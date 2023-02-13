@@ -1,0 +1,7 @@
+*.sh eol=lf
+*.js eol=lf
+*.ts eol=lf
+*.json eol=lf
+*.tsx eol=lf
+*.css eol=lf
+*.styl eol=lf

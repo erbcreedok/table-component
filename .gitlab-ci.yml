@@ -1,0 +1,55 @@
+# use docker image with node 12 inside as base image for all jobs
+image: node:12
+
+# stages are groups of jobs
+stages:
+    - install # install all npm dependencies and make some basic setups
+    - test # run all our tests
+
+# cache all our dependencies in order to prevent fetching packages from registry on every pipeline
+cache:
+    paths:
+        - node_modules
+
+install:
+    stage: install
+    script:
+        - npm install
+        - du -sh node_modules # check size of node_modules in order to monitor cache size
+
+# this job runs lint checks
+test_lint:
+    stage: test
+    script:
+        - npm run check-types
+
+# this job runs our visual regression tests
+# it will save folder tests/__image_snapshots__/__diff_output__ as artifacts when some screenshots are differ
+# we can see artifacts in gitlab ui on order to see whats happened
+# it runs tests in docker image with chrome in alpine os
+test_storybook:
+    stage: test
+    variables:
+        # this variable tells out tests where storybook build is
+        # puppeteer will open this folder as will check visual regression
+        STORYBOOK_URL: file://$CI_PROJECT_DIR/web_build/storybook
+        # this is a host where our chrome exposes deugging protocol
+        # puppeteer will connect to it and will manipulate chrome in docker container
+        BROWSER_URL: http://localhost:9222
+    services:
+        - name: epmdhm/alpine-chrome:77
+          command:
+              [
+                  '--no-sandbox',
+                  '--remote-debugging-address=0.0.0.0',
+                  '--remote-debugging-port=9222',
+                  '--font-render-hinting=none',
+              ]
+    script:
+        - npm run build-storybook
+        - npm run test:storyshots:base
+    artifacts:
+        expire_in: 2 days
+        when: on_failure
+        paths:
+            - tests/__image_snapshots__/__diff_output__

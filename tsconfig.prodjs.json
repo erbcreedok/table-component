@@ -1,0 +1,9 @@
+{
+    "compilerOptions": {
+        "allowJs": true,
+        "declaration": false
+    },
+    "extends": "./tsconfig.json",
+    "include": ["src/VirtualizedTable/lib/*.js"],
+    "exclude": ["node_modules", "src/**/*.tsx", "src/**/*.ts"]
+}

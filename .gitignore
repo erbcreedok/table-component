@@ -1,0 +1,13 @@
+node_modules/
+log/
+.idea/
+.vscode/
+.awcache/
+.env
+.env.local
+.npmrc
+.DS_Store
+/dist
+/web_build
+res/UUI Icons
+tests/__image_snapshots__/__diff_output__
