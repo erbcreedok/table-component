@@ -1,6 +1,6 @@
-import { createTheme, Link, ThemeProvider, Typography } from '@mui/material';
+import { Link, ThemeProvider, Typography } from '@mui/material';
 import { useDarkMode } from 'storybook-dark-mode';
-
+import { createTheme } from '../src';
 export const parameters = {
   actions: { argTypesRegex: '^on.*' },
   backgrounds: {
@@ -30,6 +30,8 @@ const withThemeProvider = (Story, context) => {
   const defaultTheme = createTheme({
     palette: { mode: useDarkMode() ? 'dark' : 'light' },
   });
+
+  console.log(defaultTheme)
 
   return (
     <ThemeProvider theme={defaultTheme}>

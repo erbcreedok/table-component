@@ -3,7 +3,7 @@ import { Meta, Story } from '@storybook/react';
 import MaterialReactTable, {
   MaterialReactTableProps,
   MRT_ColumnDef,
-} from 'material-react-table';
+} from '../../';
 import { faker } from '@faker-js/faker';
 import { createTheme, ThemeProvider } from '@mui/material';
 import { esES } from '@mui/material/locale';
@@ -82,7 +82,6 @@ export const CustomSpanishLocalizationExample: Story<
         sortByColumnAsc: 'Ordenar por {column} ascendente',
         sortByColumnDesc: 'Ordenar por {column} descendiendo',
         thenBy: ', entonces por ',
-        toggleDensity: 'Alternar relleno denso',
         toggleFullScreen: 'Alternar pantalla completa',
         toggleSelectAll: 'Seleccionar todo',
         toggleSelectRow: 'Seleccionar fila',

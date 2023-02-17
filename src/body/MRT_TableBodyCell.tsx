@@ -65,7 +65,6 @@ export const MRT_TableBodyCell: FC<Props> = ({
     editingCell,
     editingRow,
     hoveredColumn,
-    density,
     isLoading,
     showSkeletons,
   } = getState();
@@ -189,30 +188,17 @@ export const MRT_TableBodyCell: FC<Props> = ({
         cursor: isEditable && editingMode === 'cell' ? 'pointer' : 'inherit',
         overflow: 'hidden',
         p:
-          density === 'compact'
-            ? columnDefType === 'display'
-              ? '0 0.5rem'
-              : '0.5rem'
-            : density === 'comfortable'
-            ? columnDefType === 'display'
+          columnDefType === 'display'
               ? '0.5rem 0.75rem'
-              : '1rem'
-            : columnDefType === 'display'
-            ? '1rem 1.25rem'
-            : '1.5rem',
+              : '1rem',
         pl:
           column.id === 'mrt-row-expand'
             ? `${
-                row.depth +
-                (density === 'compact'
-                  ? 0.5
-                  : density === 'comfortable'
-                  ? 0.75
-                  : 1.25)
+                row.depth + 0.75
               }rem`
             : undefined,
         textOverflow: columnDefType !== 'display' ? 'ellipsis' : undefined,
-        whiteSpace: density === 'compact' ? 'nowrap' : 'normal',
+        whiteSpace: 'normal',
         zIndex:
           draggingColumn?.id === column.id ? 2 : column.getIsPinned() ? 1 : 0,
         '&:hover': {

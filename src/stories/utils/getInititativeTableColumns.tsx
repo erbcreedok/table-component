@@ -1,5 +1,5 @@
 import { Avatar, Chip } from '@mui/material'
-import { MRT_ColumnDef } from 'material-react-table'
+import { MRT_ColumnDef } from '../../'
 import React from 'react'
 import { Initiative } from '../types/Initiative'
 
@@ -7,7 +7,6 @@ export const getInitiativeTableColumns = () => [
   {
     header: 'Unit',
     accessorKey: 'unit',
-    Cell: ({ row }) => row.original.unitTitle
   },
   {
     header: 'Title',
@@ -38,4 +37,7 @@ export const getInitiativeTableColumns = () => [
       variant="outlined"
     />,
 },
-] as MRT_ColumnDef<Initiative>[]
+].map((i) => ({
+  ...i,
+  Header: ({ column }) => column.columnDef.header?.toUpperCase(),
+})) as MRT_ColumnDef<Initiative>[]

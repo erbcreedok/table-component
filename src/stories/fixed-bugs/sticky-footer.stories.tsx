@@ -2,7 +2,7 @@ import React from 'react';
 import { Meta, Story } from '@storybook/react';
 import MaterialReactTable, {
   MaterialReactTableProps,
-} from 'material-react-table';
+} from '../../';
 
 const meta: Meta = {
   title: 'Fixed Bugs/sticky-footer',

@@ -34,11 +34,9 @@ export const MRT_TableHeadCell: FC<Props> = ({ header, table }) => {
     setHoveredColumn,
   } = table;
   const {
-    density,
     draggingColumn,
     grouping,
     hoveredColumn,
-    showColumnFilters,
   } = getState();
   const { column } = header;
   const { columnDef } = column;
@@ -136,31 +134,22 @@ export const MRT_TableHeadCell: FC<Props> = ({ header, table }) => {
           }}
           {...tableCellProps}
           sx={(theme: Theme) => ({
+            fontSize: theme.typography.subtitle2.fontSize,
             flexDirection: layoutMode === 'grid' ? 'column' : undefined,
             fontWeight: 'bold',
             overflow: 'visible',
             p:
-              density === 'compact'
-                ? '0.5rem'
-                : density === 'comfortable'
-                  ? columnDefType === 'display'
+              columnDefType === 'display'
                     ? '0.75rem'
-                    : '1rem'
-                  : columnDefType === 'display'
-                    ? '1rem 1.25rem'
-                    : '1.5rem',
+                    : '1rem',
             pb:
               columnDefType === 'display'
                 ? 0
-                : showColumnFilters || density === 'compact'
-                  ? '0.4rem'
-                  : '0.6rem',
+                : '0.6rem',
             pt:
-              columnDefType === 'group' || density === 'compact'
+              columnDefType === 'group'
                 ? '0.25rem'
-                : density === 'comfortable'
-                  ? '.75rem'
-                  : '1.25rem',
+                : '1.25rem',
             userSelect: enableMultiSort && column.getCanSort() ? 'none' : undefined,
             verticalAlign: 'top',
             zIndex:
@@ -225,6 +214,7 @@ export const MRT_TableHeadCell: FC<Props> = ({ header, table }) => {
                     textOverflow: 'ellipsis',
                     whiteSpace:
                       (columnDef.header?.length ?? 0) < 20 ? 'nowrap' : 'normal',
+                    flexGrow: 1,
                   }}
                   title={columnDefType === 'data' ? columnDef.header : undefined}
                 >

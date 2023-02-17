@@ -13,7 +13,7 @@ export const MRT_TableHeadCellResizeHandle: FC<Props> = ({ header, table }) => {
     getState,
     options: { columnResizeMode },
   } = table;
-  const { density, showColumnFilters } = getState();
+  const { showColumnFilters } = getState();
   const { column } = header;
   const { columnDef } = column;
   const { columnDefType } = columnDef;
@@ -25,7 +25,7 @@ export const MRT_TableHeadCellResizeHandle: FC<Props> = ({ header, table }) => {
       onTouchStart={header.getResizeHandler()}
       sx={(theme) => ({
         cursor: 'col-resize',
-        mr: density === 'compact' ? '-0.5rem' : '-1rem',
+        mr: '-1rem',
         position: 'absolute',
         right: '1px',
         px: '4px',

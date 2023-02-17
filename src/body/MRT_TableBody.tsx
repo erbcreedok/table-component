@@ -47,7 +47,7 @@ export const MRT_TableBody: FC<Props> = ({
     },
     refs: { tableContainerRef, tablePaperRef },
   } = table;
-  const { columnFilters, density, globalFilter, pagination, sorting } =
+  const { columnFilters, globalFilter, pagination, sorting } =
     getState();
 
   const tableBodyProps =
@@ -98,8 +98,7 @@ export const MRT_TableBody: FC<Props> = ({
     | undefined = enableRowVirtualization
     ? useVirtualizer({
         count: rows.length,
-        estimateSize: () =>
-          density === 'compact' ? 37 : density === 'comfortable' ? 58 : 73,
+        estimateSize: () => 58,
         getScrollElement: () => tableContainerRef.current,
         measureElement: (element) => element?.getBoundingClientRect().height,
         overscan: 4,

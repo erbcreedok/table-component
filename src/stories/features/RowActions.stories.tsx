@@ -3,7 +3,7 @@ import { Meta, Story } from '@storybook/react';
 import MaterialReactTable, {
   MaterialReactTableProps,
   MRT_ColumnDef,
-} from 'material-react-table';
+} from '../../';
 import { faker } from '@faker-js/faker';
 import { Button, MenuItem as MuiMenuItem, styled } from '@mui/material';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
@@ -134,7 +134,6 @@ export const RowActionsLastColumn: Story<MaterialReactTableProps> = () => (
     columns={columns}
     data={data}
     enableRowActions
-    initialState={{ density: 'compact' }}
     positionActionsColumn="last"
     renderRowActionMenuItems={({ row, closeMenu }) => [
       <MenuItem

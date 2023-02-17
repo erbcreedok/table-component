@@ -3,7 +3,7 @@ import React from 'react';
 import { Meta, Story } from '@storybook/react';
 import MaterialReactTable, {
   MaterialReactTableProps,
-} from 'material-react-table';
+} from '../../';
 import { faker } from '@faker-js/faker';
 
 const meta: Meta = {
@@ -101,7 +101,6 @@ export const EnableRowVirtualizationDense: Story<
     enableRowNumbers
     enableRowVirtualization
     enableBottomToolbar={false}
-    initialState={{ density: 'compact' }}
   />
 );
 
@@ -115,20 +114,6 @@ export const EnableRowVirtualizationComfortable: Story<
     enableRowNumbers
     enableRowVirtualization
     enableBottomToolbar={false}
-  />
-);
-
-export const EnableRowVirtualizationSpacious: Story<
-  MaterialReactTableProps
-> = () => (
-  <MaterialReactTable
-    columns={longColumns}
-    data={longData}
-    enablePagination={false}
-    enableRowNumbers
-    enableRowVirtualization
-    enableBottomToolbar={false}
-    initialState={{ density: 'spacious' }}
   />
 );
 
@@ -186,11 +171,9 @@ export const EnableRowVirtualizationWithMemoizedCells: Story<
     columns={longColumns}
     data={longData}
     enableBottomToolbar={false}
-    enableDensityToggle={false}
     enablePagination={false}
     enableRowNumbers
     enableRowVirtualization
-    initialState={{ density: 'compact' }}
     memoMode="cells"
   />
 );
@@ -202,11 +185,9 @@ export const EnableRowVirtualizationWithMemoizedRows: Story<
     columns={longColumns}
     data={longData}
     enableBottomToolbar={false}
-    enableDensityToggle={false}
     enablePagination={false}
     enableRowNumbers
     enableRowVirtualization
-    initialState={{ density: 'compact' }}
     memoMode="rows"
   />
 );

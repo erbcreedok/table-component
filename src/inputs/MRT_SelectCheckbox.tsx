@@ -22,7 +22,7 @@ export const MRT_SelectCheckbox: FC<Props> = ({ row, selectAll, table }) => {
       selectAllMode,
     },
   } = table;
-  const { density, isLoading } = getState();
+  const { isLoading } = getState();
 
   const checkboxProps = !row
     ? muiSelectAllCheckboxProps instanceof Function
@@ -49,16 +49,16 @@ export const MRT_SelectCheckbox: FC<Props> = ({ row, selectAll, table }) => {
       : selectAllMode === 'all'
       ? table.getToggleAllRowsSelectedHandler()
       : table.getToggleAllPageRowsSelectedHandler(),
-    size: (density === 'compact' ? 'small' : 'medium') as 'small' | 'medium',
+    size: 'medium' as const,
     ...checkboxProps,
     onClick: (e: MouseEvent<HTMLButtonElement>) => {
       e.stopPropagation();
       checkboxProps?.onClick?.(e);
     },
     sx: (theme: Theme) => ({
-      height: density === 'compact' ? '1.75rem' : '2.5rem',
-      width: density === 'compact' ? '1.75rem' : '2.5rem',
-      m: density !== 'compact' ? '-0.4rem' : undefined,
+      height: '2.5rem',
+      width: '2.5rem',
+      m: '-0.4rem',
       ...(checkboxProps?.sx instanceof Function
         ? checkboxProps.sx(theme)
         : (checkboxProps?.sx as any)),

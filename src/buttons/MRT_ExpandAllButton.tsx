@@ -21,7 +21,7 @@ export const MRT_ExpandAllButton: FC<Props> = ({ table }) => {
     },
     toggleAllRowsExpanded,
   } = table;
-  const { density, isLoading } = getState();
+  const { isLoading } = getState();
 
   const iconButtonProps =
     muiExpandAllButtonProps instanceof Function
@@ -50,9 +50,9 @@ export const MRT_ExpandAllButton: FC<Props> = ({ table }) => {
           onClick={() => toggleAllRowsExpanded(!isAllRowsExpanded)}
           {...iconButtonProps}
           sx={(theme) => ({
-            height: density === 'compact' ? '1.75rem' : '2.25rem',
-            width: density === 'compact' ? '1.75rem' : '2.25rem',
-            mt: density !== 'compact' ? '-0.25rem' : undefined,
+            height: '2.25rem',
+            width: '2.25rem',
+            mt: '-0.25rem',
             ...(iconButtonProps?.sx instanceof Function
               ? iconButtonProps?.sx(theme)
               : (iconButtonProps?.sx as any)),

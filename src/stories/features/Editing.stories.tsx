@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Meta, Story } from '@storybook/react';
 import MaterialReactTable, {
   MaterialReactTableProps,
-} from 'material-react-table';
+} from '../../';
 import { faker } from '@faker-js/faker';
 import { MenuItem } from '@mui/material';
 

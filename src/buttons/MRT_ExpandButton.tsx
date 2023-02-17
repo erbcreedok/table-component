@@ -10,7 +10,6 @@ interface Props {
 
 export const MRT_ExpandButton: FC<Props> = ({ row, table }) => {
   const {
-    getState,
     options: {
       icons: { ExpandMoreIcon },
       localization,
@@ -18,7 +17,6 @@ export const MRT_ExpandButton: FC<Props> = ({ row, table }) => {
       renderDetailPanel,
     },
   } = table;
-  const { density } = getState();
 
   const iconButtonProps =
     muiExpandButtonProps instanceof Function
@@ -53,8 +51,8 @@ export const MRT_ExpandButton: FC<Props> = ({ row, table }) => {
           {...iconButtonProps}
           onClick={handleToggleExpand}
           sx={(theme) => ({
-            height: density === 'compact' ? '1.75rem' : '2.25rem',
-            width: density === 'compact' ? '1.75rem' : '2.25rem',
+            height: '2.25rem',
+            width: '2.25rem',
             ...(iconButtonProps?.sx instanceof Function
               ? iconButtonProps.sx(theme)
               : (iconButtonProps?.sx as any)),

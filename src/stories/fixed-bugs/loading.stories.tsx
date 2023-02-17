@@ -3,7 +3,7 @@ import { Meta, Story } from '@storybook/react';
 import MaterialReactTable, {
   MaterialReactTableProps,
   MRT_ColumnDef,
-} from 'material-react-table';
+} from '../../';
 
 const meta: Meta = {
   title: 'Fixed Bugs/Loading Data',

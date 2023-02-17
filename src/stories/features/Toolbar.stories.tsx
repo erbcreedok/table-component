@@ -4,7 +4,7 @@ import MaterialReactTable, {
   MaterialReactTableProps,
   MRT_ColumnDef,
   MRT_FullScreenToggleButton,
-} from 'material-react-table';
+} from '../../';
 import { faker } from '@faker-js/faker';
 import { Box, Button, IconButton, Tooltip, Typography } from '@mui/material';
 import AddBoxIcon from '@mui/icons-material/AddBox';

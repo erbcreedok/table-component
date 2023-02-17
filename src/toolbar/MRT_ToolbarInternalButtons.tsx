@@ -2,7 +2,6 @@ import React from 'react';
 import Box from '@mui/material/Box';
 import { MRT_FullScreenToggleButton } from '../buttons/MRT_FullScreenToggleButton';
 import { MRT_ShowHideColumnsButton } from '../buttons/MRT_ShowHideColumnsButton';
-import { MRT_ToggleDensePaddingButton } from '../buttons/MRT_ToggleDensePaddingButton';
 import { MRT_ToggleFiltersButton } from '../buttons/MRT_ToggleFiltersButton';
 import { MRT_ToggleGlobalFilterButton } from '../buttons/MRT_ToggleGlobalFilterButton';
 import type { MRT_TableInstance } from '..';
@@ -20,7 +19,6 @@ export const MRT_ToolbarInternalButtons = <
     options: {
       enableColumnFilters,
       enableColumnOrdering,
-      enableDensityToggle,
       enableFilters,
       enableFullScreenToggle,
       enableGlobalFilter,
@@ -53,9 +51,6 @@ export const MRT_ToolbarInternalButtons = <
           )}
           {(enableHiding || enableColumnOrdering || enablePinning) && (
             <MRT_ShowHideColumnsButton table={table} />
-          )}
-          {enableDensityToggle && (
-            <MRT_ToggleDensePaddingButton table={table} />
           )}
           {enableFullScreenToggle && (
             <MRT_FullScreenToggleButton table={table} />

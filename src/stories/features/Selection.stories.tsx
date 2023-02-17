@@ -4,7 +4,7 @@ import MaterialReactTable, {
   MaterialReactTableProps,
   MRT_ColumnDef,
   MRT_TableInstance,
-} from 'material-react-table';
+} from '../../';
 import { faker } from '@faker-js/faker';
 import { Button } from '@mui/material';
 

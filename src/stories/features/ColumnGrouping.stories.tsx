@@ -4,7 +4,7 @@ import MaterialReactTable, {
   MaterialReactTableProps,
   MRT_Column,
   MRT_ColumnDef,
-} from 'material-react-table';
+} from '../../';
 import { Initiative } from '../types/Initiative'
 import { generateInitiatives } from '../utils/generateInitiatives'
 import { getInitiativeTableColumns } from '../utils/getInititativeTableColumns'

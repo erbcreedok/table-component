@@ -12,10 +12,8 @@ interface Props {
 
 export const MRT_FilterCheckbox: FC<Props> = ({ column, table }) => {
   const {
-    getState,
     options: { localization, muiTableHeadCellFilterCheckboxProps },
   } = table;
-  const { density } = getState();
   const { columnDef } = column;
 
   const mTableHeadCellFilterCheckboxProps =
@@ -59,7 +57,6 @@ export const MRT_FilterCheckbox: FC<Props> = ({ column, table }) => {
             color={
               column.getFilterValue() === undefined ? 'default' : 'primary'
             }
-            size={density === 'compact' ? 'small' : 'medium'}
             {...checkboxProps}
             onClick={(e) => {
               e.stopPropagation();

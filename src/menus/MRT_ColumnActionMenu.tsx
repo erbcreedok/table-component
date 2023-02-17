@@ -66,7 +66,7 @@ export const MRT_ColumnActionMenu: FC<Props> = ({
   } = table;
   const { column } = header;
   const { columnDef } = column;
-  const { columnSizing, columnVisibility, density } = getState();
+  const { columnSizing, columnVisibility } = getState();
 
   const [filterMenuAnchorEl, setFilterMenuAnchorEl] =
     useState<null | HTMLElement>(null);
@@ -154,9 +154,6 @@ export const MRT_ColumnActionMenu: FC<Props> = ({
       anchorEl={anchorEl}
       open={!!anchorEl}
       onClose={() => setAnchorEl(null)}
-      MenuListProps={{
-        dense: density === 'compact',
-      }}
     >
       {columnDef.renderColumnActionsMenuItems?.({
         closeMenu: () => setAnchorEl(null),

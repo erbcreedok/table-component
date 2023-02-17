@@ -40,7 +40,7 @@ export const MRT_ShowHideColumnsMenu = <
       localization,
     },
   } = table;
-  const { density, columnOrder, columnPinning } = getState();
+  const { columnOrder, columnPinning } = getState();
 
   const hideAllColumns = () => {
     getAllLeafColumns()
@@ -81,9 +81,6 @@ export const MRT_ShowHideColumnsMenu = <
       anchorEl={anchorEl}
       open={!!anchorEl}
       onClose={() => setAnchorEl(null)}
-      MenuListProps={{
-        dense: density === 'compact',
-      }}
     >
       <Box
         sx={{

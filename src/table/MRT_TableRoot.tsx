@@ -79,9 +79,6 @@ export const MRT_TableRoot = <TData extends Record<string, any> = {}>(
   const [columnOrder, setColumnOrder] = useState(
     initialState.columnOrder ?? [],
   );
-  const [density, setDensity] = useState(
-    initialState?.density ?? 'comfortable',
-  );
   const [draggingColumn, setDraggingColumn] =
     useState<MRT_Column<TData> | null>(initialState.draggingColumn ?? null);
   const [draggingRow, setDraggingRow] = useState<MRT_Row<TData> | null>(
@@ -274,7 +271,6 @@ export const MRT_TableRoot = <TData extends Record<string, any> = {}>(
       state: {
         columnFilterFns,
         columnOrder,
-        density,
         draggingColumn,
         draggingRow,
         editingCell,
@@ -302,7 +298,6 @@ export const MRT_TableRoot = <TData extends Record<string, any> = {}>(
       topToolbarRef,
     },
     setColumnFilterFns: props.onColumnFilterFnsChange ?? setColumnFilterFns,
-    setDensity: props.onDensityChange ?? setDensity,
     setDraggingColumn: props.onDraggingColumnChange ?? setDraggingColumn,
     setDraggingRow: props.onDraggingRowChange ?? setDraggingRow,
     setEditingCell: props.onEditingCellChange ?? setEditingCell,

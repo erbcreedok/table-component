@@ -4,7 +4,7 @@ import MaterialReactTable, {
   MaterialReactTableProps,
   MRT_ColumnDef,
   MRT_Row,
-} from 'material-react-table';
+} from '../../';
 import { faker } from '@faker-js/faker';
 
 const meta: Meta = {

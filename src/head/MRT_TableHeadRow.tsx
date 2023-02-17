@@ -33,7 +33,7 @@ export const MRT_TableHeadRow: FC<Props> = ({
     <TableRow
       {...tableRowProps}
       sx={(theme) => ({
-        backgroundColor: lighten(theme.palette.background.default, 0.04),
+        backgroundColor: lighten(theme.palette.secondary.main, 0.04),
         boxShadow: `4px 0 8px ${alpha(theme.palette.common.black, 0.1)}`,
         display: layoutMode === 'grid' ? 'flex' : 'table-row',
         top: 0,

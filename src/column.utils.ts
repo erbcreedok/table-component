@@ -98,7 +98,7 @@ export const prepareColumns = <TData extends Record<string, any> = {}>({
       if (Object.keys(filterFns).includes(columnFilterFns[columnDef.id])) {
         columnDef.filterFn =
           filterFns[columnFilterFns[columnDef.id]] ?? filterFns.fuzzy;
-        (columnDef as MRT_DefinedColumnDef<TData>)._filterFn =
+        (columnDef as unknown as MRT_DefinedColumnDef)._filterFn =
           columnFilterFns[columnDef.id];
       }
 

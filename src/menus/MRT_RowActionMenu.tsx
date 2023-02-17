@@ -25,7 +25,6 @@ export const MRT_RowActionMenu: FC<Props> = ({
   table,
 }) => {
   const {
-    getState,
     options: {
       icons: { EditIcon },
       enableEditing,
@@ -33,16 +32,12 @@ export const MRT_RowActionMenu: FC<Props> = ({
       renderRowActionMenuItems,
     },
   } = table;
-  const { density } = getState();
 
   return (
     <Menu
       anchorEl={anchorEl}
       open={!!anchorEl}
       onClose={() => setAnchorEl(null)}
-      MenuListProps={{
-        dense: density === 'compact',
-      }}
     >
       {enableEditing && (
         <MenuItem onClick={handleEdit} sx={commonMenuItemStyles}>

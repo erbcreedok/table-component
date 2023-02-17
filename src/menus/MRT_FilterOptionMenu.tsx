@@ -128,7 +128,7 @@ export const MRT_FilterOptionMenu = <TData extends Record<string, any> = {}>({
     setColumnFilterFns,
     setGlobalFilterFn,
   } = table;
-  const { globalFilterFn, density } = getState();
+  const { globalFilterFn } = getState();
   const { column } = header ?? {};
   const { columnDef } = column ?? {};
 
@@ -192,9 +192,6 @@ export const MRT_FilterOptionMenu = <TData extends Record<string, any> = {}>({
       anchorOrigin={{ vertical: 'center', horizontal: 'right' }}
       onClose={() => setAnchorEl(null)}
       open={!!anchorEl}
-      MenuListProps={{
-        dense: density === 'compact',
-      }}
     >
       {(header && column && columnDef
         ? columnDef.renderColumnFilterModeMenuItems?.({
