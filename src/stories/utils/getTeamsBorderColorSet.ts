@@ -1,6 +1,6 @@
 import { Colors } from './constants'
 
-export const getTeamMembersColorSet = (): Record<string, Record<string, string>> => ({
+export const getTeamsBorderColorSet = (): Record<string, Record<string, string>> => ({
 	impact: {
 		'Critical': Colors.purple,
 		'High': Colors.danger,

@@ -1,4 +1,4 @@
-import { Link, ThemeProvider, Typography } from '@mui/material';
+import { ThemeProvider, Typography } from '@mui/material';
 import { useDarkMode } from 'storybook-dark-mode';
 import { createTheme } from '../src';
 export const parameters = {
@@ -33,22 +33,6 @@ const withThemeProvider = (Story, context) => {
 
   return (
     <ThemeProvider theme={defaultTheme}>
-      <Typography
-        sx={{
-          pb: '0.5rem',
-          color: useDarkMode() ? '#fff' : '#666',
-        }}
-        variant="subtitle2"
-      >
-        Looking for the main docs site? Click{' '}
-        <Link
-          href="https://www.material-react-table.com"
-          target="_blank"
-          rel="noopener"
-        >
-          here.
-        </Link>
-      </Typography>
       <Typography
         variant="subtitle2"
         sx={{

@@ -1,8 +1,15 @@
 import { css } from '@emotion/react'
 import styled from '@emotion/styled'
+import { Box } from '@mui/material'
 import { getShouldForwardProps } from '../utils/getShouldForwardProps'
 
-export const Flex = styled('div', getShouldForwardProps('column', 'center', 'gap'))<{ column?: boolean, center?: boolean | 'x' | 'y', gap?: string }>`
+export const Flex = styled(Box,
+	getShouldForwardProps('column', 'center', 'gap')
+)<{
+	column?: boolean
+	center?: boolean | 'x' | 'y'
+	gap?: string
+}>`
 	display: flex;
 	${({ column, center, gap }) => css`
     flex-direction: ${column && 'column'};

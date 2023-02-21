@@ -1,11 +1,12 @@
 import { css } from '@emotion/react'
 import styled from '@emotion/styled'
+import { Box as MuiBox } from '@mui/material'
 import { useResizeDetector } from 'react-resize-detector'
 import React, { ReactNode, useCallback, useState } from 'react'
 import { MRT_Cell, MRT_Column, MRT_Row, MRT_TableInstance } from '../MaterialReactTable'
 import { getShouldForwardProps } from '../utils/getShouldForwardProps'
 
-const Box = styled('div', getShouldForwardProps('rotate', 'borderColor'))<{ rotate?: boolean; borderColor?: string }>`
+const Box = styled(MuiBox, getShouldForwardProps('rotate', 'borderColor'))<{ rotate?: boolean; borderColor?: string }>`
 	background-color: #FAFAFC;
 	box-sizing: border-box;
   height: calc(100% + 2rem);

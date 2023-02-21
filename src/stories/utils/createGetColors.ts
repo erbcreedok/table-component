@@ -14,19 +14,25 @@ const getKey = (value: unknown) => {
 
 	return `${value}`
 }
-export const createGetColors = (colorsSet: Record<string, Record<string, string>>, colors = defaultColors) => (columnId: string, value: unknown) => {
+
+type Options = {
+	colors?: string[]
+	fallback?: string
+	useRandom?: boolean
+}
+export const createGetColors = (colorsSet: Record<string, Record<string, string>>, options?: Options) => (columnId: string, value: unknown) => {
+	const { colors = defaultColors, fallback = 'inherit', useRandom } = options || {}
 	const key = getKey(value)
-	if (value === undefined || value === null) return Colors.lightestGrey
+	if (value === undefined || value === null) return fallback
+	const newColor = useRandom ? getRandomFromArray(colors) : fallback
 	if (colorsSet[columnId]) {
 		if (colorsSet[columnId][key]) {
 			return colorsSet[columnId][key]
 		}
-		const color = getRandomFromArray(colors)
-		colorsSet[columnId][key] = color
-		return color
+		colorsSet[columnId][key] = newColor
+		return newColor
 	}
 	colorsSet[columnId] = {}
-	const color = getRandomFromArray(colors)
-	colorsSet[columnId][key] = color
-	return color
+	colorsSet[columnId][key] = newColor
+	return newColor
 }

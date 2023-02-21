@@ -34,7 +34,7 @@ export const TeamsTableDefault: Story<MaterialReactTableProps> = () => (
 		enablePagination={false}
 		groupsSorting={groupsSorting}
 		groupBorder={{ left: '12px solid white', top: '20px solid white' }}
-		initialState={{ grouping: ['impact', 'performance'] }}
+		initialState={{ grouping: ['impact', 'performance'], columnSizing: { impact: 1, performance: 1 }}}
 		uppercaseHeader
 	/>
 );
