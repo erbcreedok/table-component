@@ -338,6 +338,14 @@ export const MRT_TableRoot = <TData extends Record<string, any> = {}>(
     }
   }, [table.getState().isFullScreen]);
 
+  useEffect(() => {
+    grouping.slice(0, grouping.length - 1).forEach((columnId) => {
+      table.setColumnSizing((old) => {
+        return ({ ...old, [columnId]: 58 })
+      })
+    })
+  }, [grouping])
+
   return (
     <>
       <Dialog

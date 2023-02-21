@@ -2,6 +2,7 @@ import React, { DragEvent, FC, ReactNode, useMemo } from 'react';
 import Box from '@mui/material/Box';
 import TableCell from '@mui/material/TableCell';
 import { useTheme } from '@mui/material/styles';
+import { getGroupBorders } from '../utils/getGroupBorders'
 import { MRT_TableHeadCellColumnActionsButton } from './MRT_TableHeadCellColumnActionsButton';
 import { MRT_TableHeadCellFilterContainer } from './MRT_TableHeadCellFilterContainer';
 import { MRT_TableHeadCellFilterLabel } from './MRT_TableHeadCellFilterLabel';
@@ -29,6 +30,7 @@ export const MRT_TableHeadCell: FC<Props> = ({ header, table }) => {
       enableMultiSort,
       layoutMode,
       muiTableHeadCellProps,
+      uppercaseHeader,
     },
     refs: { tableHeadCellRefs },
     setHoveredColumn,
@@ -141,7 +143,7 @@ export const MRT_TableHeadCell: FC<Props> = ({ header, table }) => {
             p:
               columnDefType === 'display'
                     ? '0.75rem'
-                    : '1rem',
+                    : '0.75rem',
             pb:
               columnDefType === 'display'
                 ? 0
@@ -152,12 +154,14 @@ export const MRT_TableHeadCell: FC<Props> = ({ header, table }) => {
                 : '1rem',
             userSelect: enableMultiSort && column.getCanSort() ? 'none' : undefined,
             verticalAlign: 'top',
+            textTransform: uppercaseHeader && 'uppercase',
             zIndex:
               column.getIsResizing() || draggingColumn?.id === column.id
                 ? 3
                 : column.getIsPinned() && columnDefType !== 'group'
                   ? 2
                   : 1,
+            ...getGroupBorders({ header, table }),
             ...getCommonCellStyles({
               column,
               header,

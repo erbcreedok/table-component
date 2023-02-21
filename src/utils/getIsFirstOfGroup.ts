@@ -1,21 +1,18 @@
 import { MRT_Cell, MRT_TableInstance } from '../MaterialReactTable'
 
-export const getIsFirstOfGroup = ({ table, cell }: { table: MRT_TableInstance, cell: MRT_Cell }): boolean => {
+export const getIsFirstOfGroup = ({ table, cell, columnId }: { table: MRT_TableInstance, cell: MRT_Cell, columnId?: string }): boolean => {
 	const { row, column } = cell
 
 	if (!column.getIsGrouped()) return true
 
 	const rowId = row.id
-	const columnId = column.id
-	const rows = table.getPrePaginationRowModel().rows
-	const { pageSize, pageIndex } = table.getState().pagination
-	const firstElementIndex = pageIndex * pageSize
+	const colId = columnId ?? column.id
+	const rows = table.getPaginationRowModel().rows
 	const index = rows.findIndex((r) => r.id === rowId)
 
-	if (index < firstElementIndex) return false
-	if (index === firstElementIndex) return true
-	const currentValue = rows[index].getValue(columnId)
-	const previousValue = rows[index - 1].getValue(columnId)
+	if (index === 0) return true
+	const currentValue = rows[index].getValue(colId)
+	const previousValue = rows[index - 1].getValue(colId)
 
 	return (currentValue !== previousValue)
 }

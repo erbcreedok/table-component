@@ -22,7 +22,7 @@ export const MRT_TableBodyCellValue: FC<Props> = ({ cell, table }) => {
           })
         : row.getIsGrouped() && !cell.getIsGrouped()
         ? null
-        : (enableAggregationRow && column.getIsGrouped() && columnDef.GroupedCell)
+        : (!enableAggregationRow && column.getIsGrouped() && columnDef.GroupedCell)
         || (cell.getIsGrouped() && columnDef.GroupedCell)
         ? columnDef.GroupedCell({
             cell,

@@ -53,6 +53,7 @@ export const MRT_TableBodyRow: FC<Props> = ({
       : muiTableBodyRowProps;
 
   const handleDragEnter = (_e: DragEvent) => {
+    console.log(_e.target)
     if (enableRowOrdering && draggingRow) {
       setHoveredRow(row);
     }

@@ -14,6 +14,7 @@ import { darken, lighten, useTheme } from '@mui/material/styles';
 import { MRT_ExpandButton } from '../buttons/MRT_ExpandButton'
 import { MRT_EditCellTextField } from '../inputs/MRT_EditCellTextField';
 import { MRT_CopyButton } from '../buttons/MRT_CopyButton';
+import { getGroupBorders } from '../utils/getGroupBorders'
 import { getGroupRowSpan } from '../utils/getGroupRowSpan'
 import { getIsFirstOfGroup } from '../utils/getIsFirstOfGroup'
 import { MRT_TableBodyRowGrabHandle } from './MRT_TableBodyRowGrabHandle';
@@ -48,6 +49,7 @@ export const MRT_TableBodyCell: FC<Props> = ({
     getState,
     options: {
       editingMode,
+      enableAggregationRow,
       enableClickToCopy,
       enableColumnOrdering,
       enableEditing,
@@ -176,10 +178,10 @@ export const MRT_TableBodyCell: FC<Props> = ({
 
   const isFirstOfGroup = getIsFirstOfGroup({ table, cell })
 
-  if (!table.options.enableAggregationRow && row.getIsGrouped()) {
+  if (!enableAggregationRow && row.getIsGrouped()) {
     return null
   }
-  if (!table.options.enableAggregationRow && !isFirstOfGroup) {
+  if (!enableAggregationRow && !isFirstOfGroup) {
     return null
   }
 
@@ -194,7 +196,7 @@ export const MRT_TableBodyCell: FC<Props> = ({
       {...tableCellProps}
       onDragEnter={handleDragEnter}
       onClick={() => {
-        getGroupRowSpan({ table, cell })
+        getGroupBorders({ table, cell })
       }}
       onDoubleClick={handleDoubleClick}
       data-is-first-of-group={getIsFirstOfGroup({ table, cell })}
@@ -202,12 +204,17 @@ export const MRT_TableBodyCell: FC<Props> = ({
       sx={(theme) => ({
         alignItems: layoutMode === 'grid' ? 'center' : undefined,
         cursor: isEditable && editingMode === 'cell' ? 'pointer' : 'inherit',
+        height: '1px',
         overflow: 'hidden',
         verticalAlign: 'top',
+        position: 'relative',
         p:
           columnDefType === 'display'
               ? '0.5rem 0.75rem'
               : '1rem',
+        px: columnDefType === 'display'
+          ? '0.5rem 0.75rem'
+          : '0.75rem',
         pl:
           column.id === 'mrt-row-expand'
             ? `${
@@ -229,6 +236,7 @@ export const MRT_TableBodyCell: FC<Props> = ({
                 : `${darken(theme.palette.background.default, 0.1)} !important`
               : undefined,
         },
+        ...getGroupBorders({ table, cell }),
         ...getCommonCellStyles({
           column,
           table,
@@ -238,46 +246,44 @@ export const MRT_TableBodyCell: FC<Props> = ({
         ...draggingBorders,
       })}
     >
-      {table.options.enableAggregationRow && cell.getIsGrouped() && (
+      {enableAggregationRow && cell.getIsGrouped() && (
         <MRT_ExpandButton row={row} table={table} />
       )}
       <>
-        {cell.getIsPlaceholder()
-        ? table.options.enableAggregationRow
-            ? null
-            : <MRT_TableBodyCellValue cell={cell} table={table} />
-        : isLoading || showSkeletons ? (
-          <Skeleton
-            animation="wave"
-            height={20}
-            width={skeletonWidth}
-            {...skeletonProps}
-          />
-        ) : enableRowNumbers &&
-          rowNumberMode === 'static' &&
-          column.id === 'mrt-row-numbers' ? (
-          rowIndex + 1
-        ) : column.id === 'mrt-row-drag' ? (
-          <MRT_TableBodyRowGrabHandle
-            cell={cell}
-            rowRef={rowRef}
-            table={table}
-          />
-        ) : columnDefType === 'display' &&
-          (column.id === 'mrt-row-select' ||
-            column.id === 'mrt-row-expand' ||
-            !row.getIsGrouped()) ? (
-          columnDef.Cell?.({ cell, column, row, table })
-        ) : isEditing ? (
-          <MRT_EditCellTextField cell={cell} table={table} />
-        ) : (enableClickToCopy || columnDef.enableClickToCopy) &&
-          columnDef.enableClickToCopy !== false ? (
-          <MRT_CopyButton cell={cell} table={table}>
-            <MRT_TableBodyCellValue cell={cell} table={table} />
-          </MRT_CopyButton>
-        ) : (
-          <MRT_TableBodyCellValue cell={cell} table={table} />
-        )}
+        {(cell.getIsPlaceholder() && enableAggregationRow)
+          ? null
+          : isLoading || showSkeletons
+            ? (
+              <Skeleton
+                animation="wave"
+                height={20}
+                width={skeletonWidth}
+                {...skeletonProps}
+              />
+            )
+            : enableRowNumbers && rowNumberMode === 'static' &&
+            column.id === 'mrt-row-numbers'
+              ? (rowIndex + 1)
+              : column.id === 'mrt-row-drag'
+                ? (
+                  <MRT_TableBodyRowGrabHandle
+                    cell={cell}
+                    rowRef={rowRef}
+                    table={table}
+                  />
+                )
+                : columnDefType === 'display' && (column.id === 'mrt-row-select' || column.id === 'mrt-row-expand' || !row.getIsGrouped())
+                  ? (columnDef.Cell?.({ cell, column, row, table }))
+                  : isEditing
+                    ? (<MRT_EditCellTextField cell={cell} table={table} />)
+                    : (enableClickToCopy || columnDef.enableClickToCopy) && columnDef.enableClickToCopy !== false
+                      ? (
+                        <MRT_CopyButton cell={cell} table={table}>
+                          <MRT_TableBodyCellValue cell={cell} table={table} />
+                        </MRT_CopyButton>
+                      )
+                      : (<MRT_TableBodyCellValue cell={cell} table={table} />)
+        }
       </>
     </TableCell>
   );

@@ -98,7 +98,8 @@
         "@tanstack/match-sorter-utils": "8.7.6",
         "@tanstack/react-table": "8.7.6",
         "@tanstack/react-virtual": "3.0.0-beta.30",
-        "classnames": "^2.2.6"
+        "classnames": "^2.2.6",
+        "react-resize-detector": "^8.0.4"
     },
     "peerDependencies": {
         "@emotion/react": ">=11",

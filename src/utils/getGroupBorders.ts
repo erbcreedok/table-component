@@ -1,0 +1,57 @@
+import { MRT_Cell, MRT_Header, MRT_TableInstance } from '../MaterialReactTable'
+import { getIsFirstOfGroup } from './getIsFirstOfGroup'
+
+type CellProps = {
+	cell: MRT_Cell
+	table: MRT_TableInstance
+}
+type HeaderProps = {
+	header: MRT_Header
+	table: MRT_TableInstance
+}
+
+const getCellBorders = ({ cell, table }: CellProps) => {
+	const groupBorder = table.options.groupBorder
+	const borderLeft = groupBorder ? typeof groupBorder === 'string' ? groupBorder : groupBorder.left : undefined
+	const borderTop = groupBorder ? typeof groupBorder === 'string' ? groupBorder : groupBorder.top : undefined
+	const borders: { [key: string]:  string } = {}
+	const rows = table.getPaginationRowModel().rows
+	const { row, column } = cell
+	const index = rows.findIndex((r) => r.id === row.id)
+	const colIndex = table.getVisibleLeafColumns().findIndex((c) => c.id === column.id)
+	const grouping = table.getState().grouping
+
+	if (column.getIsGrouped()) {
+		borders.borderBottom = 'none'
+	}
+
+	if (colIndex > 0 && column.getIsGrouped()) {
+		borders.borderLeft = borderLeft
+	}
+	if (index > 0 && grouping.some((columnId) => getIsFirstOfGroup({ table, cell, columnId }))) {
+		borders.borderTop = borderTop
+	}
+
+	return borders
+}
+
+const getHeaderBorders = ({ header, table }: HeaderProps) => {
+	const groupBorder = table.options.groupBorder
+	const borderLeft = groupBorder ? typeof groupBorder === 'string' ? groupBorder : groupBorder.left : undefined
+	const borders: { [key: string]:  string } = {}
+	const { column } = header
+	const colIndex = table.getVisibleLeafColumns().findIndex((c) => c.id === column.id)
+
+	if (colIndex > 0 && column.getIsGrouped()) {
+		borders.borderLeft = borderLeft
+	}
+
+	return borders
+}
+export const getGroupBorders = (props: CellProps | HeaderProps) => {
+	if ('cell' in props) {
+		return getCellBorders(props)
+	}
+
+	return getHeaderBorders(props)
+}

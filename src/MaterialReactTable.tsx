@@ -227,7 +227,6 @@ export type MRT_TableInstance<TData extends Record<string, any> = {}> = Omit<
 export type MRT_TableState<TData extends Record<string, any> = {}> =
   TableState & {
     columnFilterFns: Record<string, MRT_FilterOption>;
-    uppercaseHeader: boolean;
     draggingColumn: MRT_Column<TData> | null;
     draggingRow: MRT_Row<TData> | null;
     editingCell: MRT_Cell<TData> | null;
@@ -691,6 +690,7 @@ export type MaterialReactTableProps<TData extends Record<string, any> = {}> =
     globalFilterFn?: MRT_FilterOption;
     globalFilterModeOptions?: MRT_FilterOption[] | null;
     groupsSorting?: SortFunctions;
+    groupBorder?: string | { left: string, top: string };
     icons?: Partial<MRT_Icons>;
     initialState?: Partial<MRT_TableState<TData>>;
     /**
@@ -1084,6 +1084,7 @@ export type MaterialReactTableProps<TData extends Record<string, any> = {}> =
           table: MRT_TableInstance<TData>;
         }) => Partial<VirtualizerOptions<HTMLDivElement, HTMLTableRowElement>>);
     tableInstanceRef?: MutableRefObject<MRT_TableInstance<TData> | null>;
+    uppercaseHeader: boolean;
     /**
      * @deprecated Use `rowVirtualizerInstanceRef` instead
      */
