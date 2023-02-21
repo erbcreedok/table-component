@@ -339,11 +339,20 @@ export const MRT_TableRoot = <TData extends Record<string, any> = {}>(
   }, [table.getState().isFullScreen]);
 
   useEffect(() => {
-    grouping.slice(0, grouping.length - 1).forEach((columnId) => {
-      table.setColumnSizing((old) => {
-        return ({ ...old, [columnId]: 58 })
-      })
-    })
+    const newSizes = grouping.slice(0, grouping.length - 1).reduce((acc, columnId) => ({
+      ...acc,
+      [columnId]: 58
+    }), {})
+    table.setColumnSizing((oldSizes) => ({
+      ...newSizes,
+      ...Object.entries(oldSizes).reduce((acc, [columnId, size]) => {
+        if (size === 58) return acc
+        return {
+          ...acc,
+          [columnId]: size
+        }
+      }, {}),
+    }))
   }, [grouping])
 
   return (
