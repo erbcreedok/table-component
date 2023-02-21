@@ -13,5 +13,5 @@ type Props<TData> = {
 	table: MRT_TableInstance<TData>;
 }
 export const HeaderBase = <T,>({ column }: Props<T>) => {
-	return <Box style={{ width: column.getSize() }} title={column.columnDef.header}>{column.columnDef.header}</Box>
+	return <Box style={{ minWidth: column.getSize() }} title={column.columnDef.header}>{column.columnDef.header}</Box>
 }

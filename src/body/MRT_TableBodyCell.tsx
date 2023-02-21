@@ -195,11 +195,7 @@ export const MRT_TableBodyCell: FC<Props> = ({
       }}
       {...tableCellProps}
       onDragEnter={handleDragEnter}
-      onClick={() => {
-        getGroupBorders({ table, cell })
-      }}
       onDoubleClick={handleDoubleClick}
-      data-is-first-of-group={getIsFirstOfGroup({ table, cell })}
       rowSpan={getGroupRowSpan({ table, cell })}
       sx={(theme) => ({
         alignItems: layoutMode === 'grid' ? 'center' : undefined,

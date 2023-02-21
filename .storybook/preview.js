@@ -31,8 +31,6 @@ const withThemeProvider = (Story, context) => {
     palette: { mode: useDarkMode() ? 'dark' : 'light' },
   });
 
-  console.log(defaultTheme)
-
   return (
     <ThemeProvider theme={defaultTheme}>
       <Typography
