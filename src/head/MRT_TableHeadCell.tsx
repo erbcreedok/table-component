@@ -145,11 +145,11 @@ export const MRT_TableHeadCell: FC<Props> = ({ header, table }) => {
             pb:
               columnDefType === 'display'
                 ? 0
-                : '0.6rem',
+                : '1rem',
             pt:
               columnDefType === 'group'
                 ? '0.25rem'
-                : '1.25rem',
+                : '1rem',
             userSelect: enableMultiSort && column.getCanSort() ? 'none' : undefined,
             verticalAlign: 'top',
             zIndex:

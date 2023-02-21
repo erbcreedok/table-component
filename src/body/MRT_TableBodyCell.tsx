@@ -14,6 +14,8 @@ import { darken, lighten, useTheme } from '@mui/material/styles';
 import { MRT_ExpandButton } from '../buttons/MRT_ExpandButton'
 import { MRT_EditCellTextField } from '../inputs/MRT_EditCellTextField';
 import { MRT_CopyButton } from '../buttons/MRT_CopyButton';
+import { getGroupRowSpan } from '../utils/getGroupRowSpan'
+import { getIsFirstOfGroup } from '../utils/getIsFirstOfGroup'
 import { MRT_TableBodyRowGrabHandle } from './MRT_TableBodyRowGrabHandle';
 import { MRT_TableBodyCellValue } from './MRT_TableBodyCellValue';
 import { getCommonCellStyles } from '../column.utils';
@@ -172,6 +174,15 @@ export const MRT_TableBodyCell: FC<Props> = ({
     }
   };
 
+  const isFirstOfGroup = getIsFirstOfGroup({ table, cell })
+
+  if (!table.options.enableAggregationRow && row.getIsGrouped()) {
+    return null
+  }
+  if (!table.options.enableAggregationRow && !isFirstOfGroup) {
+    return null
+  }
+
   return (
     <TableCell
       data-index={virtualCell?.index}
@@ -182,11 +193,17 @@ export const MRT_TableBodyCell: FC<Props> = ({
       }}
       {...tableCellProps}
       onDragEnter={handleDragEnter}
+      onClick={() => {
+        getGroupRowSpan({ table, cell })
+      }}
       onDoubleClick={handleDoubleClick}
+      data-is-first-of-group={getIsFirstOfGroup({ table, cell })}
+      rowSpan={getGroupRowSpan({ table, cell })}
       sx={(theme) => ({
         alignItems: layoutMode === 'grid' ? 'center' : undefined,
         cursor: isEditable && editingMode === 'cell' ? 'pointer' : 'inherit',
         overflow: 'hidden',
+        verticalAlign: 'top',
         p:
           columnDefType === 'display'
               ? '0.5rem 0.75rem'
@@ -221,11 +238,15 @@ export const MRT_TableBodyCell: FC<Props> = ({
         ...draggingBorders,
       })}
     >
-      {cell.getIsGrouped() && (
+      {table.options.enableAggregationRow && cell.getIsGrouped() && (
         <MRT_ExpandButton row={row} table={table} />
       )}
       <>
-        {cell.getIsPlaceholder() ? null : isLoading || showSkeletons ? (
+        {cell.getIsPlaceholder()
+        ? table.options.enableAggregationRow
+            ? null
+            : <MRT_TableBodyCellValue cell={cell} table={table} />
+        : isLoading || showSkeletons ? (
           <Skeleton
             animation="wave"
             height={20}
@@ -258,9 +279,6 @@ export const MRT_TableBodyCell: FC<Props> = ({
           <MRT_TableBodyCellValue cell={cell} table={table} />
         )}
       </>
-      {cell.getIsGrouped() && !columnDef.GroupedCell && (
-        <> ({row.subRows?.length})</>
-      )}
     </TableCell>
   );
 };

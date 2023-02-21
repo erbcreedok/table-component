@@ -133,7 +133,7 @@ export const reorderColumn = <TData extends Record<string, any> = {}>(
 };
 
 export const showExpandColumn = <TData extends Record<string, any> = {}>(
-  props: MaterialReactTableProps<TData>
+  props: MaterialReactTableProps<TData>,
 ) =>
   !!(
     props.enableExpanding ||

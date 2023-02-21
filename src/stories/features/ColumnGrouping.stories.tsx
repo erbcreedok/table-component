@@ -20,7 +20,7 @@ const columns = getInitiativeTableColumns()
 const data = generateInitiatives(60);
 
 export const ColumnGroupingEnabled: Story<MaterialReactTableProps> = () => (
-  <MaterialReactTable columns={columns} data={data} enableGrouping />
+  <MaterialReactTable columns={columns} data={data} enableGrouping enableAggregationRow />
 );
 
 export const ColumnGroupingNoDragHandles: Story<
@@ -30,6 +30,7 @@ export const ColumnGroupingNoDragHandles: Story<
     columns={columns}
     data={data}
     enableGrouping
+    enableAggregationRow
     enableColumnDragging={false}
   />
 );
@@ -41,6 +42,7 @@ export const ColumnGroupingEnabledDropZoneBottom: Story<
     columns={columns}
     data={data}
     enableGrouping
+    enableAggregationRow
     positionToolbarDropZone="bottom"
   />
 );

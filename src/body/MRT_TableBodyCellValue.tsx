@@ -7,6 +7,7 @@ interface Props {
 }
 
 export const MRT_TableBodyCellValue: FC<Props> = ({ cell, table }) => {
+  const { options: { enableAggregationRow } } = table;
   const { column, row } = cell;
   const { columnDef } = column;
 
@@ -21,7 +22,8 @@ export const MRT_TableBodyCellValue: FC<Props> = ({ cell, table }) => {
           })
         : row.getIsGrouped() && !cell.getIsGrouped()
         ? null
-        : cell.getIsGrouped() && columnDef.GroupedCell
+        : (enableAggregationRow && column.getIsGrouped() && columnDef.GroupedCell)
+        || (cell.getIsGrouped() && columnDef.GroupedCell)
         ? columnDef.GroupedCell({
             cell,
             column,

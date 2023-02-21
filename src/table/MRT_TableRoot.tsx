@@ -8,7 +8,7 @@ import {
   getPaginationRowModel,
   getSortedRowModel,
   useReactTable,
-} from '@tanstack/react-table';
+} from '@tanstack/react-table'
 import Box from '@mui/material/Box';
 import Dialog from '@mui/material/Dialog';
 import Grow from '@mui/material/Grow';
@@ -38,6 +38,7 @@ import type {
   MRT_TableState,
   MaterialReactTableProps,
 } from '..';
+import { getFlatGroupedRowModel } from '../utils/getFlatGroupedRowModel';
 
 export const MRT_TableRoot = <TData extends Record<string, any> = {}>(
   props: MaterialReactTableProps<TData> & { localization: MRT_Localization },
@@ -144,7 +145,7 @@ export const MRT_TableRoot = <TData extends Record<string, any> = {}>(
             id: 'mrt-row-actions',
           },
           columnOrder.includes('mrt-row-expand') &&
-            showExpandColumn(props) && {
+          showExpandColumn(props) && {
               Cell: ({ row }) => (
                 <MRT_ExpandButton row={row as any} table={table as any} />
               ),
@@ -255,7 +256,9 @@ export const MRT_TableRoot = <TData extends Record<string, any> = {}>(
       getExpandedRowModel: getExpandedRowModel(),
       getFacetedRowModel: getFacetedRowModel(),
       getFilteredRowModel: getFilteredRowModel(),
-      getGroupedRowModel: getGroupedRowModel(),
+      getGroupedRowModel: props.enableAggregationRow
+        ? getGroupedRowModel()
+        : getFlatGroupedRowModel(props.groupsSorting),
       getPaginationRowModel: getPaginationRowModel(),
       getSortedRowModel: getSortedRowModel(),
       onColumnOrderChange: setColumnOrder,

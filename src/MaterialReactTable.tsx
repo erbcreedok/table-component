@@ -48,6 +48,7 @@ import { MRT_Default_Icons, MRT_Icons } from './icons';
 import { MRT_SortingFns } from './sortingFns';
 import { MRT_TableRoot } from './table/MRT_TableRoot';
 import { MRT_Localization_EN } from './_locales/en';
+import { SortFunctions } from './utils/getFlatGroupedRowModel'
 
 /**
  * Most of this file is just TypeScript types
@@ -190,6 +191,7 @@ export type MRT_TableInstance<TData extends Record<string, any> = {}> = Omit<
   options: MaterialReactTableProps<TData> & {
     icons: MRT_Icons;
     localization: MRT_Localization;
+    enableAggregationRow?: boolean;
   };
   refs: {
     bottomToolbarRef: MutableRefObject<HTMLDivElement>;
@@ -652,6 +654,7 @@ export type MaterialReactTableProps<TData extends Record<string, any> = {}> =
       [key in MRT_DisplayColumnIds]: Partial<MRT_ColumnDef>;
     }>;
     editingMode?: 'table' | 'modal' | 'row' | 'cell';
+    enableAggregationRow?: boolean;
     enableBottomToolbar?: boolean;
     enableClickToCopy?: boolean;
     enableColumnActions?: boolean;
@@ -687,6 +690,7 @@ export type MaterialReactTableProps<TData extends Record<string, any> = {}> =
     ) => string;
     globalFilterFn?: MRT_FilterOption;
     globalFilterModeOptions?: MRT_FilterOption[] | null;
+    groupsSorting?: SortFunctions;
     icons?: Partial<MRT_Icons>;
     initialState?: Partial<MRT_TableState<TData>>;
     /**
