@@ -1,6 +1,6 @@
-import type { MRT_Localization } from '..';
+import type { Table_Localization } from '..';
 
-export const MRT_Localization_ES: MRT_Localization = {
+export const Table_Localization_ES: Table_Localization = {
   actions: 'Acciones',
   and: 'y',
   cancel: 'Cancelar',

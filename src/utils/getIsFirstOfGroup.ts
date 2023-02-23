@@ -1,6 +1,6 @@
-import { MRT_Cell, MRT_TableInstance } from '../MaterialReactTable'
+import { Table_Cell, TableInstance } from '../MaterialReactTable'
 
-export const getIsFirstOfGroup = ({ table, cell, columnId }: { table: MRT_TableInstance, cell: MRT_Cell, columnId?: string }): boolean => {
+export const getIsFirstOfGroup = ({ table, cell, columnId }: { table: TableInstance, cell: Table_Cell, columnId?: string }): boolean => {
 	const { row } = cell
 	const colId = columnId ?? cell.column.id
 	const column = table.getColumn(colId)

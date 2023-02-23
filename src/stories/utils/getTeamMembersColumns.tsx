@@ -5,7 +5,7 @@ import { GroupedCellBase } from '../../body/GroupedCellBase'
 import { Flex } from '../../components/Flex'
 import { TextEllipsis } from '../../components/TextEllipsis'
 import { HeaderBase } from '../../head/HeaderBase'
-import { MRT_Cell, MRT_Column, MRT_ColumnDef, MRT_Row, MRT_TableInstance } from '../../MaterialReactTable'
+import { Table_Cell, Table_Column, Table_ColumnDef, Table_Row, TableInstance } from '../../MaterialReactTable'
 import { TeamMember } from '../types/TeamMember'
 import { Colors } from './constants'
 import { createGetColors } from './createGetColors'
@@ -23,10 +23,10 @@ const ColoredGroupedCell: typeof GroupedCellBase = (props) => {
 }
 
 const coloredCellProps = <TData, >(props: {
-	cell: MRT_Cell<TData>;
-	column: MRT_Column<TData>;
-	row: MRT_Row<TData>;
-	table: MRT_TableInstance<TData>;
+	cell: Table_Cell<TData>;
+	column: Table_Column<TData>;
+	row: Table_Row<TData>;
+	table: TableInstance<TData>;
 }): TableCellProps => {
 	const columnId = props.cell.column.id
 	const value = props.cell.getValue()
@@ -86,4 +86,4 @@ export const getTeamMembersColumns = () => [
 		GroupedCell: ColoredGroupedCell,
 		Header: HeaderBase,
 	}
-] as MRT_ColumnDef<TeamMember>[]
+] as Table_ColumnDef<TeamMember>[]

@@ -1,3 +1,3 @@
 import { aggregationFns } from '@tanstack/react-table';
 
-export const MRT_AggregationFns = { ...aggregationFns };
+export const Table_AggregationFns = { ...aggregationFns };

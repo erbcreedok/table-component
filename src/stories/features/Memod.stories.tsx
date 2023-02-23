@@ -2,7 +2,7 @@ import React from 'react';
 import { Meta, Story } from '@storybook/react';
 import MaterialReactTable, {
   MaterialReactTableProps,
-  MRT_ColumnDef,
+  Table_ColumnDef,
 } from '../../';
 import { faker } from '@faker-js/faker';
 import { Button } from '@mui/material';
@@ -24,7 +24,7 @@ type Person = {
   zipCode: string;
 };
 
-const columns: MRT_ColumnDef<Person>[] = [
+const columns: Table_ColumnDef<Person>[] = [
   {
     header: 'First Name',
     accessorKey: 'firstName',

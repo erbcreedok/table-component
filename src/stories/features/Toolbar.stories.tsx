@@ -2,8 +2,8 @@ import React from 'react';
 import { Meta, Story } from '@storybook/react';
 import MaterialReactTable, {
   MaterialReactTableProps,
-  MRT_ColumnDef,
-  MRT_FullScreenToggleButton,
+  Table_ColumnDef,
+  FullScreenToggleButton,
 } from '../../';
 import { faker } from '@faker-js/faker';
 import { Box, Button, IconButton, Tooltip, Typography } from '@mui/material';
@@ -16,7 +16,7 @@ const meta: Meta = {
 
 export default meta;
 
-const columns: MRT_ColumnDef<typeof data[0]>[] = [
+const columns: Table_ColumnDef<typeof data[0]>[] = [
   {
     header: 'First Name',
     accessorKey: 'firstName',
@@ -101,7 +101,7 @@ export const CustomToolbarInternalActions: Story<
     renderToolbarInternalActions={({ table }) => {
       return (
         <>
-          <MRT_FullScreenToggleButton table={table} />
+          <FullScreenToggleButton table={table} />
         </>
       );
     }}

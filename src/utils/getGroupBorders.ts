@@ -1,13 +1,13 @@
-import { MRT_Cell, MRT_Header, MRT_TableInstance } from '../MaterialReactTable'
+import { Table_Cell, Table_Header, TableInstance } from '../MaterialReactTable'
 import { getIsFirstOfGroup } from './getIsFirstOfGroup'
 
 type CellProps = {
-	cell: MRT_Cell
-	table: MRT_TableInstance
+	cell: Table_Cell
+	table: TableInstance
 }
 type HeaderProps = {
-	header: MRT_Header
-	table: MRT_TableInstance
+	header: Table_Header
+	table: TableInstance
 }
 
 const getCellBorders = ({ cell, table }: CellProps) => {

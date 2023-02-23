@@ -2,8 +2,8 @@ import React, { useRef, useState } from 'react';
 import { Meta, Story } from '@storybook/react';
 import MaterialReactTable, {
   MaterialReactTableProps,
-  MRT_ColumnDef,
-  MRT_TableInstance,
+  Table_ColumnDef,
+  TableInstance,
 } from '../../';
 import { faker } from '@faker-js/faker';
 import { Button } from '@mui/material';
@@ -14,7 +14,7 @@ const meta: Meta = {
 
 export default meta;
 
-const columns: MRT_ColumnDef<typeof data[0]>[] = [
+const columns: Table_ColumnDef<typeof data[0]>[] = [
   {
     header: 'First Name',
     accessorKey: 'firstName',
@@ -154,7 +154,7 @@ export const SelectCheckboxSecondaryColor: Story<
 );
 
 export const SelectionWithInstanceRef: Story<MaterialReactTableProps> = () => {
-  const tableInstanceRef = useRef<MRT_TableInstance<typeof data[0]>>(null);
+  const tableInstanceRef = useRef<TableInstance<typeof data[0]>>(null);
 
   return (
     <MaterialReactTable

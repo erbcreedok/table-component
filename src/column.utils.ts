@@ -2,33 +2,33 @@ import type {
   ColumnOrderState,
   Row,
 } from '@tanstack/react-table';
-import { MRT_AggregationFns } from './aggregationFns';
-import { MRT_FilterFns } from './filterFns';
-import { MRT_SortingFns } from './sortingFns';
+import { Table_AggregationFns } from './aggregationFns';
+import { Table_FilterFns } from './filterFns';
+import { Table_SortingFns } from './sortingFns';
 import { alpha, lighten } from '@mui/material/styles';
 import type { TableCellProps } from '@mui/material/TableCell';
 import type { Theme } from '@mui/material/styles';
 import type {
   MaterialReactTableProps,
-  MRT_Column,
-  MRT_ColumnDef,
-  MRT_DefinedColumnDef,
-  MRT_DisplayColumnIds,
-  MRT_FilterOption,
-  MRT_Header,
-  MRT_TableInstance,
+  Table_Column,
+  Table_ColumnDef,
+  Table_DefinedColumnDef,
+  Table_DisplayColumnIds,
+  Table_FilterOption,
+  Table_Header,
+  TableInstance,
 } from '.';
 
 export const getColumnId = <TData extends Record<string, any> = {}>(
-  columnDef: MRT_ColumnDef<TData>,
+  columnDef: Table_ColumnDef<TData>,
 ): string =>
   columnDef.id ?? columnDef.accessorKey?.toString?.() ?? columnDef.header;
 
 export const getAllLeafColumnDefs = <TData extends Record<string, any> = {}>(
-  columns: MRT_ColumnDef<TData>[],
-): MRT_ColumnDef<TData>[] => {
-  const allLeafColumnDefs: MRT_ColumnDef<TData>[] = [];
-  const getLeafColumns = (cols: MRT_ColumnDef<TData>[]) => {
+  columns: Table_ColumnDef<TData>[],
+): Table_ColumnDef<TData>[] => {
+  const allLeafColumnDefs: Table_ColumnDef<TData>[] = [];
+  const getLeafColumns = (cols: Table_ColumnDef<TData>[]) => {
     cols.forEach((col) => {
       if (col.columns) {
         getLeafColumns(col.columns);
@@ -49,15 +49,15 @@ export const prepareColumns = <TData extends Record<string, any> = {}>({
   filterFns,
   sortingFns,
 }: {
-  aggregationFns: typeof MRT_AggregationFns &
+  aggregationFns: typeof Table_AggregationFns &
     MaterialReactTableProps<TData>['aggregationFns'];
-  columnDefs: MRT_ColumnDef<TData>[];
-  columnFilterFns: { [key: string]: MRT_FilterOption };
-  defaultDisplayColumn: Partial<MRT_ColumnDef<TData>>;
-  filterFns: typeof MRT_FilterFns & MaterialReactTableProps<TData>['filterFns'];
-  sortingFns: typeof MRT_SortingFns &
+  columnDefs: Table_ColumnDef<TData>[];
+  columnFilterFns: { [key: string]: Table_FilterOption };
+  defaultDisplayColumn: Partial<Table_ColumnDef<TData>>;
+  filterFns: typeof Table_FilterFns & MaterialReactTableProps<TData>['filterFns'];
+  sortingFns: typeof Table_SortingFns &
     MaterialReactTableProps<TData>['sortingFns'];
-}): MRT_DefinedColumnDef<TData>[] =>
+}): Table_DefinedColumnDef<TData>[] =>
   columnDefs.map((columnDef) => {
     //assign columnId
     if (!columnDef.id) columnDef.id = getColumnId(columnDef);
@@ -98,7 +98,7 @@ export const prepareColumns = <TData extends Record<string, any> = {}>({
       if (Object.keys(filterFns).includes(columnFilterFns[columnDef.id])) {
         columnDef.filterFn =
           filterFns[columnFilterFns[columnDef.id]] ?? filterFns.fuzzy;
-        (columnDef as unknown as MRT_DefinedColumnDef)._filterFn =
+        (columnDef as unknown as Table_DefinedColumnDef)._filterFn =
           columnFilterFns[columnDef.id];
       }
 
@@ -109,16 +109,16 @@ export const prepareColumns = <TData extends Record<string, any> = {}>({
       }
     } else if (columnDef.columnDefType === 'display') {
       columnDef = {
-        ...(defaultDisplayColumn as MRT_ColumnDef<TData>),
+        ...(defaultDisplayColumn as Table_ColumnDef<TData>),
         ...columnDef,
       };
     }
     return columnDef;
-  }) as MRT_DefinedColumnDef<TData>[];
+  }) as Table_DefinedColumnDef<TData>[];
 
 export const reorderColumn = <TData extends Record<string, any> = {}>(
-  draggedColumn: MRT_Column<TData>,
-  targetColumn: MRT_Column<TData>,
+  draggedColumn: Table_Column<TData>,
+  targetColumn: Table_Column<TData>,
   columnOrder: ColumnOrderState,
 ): ColumnOrderState => {
   if (draggedColumn.getCanPin()) {
@@ -157,7 +157,7 @@ export const getLeadingDisplayColumnIds = <
       'mrt-row-expand',
     props.enableRowSelection && 'mrt-row-select',
     props.enableRowNumbers && 'mrt-row-numbers',
-  ].filter(Boolean) as MRT_DisplayColumnIds[];
+  ].filter(Boolean) as Table_DisplayColumnIds[];
 
 export const getTrailingDisplayColumnIds = <
   TData extends Record<string, any> = {},
@@ -190,8 +190,8 @@ export const getDefaultColumnOrderIds = <
 export const getDefaultColumnFilterFn = <
   TData extends Record<string, any> = {},
 >(
-  columnDef: MRT_ColumnDef<TData>,
-): MRT_FilterOption => {
+  columnDef: Table_ColumnDef<TData>,
+): Table_FilterOption => {
   if (columnDef.filterVariant === 'multi-select') return 'arrIncludesSome';
   if (columnDef.filterVariant === 'range') return 'betweenInclusive';
   if (
@@ -203,8 +203,8 @@ export const getDefaultColumnFilterFn = <
 };
 
 export const getIsLastLeftPinnedColumn = (
-  table: MRT_TableInstance,
-  column: MRT_Column,
+  table: TableInstance,
+  column: Table_Column,
 ) => {
   return (
     column.getIsPinned() === 'left' &&
@@ -212,11 +212,11 @@ export const getIsLastLeftPinnedColumn = (
   );
 };
 
-export const getIsFirstRightPinnedColumn = (column: MRT_Column) => {
+export const getIsFirstRightPinnedColumn = (column: Table_Column) => {
   return column.getIsPinned() === 'right' && column.getPinnedIndex() === 0;
 };
 
-export const getTotalRight = (table: MRT_TableInstance, column: MRT_Column) => {
+export const getTotalRight = (table: TableInstance, column: Table_Column) => {
   return (
     (table.getRightLeafHeaders().length - 1 - column.getPinnedIndex()) * 200
   );
@@ -229,9 +229,9 @@ export const getCommonCellStyles = ({
   tableCellProps,
   theme,
 }: {
-  column: MRT_Column;
-  header?: MRT_Header;
-  table: MRT_TableInstance;
+  column: Table_Column;
+  header?: Table_Header;
+  table: TableInstance;
   tableCellProps: TableCellProps;
   theme: Theme;
 }) => ({
@@ -296,13 +296,13 @@ export const getCommonCellStyles = ({
   width: header?.getSize() ?? column.getSize(),
 });
 
-export const MRT_DefaultColumn = {
+export const Table_DefaultColumn = {
   minSize: 40,
   maxSize: 1000,
   size: 180,
 };
 
-export const MRT_DefaultDisplayColumn: Partial<MRT_ColumnDef> = {
+export const Table_DefaultDisplayColumn: Partial<Table_ColumnDef> = {
   columnDefType: 'display',
   enableClickToCopy: false,
   enableColumnActions: false,

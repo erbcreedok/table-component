@@ -2,8 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { Meta, Story } from '@storybook/react';
 import MaterialReactTable, {
   MaterialReactTableProps,
-  MRT_Column,
-  MRT_ColumnDef,
+  Table_Column,
+  Table_ColumnDef,
 } from '../../';
 import { Initiative } from '../types/Initiative'
 import { generateInitiatives } from '../utils/generateInitiatives'
@@ -69,7 +69,7 @@ export const ColumnGroupingBannerOnBottom: Story<
 );
 
 export const GroupingColumnsSetState: Story<MaterialReactTableProps> = () => {
-  const [columns, setColumns] = useState<MRT_ColumnDef<any>[]>([]);
+  const [columns, setColumns] = useState<Table_ColumnDef<any>[]>([]);
   const [data, setData] = useState<any>([]);
 
   useEffect(() => {
@@ -161,7 +161,7 @@ export const ColumnGroupingDropZoneAlwaysVisible: Story<
   MaterialReactTableProps
 > = () => {
   const [draggingColumn, setDraggingColumn] =
-    useState<MRT_Column<Initiative> | null>(null);
+    useState<Table_Column<Initiative> | null>(null);
 
   return (
     <MaterialReactTable

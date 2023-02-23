@@ -2,7 +2,7 @@ import React from 'react';
 import { Meta, Story } from '@storybook/react';
 import MaterialReactTable, {
   MaterialReactTableProps,
-  MRT_ColumnDef,
+  Table_ColumnDef,
 } from '../../';
 import { faker } from '@faker-js/faker';
 import { Box, Stack } from '@mui/material';
@@ -113,7 +113,7 @@ const columns = [
       </Stack>
     ),
   },
-] as MRT_ColumnDef<typeof data[0]>[];
+] as Table_ColumnDef<typeof data[0]>[];
 
 export const Aggregation: Story<MaterialReactTableProps> = () => (
   <MaterialReactTable columns={columns} data={data} enableGrouping />

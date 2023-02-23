@@ -3,7 +3,7 @@ import styled from '@emotion/styled'
 import { Box as MuiBox } from '@mui/material'
 import { useResizeDetector } from 'react-resize-detector'
 import React, { ReactNode, useCallback, useState } from 'react'
-import { MRT_Cell, MRT_Column, MRT_Row, MRT_TableInstance } from '../MaterialReactTable'
+import { Table_Cell, Table_Column, Table_Row, TableInstance } from '../MaterialReactTable'
 import { getShouldForwardProps } from '../utils/getShouldForwardProps'
 
 const Box = styled(MuiBox, getShouldForwardProps('rotate', 'borderColor'))<{ rotate?: boolean; borderColor?: string }>`
@@ -29,10 +29,10 @@ const Box = styled(MuiBox, getShouldForwardProps('rotate', 'borderColor'))<{ rot
 `
 
 type Props<TData> = {
-	cell: MRT_Cell<TData>;
-	column: MRT_Column<TData>;
-	row: MRT_Row<TData>;
-	table: MRT_TableInstance<TData>;
+	cell: Table_Cell<TData>;
+	column: Table_Column<TData>;
+	row: Table_Row<TData>;
+	table: TableInstance<TData>;
 	borderColor?: string;
 }
 export const GroupedCellBase = <TData,>({ cell, row, column, table, borderColor }: Props<TData>) => {

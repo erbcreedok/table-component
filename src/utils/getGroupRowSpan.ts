@@ -1,7 +1,7 @@
-import { MRT_Cell, MRT_TableInstance } from '../MaterialReactTable'
+import { Table_Cell, TableInstance } from '../MaterialReactTable'
 import { getIsFirstOfGroup } from './getIsFirstOfGroup'
 
-export const getGroupRowSpan = ({ table, cell }: { table: MRT_TableInstance; cell: MRT_Cell }) => {
+export const getGroupRowSpan = ({ table, cell }: { table: TableInstance; cell: Table_Cell }) => {
 	const { row, column } = cell
 	if (!column.getIsGrouped() || !getIsFirstOfGroup({ table, cell })) return 1
 	const rowId = row.id

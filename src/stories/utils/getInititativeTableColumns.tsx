@@ -1,5 +1,5 @@
 import { Avatar, Chip } from '@mui/material'
-import { MRT_ColumnDef } from '../../'
+import { Table_ColumnDef } from '../../'
 import React from 'react'
 import { Initiative } from '../types/Initiative'
 
@@ -40,4 +40,4 @@ export const getInitiativeTableColumns = () => [
 ].map((i) => ({
   ...i,
   Header: ({ column }) => column.columnDef.header?.toUpperCase(),
-})) as MRT_ColumnDef<Initiative>[]
+})) as Table_ColumnDef<Initiative>[]

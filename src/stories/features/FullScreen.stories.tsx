@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Meta, Story } from '@storybook/react';
 import MaterialReactTable, {
   MaterialReactTableProps,
-  MRT_ColumnDef,
+  Table_ColumnDef,
 } from '../../';
 import { faker } from '@faker-js/faker';
 
@@ -12,7 +12,7 @@ const meta: Meta = {
 
 export default meta;
 
-const columns: MRT_ColumnDef<typeof data[0]>[] = [
+const columns: Table_ColumnDef<typeof data[0]>[] = [
   {
     header: 'Employee',
     id: 'employee',

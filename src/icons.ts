@@ -28,7 +28,7 @@ import SortIcon from '@mui/icons-material/Sort';
 import ViewColumnIcon from '@mui/icons-material/ViewColumn';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 
-export interface MRT_Icons {
+export interface Table_Icons {
   ArrowDownwardIcon: any;
   ArrowRightIcon: any;
   CancelIcon: any;
@@ -60,7 +60,7 @@ export interface MRT_Icons {
   VisibilityOffIcon: any;
 }
 
-export const MRT_Default_Icons: MRT_Icons = {
+export const Default_Icons: Table_Icons = {
   ArrowDownwardIcon,
   ArrowRightIcon,
   CancelIcon,

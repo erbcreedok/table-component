@@ -2,7 +2,7 @@ import React from 'react';
 import { Meta, Story } from '@storybook/react';
 import MaterialReactTable, {
   MaterialReactTableProps,
-  MRT_ColumnDef,
+  Table_ColumnDef,
 } from '../../';
 import { faker } from '@faker-js/faker';
 
@@ -20,7 +20,7 @@ interface Row {
   phoneNumber: string;
 }
 
-const columns: MRT_ColumnDef<Row>[] = [
+const columns: Table_ColumnDef<Row>[] = [
   {
     header: 'First Name',
     accessorKey: 'firstName',
