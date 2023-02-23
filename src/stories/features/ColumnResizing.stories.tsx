@@ -1,7 +1,7 @@
 import React from 'react';
 import { Meta, Story } from '@storybook/react';
-import MaterialReactTable, {
-  MaterialReactTableProps,
+import TableComponent, {
+  TableComponentProps,
   Table_ColumnDef,
 } from '../../';
 import { faker } from '@faker-js/faker';
@@ -49,15 +49,15 @@ const data = [...Array(8)].map(() => ({
 }));
 
 export const ColumnResizingEnabledDefaultOnEnd: Story<
-  MaterialReactTableProps
+  TableComponentProps
 > = () => (
-  <MaterialReactTable columns={columns} data={data} enableColumnResizing />
+  <TableComponent columns={columns} data={data} enableColumnResizing />
 );
 
 export const ColumnResizingEnabledNoColumnActions: Story<
-  MaterialReactTableProps
+  TableComponentProps
 > = () => (
-  <MaterialReactTable
+  <TableComponent
     columns={columns}
     data={data}
     enableColumnResizing
@@ -66,9 +66,9 @@ export const ColumnResizingEnabledNoColumnActions: Story<
 );
 
 export const ColumnResizingDisabledSomeColumns: Story<
-  MaterialReactTableProps
+  TableComponentProps
 > = () => (
-  <MaterialReactTable
+  <TableComponent
     columns={[
       {
         header: 'First Name',
@@ -102,9 +102,9 @@ export const ColumnResizingDisabledSomeColumns: Story<
 );
 
 export const ColumnResizingEnabledOnChange: Story<
-  MaterialReactTableProps
+  TableComponentProps
 > = () => (
-  <MaterialReactTable
+  <TableComponent
     columnResizeMode="onChange"
     columns={columns}
     data={data}
@@ -113,9 +113,9 @@ export const ColumnResizingEnabledOnChange: Story<
 );
 
 export const ColumnResizingEnabledOnChangeNoActions: Story<
-  MaterialReactTableProps
+  TableComponentProps
 > = () => (
-  <MaterialReactTable
+  <TableComponent
     columnResizeMode="onChange"
     columns={columns}
     data={data}
@@ -125,9 +125,9 @@ export const ColumnResizingEnabledOnChangeNoActions: Story<
 );
 
 export const ColumnResizingCustomDefaultWidths: Story<
-  MaterialReactTableProps
+  TableComponentProps
 > = () => (
-  <MaterialReactTable
+  <TableComponent
     columns={columns}
     data={data}
     enableColumnResizing
@@ -135,8 +135,8 @@ export const ColumnResizingCustomDefaultWidths: Story<
   />
 );
 
-export const ColumnResizingWithPinning: Story<MaterialReactTableProps> = () => (
-  <MaterialReactTable
+export const ColumnResizingWithPinning: Story<TableComponentProps> = () => (
+  <TableComponent
     columns={columns}
     data={data}
     enableColumnResizing
@@ -146,9 +146,9 @@ export const ColumnResizingWithPinning: Story<MaterialReactTableProps> = () => (
 );
 
 export const ColumnResizingWithHeaderGroups: Story<
-  MaterialReactTableProps
+  TableComponentProps
 > = () => (
-  <MaterialReactTable
+  <TableComponent
     columns={[
       {
         header: 'Name',

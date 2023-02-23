@@ -1,7 +1,7 @@
 import React from 'react';
 import { Meta, Story } from '@storybook/react';
-import MaterialReactTable, {
-  MaterialReactTableProps,
+import TableComponent, {
+  TableComponentProps,
   Table_ColumnDef,
 } from '../../';
 import { faker } from '@faker-js/faker';
@@ -43,12 +43,12 @@ const data = [...Array(100)].map(() => ({
   phoneNumber: faker.phone.number(),
 }));
 
-export const Loading: Story<MaterialReactTableProps> = () => (
-  <MaterialReactTable columns={columns} data={[]} state={{ isLoading: true }} />
+export const Loading: Story<TableComponentProps> = () => (
+  <TableComponent columns={columns} data={[]} state={{ isLoading: true }} />
 );
 
-export const LoadingWithSelection: Story<MaterialReactTableProps> = () => (
-  <MaterialReactTable
+export const LoadingWithSelection: Story<TableComponentProps> = () => (
+  <TableComponent
     columns={columns}
     data={[]}
     enableRowSelection
@@ -57,9 +57,9 @@ export const LoadingWithSelection: Story<MaterialReactTableProps> = () => (
 );
 
 export const LoadingWithDetailPanelExample: Story<
-  MaterialReactTableProps
+  TableComponentProps
 > = () => (
-  <MaterialReactTable
+  <TableComponent
     columns={columns}
     data={[]}
     state={{ isLoading: true }}
@@ -74,8 +74,8 @@ export const LoadingWithDetailPanelExample: Story<
   />
 );
 
-export const SkeletonDisplayColumns: Story<MaterialReactTableProps> = () => (
-  <MaterialReactTable
+export const SkeletonDisplayColumns: Story<TableComponentProps> = () => (
+  <TableComponent
     columns={columns}
     data={[]}
     enableRowSelection
@@ -86,16 +86,16 @@ export const SkeletonDisplayColumns: Story<MaterialReactTableProps> = () => (
   />
 );
 
-export const ReloadingExample: Story<MaterialReactTableProps> = () => (
-  <MaterialReactTable
+export const ReloadingExample: Story<TableComponentProps> = () => (
+  <TableComponent
     columns={columns}
     data={data}
     state={{ showProgressBars: true }}
   />
 );
 
-export const OnlyTopProgressBar: Story<MaterialReactTableProps> = () => (
-  <MaterialReactTable
+export const OnlyTopProgressBar: Story<TableComponentProps> = () => (
+  <TableComponent
     columns={columns}
     data={data}
     state={{ showProgressBars: true }}

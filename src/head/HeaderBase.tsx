@@ -1,6 +1,6 @@
 import styled from '@emotion/styled'
 import React from 'react'
-import { Table_Column, Table_Header, TableInstance } from '../MaterialReactTable'
+import { Table_Column, Table_Header, TableInstance } from '../TableComponent'
 
 const Box = styled('div')`
 	white-space: nowrap;

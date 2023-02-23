@@ -1,7 +1,7 @@
 import React from 'react';
 import { Meta, Story } from '@storybook/react';
-import MaterialReactTable, {
-  MaterialReactTableProps,
+import TableComponent, {
+  TableComponentProps,
   Table_ColumnDef,
 } from '../../';
 import { faker } from '@faker-js/faker';
@@ -37,12 +37,12 @@ const data = [...Array(21)].map(() => ({
   address: faker.address.streetAddress(),
 }));
 
-export const DefaultTableBodyRowStyles: Story<MaterialReactTableProps> = () => (
-  <MaterialReactTable columns={columns} data={data} />
+export const DefaultTableBodyRowStyles: Story<TableComponentProps> = () => (
+  <TableComponent columns={columns} data={data} />
 );
 
-export const DisableRowHoverEffect: Story<MaterialReactTableProps> = () => (
-  <MaterialReactTable
+export const DisableRowHoverEffect: Story<TableComponentProps> = () => (
+  <TableComponent
     columns={columns}
     data={data}
     muiTableBodyRowProps={{
@@ -51,8 +51,8 @@ export const DisableRowHoverEffect: Story<MaterialReactTableProps> = () => (
   />
 );
 
-export const StyleMuiTableBodyRow: Story<MaterialReactTableProps> = () => (
-  <MaterialReactTable
+export const StyleMuiTableBodyRow: Story<TableComponentProps> = () => (
+  <TableComponent
     columns={columns}
     data={data}
     muiTableBodyRowProps={{
@@ -64,8 +64,8 @@ export const StyleMuiTableBodyRow: Story<MaterialReactTableProps> = () => (
   />
 );
 
-export const StyleCustomStripedRows: Story<MaterialReactTableProps> = () => (
-  <MaterialReactTable
+export const StyleCustomStripedRows: Story<TableComponentProps> = () => (
+  <TableComponent
     columns={columns}
     data={data}
     muiTableBodyProps={{
@@ -80,9 +80,9 @@ export const StyleCustomStripedRows: Story<MaterialReactTableProps> = () => (
 );
 
 export const StyleCustomStripedRowsDetailPanel: Story<
-  MaterialReactTableProps
+  TableComponentProps
 > = () => (
-  <MaterialReactTable
+  <TableComponent
     columns={columns}
     data={data}
     muiTableBodyProps={{
@@ -98,9 +98,9 @@ export const StyleCustomStripedRowsDetailPanel: Story<
 );
 
 export const ConditionallyStyleMuiTableRow: Story<
-  MaterialReactTableProps
+  TableComponentProps
 > = () => (
-  <MaterialReactTable
+  <TableComponent
     columns={columns}
     data={data}
     muiTableBodyRowProps={({ row }) => ({

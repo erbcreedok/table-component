@@ -1,7 +1,7 @@
 import React from 'react';
 import { Meta, Story } from '@storybook/react';
-import MaterialReactTable, {
-  MaterialReactTableProps,
+import TableComponent, {
+  TableComponentProps,
   Table_ColumnDef,
 } from '../../';
 import { faker } from '@faker-js/faker';
@@ -48,12 +48,12 @@ const data = [...Array(100)].map(() => ({
   state: faker.address.state(),
 }));
 
-export const ColumnPinningEnabled: Story<MaterialReactTableProps> = () => (
-  <MaterialReactTable columns={columns} data={data} enablePinning />
+export const ColumnPinningEnabled: Story<TableComponentProps> = () => (
+  <TableComponent columns={columns} data={data} enablePinning />
 );
 
-export const ColumnPinningInitial: Story<MaterialReactTableProps> = () => (
-  <MaterialReactTable
+export const ColumnPinningInitial: Story<TableComponentProps> = () => (
+  <TableComponent
     columns={columns}
     data={data}
     enablePinning
@@ -62,9 +62,9 @@ export const ColumnPinningInitial: Story<MaterialReactTableProps> = () => (
 );
 
 export const ColumnPinningDisabledPerColumn: Story<
-  MaterialReactTableProps
+  TableComponentProps
 > = () => (
-  <MaterialReactTable
+  <TableComponent
     columns={[
       {
         header: 'First Name',
@@ -97,8 +97,8 @@ export const ColumnPinningDisabledPerColumn: Story<
   />
 );
 
-export const ColumnPinningWithSelect: Story<MaterialReactTableProps> = () => (
-  <MaterialReactTable
+export const ColumnPinningWithSelect: Story<TableComponentProps> = () => (
+  <TableComponent
     columns={columns}
     data={data}
     enablePinning
@@ -107,9 +107,9 @@ export const ColumnPinningWithSelect: Story<MaterialReactTableProps> = () => (
 );
 
 export const ColumnPinningWithDetailPanel: Story<
-  MaterialReactTableProps
+  TableComponentProps
 > = () => (
-  <MaterialReactTable
+  <TableComponent
     columns={columns}
     data={data}
     enablePinning

@@ -1,7 +1,7 @@
 import React from 'react';
 import { Meta, Story } from '@storybook/react';
-import MaterialReactTable, {
-  MaterialReactTableProps,
+import TableComponent, {
+  TableComponentProps,
   Table_ColumnDef,
 } from '../../';
 import { faker } from '@faker-js/faker';
@@ -48,14 +48,14 @@ const data = [...Array(100)].map(() => ({
   state: faker.address.state(),
 }));
 
-export const ColumnOrderingEnabled: Story<MaterialReactTableProps> = () => (
-  <MaterialReactTable columns={columns} data={data} enableColumnOrdering />
+export const ColumnOrderingEnabled: Story<TableComponentProps> = () => (
+  <TableComponent columns={columns} data={data} enableColumnOrdering />
 );
 
 export const ColumnOrderingDisabledPerColumn: Story<
-  MaterialReactTableProps
+  TableComponentProps
 > = () => (
-  <MaterialReactTable
+  <TableComponent
     columns={[
       {
         header: 'First Name',
@@ -88,8 +88,8 @@ export const ColumnOrderingDisabledPerColumn: Story<
   />
 );
 
-export const ColumnOrderingWithSelect: Story<MaterialReactTableProps> = () => (
-  <MaterialReactTable
+export const ColumnOrderingWithSelect: Story<TableComponentProps> = () => (
+  <TableComponent
     columns={columns}
     data={data}
     enableColumnOrdering
@@ -97,8 +97,8 @@ export const ColumnOrderingWithSelect: Story<MaterialReactTableProps> = () => (
   />
 );
 
-export const ColumnOrderingWithPinning: Story<MaterialReactTableProps> = () => (
-  <MaterialReactTable
+export const ColumnOrderingWithPinning: Story<TableComponentProps> = () => (
+  <TableComponent
     columns={columns}
     data={data}
     enableColumnOrdering
@@ -106,8 +106,8 @@ export const ColumnOrderingWithPinning: Story<MaterialReactTableProps> = () => (
   />
 );
 
-export const ColumnOrderingNoDragHandles: Story<MaterialReactTableProps> = () => (
-  <MaterialReactTable
+export const ColumnOrderingNoDragHandles: Story<TableComponentProps> = () => (
+  <TableComponent
     columns={columns}
     data={data}
     enableColumnDragging={false}

@@ -1,4 +1,4 @@
-import type { Table_Localization } from '../MaterialReactTable';
+import type { Table_Localization } from '../TableComponent';
 
 export const Table_Localization_PT: Table_Localization = {
   actions: 'Ações',

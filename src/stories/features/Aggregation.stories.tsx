@@ -1,7 +1,7 @@
 import React from 'react';
 import { Meta, Story } from '@storybook/react';
-import MaterialReactTable, {
-  MaterialReactTableProps,
+import TableComponent, {
+  TableComponentProps,
   Table_ColumnDef,
 } from '../../';
 import { faker } from '@faker-js/faker';
@@ -115,14 +115,14 @@ const columns = [
   },
 ] as Table_ColumnDef<typeof data[0]>[];
 
-export const Aggregation: Story<MaterialReactTableProps> = () => (
-  <MaterialReactTable columns={columns} data={data} enableGrouping />
+export const Aggregation: Story<TableComponentProps> = () => (
+  <TableComponent columns={columns} data={data} enableGrouping />
 );
 
 export const AggregationExpandedDefault: Story<
-  MaterialReactTableProps
+  TableComponentProps
 > = () => (
-  <MaterialReactTable
+  <TableComponent
     columns={columns}
     data={data}
     enableGrouping
@@ -131,9 +131,9 @@ export const AggregationExpandedDefault: Story<
 );
 
 export const AggregationGroupedAndExpandedDefault: Story<
-  MaterialReactTableProps
+  TableComponentProps
 > = () => (
-  <MaterialReactTable
+  <TableComponent
     columns={columns}
     data={data}
     enableGrouping
@@ -146,8 +146,8 @@ export const AggregationGroupedAndExpandedDefault: Story<
   />
 );
 
-export const MultiAggregationPerColumn: Story<MaterialReactTableProps> = () => (
-  <MaterialReactTable
+export const MultiAggregationPerColumn: Story<TableComponentProps> = () => (
+  <TableComponent
     columns={[
       {
         header: 'First Name',

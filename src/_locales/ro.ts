@@ -1,4 +1,4 @@
-import { Table_Localization } from '../MaterialReactTable';
+import { Table_Localization } from '../TableComponent';
 
 export const Table_Localization_RO: Table_Localization = {
   actions: 'Acțiuni',

@@ -1,7 +1,7 @@
 import React from 'react';
 import { Meta, Story } from '@storybook/react';
-import MaterialReactTable, {
-  MaterialReactTableProps,
+import TableComponent, {
+  TableComponentProps,
   Table_ColumnDef,
 } from '../../';
 import { faker } from '@faker-js/faker';
@@ -38,8 +38,8 @@ const data = [...Array(21)].map(() => ({
   address: faker.address.streetAddress(),
 }));
 
-export const CustomizeDisplayColumns: Story<MaterialReactTableProps> = () => (
-  <MaterialReactTable
+export const CustomizeDisplayColumns: Story<TableComponentProps> = () => (
+  <TableComponent
     columns={columns}
     data={data}
     displayColumnDefOptions={{

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Meta, Story } from '@storybook/react';
-import MaterialReactTable, {
-  MaterialReactTableProps,
+import TableComponent, {
+  TableComponentProps,
   Table_ColumnDef,
 } from '../../';
 import { faker } from '@faker-js/faker';
@@ -63,30 +63,30 @@ const data = [...Array(128)].map(() => ({
 }));
 
 export const FullScreenToggleEnabledDefault: Story<
-  MaterialReactTableProps
-> = () => <MaterialReactTable columns={columns} data={data} />;
+  TableComponentProps
+> = () => <TableComponent columns={columns} data={data} />;
 
-export const DisableFullScreenToggle: Story<MaterialReactTableProps> = () => (
-  <MaterialReactTable
+export const DisableFullScreenToggle: Story<TableComponentProps> = () => (
+  <TableComponent
     columns={columns}
     data={data}
     enableFullScreenToggle={false}
   />
 );
 
-export const DefaultFullScreenOn: Story<MaterialReactTableProps> = () => (
-  <MaterialReactTable
+export const DefaultFullScreenOn: Story<TableComponentProps> = () => (
+  <TableComponent
     columns={columns}
     data={data}
     initialState={{ isFullScreen: true }}
   />
 );
 
-export const ControlledFullScreen: Story<MaterialReactTableProps> = () => {
+export const ControlledFullScreen: Story<TableComponentProps> = () => {
   const [isFullScreen, setIsFullScreen] = useState(false);
 
   return (
-    <MaterialReactTable
+    <TableComponent
       columns={columns}
       data={data}
       onIsFullScreenChange={setIsFullScreen}

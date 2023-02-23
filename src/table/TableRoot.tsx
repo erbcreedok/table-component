@@ -36,12 +36,12 @@ import type {
 	Table_Row,
 	TableInstance,
 	Table_TableState,
-	MaterialReactTableProps,
+	TableComponentProps,
 } from '..'
 import { getFlatGroupedRowModel } from '../utils/getFlatGroupedRowModel'
 
 export const TableRoot = <TData extends Record<string, any> = {}>(
-	props: MaterialReactTableProps<TData> & { localization: Table_Localization },
+	props: TableComponentProps<TData> & { localization: Table_Localization },
 ) => {
 	const bottomToolbarRef = useRef<HTMLDivElement>(null)
 	const editInputRefs = useRef<Record<string, HTMLInputElement>>({})

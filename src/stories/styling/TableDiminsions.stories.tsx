@@ -1,7 +1,7 @@
 import React from 'react';
 import { Meta, Story } from '@storybook/react';
-import MaterialReactTable, {
-  MaterialReactTableProps,
+import TableComponent, {
+  TableComponentProps,
   Table_ColumnDef,
 } from '../../';
 import { faker } from '@faker-js/faker';
@@ -43,8 +43,8 @@ const data = [...Array(25)].map(() => ({
   phoneNumber: faker.phone.number(),
 }));
 
-export const MaxWidthAndCentered: Story<MaterialReactTableProps> = () => (
-  <MaterialReactTable
+export const MaxWidthAndCentered: Story<TableComponentProps> = () => (
+  <TableComponent
     columns={columns}
     data={data}
     muiTablePaperProps={{
@@ -56,8 +56,8 @@ export const MaxWidthAndCentered: Story<MaterialReactTableProps> = () => (
   />
 );
 
-export const maxHeight: Story<MaterialReactTableProps> = () => (
-  <MaterialReactTable
+export const maxHeight: Story<TableComponentProps> = () => (
+  <TableComponent
     columns={columns}
     data={data}
     muiTableContainerProps={{
@@ -68,8 +68,8 @@ export const maxHeight: Story<MaterialReactTableProps> = () => (
   />
 );
 
-export const minHeight: Story<MaterialReactTableProps> = () => (
-  <MaterialReactTable
+export const minHeight: Story<TableComponentProps> = () => (
+  <TableComponent
     columns={columns}
     data={data.slice(0, 5)}
     muiTableContainerProps={{
@@ -80,9 +80,9 @@ export const minHeight: Story<MaterialReactTableProps> = () => (
   />
 );
 
-export const minHeightParent: Story<MaterialReactTableProps> = () => (
+export const minHeightParent: Story<TableComponentProps> = () => (
   <div style={{ height: '700px' }}>
-    <MaterialReactTable
+    <TableComponent
       columns={columns}
       data={data.slice(0, 5)}
       muiTableContainerProps={({ table }) => ({

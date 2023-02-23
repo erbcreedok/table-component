@@ -1,7 +1,7 @@
 import React from 'react';
 import { Meta, Story } from '@storybook/react';
-import MaterialReactTable, {
-  MaterialReactTableProps,
+import TableComponent, {
+  TableComponentProps,
   Table_ColumnDef,
 } from '../../';
 import { faker } from '@faker-js/faker';
@@ -48,12 +48,12 @@ const data = [...Array(25)].map(() => ({
   phoneNumber: faker.phone.number(),
 }));
 
-export const DefaultLeft: Story<MaterialReactTableProps> = () => (
-  <MaterialReactTable columns={columns} data={data} />
+export const DefaultLeft: Story<TableComponentProps> = () => (
+  <TableComponent columns={columns} data={data} />
 );
 
-export const CenterCells: Story<MaterialReactTableProps> = () => (
-  <MaterialReactTable
+export const CenterCells: Story<TableComponentProps> = () => (
+  <TableComponent
     columns={columns}
     data={data}
     muiTableHeadCellProps={{
@@ -65,8 +65,8 @@ export const CenterCells: Story<MaterialReactTableProps> = () => (
   />
 );
 
-export const CenterCellsWithGrabHandle: Story<MaterialReactTableProps> = () => (
-  <MaterialReactTable
+export const CenterCellsWithGrabHandle: Story<TableComponentProps> = () => (
+  <TableComponent
     columns={columns}
     data={data}
     enableColumnDragging
@@ -80,9 +80,9 @@ export const CenterCellsWithGrabHandle: Story<MaterialReactTableProps> = () => (
 );
 
 export const CenterCellsWithGrabHandleNoSorting: Story<
-  MaterialReactTableProps
+  TableComponentProps
 > = () => (
-  <MaterialReactTable
+  <TableComponent
     columns={columns}
     data={data}
     enableColumnDragging
@@ -97,9 +97,9 @@ export const CenterCellsWithGrabHandleNoSorting: Story<
 );
 
 export const CenterCellsNoColumnActions: Story<
-  MaterialReactTableProps
+  TableComponentProps
 > = () => (
-  <MaterialReactTable
+  <TableComponent
     columns={columns}
     data={data}
     enableColumnActions={false}
@@ -112,8 +112,8 @@ export const CenterCellsNoColumnActions: Story<
   />
 );
 
-export const RightAlignNumberColumn: Story<MaterialReactTableProps> = () => (
-  <MaterialReactTable
+export const RightAlignNumberColumn: Story<TableComponentProps> = () => (
+  <TableComponent
     columns={[
       {
         header: 'First Name',

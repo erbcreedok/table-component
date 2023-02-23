@@ -1,7 +1,7 @@
 import React from 'react';
 import { Meta, Story } from '@storybook/react';
-import MaterialReactTable, {
-  MaterialReactTableProps,
+import TableComponent, {
+  TableComponentProps,
   Table_ColumnDef,
 } from '../../';
 import { faker } from '@faker-js/faker';
@@ -54,17 +54,17 @@ const data = [...Array(100)].map(() => ({
 }));
 
 export const ColumnHidingEnabledDefault: Story<
-  MaterialReactTableProps
-> = () => <MaterialReactTable columns={columns} data={data} />;
+  TableComponentProps
+> = () => <TableComponent columns={columns} data={data} />;
 
-export const ColumnHidingDisabled: Story<MaterialReactTableProps> = () => (
-  <MaterialReactTable columns={columns} data={data} enableHiding={false} />
+export const ColumnHidingDisabled: Story<TableComponentProps> = () => (
+  <TableComponent columns={columns} data={data} enableHiding={false} />
 );
 
 export const ColumnHidingDisabledButWithOrdering: Story<
-  MaterialReactTableProps
+  TableComponentProps
 > = () => (
-  <MaterialReactTable
+  <TableComponent
     columns={columns}
     data={data}
     enableHiding={false}
@@ -73,9 +73,9 @@ export const ColumnHidingDisabledButWithOrdering: Story<
 );
 
 export const ColumnHidingDisabledButWithPinning: Story<
-  MaterialReactTableProps
+  TableComponentProps
 > = () => (
-  <MaterialReactTable
+  <TableComponent
     columns={columns}
     data={data}
     enableHiding={false}
@@ -84,9 +84,9 @@ export const ColumnHidingDisabledButWithPinning: Story<
 );
 
 export const ColumnHidingDisabledPerColumn: Story<
-  MaterialReactTableProps
+  TableComponentProps
 > = () => (
-  <MaterialReactTable
+  <TableComponent
     columns={[
       {
         header: 'First Name',
@@ -124,9 +124,9 @@ export const ColumnHidingDisabledPerColumn: Story<
 );
 
 export const ColumnHidingWithHeaderGroups: Story<
-  MaterialReactTableProps
+  TableComponentProps
 > = () => (
-  <MaterialReactTable
+  <TableComponent
     columns={[
       {
         header: 'Name',

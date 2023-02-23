@@ -1,7 +1,7 @@
 import React from 'react';
 import { Meta, Story } from '@storybook/react';
-import MaterialReactTable, {
-  MaterialReactTableProps,
+import TableComponent, {
+  TableComponentProps,
   Table_ColumnDef,
 } from '../../';
 import { faker } from '@faker-js/faker';
@@ -57,14 +57,14 @@ const data = [...Array(100)].map(() => ({
   state: faker.address.state(),
 }));
 
-export const ColumnDraggingEnabled: Story<MaterialReactTableProps> = () => (
-  <MaterialReactTable columns={columns} data={data} enableColumnDragging />
+export const ColumnDraggingEnabled: Story<TableComponentProps> = () => (
+  <TableComponent columns={columns} data={data} enableColumnDragging />
 );
 
 export const ColumnDraggingDisabledPerColumn: Story<
-  MaterialReactTableProps
+  TableComponentProps
 > = () => (
-  <MaterialReactTable
+  <TableComponent
     columns={[
       {
         header: 'First Name',

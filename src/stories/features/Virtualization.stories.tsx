@@ -1,8 +1,8 @@
 import { AccessorColumnDef } from '@tanstack/react-table'
 import React from 'react';
 import { Meta, Story } from '@storybook/react';
-import MaterialReactTable, {
-  MaterialReactTableProps,
+import TableComponent, {
+  TableComponentProps,
 } from '../../';
 import { faker } from '@faker-js/faker';
 
@@ -92,9 +92,9 @@ const longData = [...Array(500)].map(() => ({
 }));
 
 export const EnableRowVirtualizationDense: Story<
-  MaterialReactTableProps
+  TableComponentProps
 > = () => (
-  <MaterialReactTable
+  <TableComponent
     columns={longColumns}
     data={longData}
     enablePagination={false}
@@ -105,9 +105,9 @@ export const EnableRowVirtualizationDense: Story<
 );
 
 export const EnableRowVirtualizationComfortable: Story<
-  MaterialReactTableProps
+  TableComponentProps
 > = () => (
-  <MaterialReactTable
+  <TableComponent
     columns={longColumns}
     data={longData}
     enablePagination={false}
@@ -118,9 +118,9 @@ export const EnableRowVirtualizationComfortable: Story<
 );
 
 export const EnableRowVirtualizationTallContent: Story<
-  MaterialReactTableProps
+  TableComponentProps
 > = () => (
-  <MaterialReactTable
+  <TableComponent
     columns={[
       ...longColumns,
       {
@@ -137,9 +137,9 @@ export const EnableRowVirtualizationTallContent: Story<
 );
 
 export const EnableRowVirtualizationWithColumnResizing: Story<
-  MaterialReactTableProps
+  TableComponentProps
 > = () => (
-  <MaterialReactTable
+  <TableComponent
     columns={longColumns}
     data={longData}
     enableColumnResizing
@@ -151,9 +151,9 @@ export const EnableRowVirtualizationWithColumnResizing: Story<
 );
 
 export const EnableRowVirtualizationWithDetailPanel: Story<
-  MaterialReactTableProps
+  TableComponentProps
 > = () => (
-  <MaterialReactTable
+  <TableComponent
     columns={longColumns}
     data={longData.slice(0, 100)}
     enablePagination={false}
@@ -165,9 +165,9 @@ export const EnableRowVirtualizationWithDetailPanel: Story<
 );
 
 export const EnableRowVirtualizationWithMemoizedCells: Story<
-  MaterialReactTableProps
+  TableComponentProps
 > = () => (
-  <MaterialReactTable
+  <TableComponent
     columns={longColumns}
     data={longData}
     enableBottomToolbar={false}
@@ -179,9 +179,9 @@ export const EnableRowVirtualizationWithMemoizedCells: Story<
 );
 
 export const EnableRowVirtualizationWithMemoizedRows: Story<
-  MaterialReactTableProps
+  TableComponentProps
 > = () => (
-  <MaterialReactTable
+  <TableComponent
     columns={longColumns}
     data={longData}
     enableBottomToolbar={false}
@@ -193,9 +193,9 @@ export const EnableRowVirtualizationWithMemoizedRows: Story<
 );
 
 export const EnableRowVirtualizationStickyFooter: Story<
-  MaterialReactTableProps
+  TableComponentProps
 > = () => (
-  <MaterialReactTable
+  <TableComponent
     columns={[
       {
         header: 'First Name',
@@ -223,9 +223,9 @@ export const EnableRowVirtualizationStickyFooter: Story<
 );
 
 export const EnableColumnVirtualization: Story<
-  MaterialReactTableProps
+  TableComponentProps
 > = () => (
-  <MaterialReactTable
+  <TableComponent
     columns={longColumns}
     data={longData.slice(0, 10)}
     enableRowNumbers
@@ -234,9 +234,9 @@ export const EnableColumnVirtualization: Story<
 );
 
 export const EnableColumnVirtualizationWithPinning: Story<
-  MaterialReactTableProps
+  TableComponentProps
 > = () => (
-  <MaterialReactTable
+  <TableComponent
     columns={longColumns}
     data={longData.slice(0, 10)}
     enableColumnVirtualization
@@ -246,9 +246,9 @@ export const EnableColumnVirtualizationWithPinning: Story<
 );
 
 export const EnableColumnVirtualizationShortColumns: Story<
-  MaterialReactTableProps
+  TableComponentProps
 > = () => (
-  <MaterialReactTable
+  <TableComponent
     columns={longColumns.slice(0, 3)}
     data={longData.slice(0, 10)}
     enableRowNumbers
@@ -257,9 +257,9 @@ export const EnableColumnVirtualizationShortColumns: Story<
 );
 
 export const EnableColumnVirtualizationWithFooter: Story<
-  MaterialReactTableProps
+  TableComponentProps
 > = () => (
-  <MaterialReactTable
+  <TableComponent
     columns={[
       {
         header: 'First Name',
@@ -284,9 +284,9 @@ export const EnableColumnVirtualizationWithFooter: Story<
 );
 
 export const EnableColumnVirtualizationStickyFooter: Story<
-  MaterialReactTableProps
+  TableComponentProps
 > = () => (
-  <MaterialReactTable
+  <TableComponent
     columns={[
       {
         header: 'First Name',
@@ -312,9 +312,9 @@ export const EnableColumnVirtualizationStickyFooter: Story<
 );
 
 export const RowAndColumnVirtualization: Story<
-  MaterialReactTableProps
+  TableComponentProps
 > = () => (
-  <MaterialReactTable
+  <TableComponent
     columns={longColumns}
     data={longData}
     enableBottomToolbar={false}
@@ -326,9 +326,9 @@ export const RowAndColumnVirtualization: Story<
 );
 
 export const RowAndColumnVirtualizationWithFeatures: Story<
-  MaterialReactTableProps
+  TableComponentProps
 > = () => (
-  <MaterialReactTable
+  <TableComponent
     columns={longColumns}
     data={longData}
     enableBottomToolbar={false}
@@ -356,8 +356,8 @@ const fakeData = [...Array(500)].map(() => ({
   ),
 }));
 
-export const MaxVirtualization: Story<MaterialReactTableProps> = () => (
-  <MaterialReactTable
+export const MaxVirtualization: Story<TableComponentProps> = () => (
+  <TableComponent
     columns={fakeColumns}
     data={fakeData}
     enableBottomToolbar={false}

@@ -1,7 +1,7 @@
 import React from 'react';
 import { Meta, Story } from '@storybook/react';
-import MaterialReactTable, {
-  MaterialReactTableProps,
+import TableComponent, {
+  TableComponentProps,
   Table_ColumnDef,
 } from '../../';
 import { faker } from '@faker-js/faker';
@@ -48,16 +48,16 @@ const data = [...Array(200)].map(() => ({
   age: +faker.datatype.float({ min: 0, max: 100 }),
 }));
 
-export const SearchEnabledDefault: Story<MaterialReactTableProps> = () => (
-  <MaterialReactTable columns={columns} data={data} />
+export const SearchEnabledDefault: Story<TableComponentProps> = () => (
+  <TableComponent columns={columns} data={data} />
 );
 
-export const SearchContains: Story<MaterialReactTableProps> = () => (
-  <MaterialReactTable columns={columns} data={data} globalFilterFn="contains" />
+export const SearchContains: Story<TableComponentProps> = () => (
+  <TableComponent columns={columns} data={data} globalFilterFn="contains" />
 );
 
-export const CustomGlobalFilterFn: Story<MaterialReactTableProps> = () => (
-  <MaterialReactTable
+export const CustomGlobalFilterFn: Story<TableComponentProps> = () => (
+  <TableComponent
     columns={columns}
     data={data}
     filterFns={{
@@ -68,14 +68,14 @@ export const CustomGlobalFilterFn: Story<MaterialReactTableProps> = () => (
   />
 );
 
-export const SearchGlobalFilterModes: Story<MaterialReactTableProps> = () => (
-  <MaterialReactTable columns={columns} data={data} enableGlobalFilterModes />
+export const SearchGlobalFilterModes: Story<TableComponentProps> = () => (
+  <TableComponent columns={columns} data={data} enableGlobalFilterModes />
 );
 
 export const SearchGlobalFilterModeOptions: Story<
-  MaterialReactTableProps
+  TableComponentProps
 > = () => (
-  <MaterialReactTable
+  <TableComponent
     columns={columns}
     data={data}
     enableGlobalFilterModes
@@ -84,13 +84,13 @@ export const SearchGlobalFilterModeOptions: Story<
 );
 
 export const SearchRankedResultsEnabledByDefault: Story<
-  MaterialReactTableProps
-> = () => <MaterialReactTable columns={columns} data={data} enableRowNumbers />;
+  TableComponentProps
+> = () => <TableComponent columns={columns} data={data} enableRowNumbers />;
 
 export const SearchDisableRankedResults: Story<
-  MaterialReactTableProps
+  TableComponentProps
 > = () => (
-  <MaterialReactTable
+  <TableComponent
     columns={columns}
     data={data}
     enableRowNumbers
@@ -99,9 +99,9 @@ export const SearchDisableRankedResults: Story<
 );
 
 export const ShowSearchRightBoxByDefault: Story<
-  MaterialReactTableProps
+  TableComponentProps
 > = () => (
-  <MaterialReactTable
+  <TableComponent
     columns={columns}
     data={data}
     initialState={{ showGlobalFilter: true }}
@@ -109,9 +109,9 @@ export const ShowSearchRightBoxByDefault: Story<
 );
 
 export const ShowSearchBoxLeftByDefault: Story<
-  MaterialReactTableProps
+  TableComponentProps
 > = () => (
-  <MaterialReactTable
+  <TableComponent
     columns={columns}
     data={data}
     initialState={{ showGlobalFilter: true }}
@@ -120,9 +120,9 @@ export const ShowSearchBoxLeftByDefault: Story<
 );
 
 export const ShowSearchBoxLeftByDefaultWithSelection: Story<
-  MaterialReactTableProps
+  TableComponentProps
 > = () => (
-  <MaterialReactTable
+  <TableComponent
     columns={columns}
     data={data}
     enableRowSelection
@@ -131,8 +131,8 @@ export const ShowSearchBoxLeftByDefaultWithSelection: Story<
   />
 );
 
-export const JustASearchBox: Story<MaterialReactTableProps> = () => (
-  <MaterialReactTable
+export const JustASearchBox: Story<TableComponentProps> = () => (
+  <TableComponent
     columns={columns}
     data={data}
     initialState={{ showGlobalFilter: true }}
@@ -140,16 +140,16 @@ export const JustASearchBox: Story<MaterialReactTableProps> = () => (
   />
 );
 
-export const SearchDisabled: Story<MaterialReactTableProps> = () => (
-  <MaterialReactTable
+export const SearchDisabled: Story<TableComponentProps> = () => (
+  <TableComponent
     columns={columns}
     data={data}
     enableGlobalFilter={false}
   />
 );
 
-export const CustomizeSearchTextBox: Story<MaterialReactTableProps> = () => (
-  <MaterialReactTable
+export const CustomizeSearchTextBox: Story<TableComponentProps> = () => (
+  <TableComponent
     columns={columns}
     data={data}
     initialState={{ showGlobalFilter: true }}

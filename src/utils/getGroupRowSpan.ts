@@ -1,4 +1,4 @@
-import { Table_Cell, TableInstance } from '../MaterialReactTable'
+import { Table_Cell, TableInstance } from '../TableComponent'
 import { getIsFirstOfGroup } from './getIsFirstOfGroup'
 
 export const getGroupRowSpan = ({ table, cell }: { table: TableInstance; cell: Table_Cell }) => {

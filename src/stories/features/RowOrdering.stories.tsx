@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Meta, Story } from '@storybook/react';
-import MaterialReactTable, {
-  MaterialReactTableProps,
+import TableComponent, {
+  TableComponentProps,
   Table_ColumnDef,
   Table_Row,
 } from '../../';
@@ -58,11 +58,11 @@ const initData = [...Array(100)].map(() => ({
   state: faker.address.state(),
 }));
 
-export const RowOrderingEnabled: Story<MaterialReactTableProps> = () => {
+export const RowOrderingEnabled: Story<TableComponentProps> = () => {
   const [data, setData] = useState(() => initData);
 
   return (
-    <MaterialReactTable
+    <TableComponent
       autoResetPageIndex={false}
       columns={columns}
       data={data}
@@ -85,13 +85,13 @@ export const RowOrderingEnabled: Story<MaterialReactTableProps> = () => {
   );
 };
 
-export const RowOrderingWithSelect: Story<MaterialReactTableProps> = () => {
+export const RowOrderingWithSelect: Story<TableComponentProps> = () => {
   const [data, setData] = useState(() => initData);
   const [draggingRow, setDraggingRow] = useState<Table_Row<Person> | null>(null);
   const [hoveredRow, setHoveredRow] = useState<Table_Row<Person> | null>(null);
 
   return (
-    <MaterialReactTable
+    <TableComponent
       autoResetPageIndex={false}
       columns={columns}
       data={data}
@@ -121,13 +121,13 @@ export const RowOrderingWithSelect: Story<MaterialReactTableProps> = () => {
   );
 };
 
-export const RowOrderingWithPinning: Story<MaterialReactTableProps> = () => {
+export const RowOrderingWithPinning: Story<TableComponentProps> = () => {
   const [data, setData] = useState(() => initData);
   const [draggingRow, setDraggingRow] = useState<Table_Row<Person> | null>(null);
   const [hoveredRow, setHoveredRow] = useState<Table_Row<Person> | null>(null);
 
   return (
-    <MaterialReactTable
+    <TableComponent
       autoResetPageIndex={false}
       columns={columns}
       data={data}
@@ -156,13 +156,13 @@ export const RowOrderingWithPinning: Story<MaterialReactTableProps> = () => {
   );
 };
 
-export const RowAndColumnOrdering: Story<MaterialReactTableProps> = () => {
+export const RowAndColumnOrdering: Story<TableComponentProps> = () => {
   const [data, setData] = useState(() => initData);
   const [draggingRow, setDraggingRow] = useState<Table_Row<Person> | null>(null);
   const [hoveredRow, setHoveredRow] = useState<Table_Row<Person> | null>(null);
 
   return (
-    <MaterialReactTable
+    <TableComponent
       autoResetPageIndex={false}
       columns={columns}
       data={data}

@@ -1,7 +1,7 @@
 import React from 'react';
 import { Meta, Story } from '@storybook/react';
-import MaterialReactTable, {
-  MaterialReactTableProps,
+import TableComponent, {
+  TableComponentProps,
   Table_ColumnDef,
 } from '../../';
 import { faker } from '@faker-js/faker';
@@ -38,11 +38,11 @@ const data = [...Array(21)].map(() => ({
 }));
 
 export const DefaultTableBodyCellStyles: Story<
-  MaterialReactTableProps
-> = () => <MaterialReactTable columns={columns} data={data} />;
+  TableComponentProps
+> = () => <TableComponent columns={columns} data={data} />;
 
-export const StyleAllMuiTableBodyCell: Story<MaterialReactTableProps> = () => (
-  <MaterialReactTable
+export const StyleAllMuiTableBodyCell: Story<TableComponentProps> = () => (
+  <TableComponent
     columns={columns}
     data={data}
     muiTableBodyCellProps={{
@@ -55,9 +55,9 @@ export const StyleAllMuiTableBodyCell: Story<MaterialReactTableProps> = () => (
 );
 
 export const StyleMuiTableBodyCellConditionallyIn1Column: Story<
-  MaterialReactTableProps
+  TableComponentProps
 > = () => (
-  <MaterialReactTable
+  <TableComponent
     columns={[
       {
         header: 'First Name',
@@ -92,8 +92,8 @@ export const StyleMuiTableBodyCellConditionallyIn1Column: Story<
   />
 );
 
-export const CustomCellRender: Story<MaterialReactTableProps> = () => (
-  <MaterialReactTable
+export const CustomCellRender: Story<TableComponentProps> = () => (
+  <TableComponent
     columns={[
       {
         header: 'First Name',

@@ -1,7 +1,7 @@
 import React from 'react';
 import { Meta, Story } from '@storybook/react';
-import MaterialReactTable, {
-  MaterialReactTableProps,
+import TableComponent, {
+  TableComponentProps,
   Table_ColumnDef,
 } from '../../';
 import { faker } from '@faker-js/faker';
@@ -43,18 +43,18 @@ const data = [...Array(100)].map(() => ({
   phoneNumber: faker.phone.number(),
 }));
 
-export const SortingEnabledDefault: Story<MaterialReactTableProps> = () => (
-  <MaterialReactTable columns={columns} data={data} />
+export const SortingEnabledDefault: Story<TableComponentProps> = () => (
+  <TableComponent columns={columns} data={data} />
 );
 
-export const DisableSorting: Story<MaterialReactTableProps> = () => (
-  <MaterialReactTable columns={columns} data={data} enableSorting={false} />
+export const DisableSorting: Story<TableComponentProps> = () => (
+  <TableComponent columns={columns} data={data} enableSorting={false} />
 );
 
 export const DisableSortingForSpecificColumns: Story<
-  MaterialReactTableProps
+  TableComponentProps
 > = () => (
-  <MaterialReactTable
+  <TableComponent
     columns={[
       {
         header: 'First Name',
@@ -83,12 +83,12 @@ export const DisableSortingForSpecificColumns: Story<
   />
 );
 
-export const DisableMultiSorting: Story<MaterialReactTableProps> = () => (
-  <MaterialReactTable columns={columns} data={data} enableMultiSort={false} />
+export const DisableMultiSorting: Story<TableComponentProps> = () => (
+  <TableComponent columns={columns} data={data} enableMultiSort={false} />
 );
 
-export const SortRanking: Story<MaterialReactTableProps> = () => (
-  <MaterialReactTable
+export const SortRanking: Story<TableComponentProps> = () => (
+  <TableComponent
     columns={[
       {
         header: 'First Name',

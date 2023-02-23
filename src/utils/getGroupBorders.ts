@@ -1,4 +1,4 @@
-import { Table_Cell, Table_Header, TableInstance } from '../MaterialReactTable'
+import { Table_Cell, Table_Header, TableInstance } from '../TableComponent'
 import { getIsFirstOfGroup } from './getIsFirstOfGroup'
 
 type CellProps = {

@@ -1,7 +1,7 @@
 import React from 'react';
 import { Meta, Story } from '@storybook/react';
-import MaterialReactTable, {
-  MaterialReactTableProps,
+import TableComponent, {
+  TableComponentProps,
   Table_ColumnDef,
 } from '../../';
 import { faker } from '@faker-js/faker';
@@ -52,11 +52,11 @@ const data: Row[] = [...Array(100)].map(() => ({
 }));
 
 export const ColumnActionsEnabledDefault: Story<
-  MaterialReactTableProps
-> = () => <MaterialReactTable columns={columns} data={data} />;
+  TableComponentProps
+> = () => <TableComponent columns={columns} data={data} />;
 
-export const ColumnActionsDisabled: Story<MaterialReactTableProps> = () => (
-  <MaterialReactTable
+export const ColumnActionsDisabled: Story<TableComponentProps> = () => (
+  <TableComponent
     columns={columns}
     data={data}
     enableColumnActions={false}
@@ -64,9 +64,9 @@ export const ColumnActionsDisabled: Story<MaterialReactTableProps> = () => (
 );
 
 export const ColumnActionsDisabledPerColumn: Story<
-  MaterialReactTableProps
+  TableComponentProps
 > = () => (
-  <MaterialReactTable
+  <TableComponent
     columns={[
       {
         header: 'First Name',
@@ -97,9 +97,9 @@ export const ColumnActionsDisabledPerColumn: Story<
 );
 
 export const ColumnActionsEnabledPerColumn: Story<
-  MaterialReactTableProps
+  TableComponentProps
 > = () => (
-  <MaterialReactTable
+  <TableComponent
     columns={[
       {
         header: 'First Name',

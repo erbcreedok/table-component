@@ -1,7 +1,7 @@
 import React from 'react';
 import { Meta, Story } from '@storybook/react';
-import MaterialReactTable, {
-  MaterialReactTableProps,
+import TableComponent, {
+  TableComponentProps,
   Table_ColumnDef,
 } from '../../';
 import { faker } from '@faker-js/faker';
@@ -49,17 +49,17 @@ const data = [...Array(100)].map(() => ({
 }));
 
 export const StickyHeaderDisabledDefault: Story<
-  MaterialReactTableProps
+  TableComponentProps
 > = () => (
-  <MaterialReactTable
+  <TableComponent
     columns={columns}
     data={data}
     initialState={{ pagination: { pageSize: 25, pageIndex: 0 } }}
   />
 );
 
-export const EnableStickyHeader: Story<MaterialReactTableProps> = () => (
-  <MaterialReactTable
+export const EnableStickyHeader: Story<TableComponentProps> = () => (
+  <TableComponent
     columns={columns}
     data={data}
     initialState={{ pagination: { pageSize: 25, pageIndex: 0 } }}
@@ -67,8 +67,8 @@ export const EnableStickyHeader: Story<MaterialReactTableProps> = () => (
   />
 );
 
-export const StickyHeaderShorterTable: Story<MaterialReactTableProps> = () => (
-  <MaterialReactTable
+export const StickyHeaderShorterTable: Story<TableComponentProps> = () => (
+  <TableComponent
     columns={columns}
     data={data}
     enableStickyHeader
@@ -107,8 +107,8 @@ const columnsWithFooters: Table_ColumnDef<typeof data[0]>[] = [
   },
 ];
 
-export const disableStickyFooter: Story<MaterialReactTableProps> = () => (
-  <MaterialReactTable
+export const disableStickyFooter: Story<TableComponentProps> = () => (
+  <TableComponent
     columns={columnsWithFooters}
     data={data}
     initialState={{ pagination: { pageSize: 25, pageIndex: 0 } }}
@@ -119,8 +119,8 @@ export const disableStickyFooter: Story<MaterialReactTableProps> = () => (
   />
 );
 
-export const enableStickyFooter: Story<MaterialReactTableProps> = () => (
-  <MaterialReactTable
+export const enableStickyFooter: Story<TableComponentProps> = () => (
+  <TableComponent
     columns={columnsWithFooters}
     data={data}
     initialState={{ pagination: { pageSize: 25, pageIndex: 0 } }}

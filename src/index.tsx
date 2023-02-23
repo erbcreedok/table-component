@@ -1,6 +1,6 @@
-import MaterialReactTable from './MaterialReactTable';
-export default MaterialReactTable;
-export * from './MaterialReactTable';
+import TableComponent from './TableComponent';
+export default TableComponent;
+export * from './TableComponent';
 
 import type { Table_Icons } from './icons';
 export type { Table_Icons };

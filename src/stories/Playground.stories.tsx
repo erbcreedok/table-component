@@ -1,7 +1,7 @@
 import React from 'react';
 import { Meta, Story } from '@storybook/react';
-import MaterialReactTable, {
-  MaterialReactTableProps,
+import TableComponent, {
+  TableComponentProps,
 } from '../';
 
 import { Initiative } from './types/Initiative'
@@ -10,18 +10,18 @@ import { getInitiativeTableColumns } from './utils/getInititativeTableColumns'
 
 const meta: Meta = {
   title: 'Prop Playground',
-  component: MaterialReactTable,
+  component: TableComponent,
 };
 
 export default meta;
 
-const Template: Story<MaterialReactTableProps<Initiative>> = (
-  args: MaterialReactTableProps<Initiative>,
-) => <MaterialReactTable {...args} />;
+const Template: Story<TableComponentProps<Initiative>> = (
+  args: TableComponentProps<Initiative>,
+) => <TableComponent {...args} />;
 
 export const Default = Template.bind({});
 
 Default.args = {
   columns: getInitiativeTableColumns(),
   data: generateInitiatives(60),
-} as MaterialReactTableProps<Initiative>;
+} as TableComponentProps<Initiative>;

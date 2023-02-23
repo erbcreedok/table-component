@@ -1,7 +1,7 @@
 import React from 'react';
 import { Meta, Story } from '@storybook/react';
-import MaterialReactTable, {
-  MaterialReactTableProps,
+import TableComponent, {
+  TableComponentProps,
   Table_ColumnDef,
 } from '../../';
 import { faker } from '@faker-js/faker';
@@ -50,14 +50,14 @@ const data = [...Array(100)].map(() => ({
   state: faker.address.state(),
 }));
 
-export const ClickToCopyEnabled: Story<MaterialReactTableProps> = () => (
-  <MaterialReactTable columns={columns} data={data} enableClickToCopy />
+export const ClickToCopyEnabled: Story<TableComponentProps> = () => (
+  <TableComponent columns={columns} data={data} enableClickToCopy />
 );
 
 export const ClickToCopyEnabledPerColumn: Story<
-  MaterialReactTableProps
+  TableComponentProps
 > = () => (
-  <MaterialReactTable
+  <TableComponent
     columns={[
       {
         header: 'First Name',
@@ -90,9 +90,9 @@ export const ClickToCopyEnabledPerColumn: Story<
 );
 
 export const ClickToCopyDisabledPerColumn: Story<
-  MaterialReactTableProps
+  TableComponentProps
 > = () => (
-  <MaterialReactTable
+  <TableComponent
     columns={[
       {
         header: 'First Name',

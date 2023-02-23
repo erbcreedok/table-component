@@ -1,7 +1,7 @@
 import React from 'react';
 import { Meta, Story } from '@storybook/react';
-import MaterialReactTable, {
-  MaterialReactTableProps,
+import TableComponent, {
+  TableComponentProps,
   Table_ColumnDef,
 } from '../../';
 import { faker } from '@faker-js/faker';
@@ -43,8 +43,8 @@ const data = [...Array(100)].map(() => ({
   phoneNumber: faker.phone.number(),
 }));
 
-export const DefaultSemantic: Story<MaterialReactTableProps> = () => (
-  <MaterialReactTable
+export const DefaultSemantic: Story<TableComponentProps> = () => (
+  <TableComponent
     columns={columns}
     data={data}
     layoutMode="semantic"
@@ -53,8 +53,8 @@ export const DefaultSemantic: Story<MaterialReactTableProps> = () => (
   />
 );
 
-export const Grid: Story<MaterialReactTableProps> = () => (
-  <MaterialReactTable
+export const Grid: Story<TableComponentProps> = () => (
+  <TableComponent
     columns={columns}
     data={data}
     layoutMode="grid"
@@ -63,8 +63,8 @@ export const Grid: Story<MaterialReactTableProps> = () => (
   />
 );
 
-export const GridWithResizing: Story<MaterialReactTableProps> = () => (
-  <MaterialReactTable
+export const GridWithResizing: Story<TableComponentProps> = () => (
+  <TableComponent
     columns={columns}
     data={data}
     layoutMode="grid"

@@ -1,4 +1,4 @@
-import { Table_Cell, TableInstance } from '../MaterialReactTable'
+import { Table_Cell, TableInstance } from '../TableComponent'
 
 export const getIsFirstOfGroup = ({ table, cell, columnId }: { table: TableInstance, cell: Table_Cell, columnId?: string }): boolean => {
 	const { row } = cell

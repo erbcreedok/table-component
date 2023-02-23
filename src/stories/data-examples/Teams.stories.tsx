@@ -1,7 +1,7 @@
 import { Meta, Story } from '@storybook/react'
 import React from 'react'
-import MaterialReactTable from '../../index'
-import { MaterialReactTableProps } from '../../MaterialReactTable'
+import TableComponent from '../../index'
+import { TableComponentProps } from '../../TableComponent'
 import { getSeparatedTeamMembers } from '../utils/getTeamMembers'
 import { getTeamMembersColumns } from '../utils/getTeamMembersColumns'
 import { sortByArrayOrder } from '../utils/sortByArrayOrder'
@@ -22,8 +22,8 @@ const groupsSorting = {
 const data = getSeparatedTeamMembers()
 const columns = getTeamMembersColumns()
 
-export const TeamsTableDefault: Story<MaterialReactTableProps> = () => (
-	<MaterialReactTable
+export const TeamsTableDefault: Story<TableComponentProps> = () => (
+	<TableComponent
 		columns={columns}
 		data={data}
 		enableAggregationRow={false}

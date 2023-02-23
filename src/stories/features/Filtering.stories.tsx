@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Meta, Story } from '@storybook/react';
-import MaterialReactTable, {
-  MaterialReactTableProps,
+import TableComponent, {
+  TableComponentProps,
   Table_ColumnDef,
 } from '../../';
 import { faker } from '@faker-js/faker';
@@ -69,24 +69,24 @@ const data = [...Array(120)].map(() => ({
   state: faker.address.state(),
 }));
 
-export const FilteringEnabledDefault: Story<MaterialReactTableProps> = () => (
-  <MaterialReactTable columns={columns} data={data} />
+export const FilteringEnabledDefault: Story<TableComponentProps> = () => (
+  <TableComponent columns={columns} data={data} />
 );
 
-export const ColumnFilteringDisabled: Story<MaterialReactTableProps> = () => (
-  <MaterialReactTable
+export const ColumnFilteringDisabled: Story<TableComponentProps> = () => (
+  <TableComponent
     columns={columns}
     data={data}
     enableColumnFilters={false}
   />
 );
 
-export const FilteringDisabled: Story<MaterialReactTableProps> = () => (
-  <MaterialReactTable columns={columns} data={data} enableFilters={false} />
+export const FilteringDisabled: Story<TableComponentProps> = () => (
+  <TableComponent columns={columns} data={data} enableFilters={false} />
 );
 
-export const FilterFnAndFilterVariants: Story<MaterialReactTableProps> = () => (
-  <MaterialReactTable
+export const FilterFnAndFilterVariants: Story<TableComponentProps> = () => (
+  <TableComponent
     columns={[
       {
         header: 'Is Active',
@@ -143,9 +143,9 @@ export const FilterFnAndFilterVariants: Story<MaterialReactTableProps> = () => (
 );
 
 export const FilteringChangeModeEnabled: Story<
-  MaterialReactTableProps
+  TableComponentProps
 > = () => (
-  <MaterialReactTable
+  <TableComponent
     columns={[
       {
         header: 'First Name',
@@ -181,9 +181,9 @@ export const FilteringChangeModeEnabled: Story<
 );
 
 export const DisableSomeFilterTypesForCertainColumns: Story<
-  MaterialReactTableProps
+  TableComponentProps
 > = () => (
-  <MaterialReactTable
+  <TableComponent
     columns={[
       {
         header: 'First Name',
@@ -226,9 +226,9 @@ export const DisableSomeFilterTypesForCertainColumns: Story<
 );
 
 export const FilteringDisabledForCertainColumns: Story<
-  MaterialReactTableProps
+  TableComponentProps
 > = () => (
-  <MaterialReactTable
+  <TableComponent
     columns={[
       {
         header: 'First Name',
@@ -263,9 +263,9 @@ export const FilteringDisabledForCertainColumns: Story<
 );
 
 export const CustomFilterFunctionPerColumn: Story<
-  MaterialReactTableProps
+  TableComponentProps
 > = () => (
-  <MaterialReactTable
+  <TableComponent
     columns={[
       {
         header: 'First Name',
@@ -307,8 +307,8 @@ export const CustomFilterFunctionPerColumn: Story<
   />
 );
 
-export const CustomFilterFns: Story<MaterialReactTableProps> = () => (
-  <MaterialReactTable
+export const CustomFilterFns: Story<TableComponentProps> = () => (
+  <TableComponent
     columns={[
       {
         header: 'First Name',
@@ -351,8 +351,8 @@ export const CustomFilterFns: Story<MaterialReactTableProps> = () => (
   />
 );
 
-export const CustomFilterComponent: Story<MaterialReactTableProps> = () => (
-  <MaterialReactTable
+export const CustomFilterComponent: Story<TableComponentProps> = () => (
+  <TableComponent
     columns={[
       {
         header: 'First Name',
@@ -406,7 +406,7 @@ export const CustomFilterComponent: Story<MaterialReactTableProps> = () => (
   />
 );
 
-export const ManualFiltering: Story<MaterialReactTableProps> = () => {
+export const ManualFiltering: Story<TableComponentProps> = () => {
   const [rows, setRows] = useState(() => [...data]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
 
@@ -430,7 +430,7 @@ export const ManualFiltering: Story<MaterialReactTableProps> = () => {
   }, [columnFilters]);
 
   return (
-    <MaterialReactTable
+    <TableComponent
       columns={columns}
       data={rows}
       manualFiltering
@@ -441,8 +441,8 @@ export const ManualFiltering: Story<MaterialReactTableProps> = () => {
   );
 };
 
-export const ExternalSetFilterValue: Story<MaterialReactTableProps> = () => (
-  <MaterialReactTable
+export const ExternalSetFilterValue: Story<TableComponentProps> = () => (
+  <TableComponent
     columns={columns}
     data={data}
     initialState={{ showColumnFilters: true }}

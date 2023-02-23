@@ -1,7 +1,7 @@
 import React from 'react';
 import { Meta, Story } from '@storybook/react';
-import MaterialReactTable, {
-  MaterialReactTableProps,
+import TableComponent, {
+  TableComponentProps,
   Table_ColumnDef,
 } from '../../';
 import { faker } from '@faker-js/faker';
@@ -46,10 +46,10 @@ const data = [...Array(100)].map(() => ({
 }));
 
 export const CustomSpanishLocalizationExample: Story<
-  MaterialReactTableProps
+  TableComponentProps
 > = () => (
   <ThemeProvider theme={createTheme({}, esES)}>
-    <MaterialReactTable
+    <TableComponent
       columns={columns}
       data={data}
       enableGrouping

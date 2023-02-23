@@ -3,7 +3,7 @@ import styled from '@emotion/styled'
 import { Box as MuiBox } from '@mui/material'
 import { useResizeDetector } from 'react-resize-detector'
 import React, { ReactNode, useCallback, useState } from 'react'
-import { Table_Cell, Table_Column, Table_Row, TableInstance } from '../MaterialReactTable'
+import { Table_Cell, Table_Column, Table_Row, TableInstance } from '../TableComponent'
 import { getShouldForwardProps } from '../utils/getShouldForwardProps'
 
 const Box = styled(MuiBox, getShouldForwardProps('rotate', 'borderColor'))<{ rotate?: boolean; borderColor?: string }>`

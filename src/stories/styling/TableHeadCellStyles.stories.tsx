@@ -1,7 +1,7 @@
 import React from 'react';
 import { Meta, Story } from '@storybook/react';
-import MaterialReactTable, {
-  MaterialReactTableProps,
+import TableComponent, {
+  TableComponentProps,
   Table_ColumnDef,
 } from '../../';
 import { faker } from '@faker-js/faker';
@@ -39,11 +39,11 @@ const data = [...Array(21)].map(() => ({
 }));
 
 export const DefaultTableHeadCellStyles: Story<
-  MaterialReactTableProps
-> = () => <MaterialReactTable columns={columns} data={data} />;
+  TableComponentProps
+> = () => <TableComponent columns={columns} data={data} />;
 
-export const StyleAllMuiTableHeadCell: Story<MaterialReactTableProps> = () => (
-  <MaterialReactTable
+export const StyleAllMuiTableHeadCell: Story<TableComponentProps> = () => (
+  <TableComponent
     columns={columns}
     data={data}
     muiTableHeadCellProps={{
@@ -57,9 +57,9 @@ export const StyleAllMuiTableHeadCell: Story<MaterialReactTableProps> = () => (
 );
 
 export const StyleTableHeadCellsIndividually: Story<
-  MaterialReactTableProps
+  TableComponentProps
 > = () => (
-  <MaterialReactTable
+  <TableComponent
     columns={[
       {
         header: 'First Name',
@@ -90,8 +90,8 @@ export const StyleTableHeadCellsIndividually: Story<
   />
 );
 
-export const CustomHeadCellRenders: Story<MaterialReactTableProps> = () => (
-  <MaterialReactTable
+export const CustomHeadCellRenders: Story<TableComponentProps> = () => (
+  <TableComponent
     columns={[
       {
         header: 'First Name',

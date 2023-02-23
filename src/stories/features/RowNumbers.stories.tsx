@@ -1,7 +1,7 @@
 import React from 'react';
 import { Meta, Story } from '@storybook/react';
-import MaterialReactTable, {
-  MaterialReactTableProps,
+import TableComponent, {
+  TableComponentProps,
   Table_ColumnDef,
 } from '../../';
 import { faker } from '@faker-js/faker';
@@ -43,8 +43,8 @@ const data = [...Array(100)].map(() => ({
   phoneNumber: faker.phone.number(),
 }));
 
-export const enableRowNumbersOriginal: Story<MaterialReactTableProps> = () => (
-  <MaterialReactTable
+export const enableRowNumbersOriginal: Story<TableComponentProps> = () => (
+  <TableComponent
     columns={columns}
     data={data}
     enableRowNumbers
@@ -52,8 +52,8 @@ export const enableRowNumbersOriginal: Story<MaterialReactTableProps> = () => (
   />
 );
 
-export const enableRowNumbersStatic: Story<MaterialReactTableProps> = () => (
-  <MaterialReactTable
+export const enableRowNumbersStatic: Story<TableComponentProps> = () => (
+  <TableComponent
     columns={columns}
     data={data}
     enableRowNumbers
@@ -63,9 +63,9 @@ export const enableRowNumbersStatic: Story<MaterialReactTableProps> = () => (
 );
 
 export const enableRowNumbersOriginalVirtual: Story<
-  MaterialReactTableProps
+  TableComponentProps
 > = () => (
-  <MaterialReactTable
+  <TableComponent
     columns={columns}
     data={data}
     enablePagination={false}
@@ -76,9 +76,9 @@ export const enableRowNumbersOriginalVirtual: Story<
 );
 
 export const enableRowNumbersStaticVirtual: Story<
-  MaterialReactTableProps
+  TableComponentProps
 > = () => (
-  <MaterialReactTable
+  <TableComponent
     columns={columns}
     data={data}
     enablePagination={false}

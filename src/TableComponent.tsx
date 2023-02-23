@@ -188,7 +188,7 @@ export type TableInstance<TData extends Record<string, any> = {}> = Omit<
   getRowModel: () => Table_RowModel<TData>;
   getSelectedRowModel: () => Table_RowModel<TData>;
   getState: () => Table_TableState<TData>;
-  options: MaterialReactTableProps<TData> & {
+  options: TableComponentProps<TData> & {
     icons: Table_Icons;
     localization: Table_Localization;
     enableAggregationRow?: boolean;
@@ -606,7 +606,7 @@ export type Table_DisplayColumnIds =
  * See the full props list on the official docs site:
  * @link https://www.material-react-table.com/docs/api/props
  */
-export type MaterialReactTableProps<TData extends Record<string, any> = {}> =
+export type TableComponentProps<TData extends Record<string, any> = {}> =
   Omit<
     Partial<TableOptions<TData>>,
     | 'columns'
@@ -1095,7 +1095,7 @@ export type MaterialReactTableProps<TData extends Record<string, any> = {}> =
     virtualizerProps?: any;
   };
 
-const MaterialReactTable = <TData extends Record<string, any> = {}>({
+const TableComponent = <TData extends Record<string, any> = {}>({
   aggregationFns,
   autoResetExpanded = false,
   columnResizeMode = 'onEnd',
@@ -1145,7 +1145,7 @@ const MaterialReactTable = <TData extends Record<string, any> = {}>({
   selectAllMode = 'page',
   sortingFns,
   ...rest
-}: MaterialReactTableProps<TData>) => {
+}: TableComponentProps<TData>) => {
   const _icons = useMemo(() => ({ ...Default_Icons, ...icons }), [icons]);
   const _localization = useMemo(
     () => ({
@@ -1246,4 +1246,4 @@ const MaterialReactTable = <TData extends Record<string, any> = {}>({
   );
 };
 
-export default MaterialReactTable;
+export default TableComponent;

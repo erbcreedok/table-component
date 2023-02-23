@@ -1,7 +1,7 @@
 import React from 'react';
 import { Meta, Story } from '@storybook/react';
-import MaterialReactTable, {
-  MaterialReactTableProps,
+import TableComponent, {
+  TableComponentProps,
   Table_ColumnDef,
 } from '../../';
 import { faker } from '@faker-js/faker';
@@ -37,38 +37,38 @@ const data = [...Array(21)].map(() => ({
   address: faker.address.streetAddress(),
 }));
 
-export const PaginationEnabledDefault: Story<MaterialReactTableProps> = () => (
-  <MaterialReactTable columns={columns} data={data} />
+export const PaginationEnabledDefault: Story<TableComponentProps> = () => (
+  <TableComponent columns={columns} data={data} />
 );
 
 export const PaginationDisabledOrOverriden: Story<
-  MaterialReactTableProps
+  TableComponentProps
 > = () => (
-  <MaterialReactTable columns={columns} data={data} enablePagination={false} />
+  <TableComponent columns={columns} data={data} enablePagination={false} />
 );
 
-export const PaginationPositionBottom: Story<MaterialReactTableProps> = () => (
-  <MaterialReactTable
+export const PaginationPositionBottom: Story<TableComponentProps> = () => (
+  <TableComponent
     columns={columns}
     data={data}
     positionPagination="bottom"
   />
 );
 
-export const PaginationPositionTop: Story<MaterialReactTableProps> = () => (
-  <MaterialReactTable columns={columns} data={data} positionPagination="top" />
+export const PaginationPositionTop: Story<TableComponentProps> = () => (
+  <TableComponent columns={columns} data={data} positionPagination="top" />
 );
 
 export const PaginationPositionTopAndBottom: Story<
-  MaterialReactTableProps
+  TableComponentProps
 > = () => (
-  <MaterialReactTable columns={columns} data={data} positionPagination="both" />
+  <TableComponent columns={columns} data={data} positionPagination="both" />
 );
 
 export const PaginationPositionTopAndBottomNoInternalActions: Story<
-  MaterialReactTableProps
+  TableComponentProps
 > = () => (
-  <MaterialReactTable
+  <TableComponent
     columns={columns}
     data={data}
     positionPagination="both"
@@ -77,9 +77,9 @@ export const PaginationPositionTopAndBottomNoInternalActions: Story<
 );
 
 export const CustomizePaginationComponents: Story<
-  MaterialReactTableProps
+  TableComponentProps
 > = () => (
-  <MaterialReactTable
+  <TableComponent
     columns={columns}
     data={data}
     initialState={{ pagination: { pageSize: 5, pageIndex: 0 } }}
