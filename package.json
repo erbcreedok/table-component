@@ -1,19 +1,23 @@
 {
-    "name": "@sag/table-component",
+    "name": "@core/table-component",
     "version": "1.0.0",
     "description": "React table written with tanstack table v8",
     "main": "dist/index.js",
     "scripts": {
         "dev": "start-storybook -p 6006",
         "storybook": "start-storybook -p 6006",
-        "storybook:build": "build-storybook"
+        "storybook:build": "build-storybook",
+        "init": "npm ci",
+        "lint": "",
+        "test": "",
+        "build": ""
     },
     "repository": {
         "type": "git",
-        "url": "https://git.epam.com/epm-dhm/epm-perf-ui-components.git"
+        "url": "https://git.epam.com/epm-dce/core/table-component.git"
     },
     "publishConfig": {
-        "registry": "https://artifactory.epam.com/artifactory/api/npm/epm-prf-npm/"
+        "registry": "https://artifactory.epam.com/artifactory/api/npm/epm-dce-npm/"
     },
     "keywords": [
         "MUI",
