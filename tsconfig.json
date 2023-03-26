@@ -1,39 +1,45 @@
 {
     "compilerOptions": {
-        "allowJs": true,
-        "allowSyntheticDefaultImports": true,
-        "allowUnreachableCode": false,
-        "allowUnusedLabels": false,
-        "experimentalDecorators": true,
-        "forceConsistentCasingInFileNames": true,
-        "jsx": "react",
+        "declaration": true,
+        "declarationDir": "types",
+        "noErrorTruncation": false,
+        "jsx": "react-jsx",
+        "noEmitOnError": false,
+        "inlineSources": true,
+        "sourceMap": true,
         "lib": [
-            "esnext",
+            "ES2022",
             "dom",
             "dom.iterable",
             "esnext.asynciterable"
         ],
         "module": "ESNext",
         "moduleResolution": "node",
-        "noFallthroughCasesInSwitch": true,
-        "noImplicitReturns": true,
-        "noImplicitThis": true,
-        "noUnusedLocals": true,
-        "noUnusedParameters": true,
-        "outDir": "dist",
-        "removeComments": true,
+        "noImplicitAny": false,
+        "allowSyntheticDefaultImports": true,
+        "esModuleInterop": true,
+        "outDir": "build",
+        "target": "es6",
+        "typeRoots": [
+            "./node_modules/@types/",
+        ],
+        "allowJs": true,
         "skipLibCheck": true,
-        "target": "es5",
-        "types": ["react", "node", "webpack-env", "jest"],
-        "sourceMap": true,
+        "strict": true,
+        "forceConsistentCasingInFileNames": true,
+        "resolveJsonModule": true,
+        "isolatedModules": true,
+        "experimentalDecorators": false,
         "baseUrl": ".",
-        "rootDir": "./src",
-        "paths": {
-            "@assets/*": ["assets/*"]
-        }
+        "incremental": true,
+        "useDefineForClassFields": true
     },
-    "compileOnSave": false,
-    "buildOnSave": false,
-    "include": ["src/**/*.ts", "src/**/*.tsx"],
-    "exclude": ["node_modules", "dist", "src/**/*.test.ts", "src/**/*.test.tsx", "src/**/*.stories.tsx"]
+    "include": [
+        "./"
+    ],
+    "exclude": [
+        "./dist/",
+        "node_modules",
+        "./src/stories"
+    ]
 }

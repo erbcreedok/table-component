@@ -8,8 +8,9 @@ export type TeamMember = {
 	id: string;
 	member: User;
 	impact: string | null;
-	performance: string | null;
-	riskOfLeaving: string | null;
+	performance?: string | null;
+	riskOfLeaving?: string | null;
 	successionStatus: string | null;
 	location: string;
+	subRows?: TeamMember[]
 }

@@ -1,170 +1,173 @@
-import React, { DragEvent, FC, memo, useMemo, useRef } from 'react';
-import MuiTableRow from '@mui/material/TableRow';
-import { darken, lighten, useTheme } from '@mui/material/styles';
-import { Memo_TableBodyCell, TableBodyCell } from './TableBodyCell';
-import { TableDetailPanel } from './TableDetailPanel';
-import type { VirtualItem, Virtualizer } from '@tanstack/react-virtual';
-import type { Table_Cell, Table_Row, TableInstance } from '..';
+import React, { DragEvent, FC, memo, useMemo, useRef } from 'react'
+import MuiTableRow from '@mui/material/TableRow'
+import { darken, lighten, useTheme } from '@mui/material/styles'
+import type { VirtualItem, Virtualizer } from '@tanstack/react-virtual'
+
+import type { Table_Cell, Table_Row, TableInstance } from '..'
+
+import { Memo_TableBodyCell, TableBodyCell } from './TableBodyCell'
+import { TableDetailPanel } from './TableDetailPanel'
 
 interface Props {
-  columnVirtualizer?: Virtualizer<HTMLDivElement, HTMLTableCellElement>;
-  measureElement?: (element: HTMLTableRowElement) => void;
-  numRows: number;
-  row: Table_Row;
-  rowIndex: number;
-  table: TableInstance;
-  virtualColumns?: VirtualItem[];
-  virtualPaddingLeft?: number;
-  virtualPaddingRight?: number;
-  virtualRow?: VirtualItem;
+	columnVirtualizer?: Virtualizer<HTMLDivElement, HTMLTableCellElement>
+	measureElement?: (element: HTMLTableRowElement) => void
+	numRows: number
+	row: Table_Row
+	rowIndex: number
+	table: TableInstance
+	virtualColumns?: VirtualItem[]
+	virtualPaddingLeft?: number
+	virtualPaddingRight?: number
+	virtualRow?: VirtualItem
 }
 
 export const TableBodyRow: FC<Props> = ({
-  columnVirtualizer,
-  measureElement,
-  numRows,
-  row,
-  rowIndex,
-  table,
-  virtualColumns,
-  virtualPaddingLeft,
-  virtualPaddingRight,
-  virtualRow,
+	columnVirtualizer,
+	measureElement,
+	numRows,
+	row,
+	rowIndex,
+	table,
+	virtualColumns,
+	virtualPaddingLeft,
+	virtualPaddingRight,
+	virtualRow,
 }) => {
-  const theme = useTheme();
-  const {
-    getIsSomeColumnsPinned,
-    getState,
-    options: {
-      enableRowOrdering,
-      layoutMode,
-      memoMode,
-      muiTableBodyRowProps,
-      renderDetailPanel,
-    },
-    setHoveredRow,
-  } = table;
-  const { draggingColumn, draggingRow, editingCell, editingRow, hoveredRow } =
-    getState();
+	const theme = useTheme()
+	const {
+		getIsSomeColumnsPinned,
+		getState,
+		options: {
+			enableRowOrdering,
+			layoutMode,
+			memoMode,
+			muiTableBodyRowProps,
+			renderDetailPanel,
+		},
+		setHoveredRow,
+	} = table
+	const { draggingColumn, draggingRow, editingCell, editingRow, hoveredRow } =
+		getState()
 
-  const tableRowProps =
-    muiTableBodyRowProps instanceof Function
-      ? muiTableBodyRowProps({ row, table })
-      : muiTableBodyRowProps;
+	const tableRowProps =
+		muiTableBodyRowProps instanceof Function
+			? muiTableBodyRowProps({ row, table })
+			: muiTableBodyRowProps
 
-  const handleDragEnter = (_e: DragEvent) => {
-    console.log(_e.target)
-    if (enableRowOrdering && draggingRow) {
-      setHoveredRow(row);
-    }
-  };
+	const handleDragEnter = (_e: DragEvent) => {
+		if (enableRowOrdering && draggingRow) {
+			setHoveredRow(row)
+		}
+	}
 
-  const rowRef = useRef<HTMLTableRowElement | null>(null);
+	const rowRef = useRef<HTMLTableRowElement | null>(null)
 
-  const draggingBorder = useMemo(
-    () =>
-      draggingRow?.id === row.id
-        ? `1px dashed ${theme.palette.text.secondary}`
-        : hoveredRow?.id === row.id
-        ? `2px dashed ${theme.palette.primary.main}`
-        : undefined,
-    [draggingRow, hoveredRow],
-  );
+	const draggingBorder = useMemo(
+		() =>
+			draggingRow?.id === row.id
+				? `1px dashed ${theme.palette.text.secondary}`
+				: hoveredRow?.id === row.id
+				? `2px dashed ${theme.palette.primary.main}`
+				: undefined,
+		[draggingRow, hoveredRow]
+	)
 
-  const draggingBorders = draggingBorder
-    ? {
-        border: draggingBorder,
-      }
-    : undefined;
+	const draggingBorders = draggingBorder
+		? {
+				border: draggingBorder,
+		  }
+		: undefined
 
-  return (
-    <>
-      <MuiTableRow
-        data-index={virtualRow?.index}
-        hover
-        onDragEnter={handleDragEnter}
-        selected={row.getIsSelected()}
-        ref={(node: HTMLTableRowElement) => {
-          if (node) {
-            rowRef.current = node;
-            measureElement?.(node);
-          }
-        }}
-        {...tableRowProps}
-        sx={(theme) => ({
-          backgroundColor: lighten(theme.palette.background.default, 0.06),
-          display: layoutMode === 'grid' ? 'flex' : 'table-row',
-          opacity:
-            draggingRow?.id === row.id || hoveredRow?.id === row.id ? 0.5 : 1,
-          position: virtualRow ? 'absolute' : undefined,
-          top: virtualRow ? 0 : undefined,
-          transform: virtualRow
-            ? `translateY(${virtualRow?.start}px)`
-            : undefined,
-          transition: virtualRow ? 'none' : 'all 150ms ease-in-out',
-          width: '100%',
-          '&:hover td': {
-            backgroundColor:
-              tableRowProps?.hover !== false && getIsSomeColumnsPinned()
-                ? theme.palette.mode === 'dark'
-                  ? `${lighten(theme.palette.background.default, 0.12)}`
-                  : `${darken(theme.palette.background.default, 0.05)}`
-                : undefined,
-          },
-          ...(tableRowProps?.sx instanceof Function
-            ? tableRowProps.sx(theme)
-            : (tableRowProps?.sx as any)),
-          ...draggingBorders,
-        })}
-      >
-        {virtualPaddingLeft ? (
-          <td style={{ display: 'flex', width: virtualPaddingLeft }} />
-        ) : null}
-        {(virtualColumns ?? row.getVisibleCells()).map((cellOrVirtualCell) => {
-          const cell = columnVirtualizer
-            ? row.getVisibleCells()[(cellOrVirtualCell as VirtualItem).index]
-            : (cellOrVirtualCell as Table_Cell);
-          const props = {
-            cell,
-            enableHover: tableRowProps?.hover !== false,
-            key: cell.id,
-            measureElement: columnVirtualizer?.measureElement,
-            numRows,
-            rowIndex,
-            rowRef,
-            table,
-            virtualCell: columnVirtualizer
-              ? (cellOrVirtualCell as VirtualItem)
-              : undefined,
-          };
-          return memoMode === 'cells' &&
-            cell.column.columnDef.columnDefType === 'data' &&
-            !draggingColumn &&
-            !draggingRow &&
-            editingCell?.id !== cell.id &&
-            editingRow?.id !== row.id ? (
-            <Memo_TableBodyCell {...props} />
-          ) : (
-            <TableBodyCell {...props} />
-          );
-        })}
-        {virtualPaddingRight ? (
-          <td style={{ display: 'flex', width: virtualPaddingRight }} />
-        ) : null}
-      </MuiTableRow>
-      {renderDetailPanel && !row.getIsGrouped() && (
-        <TableDetailPanel
-          parentRowRef={rowRef}
-          row={row}
-          table={table}
-          virtualRow={virtualRow}
-        />
-      )}
-    </>
-  );
-};
+	return (
+		<>
+			<MuiTableRow
+				data-index={virtualRow?.index}
+				hover
+				onDragEnter={handleDragEnter}
+				selected={row.getIsSelected()}
+				ref={(node: HTMLTableRowElement) => {
+					if (node) {
+						rowRef.current = node
+						measureElement?.(node)
+					}
+				}}
+				{...tableRowProps}
+				sx={(theme) => ({
+					backgroundColor: lighten(theme.palette.background.default, 0.06),
+					display: layoutMode === 'grid' ? 'flex' : 'table-row',
+					opacity:
+						draggingRow?.id === row.id || hoveredRow?.id === row.id ? 0.5 : 1,
+					position: virtualRow ? 'absolute' : undefined,
+					top: virtualRow ? 0 : undefined,
+					transform: virtualRow
+						? `translateY(${virtualRow?.start}px)`
+						: undefined,
+					transition: virtualRow ? 'none' : 'all 150ms ease-in-out',
+					width: '100%',
+					'&:hover td': {
+						backgroundColor:
+							tableRowProps?.hover !== false && getIsSomeColumnsPinned()
+								? theme.palette.mode === 'dark'
+									? `${lighten(theme.palette.background.default, 0.12)}`
+									: `${darken(theme.palette.background.default, 0.05)}`
+								: undefined,
+					},
+					...(tableRowProps?.sx instanceof Function
+						? tableRowProps.sx(theme)
+						: (tableRowProps?.sx as any)),
+					...draggingBorders,
+				})}
+			>
+				{virtualPaddingLeft ? (
+					<td style={{ display: 'flex', width: virtualPaddingLeft }} />
+				) : null}
+				{(virtualColumns ?? row.getVisibleCells()).map((cellOrVirtualCell) => {
+					const cell = columnVirtualizer
+						? row.getVisibleCells()[(cellOrVirtualCell as VirtualItem).index]
+						: (cellOrVirtualCell as Table_Cell)
+					const props = {
+						cell,
+						enableHover: tableRowProps?.hover !== false,
+						key: cell.id,
+						measureElement: columnVirtualizer?.measureElement,
+						numRows,
+						rowIndex,
+						rowRef,
+						table,
+						virtualCell: columnVirtualizer
+							? (cellOrVirtualCell as VirtualItem)
+							: undefined,
+					}
+
+					return memoMode === 'cells' &&
+						cell.column.columnDef.columnDefType === 'data' &&
+						!draggingColumn &&
+						!draggingRow &&
+						editingCell?.id !== cell.id &&
+						editingRow?.id !== row.id ? (
+						// eslint-disable-next-line react/jsx-pascal-case
+						<Memo_TableBodyCell {...props} />
+					) : (
+						<TableBodyCell {...props} />
+					)
+				})}
+				{virtualPaddingRight ? (
+					<td style={{ display: 'flex', width: virtualPaddingRight }} />
+				) : null}
+			</MuiTableRow>
+			{renderDetailPanel && !row.getIsGrouped() && (
+				<TableDetailPanel
+					parentRowRef={rowRef}
+					row={row}
+					table={table}
+					virtualRow={virtualRow}
+				/>
+			)}
+		</>
+	)
+}
 
 export const Memo_TableBodyRow = memo(
-  TableBodyRow,
-  (prev, next) => (prev.row === next.row && prev.rowIndex === next.rowIndex),
-);
+	TableBodyRow,
+	(prev, next) => prev.row === next.row && prev.rowIndex === next.rowIndex
+)

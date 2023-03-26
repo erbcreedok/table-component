@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import {
 	getCoreRowModel,
@@ -12,11 +13,12 @@ import {
 import Box from '@mui/material/Box'
 import Dialog from '@mui/material/Dialog'
 import Grow from '@mui/material/Grow'
+import type { GroupingState, TableState } from '@tanstack/react-table'
+
 import { ExpandAllButton } from '../buttons/ExpandAllButton'
 import { ExpandButton } from '../buttons/ExpandButton'
 import { ToggleRowActionMenuButton } from '../buttons/ToggleRowActionMenuButton'
 import { SelectCheckbox } from '../inputs/SelectCheckbox'
-import { TablePaper } from './TablePaper'
 import { EditRowModal } from '../body/EditRowModal'
 import {
 	prepareColumns,
@@ -26,7 +28,6 @@ import {
 	showExpandColumn,
 	getColumnId,
 } from '../column.utils'
-import type { GroupingState, TableState } from '@tanstack/react-table'
 import type {
 	Table_Cell,
 	Table_Column,
@@ -40,8 +41,10 @@ import type {
 } from '..'
 import { getFlatGroupedRowModel } from '../utils/getFlatGroupedRowModel'
 
+import { TablePaper } from './TablePaper'
+
 export const TableRoot = <TData extends Record<string, any> = {}>(
-	props: TableComponentProps<TData> & { localization: Table_Localization },
+	props: TableComponentProps<TData> & { localization: Table_Localization }
 ) => {
 	const bottomToolbarRef = useRef<HTMLDivElement>(null)
 	const editInputRefs = useRef<Record<string, HTMLInputElement>>({})
@@ -57,11 +60,12 @@ export const TableRoot = <TData extends Record<string, any> = {}>(
 		initState.columnOrder =
 			initState.columnOrder ?? getDefaultColumnOrderIds(props)
 		initState.globalFilterFn = props.globalFilterFn ?? 'fuzzy'
+
 		return initState
-	}, [])
+	}, [props.initialState, props.globalFilterFn])
 
 	const [columnFilterFns, setColumnFilterFns] = useState<{
-		[key: string]: Table_FilterOption;
+		[key: string]: Table_FilterOption
 	}>(() =>
 		Object.assign(
 			{},
@@ -71,31 +75,29 @@ export const TableRoot = <TData extends Record<string, any> = {}>(
 						col.filterFn instanceof Function
 							? col.filterFn.name ?? 'custom'
 							: col.filterFn ??
-							initialState?.columnFilterFns?.[getColumnId(col)] ??
-							getDefaultColumnFilterFn(col),
-				}),
-			),
-		),
+							  initialState?.columnFilterFns?.[getColumnId(col)] ??
+							  getDefaultColumnFilterFn(col),
+				})
+			)
+		)
 	)
-	const [columnOrder, setColumnOrder] = useState(
-		initialState.columnOrder ?? [],
-	)
+	const [columnOrder, setColumnOrder] = useState(initialState.columnOrder ?? [])
 	const [draggingColumn, setDraggingColumn] =
 		useState<Table_Column<TData> | null>(initialState.draggingColumn ?? null)
 	const [draggingRow, setDraggingRow] = useState<Table_Row<TData> | null>(
-		initialState.draggingRow ?? null,
+		initialState.draggingRow ?? null
 	)
 	const [editingCell, setEditingCell] = useState<Table_Cell<TData> | null>(
-		initialState.editingCell ?? null,
+		initialState.editingCell ?? null
 	)
 	const [editingRow, setEditingRow] = useState<Table_Row<TData> | null>(
-		initialState.editingRow ?? null,
+		initialState.editingRow ?? null
 	)
 	const [globalFilterFn, setGlobalFilterFn] = useState<Table_FilterOption>(
-		initialState.globalFilterFn ?? 'fuzzy',
+		initialState.globalFilterFn ?? 'fuzzy'
 	)
 	const [grouping, setGrouping] = useState<GroupingState>(
-		initialState.grouping ?? [],
+		initialState.grouping ?? []
 	)
 	const [hoveredColumn, setHoveredColumn] = useState<
 		Table_Column<TData> | { id: string } | null
@@ -104,19 +106,19 @@ export const TableRoot = <TData extends Record<string, any> = {}>(
 		Table_Row<TData> | { id: string } | null
 	>(initialState.hoveredRow ?? null)
 	const [isFullScreen, setIsFullScreen] = useState(
-		initialState?.isFullScreen ?? false,
+		initialState?.isFullScreen ?? false
 	)
 	const [showAlertBanner, setShowAlertBanner] = useState(
-		props.initialState?.showAlertBanner ?? false,
+		props.initialState?.showAlertBanner ?? false
 	)
 	const [showColumnFilters, setShowFilters] = useState(
-		initialState?.showColumnFilters ?? false,
+		initialState?.showColumnFilters ?? false
 	)
 	const [showGlobalFilter, setShowGlobalFilter] = useState(
-		initialState?.showGlobalFilter ?? false,
+		initialState?.showGlobalFilter ?? false
 	)
 	const [showToolbarDropZone, setShowToolbarDropZone] = useState(
-		initialState?.showToolbarDropZone ?? false,
+		initialState?.showToolbarDropZone ?? false
 	)
 
 	const displayColumns = useMemo(
@@ -145,26 +147,26 @@ export const TableRoot = <TData extends Record<string, any> = {}>(
 						id: 'mrt-row-actions',
 					},
 					columnOrder.includes('mrt-row-expand') &&
-					showExpandColumn(props) && {
-						Cell: ({ row }) => (
-							<ExpandButton row={row as any} table={table as any}/>
-						),
-						Header: props.enableExpandAll
-							? () => <ExpandAllButton table={table as any}/>
-							: null,
-						header: props.localization.expand,
-						size: 60,
-						...props.defaultDisplayColumn,
-						...props.displayColumnDefOptions?.['mrt-row-expand'],
-						id: 'mrt-row-expand',
-					},
+						showExpandColumn(props) && {
+							Cell: ({ row }) => (
+								<ExpandButton row={row as any} table={table as any} />
+							),
+							Header: props.enableExpandAll
+								? () => <ExpandAllButton table={table as any} />
+								: null,
+							header: props.localization.expand,
+							size: 60,
+							...props.defaultDisplayColumn,
+							...props.displayColumnDefOptions?.['mrt-row-expand'],
+							id: 'mrt-row-expand',
+						},
 					columnOrder.includes('mrt-row-select') && {
 						Cell: ({ row }) => (
-							<SelectCheckbox row={row as any} table={table as any}/>
+							<SelectCheckbox row={row as any} table={table as any} />
 						),
 						Header:
 							props.enableSelectAll && props.enableMultiRowSelection
-								? () => <SelectCheckbox selectAll table={table as any}/>
+								? () => <SelectCheckbox selectAll table={table as any} />
 								: null,
 						header: props.localization.select,
 						size: 60,
@@ -204,7 +206,7 @@ export const TableRoot = <TData extends Record<string, any> = {}>(
 			props.localization,
 			props.positionActionsColumn,
 			props.renderDetailPanel,
-		],
+		]
 	)
 
 	const columnDefs = useMemo(
@@ -222,7 +224,7 @@ export const TableRoot = <TData extends Record<string, any> = {}>(
 			displayColumns,
 			props.columns,
 			props.state?.columnFilterFns,
-		],
+		]
 	)
 
 	const data: TData[] = useMemo(
@@ -230,52 +232,54 @@ export const TableRoot = <TData extends Record<string, any> = {}>(
 			(props.state?.isLoading || props.state?.showSkeletons) &&
 			!props.data.length
 				? [
-					...Array(
-						props.state?.pagination?.pageSize ||
-						initialState?.pagination?.pageSize ||
-						10,
-					).fill(null),
-				].map(() =>
-					Object.assign(
-						{},
-						...getAllLeafColumnDefs(props.columns).map(
-							(col) => ({
+						...Array(
+							props.state?.pagination?.pageSize ||
+								initialState?.pagination?.pageSize ||
+								10
+						).fill(null),
+				  ].map(() =>
+						Object.assign(
+							{},
+							...getAllLeafColumnDefs(props.columns).map((col) => ({
 								[getColumnId(col)]: null,
-							}),
-						),
-					),
-				)
+							}))
+						)
+				  )
 				: props.data,
-		[props.data, props.state?.isLoading, props.state?.showSkeletons],
+		[props.data, props.state?.isLoading, props.state?.showSkeletons]
 	)
 
 	const setFlatGrouping = useCallback((setter) => {
 		const setColumnSizings = (grouping) => {
-			const newSizes = grouping
-        .slice(0, grouping.length - 1)
-        .reduce((acc, columnId) => ({
-          ...acc,
-          [columnId]: 1
-        }), {})
+			const newSizes = grouping.slice(0, grouping.length - 1).reduce(
+				(acc, columnId) => ({
+					...acc,
+					[columnId]: 1,
+				}),
+				{}
+			)
 
 			table.setColumnSizing((oldSizes) =>
-					Object
-            .entries(oldSizes)
-            .reduce((acc, [columnId, size]) => ({
-              [columnId]: size === 1 ? undefined : size,
-              ...acc,
-            }), newSizes)
+				Object.entries(oldSizes).reduce(
+					(acc, [columnId, size]) => ({
+						[columnId]: size === 1 ? undefined : size,
+						...acc,
+					}),
+					newSizes
+				)
 			)
 		}
 
 		return setGrouping((old) => {
-      const newGrouping = setter(old)
+			const newGrouping = setter(old)
 			setColumnSizings(newGrouping)
+
 			return newGrouping
 		})
 	}, [])
 
-	//@ts-ignore
+	// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+	// @ts-ignore
 	const table = {
 		...useReactTable({
 			getCoreRowModel: getCoreRowModel(),
@@ -293,7 +297,8 @@ export const TableRoot = <TData extends Record<string, any> = {}>(
 				: setFlatGrouping,
 			getSubRows: (row) => row?.subRows,
 			...props,
-			//@ts-ignore
+			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+			// @ts-ignore
 			columns: columnDefs,
 			data,
 			globalFilterFn:
@@ -366,6 +371,7 @@ export const TableRoot = <TData extends Record<string, any> = {}>(
 				document.body.style.height = initialBodyHeight.current as string
 			}
 		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [table.getState().isFullScreen])
 
 	return (
@@ -380,13 +386,11 @@ export const TableRoot = <TData extends Record<string, any> = {}>(
 				open={table.getState().isFullScreen}
 				transitionDuration={400}
 			>
-				<TablePaper table={table as any}/>
+				<TablePaper table={table as any} />
 			</Dialog>
-			{!table.getState().isFullScreen && (
-				<TablePaper table={table as any}/>
-			)}
+			{!table.getState().isFullScreen && <TablePaper table={table as any} />}
 			{editingRow && props.editingMode === 'modal' && (
-				<EditRowModal row={editingRow as any} table={table} open/>
+				<EditRowModal row={editingRow as any} table={table} open />
 			)}
 		</>
 	)

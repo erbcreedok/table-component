@@ -22,68 +22,91 @@ const ColoredGroupedCell: typeof GroupedCellBase = (props) => {
 	return <GroupedCellBase borderColor={getBorderColors(columnId, value)} {...props} />
 }
 
-const coloredCellProps = <TData, >(props: {
-	cell: Table_Cell<TData>;
-	column: Table_Column<TData>;
-	row: Table_Row<TData>;
-	table: TableInstance<TData>;
+const coloredCellProps = <TData extends Record<string, any> = {}>(props: {
+    cell: Table_Cell<TData>;
+    column: Table_Column<TData>;
+    row: Table_Row<TData>;
+    table: TableInstance<TData>;
 }): TableCellProps => {
-	const columnId = props.cell.column.id
-	const value = props.cell.getValue()
+    const columnId = props.cell.column.id;
+    const value = props.cell.getValue();
 
-	return {
-		sx: { backgroundColor: getBackgroundColors(columnId, value) },
-	}
-}
-export const getTeamMembersColumns = () => [
-	{
-		header: 'Team member',
-		accessorKey: 'member.id',
-		Cell: ({ row, column }) => {
-			const user = row.original.member
-			return (
-				<Flex center="y" gap="0.75rem" style={{ minWidth: column.getSize(), padding: '0 0.575rem' }} title={user.fullName}>
-					<Avatar sx={{ width: 24, height: 24 }} src={user.avatarUrl} alt={user.fullName} />
-					<Flex column style={{ overflow: 'hidden' }}>
-						<TextEllipsis style={{ fontSize: '0.875rem' }}>{user.fullName}</TextEllipsis>
-						<TextEllipsis style={{ color: '#6C6F80', fontSize: '0.75rem', fontWeight: '400' }}>{user.role}</TextEllipsis>
-					</Flex>
-				</Flex>
-			)
-		},
-		GroupedCell: ColoredGroupedCell,
-	},
-	{
-		header: 'Impact on the project',
-		accessorKey: 'impact',
-		GroupedCell: ColoredGroupedCell,
-		Header: HeaderBase,
-		muiTableBodyCellProps: coloredCellProps,
-	},
-	{
-		header: 'Performance',
-		accessorKey: 'performance',
-		GroupedCell: ColoredGroupedCell,
-		Header: HeaderBase,
-		muiTableBodyCellProps: coloredCellProps,
-	},
-	{
-		header: 'Risk of leaving',
-		accessorKey: 'riskOfLeaving',
-		GroupedCell: ColoredGroupedCell,
-		Header: HeaderBase,
-		muiTableBodyCellProps: coloredCellProps,
-	},
-	{
-		header: 'Succession status',
-		accessorKey: 'successionStatus',
-		GroupedCell: ColoredGroupedCell,
-		Header: HeaderBase,
-	},
-	{
-		header: 'Location',
-		accessorKey: 'location',
-		GroupedCell: ColoredGroupedCell,
-		Header: HeaderBase,
-	}
-] as Table_ColumnDef<TeamMember>[]
+    return {
+        sx: { backgroundColor: getBackgroundColors(columnId, value) },
+    };
+};
+export const getTeamMembersColumns = () =>
+    [
+        {
+            header: 'Team member',
+            accessorKey: 'member.id',
+            Cell: ({ row, column }) => {
+                const user = row.original.member;
+                return (
+                    <Flex
+                        center="y"
+                        gap="0.75rem"
+                        style={{ minWidth: column.getSize(), padding: '0 0.575rem' }}
+                        title={user.fullName}
+                    >
+                        <Avatar
+                            sx={{ width: 24, height: 24 }}
+                            src={user.avatarUrl}
+                            alt={user.fullName}
+                        />
+                        <Flex column style={{ overflow: 'hidden' }}>
+                            <TextEllipsis style={{ fontSize: '0.875rem' }}>
+                                {user.fullName}
+                            </TextEllipsis>
+                            <TextEllipsis
+                                style={{ color: '#6C6F80', fontSize: '0.75rem', fontWeight: '400' }}
+                            >
+                                {user.role}
+                            </TextEllipsis>
+                        </Flex>
+                    </Flex>
+                );
+            },
+            GroupedCell: ColoredGroupedCell,
+            enableHiding: false,
+            enableColumnOrdering: false,
+        },
+        {
+            header: 'Impact on the project',
+            accessorKey: 'impact',
+            GroupedCell: ColoredGroupedCell,
+            Header: HeaderBase,
+            muiTableBodyCellProps: coloredCellProps,
+            enableColumnOrdering: true,
+        },
+        {
+            header: 'Performance',
+            accessorKey: 'performance',
+            GroupedCell: ColoredGroupedCell,
+            Header: HeaderBase,
+            muiTableBodyCellProps: coloredCellProps,
+            enableColumnOrdering: true,
+        },
+        {
+            header: 'Risk of leaving',
+            accessorKey: 'riskOfLeaving',
+            GroupedCell: ColoredGroupedCell,
+            Header: HeaderBase,
+            muiTableBodyCellProps: coloredCellProps,
+            enableColumnOrdering: true,
+        },
+        {
+            header: 'Succession status',
+            accessorKey: 'successionStatus',
+            GroupedCell: ColoredGroupedCell,
+            Header: HeaderBase,
+            enableColumnOrdering: true,
+        },
+        {
+            header: 'Location',
+            accessorKey: 'location',
+            GroupedCell: ColoredGroupedCell,
+            Header: HeaderBase,
+            enableColumnOrdering: true,
+        },
+    ] as Table_ColumnDef<TeamMember>[];

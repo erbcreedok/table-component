@@ -1,48 +1,47 @@
-import React from 'react';
-import Collapse from '@mui/material/Collapse';
-import LinearProgress from '@mui/material/LinearProgress';
-import type { TableInstance } from '..';
+import React from 'react'
+import Collapse from '@mui/material/Collapse'
+import LinearProgress from '@mui/material/LinearProgress'
 
-interface Props<TData extends Record<string, any> = {}> {
-  isTopToolbar: boolean;
-  table: TableInstance<TData>;
+import type { TableInstance } from '..'
+
+interface Props<TData extends Record<string, any> = object> {
+	isTopToolbar: boolean
+	table: TableInstance<TData>
 }
 
-export const LinearProgressBar = <
-  TData extends Record<string, any> = {},
-  >({
-      isTopToolbar,
-      table,
-    }: Props<TData>) => {
-  const {
-    options: { muiLinearProgressProps },
-    getState,
-  } = table;
-  const { isLoading, showProgressBars } = getState();
+export const LinearProgressBar = <TData extends Record<string, any> = object>({
+	isTopToolbar,
+	table,
+}: Props<TData>) => {
+	const {
+		options: { muiLinearProgressProps },
+		getState,
+	} = table
+	const { isLoading, showProgressBars } = getState()
 
-  const linearProgressProps =
-    muiLinearProgressProps instanceof Function
-      ? muiLinearProgressProps({ isTopToolbar, table })
-      : muiLinearProgressProps;
+	const linearProgressProps =
+		muiLinearProgressProps instanceof Function
+			? muiLinearProgressProps({ isTopToolbar, table })
+			: muiLinearProgressProps
 
-  return (
-    <Collapse
-      in={isLoading || showProgressBars}
-      mountOnEnter
-      unmountOnExit
-      sx={{
-        bottom: isTopToolbar ? 0 : undefined,
-        position: 'absolute',
-        top: !isTopToolbar ? 0 : undefined,
-        width: '100%',
-      }}
-    >
-      <LinearProgress
-        aria-label="Loading"
-        aria-busy="true"
-        sx={{ position: 'relative' }}
-        {...linearProgressProps}
-      />
-    </Collapse>
-  );
-};
+	return (
+		<Collapse
+			in={isLoading || showProgressBars}
+			mountOnEnter
+			unmountOnExit
+			sx={{
+				bottom: isTopToolbar ? 0 : undefined,
+				position: 'absolute',
+				top: !isTopToolbar ? 0 : undefined,
+				width: '100%',
+			}}
+		>
+			<LinearProgress
+				aria-label="Loading"
+				aria-busy="true"
+				sx={{ position: 'relative' }}
+				{...linearProgressProps}
+			/>
+		</Collapse>
+	)
+}

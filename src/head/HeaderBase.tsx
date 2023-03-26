@@ -1,5 +1,6 @@
 import styled from '@emotion/styled'
 import React from 'react'
+
 import { Table_Column, Table_Header, TableInstance } from '../TableComponent'
 
 const Box = styled('div')`
@@ -7,11 +8,17 @@ const Box = styled('div')`
 	text-overflow: ellipsis;
 	overflow: inherit;
 `
-type Props<TData> = {
-	column: Table_Column<TData>;
-	header: Table_Header<TData>;
-	table: TableInstance<TData>;
+type Props<TData extends Record<string, any>> = {
+	column: Table_Column<TData>
+	header: Table_Header<TData>
+	table: TableInstance<TData>
 }
-export const HeaderBase = <T,>({ column }: Props<T>) => {
-	return <Box style={{ minWidth: column.getSize() }} title={column.columnDef.header}>{column.columnDef.header}</Box>
+export const HeaderBase = <T extends Record<string, any>>({
+	column,
+}: Props<T>) => {
+	return (
+		<Box style={{ minWidth: column.getSize() }} title={column.columnDef.header}>
+			{column.columnDef.header}
+		</Box>
+	)
 }

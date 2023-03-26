@@ -1,7 +1,14 @@
 import { Table_Cell, TableInstance } from '../TableComponent'
+
 import { getIsFirstOfGroup } from './getIsFirstOfGroup'
 
-export const getGroupRowSpan = ({ table, cell }: { table: TableInstance; cell: Table_Cell }) => {
+export const getGroupRowSpan = ({
+	table,
+	cell,
+}: {
+	table: TableInstance
+	cell: Table_Cell
+}) => {
 	const { row, column } = cell
 	if (!column.getIsGrouped() || !getIsFirstOfGroup({ table, cell })) return 1
 	const rowId = row.id

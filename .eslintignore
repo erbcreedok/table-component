@@ -1,5 +1,11 @@
+build
+dist
+node_modules
+packages
+*.min.js
 /*.js
 /tests/*.ts
 /src/theme/color-names.ts
-README.md
-CHANGELOG.md
+/src/stories/**
+locales
+

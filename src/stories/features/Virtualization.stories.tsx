@@ -1,4 +1,3 @@
-import { AccessorColumnDef } from '@tanstack/react-table'
 import React from 'react';
 import { Meta, Story } from '@storybook/react';
 import TableComponent, {
@@ -12,7 +11,7 @@ const meta: Meta = {
 
 export default meta;
 
-const longColumns: AccessorColumnDef<{}>[] = [
+const longColumns = [
   {
     header: 'First Name',
     accessorKey: 'firstName',
@@ -72,7 +71,7 @@ const longColumns: AccessorColumnDef<{}>[] = [
     header: 'Pet Type',
     accessorKey: 'petType',
   },
-];
+]
 
 const longData = [...Array(500)].map(() => ({
   firstName: faker.name.firstName(),

@@ -9,6 +9,47 @@ Component is written in TypeScript.
 -   [Yerbol Syzdyk](https://telescope.epam.com/who/Yerbol_Syzdyk)
 -   [Siarhei Zanimonets](https://telescope.epam.com/who/Siarhei_Zanimonets)
 
+### Setup npm repository
+
+1. Generate **YOUR_PERSONAL_TOKEN**:
+
+    ```powershell
+    curl -u user_name@epam.com:your_personal_password https://artifactory.epam.com/artifactory/api/npm/auth
+    ```
+
+2. Create `.npmrc` file in `/next-app` and replace **YOUR_PERSONAL_TOKEN** to token from previous step:
+
+    ```
+    Optional: you can use common place to keep your .npmrc in user scope or global scope
+    ```
+
+   https://docs.npmjs.com/cli/v8/configuring-npm/npmrc#files
+
+    ```powershell
+    @core:registry=https://artifactory.epam.com/artifactory/api/npm/epm-dce-npm/
+    //artifactory.epam.com/artifactory/api/npm/epm-dce-npm/:always-auth=true
+    //artifactory.epam.com/artifactory/api/npm/epm-dce-npm/:_auth=YOUR_PERSONAL_TOKEN
+    @perf:registry=https://artifactory.epam.com/artifactory/api/npm/epm-dce-npm/
+    //artifactory.epam.com/artifactory/api/npm/epm-dce-npm/:always-auth=true
+    //artifactory.epam.com/artifactory/api/npm/epm-dce-npm/:_auth=YOUR_PERSONAL_TOKEN
+    @health:registry=https://artifactory.epam.com/artifactory/api/npm/epm-dce-npm/
+    //artifactory.epam.com/artifactory/api/npm/epm-dce-npm/:always-auth=true
+    //artifactory.epam.com/artifactory/api/npm/epm-dce-npm/:_auth=YOUR_PERSONAL_TOKEN
+    @projects:registry=https://artifactory.epam.com/artifactory/api/npm/EPM-PRJ-external-widgets/
+    //artifactory.epam.com/artifactory/api/npm/EPM-PRJ-external-widgets/:always-auth=true
+    //artifactory.epam.com/artifactory/api/npm/EPM-PRJ-external-widgets/:_auth=YOUR_PERSONAL_TOKEN
+    @teams:registry=https://artifactory.epam.com/artifactory/api/npm/EPM-DMTM-npm/
+    //artifactory.epam.com/artifactory/api/npm/EPM-DMTM-npm/:always-auth=true
+    //artifactory.epam.com/artifactory/api/npm/EPM-DMTM-npm/:_auth=YOUR_PERSONAL_TOKEN
+    @planner:registry=https://artifactory.epam.com/artifactory/api/npm/epm-dce-npm/
+    //artifactory.epam.com/artifactory/api/npm/epm-dce-npm/:always-auth=true
+    //artifactory.epam.com/artifactory/api/npm/epm-dce-npm/:_auth=YOUR_PERSONAL_TOKEN
+    @okr:registry=https://artifactory.epam.com/artifactory/api/npm/epm-dce-npm/
+    //artifactory.epam.com/artifactory/api/npm/epm-dce-npm/:always-auth=true
+    //artifactory.epam.com/artifactory/api/npm/epm-dce-npm/:_auth=YOUR_PERSONAL_TOKEN
+    ```
+
+
 ## USE IN PROJECTS
 
 ### INSTALL
