@@ -12,3 +12,4 @@ log/
 .rollup.cache/
 build/
 locales/
+storybook-static/

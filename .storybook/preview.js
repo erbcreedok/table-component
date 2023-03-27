@@ -24,6 +24,8 @@ export const parameters = {
     ],
   },
   controls: { expanded: true, sort: 'requiredFirst' },
+  darkMode: { current: 'light' },
+  options: { showPanel: false, },
 };
 
 const withThemeProvider = (Story, context) => {
