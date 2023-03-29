@@ -39,7 +39,6 @@ import type {
 	Table_TableState,
 	TableComponentProps,
 } from '..'
-import { getFlatGroupedRowModel } from '../utils/getFlatGroupedRowModel'
 
 import { TablePaper } from './TablePaper'
 
@@ -249,7 +248,7 @@ export const TableRoot = <TData extends Record<string, any> = {}>(
 		[props.data, props.state?.isLoading, props.state?.showSkeletons]
 	)
 
-	const setFlatGrouping = useCallback((setter) => {
+	const setMergedGrouping = useCallback((setter) => {
 		const setColumnSizings = (grouping) => {
 			const newSizes = grouping.slice(0, grouping.length - 1).reduce(
 				(acc, columnId) => ({
@@ -286,15 +285,13 @@ export const TableRoot = <TData extends Record<string, any> = {}>(
 			getExpandedRowModel: getExpandedRowModel(),
 			getFacetedRowModel: getFacetedRowModel(),
 			getFilteredRowModel: getFilteredRowModel(),
-			getGroupedRowModel: props.enableAggregationRow
-				? getGroupedRowModel()
-				: getFlatGroupedRowModel(props.groupsSorting),
+			getGroupedRowModel: getGroupedRowModel(),
 			getPaginationRowModel: getPaginationRowModel(),
 			getSortedRowModel: getSortedRowModel(),
 			onColumnOrderChange: setColumnOrder,
 			onGroupingChange: props.enableAggregationRow
 				? setGrouping
-				: setFlatGrouping,
+				: setMergedGrouping,
 			getSubRows: (row) => row?.subRows,
 			...props,
 			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -304,6 +301,7 @@ export const TableRoot = <TData extends Record<string, any> = {}>(
 			globalFilterFn:
 				props.filterFns?.[globalFilterFn] ?? props.filterFns?.fuzzy,
 			initialState: {
+				expanded: true,
 				...initialState,
 			},
 			state: {

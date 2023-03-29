@@ -50,7 +50,6 @@ import { Default_Icons, Table_Icons } from './icons'
 import { Table_SortingFns } from './sortingFns'
 import { TableRoot } from './table/TableRoot'
 import { Table_Localization_EN } from './_locales/en'
-import { SortFunctions } from './utils/getFlatGroupedRowModel'
 
 /**
  * Most of this file is just TypeScript types
@@ -199,6 +198,7 @@ export type TableInstance<TData extends Record<string, any> = {}> = Omit<
 		icons: Table_Icons
 		localization: Table_Localization
 		enableAggregationRow?: boolean
+		enableMergedGrouping?: boolean
 	}
 	refs: {
 		bottomToolbarRef: MutableRefObject<HTMLDivElement>
@@ -659,6 +659,7 @@ export type TableComponentProps<TData extends Record<string, any> = {}> = Omit<
 	}>
 	editingMode?: 'table' | 'modal' | 'row' | 'cell'
 	enableAggregationRow?: boolean
+	enableMergedGrouping?: boolean
 	enableBottomToolbar?: boolean
 	enableClickToCopy?: boolean
 	enableColumnActions?: boolean
@@ -694,7 +695,7 @@ export type TableComponentProps<TData extends Record<string, any> = {}> = Omit<
 	) => string
 	globalFilterFn?: Table_FilterOption
 	globalFilterModeOptions?: Table_FilterOption[] | null
-	groupsSorting?: SortFunctions
+	groupsSorting?: any
 	groupBorder?: string | { left: string; top: string }
 	icons?: Partial<Table_Icons>
 	initialState?: Partial<Table_TableState<TData>>

@@ -17,10 +17,9 @@ import { ExpandButton } from '../buttons/ExpandButton'
 import { EditCellTextField } from '../inputs/EditCellTextField'
 import { CopyButton } from '../buttons/CopyButton'
 import { getGroupBorders } from '../utils/getGroupBorders'
-import { getGroupRowSpan } from '../utils/getGroupRowSpan'
-import { getIsFirstOfGroup } from '../utils/getIsFirstOfGroup'
 import { getCommonCellStyles } from '../column.utils'
 import type { Table_Cell, TableInstance } from '..'
+import { getVisibleLeafRows } from '../utils/getVisibleLeafRows'
 
 import { TableBodyRowGrabHandle } from './TableBodyRowGrabHandle'
 import { TableBodyCellValue } from './TableBodyCellValue'
@@ -176,17 +175,23 @@ export const TableBodyCell: FC<Props> = ({
 		}
 	}
 
-	const isFirstOfGroup = getIsFirstOfGroup({ table, cell })
+	if (!enableAggregationRow && row.getIsGrouped() && !cell.getIsGrouped()) {
+		return null
+	}
+	if (!enableAggregationRow && !row.getIsGrouped() && column.getIsGrouped()) {
+		return null
+	}
+	const isGroupedCell =
+		!enableAggregationRow && row.getIsGrouped() && cell.getIsGrouped()
 
-	if (!enableAggregationRow && row.getIsGrouped()) {
-		return null
-	}
-	if (!enableAggregationRow && !isFirstOfGroup) {
-		return null
-	}
+	const rowSpan =
+		!enableAggregationRow && row.getIsGrouped()
+			? getVisibleLeafRows(row, table).length
+			: 1
 
 	return (
 		<MuiTableCell
+			rowSpan={rowSpan}
 			data-index={virtualCell?.index}
 			ref={(node: HTMLTableCellElement) => {
 				if (node) {
@@ -196,17 +201,18 @@ export const TableBodyCell: FC<Props> = ({
 			{...tableCellProps}
 			onDragEnter={handleDragEnter}
 			onDoubleClick={handleDoubleClick}
-			rowSpan={
-				!enableAggregationRow ? getGroupRowSpan({ table, cell }) : undefined
-			}
 			sx={(theme) => ({
 				alignItems: layoutMode === 'grid' ? 'center' : undefined,
 				cursor: isEditable && editingMode === 'cell' ? 'pointer' : 'inherit',
-				height: '1px',
+				height: columnDefType === 'display' ? '1px' : '48px',
+				boxSizing: 'border-box',
 				overflow: 'hidden',
-				verticalAlign: 'top',
+				verticalAlign: 'middle',
 				position: 'relative',
-				p: columnDefType === 'display' ? '0.5rem 0.75rem' : '1rem',
+				p:
+					columnDefType === 'display' || isGroupedCell
+						? '0.5rem 0.75rem'
+						: '0rem',
 				px: columnDefType === 'display' ? '0.5rem 0.75rem' : '0.75rem',
 				pl:
 					column.id === 'mrt-row-expand' ? `${row.depth + 0.75}rem` : undefined,

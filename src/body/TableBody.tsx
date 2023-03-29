@@ -103,7 +103,7 @@ export const TableBody: FC<Props> = ({
 		? // eslint-disable-next-line react-hooks/rules-of-hooks
 		  useVirtualizer({
 				count: rows.length,
-				estimateSize: () => 58,
+				estimateSize: () => 48,
 				getScrollElement: () => tableContainerRef.current,
 				measureElement: (element) => element?.getBoundingClientRect().height,
 				overscan: 4,

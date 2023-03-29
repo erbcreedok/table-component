@@ -40,7 +40,7 @@ const getCellBorders = ({ cell, table }: CellProps) => {
 		borders.borderLeft = borderLeft
 	}
 	if (
-		index > 0 &&
+		index > grouping.length &&
 		grouping.some((columnId) => getIsFirstOfGroup({ table, cell, columnId }))
 	) {
 		borders.borderTop = borderTop

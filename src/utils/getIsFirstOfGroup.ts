@@ -1,3 +1,5 @@
+import { Row } from '@tanstack/react-table'
+
 import { Table_Cell, TableInstance } from '../TableComponent'
 
 export const getIsFirstOfGroup = ({
@@ -13,15 +15,30 @@ export const getIsFirstOfGroup = ({
 	const colId = columnId ?? cell.column.id
 	const column = table.getColumn(colId)
 
-	if (!column.getIsGrouped()) return true
+	if (row.getIsGrouped() || !column.getIsGrouped()) return true
 
 	const rowId = row.id
-	const rows = table.getPaginationRowModel().rows
-	const index = rows.findIndex((r) => r.id === rowId)
+	const paginationRows = table.getPaginationRowModel().rows
+	let index = paginationRows.findIndex((r) => r.id === rowId)
 
 	if (index === 0) return true
-	const currentValue = rows[index].getValue(colId)
-	const previousValue = rows[index - 1].getValue(colId)
+	const groupedRows = table.getGroupedRowModel().rows
+	const recursivelyFindIndexInGroupedRows = (
+		rows: Row<any>[],
+		rowId: string
+	) => {
+		const index = rows.findIndex((r) => r.id === rowId)
+		if (index !== -1) return index
+		for (const row of rows) {
+			if (row.subRows) {
+				const index = recursivelyFindIndexInGroupedRows(row.subRows, rowId)
+				if (index !== -1) return index
+			}
+		}
 
-	return currentValue !== previousValue
+		return -1
+	}
+	index = recursivelyFindIndexInGroupedRows(groupedRows, rowId)
+
+	return index === 0
 }
