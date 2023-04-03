@@ -29,6 +29,9 @@ import ViewColumnIcon from '@mui/icons-material/ViewColumn'
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff'
 
 import { GroupIcon } from './TableToolbar/components/icons/GroupIcon'
+import { HideIcon } from './TableToolbar/components/icons/HideIcon'
+import { SortAscIcon } from './TableToolbar/components/icons/SortAscIcon'
+import { SortDescIcon } from './TableToolbar/components/icons/SortDescIcon'
 import { SortIcon } from './TableToolbar/components/icons/SortIcon'
 import { FiltersIcon } from './TableToolbar/components/icons/FiltersIcon'
 import { SettingsIcon } from './TableToolbar/components/icons/SettingsIcon'
@@ -54,6 +57,7 @@ export interface Table_Icons {
 	FullscreenExitIcon: any
 	FullscreenIcon: any
 	GroupIcon: any
+	HideIcon: any
 	MoreHorizIcon: any
 	MoreVertIcon: any
 	PushPinIcon: any
@@ -62,6 +66,8 @@ export interface Table_Icons {
 	SearchIcon: any
 	SearchOffIcon: any
 	SortIcon: any
+	SortAscIcon: any
+	SortDescIcon: any
 	ViewColumnIcon: any
 	VisibilityOffIcon: any
 	FiltersIcon: any
@@ -96,9 +102,12 @@ export const Default_Icons: Table_Icons = {
 	SearchIcon,
 	SearchOffIcon,
 	SortIcon,
+	SortAscIcon,
+	SortDescIcon,
 	ViewColumnIcon,
 	VisibilityOffIcon,
 	GroupIcon,
 	FiltersIcon,
 	SettingsIcon,
+	HideIcon,
 }

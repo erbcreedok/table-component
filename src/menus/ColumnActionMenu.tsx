@@ -52,13 +52,14 @@ export const ColumnActionMenu: FC<Props> = ({
 				ArrowRightIcon,
 				ClearAllIcon,
 				ViewColumnIcon,
-				DynamicFeedIcon,
-				FilterListIcon,
+				FiltersIcon,
 				FilterListOffIcon,
+				GroupIcon,
 				PushPinIcon,
-				SortIcon,
+				SortAscIcon,
+				SortDescIcon,
 				RestartAltIcon,
-				VisibilityOffIcon,
+				HideIcon,
 			},
 			localization,
 			renderColumnActionsMenuItems,
@@ -168,20 +169,22 @@ export const ColumnActionMenu: FC<Props> = ({
 					table,
 				}) ??
 				(enableSorting &&
-					column.getCanSort() && [
-						<MenuItem
-							disabled={!column.getIsSorted()}
-							key={0}
-							onClick={handleClearSort}
-							sx={commonMenuItemStyles}
-						>
-							<Box sx={commonListItemStyles}>
-								<ListItemIcon>
-									<ClearAllIcon />
-								</ListItemIcon>
-								{localization.clearSort}
-							</Box>
-						</MenuItem>,
+					column.getCanSort() &&
+					[
+						column.getIsSorted() && (
+							<MenuItem
+								key={0}
+								onClick={handleClearSort}
+								sx={commonMenuItemStyles}
+							>
+								<Box sx={commonListItemStyles}>
+									<ListItemIcon>
+										<ClearAllIcon />
+									</ListItemIcon>
+									{localization.clearSort}
+								</Box>
+							</MenuItem>
+						),
 						<MenuItem
 							disabled={column.getIsSorted() === 'asc'}
 							key={1}
@@ -190,14 +193,9 @@ export const ColumnActionMenu: FC<Props> = ({
 						>
 							<Box sx={commonListItemStyles}>
 								<ListItemIcon>
-									<SortIcon
-										style={{ transform: 'rotate(180deg) scaleX(-1)' }}
-									/>
+									<SortAscIcon />
 								</ListItemIcon>
-								{localization.sortByColumnAsc?.replace(
-									'{column}',
-									String(columnDef.header)
-								)}
+								{localization.sortAsc}
 							</Box>
 						</MenuItem>,
 						<MenuItem
@@ -209,57 +207,52 @@ export const ColumnActionMenu: FC<Props> = ({
 						>
 							<Box sx={commonListItemStyles}>
 								<ListItemIcon>
-									<SortIcon />
+									<SortDescIcon />
 								</ListItemIcon>
-								{localization.sortByColumnDesc?.replace(
-									'{column}',
-									String(columnDef.header)
-								)}
+								{localization.sortDesc}
 							</Box>
 						</MenuItem>,
-					])}
+					].filter(Boolean))}
 			{enableColumnFilters &&
 				column.getCanFilter() &&
 				[
-					<MenuItem
-						disabled={!column.getFilterValue()}
-						key={0}
-						onClick={handleClearFilter}
-						sx={commonMenuItemStyles}
-					>
-						<Box sx={commonListItemStyles}>
-							<ListItemIcon>
-								<FilterListOffIcon />
-							</ListItemIcon>
-							{localization.clearFilter}
-						</Box>
-					</MenuItem>,
-					<MenuItem
-						divider={enableGrouping || enableHiding}
-						key={1}
-						onClick={handleFilterByColumn}
-						sx={commonMenuItemStyles}
-					>
-						<Box sx={commonListItemStyles}>
-							<ListItemIcon>
-								<FilterListIcon />
-							</ListItemIcon>
-							{localization.filterByColumn?.replace(
-								'{column}',
-								String(columnDef.header)
+					column.getFilterValue() ? (
+						<MenuItem
+							key={0}
+							onClick={handleClearFilter}
+							sx={commonMenuItemStyles}
+						>
+							<Box sx={commonListItemStyles}>
+								<ListItemIcon>
+									<FilterListOffIcon />
+								</ListItemIcon>
+								{localization.clearFilter}
+							</Box>
+						</MenuItem>
+					) : (
+						<MenuItem
+							key={1}
+							onClick={handleFilterByColumn}
+							sx={commonMenuItemStyles}
+						>
+							<Box sx={commonListItemStyles}>
+								<ListItemIcon>
+									<FiltersIcon />
+								</ListItemIcon>
+								{localization.filter}
+							</Box>
+							{showFilterModeSubMenu && (
+								<IconButton
+									onClick={handleOpenFilterModeMenu}
+									onMouseEnter={handleOpenFilterModeMenu}
+									size="small"
+									sx={{ p: 0 }}
+								>
+									<ArrowRightIcon />
+								</IconButton>
 							)}
-						</Box>
-						{showFilterModeSubMenu && (
-							<IconButton
-								onClick={handleOpenFilterModeMenu}
-								onMouseEnter={handleOpenFilterModeMenu}
-								size="small"
-								sx={{ p: 0 }}
-							>
-								<ArrowRightIcon />
-							</IconButton>
-						)}
-					</MenuItem>,
+						</MenuItem>
+					),
 					showFilterModeSubMenu && (
 						<FilterOptionMenu
 							anchorEl={filterMenuAnchorEl}
@@ -274,18 +267,16 @@ export const ColumnActionMenu: FC<Props> = ({
 			{enableGrouping &&
 				column.getCanGroup() && [
 					<MenuItem
-						divider={enablePinning}
+						divider={enableHiding}
 						key={0}
 						onClick={handleGroupByColumn}
 						sx={commonMenuItemStyles}
 					>
 						<Box sx={commonListItemStyles}>
-							<ListItemIcon>
-								<DynamicFeedIcon />
+							<ListItemIcon sx={{ pl: '4px' }}>
+								<GroupIcon />
 							</ListItemIcon>
-							{localization[
-								column.getIsGrouped() ? 'ungroupByColumn' : 'groupByColumn'
-							]?.replace('{column}', String(columnDef.header))}
+							{localization[column.getIsGrouped() ? 'ungroup' : 'groupBy']}
 						</Box>
 					</MenuItem>,
 				]}
@@ -356,13 +347,10 @@ export const ColumnActionMenu: FC<Props> = ({
 					sx={commonMenuItemStyles}
 				>
 					<Box sx={commonListItemStyles}>
-						<ListItemIcon>
-							<VisibilityOffIcon />
+						<ListItemIcon sx={{ pl: '4px' }}>
+							<HideIcon />
 						</ListItemIcon>
-						{localization.hideColumn?.replace(
-							'{column}',
-							String(columnDef.header)
-						)}
+						{localization.hideInView}
 					</Box>
 				</MenuItem>,
 				<MenuItem

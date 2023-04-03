@@ -1,3 +1,4 @@
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 import React, { DragEvent, FC, ReactNode, useMemo } from 'react'
 import Box from '@mui/material/Box'
 import TableCell from '@mui/material/TableCell'
@@ -8,7 +9,7 @@ import { getGroupBorders } from '../utils/getGroupBorders'
 import { getCommonCellStyles } from '../column.utils'
 import type { Table_Header, TableInstance } from '..'
 
-import { TableHeadCellColumnActionsButton } from './TableHeadCellColumnActionsButton'
+import { TableHeadCellActionsButton } from './TableHeadCellActionsButton'
 import { TableHeadCellFilterContainer } from './TableHeadCellFilterContainer'
 import { TableHeadCellFilterLabel } from './TableHeadCellFilterLabel'
 import { TableHeadCellGrabHandle } from './TableHeadCellGrabHandle'
@@ -117,145 +118,152 @@ export const TableHeadCell: FC<Props> = ({ header, table }) => {
 			: columnDef?.Header ?? (columnDef.header as ReactNode)
 
 	return (
-		<TableHeadCellColumnActionsButton
-			header={header}
-			table={table}
-			disabled={!showColumnActions}
+		<TableCell
+			align={columnDefType === 'group' ? 'center' : 'left'}
+			colSpan={header.colSpan}
+			onDragEnter={handleDragEnter}
+			ref={(node: HTMLTableCellElement) => {
+				if (node) {
+					tableHeadCellRefs.current[column.id] = node
+				}
+			}}
+			{...tableCellProps}
+			sx={(theme: Theme) => ({
+				boxSizing: 'border-box',
+				fontSize: theme.typography.subtitle2.fontSize,
+				flexDirection: layoutMode === 'grid' ? 'column' : undefined,
+				fontWeight: 'bold',
+				height: '48px',
+				overflow: 'visible',
+				p: '0.75rem',
+				pb: columnDefType === 'display' ? 0 : '0.25rem',
+				pt: '0.25rem',
+				userSelect: enableMultiSort && column.getCanSort() ? 'none' : undefined,
+				verticalAlign: 'middle',
+				textTransform: uppercaseHeader && 'uppercase',
+				zIndex:
+					column.getIsResizing() || draggingColumn?.id === column.id
+						? 3
+						: column.getIsPinned() && columnDefType !== 'group'
+						? 2
+						: 1,
+				...getGroupBorders({ header, table }),
+				...getCommonCellStyles({
+					column,
+					header,
+					table,
+					tableCellProps,
+					theme,
+				}),
+				backgroundColor: '#FAFAFC',
+				...draggingBorders,
+			})}
 		>
-			{(props) => (
-				<TableCell
-					align={columnDefType === 'group' ? 'center' : 'left'}
-					colSpan={header.colSpan}
-					onDragEnter={handleDragEnter}
-					ref={(node: HTMLTableCellElement) => {
-						if (node) {
-							tableHeadCellRefs.current[column.id] = node
-						}
+			{header.isPlaceholder ? null : (
+				<Box
+					className="Mui-TableHeadCell-Content"
+					sx={{
+						alignItems: 'flex-start',
+						display: 'flex',
+						flexDirection:
+							tableCellProps?.align === 'right' ? 'row-reverse' : 'row',
+						justifyContent:
+							columnDefType === 'group' || tableCellProps?.align === 'center'
+								? 'center'
+								: column.getCanResize()
+								? 'space-between'
+								: 'flex-start',
+						position: 'relative',
+						width: '100%',
 					}}
-					{...tableCellProps}
-					sx={(theme: Theme) => ({
-						fontSize: theme.typography.subtitle2.fontSize,
-						flexDirection: layoutMode === 'grid' ? 'column' : undefined,
-						fontWeight: 'bold',
-						overflow: 'visible',
-						p: '0.75rem',
-						pb: columnDefType === 'display' ? 0 : '1rem',
-						pt: columnDefType === 'group' ? '0.25rem' : '1rem',
-						userSelect:
-							enableMultiSort && column.getCanSort() ? 'none' : undefined,
-						verticalAlign: 'top',
-						textTransform: uppercaseHeader && 'uppercase',
-						zIndex:
-							column.getIsResizing() || draggingColumn?.id === column.id
-								? 3
-								: column.getIsPinned() && columnDefType !== 'group'
-								? 2
-								: 1,
-						...getGroupBorders({ header, table }),
-						...getCommonCellStyles({
-							column,
-							header,
-							table,
-							tableCellProps,
-							theme,
-						}),
-						backgroundColor: '#FAFAFC',
-						...draggingBorders,
-					})}
-					{...props}
 				>
-					{header.isPlaceholder ? null : (
+					<Box
+						className="Mui-TableHeadCell-Content-Labels"
+						sx={{
+							gap: '0.5rem',
+							alignItems: 'center',
+							cursor:
+								column.getCanSort() && columnDefType !== 'group'
+									? 'pointer'
+									: undefined,
+							display: 'flex',
+							flexGrow: 1,
+							flexDirection:
+								tableCellProps?.align === 'right' ? 'row-reverse' : 'row',
+							overflow: columnDefType === 'data' ? 'hidden' : undefined,
+							pl:
+								tableCellProps?.align === 'center'
+									? `${headerPL}rem`
+									: undefined,
+						}}
+					>
 						<Box
-							className="Mui-TableHeadCell-Content"
+							className="Mui-TableHeadCell-Content-Wrapper"
 							sx={{
-								alignItems: 'flex-start',
-								display: 'flex',
-								flexDirection:
-									tableCellProps?.align === 'right' ? 'row-reverse' : 'row',
-								justifyContent:
-									columnDefType === 'group' ||
-									tableCellProps?.align === 'center'
-										? 'center'
-										: column.getCanResize()
-										? 'space-between'
-										: 'flex-start',
-								position: 'relative',
-								width: '100%',
+								overflow: columnDefType === 'data' ? 'hidden' : undefined,
+								textOverflow: 'ellipsis',
+								whiteSpace:
+									(columnDef.header?.length ?? 0) < 20 ? 'nowrap' : 'normal',
+								flexGrow: 1,
 							}}
+							title={columnDefType === 'data' ? columnDef.header : undefined}
 						>
-							<Box
-								className="Mui-TableHeadCell-Content-Labels"
-								sx={{
-									alignItems: 'center',
-									cursor:
-										column.getCanSort() && columnDefType !== 'group'
-											? 'pointer'
-											: undefined,
-									display: 'flex',
-									flexGrow: 1,
-									flexDirection:
-										tableCellProps?.align === 'right' ? 'row-reverse' : 'row',
-									overflow: columnDefType === 'data' ? 'hidden' : undefined,
-									pl:
-										tableCellProps?.align === 'center'
-											? `${headerPL}rem`
-											: undefined,
-								}}
+							{headerElement}
+						</Box>
+						{column.getIsSorted() && (
+							<TableHeadCellSortLabel
+								header={header}
+								table={table}
+								tableCellProps={tableCellProps}
+							/>
+						)}
+						{column.getCanFilter() && (
+							<TableHeadCellFilterLabel header={header} table={table} />
+						)}
+						{showColumnActions && (
+							<TableHeadCellActionsButton
+								header={header}
+								table={table}
+								disabled={!showColumnActions}
 							>
-								<Box
-									className="Mui-TableHeadCell-Content-Wrapper"
-									sx={{
-										overflow: columnDefType === 'data' ? 'hidden' : undefined,
-										textOverflow: 'ellipsis',
-										whiteSpace:
-											(columnDef.header?.length ?? 0) < 20
-												? 'nowrap'
-												: 'normal',
-										flexGrow: 1,
-									}}
-									title={
-										columnDefType === 'data' ? columnDef.header : undefined
-									}
-								>
-									{headerElement}
-								</Box>
-								{column.getIsSorted() && (
-									<TableHeadCellSortLabel
-										header={header}
-										table={table}
-										tableCellProps={tableCellProps}
+								{(props) => (
+									<ExpandMoreIcon
+										sx={{
+											opacity: 0,
+											'th:hover &': { opacity: 1 },
+											color: '#6C6F80',
+										}}
+										height={12}
+										{...props}
 									/>
 								)}
-								{column.getCanFilter() && (
-									<TableHeadCellFilterLabel header={header} table={table} />
-								)}
-							</Box>
-							{columnDefType !== 'group' && (
-								<Box
-									className="Mui-TableHeadCell-Content-Actions"
-									sx={{ whiteSpace: 'nowrap' }}
-								>
-									{showDragHandle && (
-										<TableHeadCellGrabHandle
-											column={column}
-											table={table}
-											tableHeadCellRef={{
-												current: tableHeadCellRefs.current[column.id],
-											}}
-										/>
-									)}
-								</Box>
-							)}
-							{column.getCanResize() && (
-								<TableHeadCellResizeHandle header={header} table={table} />
+							</TableHeadCellActionsButton>
+						)}
+					</Box>
+					{columnDefType !== 'group' && (
+						<Box
+							className="Mui-TableHeadCell-Content-Actions"
+							sx={{ whiteSpace: 'nowrap' }}
+						>
+							{showDragHandle && (
+								<TableHeadCellGrabHandle
+									column={column}
+									table={table}
+									tableHeadCellRef={{
+										current: tableHeadCellRefs.current[column.id],
+									}}
+								/>
 							)}
 						</Box>
 					)}
-					{column.getCanFilter() && (
-						<TableHeadCellFilterContainer header={header} table={table} />
+					{column.getCanResize() && (
+						<TableHeadCellResizeHandle header={header} table={table} />
 					)}
-				</TableCell>
+				</Box>
 			)}
-		</TableHeadCellColumnActionsButton>
+			{column.getCanFilter() && (
+				<TableHeadCellFilterContainer header={header} table={table} />
+			)}
+		</TableCell>
 	)
 }

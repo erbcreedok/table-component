@@ -40,13 +40,13 @@ export const getTeamMembersColumns = () =>
         {
             header: 'Team member',
             accessorKey: 'member.id',
-            Cell: ({ row, column }) => {
+            Cell: ({ row }) => {
                 const user = row.original.member;
                 return (
                     <Flex
                         center="y"
                         gap="0.75rem"
-                        style={{ minWidth: column.getSize(), padding: '0 0.575rem' }}
+                        style={{ minWidth: '100%', padding: '0 0.575rem' }}
                         title={user.fullName}
                     >
                         <Avatar

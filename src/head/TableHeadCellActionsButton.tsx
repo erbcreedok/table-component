@@ -18,7 +18,7 @@ type Props = {
 	children(props: { onClick: MouseEventHandler }): ReactNode
 }
 
-export const TableHeadCellColumnActionsButton: FC<Props> = ({
+export const TableHeadCellActionsButton: FC<Props> = ({
 	header,
 	table,
 	children,

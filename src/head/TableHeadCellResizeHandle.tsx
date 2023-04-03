@@ -30,8 +30,12 @@ export const TableHeadCellResizeHandle: FC<Props> = ({ header, table }) => {
 				position: 'absolute',
 				right: '1px',
 				px: '4px',
+				opacity: column.getIsResizing() ? 1 : 0,
 				'&:active > hr': {
 					backgroundColor: theme.palette.info.main,
+					opacity: 1,
+				},
+				'td:hover &, th:hover &, &:hover': {
 					opacity: 1,
 				},
 			})}

@@ -75,6 +75,7 @@ export interface Table_Localization {
 	edit: string
 	expand: string
 	expandAll: string
+	filter: string
 	filterArrIncludes: string
 	filterArrIncludesAll: string
 	filterArrIncludesSome: string
@@ -105,10 +106,12 @@ export interface Table_Localization {
 	goToNextPage: string
 	goToPreviousPage: string
 	grab: string
+	groupBy: string
 	groupByColumn: string
 	groupedBy: string
 	hideAll: string
 	hideColumn: string
+	hideInView: string
 	max: string
 	min: string
 	move: string
@@ -138,6 +141,8 @@ export interface Table_Localization {
 	showHideSearch: string
 	showSettings: string
 	showPreset: string
+	sortAsc: string
+	sortDesc: string
 	sortByColumnAsc: string
 	sortByColumnDesc: string
 	sortedByColumnAsc: string
@@ -148,6 +153,7 @@ export interface Table_Localization {
 	toggleSelectAll: string
 	toggleSelectRow: string
 	toggleVisibility: string
+	ungroup: string
 	ungroupByColumn: string
 	unpin: string
 	unpinAll: string

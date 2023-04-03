@@ -41,7 +41,7 @@
         },
         {
             "path": "dist/esm/table-component.esm.js",
-            "limit": "55 KB"
+            "limit": "60 KB"
         }
     ],
     "engines": {
