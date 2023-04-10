@@ -5,6 +5,7 @@ import { FilterOptionMenu } from './menus/FilterOptionMenu'
 import { FullScreenToggleButton } from './buttons/FullScreenToggleButton'
 import { GlobalFilterTextField } from './inputs/GlobalFilterTextField'
 import { ShowHideColumnsButton } from './buttons/ShowHideColumnsButton'
+import { TableMain } from './table/TableMain'
 import { TablePagination } from './toolbar/TablePagination'
 import { ToggleFiltersButton } from './buttons/ToggleFiltersButton'
 import { ToggleGlobalFilterButton } from './buttons/ToggleGlobalFilterButton'
@@ -26,6 +27,7 @@ export {
 	FullScreenToggleButton,
 	GlobalFilterTextField,
 	ShowHideColumnsButton,
+	TableMain,
 	TablePagination,
 	ToggleFiltersButton,
 	ToggleGlobalFilterButton,
