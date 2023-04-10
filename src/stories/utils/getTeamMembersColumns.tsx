@@ -101,6 +101,7 @@ export const getTeamMembersColumns = () =>
             GroupedCell: ColoredGroupedCell,
             Header: HeaderBase,
             enableColumnOrdering: true,
+            enableGrouping: false
         },
         {
             header: 'Location',
@@ -109,4 +110,4 @@ export const getTeamMembersColumns = () =>
             Header: HeaderBase,
             enableColumnOrdering: true,
         },
-    ] as Table_ColumnDef<TeamMember>[];
+    ] as Array<Table_ColumnDef<TeamMember>>;

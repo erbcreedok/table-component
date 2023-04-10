@@ -3,7 +3,11 @@ import { SvgIcon, SvgIconProps } from '@mui/material'
 
 export const GroupIcon = (props: SvgIconProps) => {
 	return (
-		<SvgIcon {...props} viewBox="0 0 18 18" sx={{ width: 18, height: 18 }}>
+		<SvgIcon
+			{...props}
+			viewBox="0 0 18 18"
+			sx={{ width: 18, height: 18, ...props.sx }}
+		>
 			<path
 				fillRule="evenodd"
 				clipRule="evenodd"

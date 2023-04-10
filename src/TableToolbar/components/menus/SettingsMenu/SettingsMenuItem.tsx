@@ -11,15 +11,16 @@ import MenuItem from '@mui/material/MenuItem'
 import Tooltip from '@mui/material/Tooltip'
 import Typography from '@mui/material/Typography'
 
-import { ColumnPinningButtons } from '../../../buttons/ColumnPinningButtons'
-import { GrabHandleButton } from '../buttons/GrabHandleButton'
-import type { Table_Column, TableInstance } from '../../../'
-import { TableSwitch } from '../../../components/TableSwitch'
-import { DEFAULT_FONT_FAMILY, Text } from '../../../components/styles'
-import { LockIcon } from '../icons/LockIcon'
+import { ColumnPinningButtons } from '../../../../buttons/ColumnPinningButtons'
+import { GrabHandleButton } from '../../buttons/GrabHandleButton'
+import type { Table_Column, TableInstance } from '../../../../index'
+import { TableSwitch } from '../../../../components/TableSwitch'
+import { DEFAULT_FONT_FAMILY, Text } from '../../../../components/styles'
+import { LockIcon } from '../../icons/LockIcon'
+import { GroupIcon } from '../../icons/GroupIcon'
 
 interface Props<TData extends Record<string, any> = {}> {
-	allColumns: Table_Column<TData>[]
+	allColumns: Array<Table_Column<TData>>
 	column: Table_Column<TData>
 	hoveredColumn: Table_Column<TData> | null
 	isSubMenu?: boolean
@@ -61,15 +62,18 @@ export const SettingsMenuItem = <TData extends Record<string, any> = {}>({
 		(columnDefType === 'group' &&
 			column.getLeafColumns().some((col) => col.getIsVisible()))
 
-	const handleToggleColumnHidden = (column: Table_Column<TData>) => {
+	const handleToggleColumnHidden = (col: Table_Column<TData>) => {
 		if (columnDefType === 'group') {
-			column?.columns?.forEach?.((childColumn: Table_Column<TData>) => {
+			col?.columns?.forEach?.((childColumn: Table_Column<TData>) => {
 				childColumn.toggleVisibility(!switchChecked)
-				onColumnVisibilityChange(column, !switchChecked)
+				onColumnVisibilityChange(col, !switchChecked)
 			})
 		} else {
-			column.toggleVisibility()
-			onColumnVisibilityChange(column, !switchChecked)
+			if (col.getIsGrouped()) {
+				col.toggleGrouping()
+			}
+			col.toggleVisibility()
+			onColumnVisibilityChange(col, !switchChecked)
 		}
 	}
 
@@ -91,7 +95,7 @@ export const SettingsMenuItem = <TData extends Record<string, any> = {}>({
 	}
 
 	const handleDragEnter = (_e: DragEvent) => {
-		if (!isDragging && columnDef.enableColumnOrdering !== false) {
+		if (!isDragging && columnDef.enableColumnOrdering) {
 			setHoveredColumn(column)
 		}
 	}
@@ -141,9 +145,7 @@ export const SettingsMenuItem = <TData extends Record<string, any> = {}>({
 						!allColumns.some(
 							(col) => col.columnDef.columnDefType === 'group'
 						) &&
-						(columnDef.enableColumnOrdering !== false &&
-						switchChecked &&
-						enableDrag ? (
+						(columnDef.enableColumnOrdering && switchChecked && enableDrag ? (
 							<GrabHandleButton
 								onDragEnd={handleDragEnd}
 								onDragStart={handleDragStart}
@@ -196,6 +198,7 @@ export const SettingsMenuItem = <TData extends Record<string, any> = {}>({
 						</Typography>
 					)}
 					{!column.getCanHide() && <LockIcon sx={{ marginLeft: 'auto' }} />}
+					{column.getIsGrouped() && <GroupIcon sx={{ marginLeft: 'auto' }} />}
 				</Box>
 			</MenuItem>
 		</>

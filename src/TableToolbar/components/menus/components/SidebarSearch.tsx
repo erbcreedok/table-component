@@ -1,6 +1,6 @@
 import styled from '@emotion/styled'
 import { Divider, TextField, InputAdornment, IconButton } from '@mui/material'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 
 import { SearchIcon } from '../../icons/SearchIcon'
 import { CloseIcon } from '../../icons/CloseIcon'
@@ -28,21 +28,28 @@ const SidebarSearch = styled(TextField)`
 
 type Props = {
 	onChange(value: string): void
+	reset?: boolean
 }
 
-export const SidebarSearchComponent = ({ onChange }: Props) => {
-	const [value, setValue] = useState<string>('')
+export const SidebarSearchComponent = ({ reset, onChange, ...rest }: Props) => {
+	const [input, setInput] = useState<string>('')
 
 	const handleInputChange = (e) => {
 		e.preventDefault()
-		setValue(e.target.value.toLowerCase())
+		setInput(e.target.value.toLowerCase())
 		onChange(e.target.value.toLowerCase())
 	}
 
 	const handleClearCLick = () => {
-		setValue('')
+		setInput('')
 		onChange('')
 	}
+
+	useEffect(() => {
+		if (reset) {
+			setInput('')
+		}
+	}, [reset])
 
 	return (
 		<>
@@ -56,7 +63,7 @@ export const SidebarSearchComponent = ({ onChange }: Props) => {
 					),
 					endAdornment: (
 						<InputAdornment position="end">
-							{value.length > 0 && (
+							{input.length > 0 && (
 								<IconButton onClick={handleClearCLick} disableRipple>
 									<CloseIcon style={{ width: 18, height: 18 }} />
 								</IconButton>
@@ -64,8 +71,9 @@ export const SidebarSearchComponent = ({ onChange }: Props) => {
 						</InputAdornment>
 					),
 				}}
-				value={value}
+				value={input}
 				onChange={handleInputChange}
+				{...rest}
 			/>
 			<Divider />
 		</>

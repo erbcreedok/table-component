@@ -3,13 +3,13 @@ import Box from '@mui/material/Box'
 import Drawer from '@mui/material/Drawer'
 import { Typography } from '@mui/material'
 
-import type { Table_Column, TableInstance } from '../../../index'
-import { ContentTitle } from '../../../components/ContentTitle'
-import { ButtonLink } from '../../../components/ButtonLink'
-import { reorderColumn } from '../../../column.utils'
+import type { Table_Column, TableInstance } from '../../../../index'
+import { ContentTitle } from '../../../../components/ContentTitle'
+import { ButtonLink } from '../../../../components/ButtonLink'
+import { reorderColumn } from '../../../../column.utils'
+import { SidebarSearchComponent } from '../components/SidebarSearch'
+import { SidebarHeaderComponent } from '../components/SIdebarHeader'
 
-import { SidebarSearchComponent } from './components/SidebarSearch'
-import { SidebarHeaderComponent } from './components/SIdebarHeader'
 import { SettingsMenuItem } from './SettingsMenuItem'
 
 interface Props<TData extends Record<string, any> = {}> {
@@ -30,8 +30,9 @@ export const SettingsMenu = <TData extends Record<string, any> = {}>({
 		getRightLeafColumns,
 		getState,
 		setColumnOrder,
+		setGrouping,
 	} = table
-	const { columnOrder, columnPinning, columnVisibility } = getState()
+	const { columnOrder, columnPinning, columnVisibility, grouping } = getState()
 	const [searchList, setSearchList] = useState<Array<Table_Column<TData>>>([])
 
 	const allColumns = useMemo(() => {
@@ -59,7 +60,7 @@ export const SettingsMenu = <TData extends Record<string, any> = {}>({
 		getCenterLeafColumns,
 		getLeftLeafColumns,
 		getRightLeafColumns,
-	]) as Table_Column<TData>[]
+	]) as Array<Table_Column<TData>>
 
 	const [columnIds, setColumnIds] = useState({
 		shown: allColumns
@@ -69,6 +70,14 @@ export const SettingsMenu = <TData extends Record<string, any> = {}>({
 			.filter((column) => !column.getIsVisible())
 			.map((col) => col.id),
 	})
+
+	const groupedList = useMemo(
+		() =>
+			grouping.map((colId) =>
+				getCenterLeafColumns().find((col) => col?.id === colId)
+			),
+		[grouping]
+	)
 
 	useEffect(() => {
 		setColumnOrder([...columnIds.shown, ...columnIds.hidden])
@@ -80,7 +89,7 @@ export const SettingsMenu = <TData extends Record<string, any> = {}>({
 	): void => {
 		setColumnIds((prev) => {
 			if (checked) {
-				prev.shown = [...prev.shown, column.columnDef.accessorKey as string]
+				prev.shown = [...prev.shown, column.columnDef.accessorKey]
 				prev.hidden = [
 					...prev.hidden.filter((id) => id !== column.columnDef.accessorKey),
 				]
@@ -88,7 +97,7 @@ export const SettingsMenu = <TData extends Record<string, any> = {}>({
 				prev.shown = [
 					...prev.shown.filter((id) => id !== column.columnDef.accessorKey),
 				]
-				prev.hidden = [column.columnDef.accessorKey as string, ...prev.hidden]
+				prev.hidden = [column.columnDef.accessorKey, ...prev.hidden]
 			}
 
 			return { ...prev }
@@ -97,19 +106,23 @@ export const SettingsMenu = <TData extends Record<string, any> = {}>({
 
 	const [hoveredColumn, setHoveredColumn] =
 		useState<Table_Column<TData> | null>(null)
+
 	const visibleColumnsCount = allColumns.reduce((acc, item) => {
-		return acc + (item.getIsVisible() ? 1 : 0)
+		// eslint-disable-next-line no-param-reassign
+		acc += item.getIsVisible() ? 1 : 0
+
+		return acc
 	}, 0)
 
 	const handleCloseCLick = () => setAnchorEl(null)
 
 	const handleHideAllClick = () => {
 		allColumns
-			.filter((col) => col.columnDef.enableHiding !== false)
+			.filter((col) => col.columnDef.enableHiding)
 			.forEach((col) => col.toggleVisibility(false))
 		const required = allColumns
-			.filter((col) => col.columnDef.enableHiding === false)
-			.map((col) => col.columnDef.accessorKey as string)
+			.filter((col) => !col.columnDef.enableHiding)
+			.map((col) => col.columnDef.accessorKey)
 
 		setColumnIds((prev) => ({
 			shown: [...required],
@@ -147,6 +160,13 @@ export const SettingsMenu = <TData extends Record<string, any> = {}>({
 			shown: reorderColumn(draggedColumn, targetColumn, columnIds.shown),
 			hidden: state.hidden,
 		}))
+	}
+
+	const onColumnGroupingChange = (
+		draggedColumn: Table_Column<TData>,
+		targetColumn: Table_Column<TData>
+	) => {
+		setGrouping((old) => reorderColumn(draggedColumn, targetColumn, old))
 	}
 
 	return (
@@ -220,9 +240,26 @@ export const SettingsMenu = <TData extends Record<string, any> = {}>({
 								},
 							}}
 						>
+							{groupedList.map((column, index) => (
+								<SettingsMenuItem
+									allColumns={allColumns}
+									column={column}
+									hoveredColumn={hoveredColumn}
+									isSubMenu={false}
+									key={`${index}-${column.id}`}
+									setHoveredColumn={setHoveredColumn}
+									table={table}
+									onColumnVisibilityChange={onColumnVisibilityChange}
+									enableDrag
+									onColumnOrderChange={onColumnGroupingChange}
+								/>
+							))}
+
 							{allColumns
-								.filter((col) =>
-									columnIds.shown.includes(col.columnDef.accessorKey as string)
+								.filter(
+									(col) =>
+										columnIds.shown.includes(col.columnDef.accessorKey) &&
+										!grouping.includes(col.columnDef.accessorKey)
 								)
 								.map((column, index) => (
 									<SettingsMenuItem
@@ -252,9 +289,7 @@ export const SettingsMenu = <TData extends Record<string, any> = {}>({
 									</ContentTitle>
 									{allColumns
 										.filter((col) =>
-											columnIds.hidden.includes(
-												col.columnDef.accessorKey as string
-											)
+											columnIds.hidden.includes(col.columnDef.accessorKey)
 										)
 										.map((column, index) => (
 											<SettingsMenuItem
