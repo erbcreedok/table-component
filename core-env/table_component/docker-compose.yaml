@@ -1,0 +1,10 @@
+version: '3'
+services:
+  nginx:
+    image: harbor.delivery.epam.com/spectrum/table_component:$NODE_TAG
+    restart: always
+    ports:
+      - 6006:443
+    volumes:
+      - "./nginx/certs:/etc/nginx/certs/core/"
+      - "./nginx/conf:/etc/nginx/conf.d/"

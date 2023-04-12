@@ -1,0 +1,62 @@
+try {
+    timeout(time: 25, unit: 'MINUTES') {
+        properties([
+            parameters([
+                string(name: 'BRANCH', defaultValue: 'master', description: 'Branch')
+            ])
+        ])
+        node('jenkins-node14'){
+            container('npm'){
+                env.SUPER_VERSION = ''
+                env.SERVER = 'ecsb00301372.epam.com'
+                stage("Checkout") {
+                    cleanWs deleteDirs: true, notFailBuild: true
+                    git credentialsId: 'auto-epm-dce-ci-ssh-key',
+                    url: 'git@git.epam.com:epm-dce/core/table-component.git', branch: '$BRANCH'
+                    }
+                withNPM(npmrcConfig:'npm-dce') {
+                    stage('Preparation') {
+                        sh "npm config set userconfig $WORKSPACE/.npmrc"
+                        sh "npm run ci_stage1"
+                        version = sh returnStdout: true, script: 'node -pe "require(\'./package.json\').version"'
+                        version = version.tokenize('.')[0..1] + "${env.BUILD_ID}"
+                        super_version = version.join(".")
+                        print super_version
+                        env.SUPER_VERSION = super_version
+                        sh "cd ./dist && npm version $super_version"
+                    }
+                    stage('Build'){
+                        withCredentials([usernamePassword(credentialsId: 'auto-epm-dce-ci', passwordVariable: 'USERPASS', usernameVariable: 'USERNAME')]){
+                            dir("@core/icons") {
+                                sh """export USERPASS=$USERPASS && export USERNAME=$USERNAME && \
+                                    npm run ci_stage2
+                                """
+                                sh "cp -r ./web_build ../../core-env/core_nginx/"
+                            }
+                        }
+                    }
+                }
+            }
+            container('docker'){
+                stage('Publish'){
+                    sh """docker build -t harbor.delivery.epam.com/spectrum/table_component:${SUPER_VERSION} ./core-env/core_nginx && \
+                        docker push harbor.delivery.epam.com/spectrum/table_component:${SUPER_VERSION}
+                    """
+                }
+            }
+            container('ssh'){
+                stage('Deploy storybook on UIKIT server'){
+                    sh "rsync -e 'ssh -o StrictHostKeyChecking=no -i /var/run/secrets/auth/id_rsa' --delete -rptv core-env/table_component/ auto_epm-dce_ci@epam.com@${env.SERVER}:/opt/table_component"
+                    sh "ssh -o StrictHostKeyChecking=no -i /var/run/secrets/auth/id_rsa -C auto_epm-dce_ci@epam.com@${env.SERVER} 'cp -r /opt/certs /opt/table_component/nginx/'"
+                    sh "ssh -o StrictHostKeyChecking=no -i /var/run/secrets/auth/id_rsa -C auto_epm-dce_ci@epam.com@${env.SERVER} 'export NODE_TAG=\"${env.SUPER_VERSION}\"; cd /opt/table_component && docker-compose up -d'"
+                }
+            }
+        }
+    }
+}
+catch (err) {
+    echo "in catch block"
+    echo "Caught: ${err}"
+    currentBuild.result = 'FAILURE'
+    throw err
+}
