@@ -30,7 +30,7 @@ type Props = {
 	onChange(value: string): void
 	dividerProps?: ComponentProps<typeof Divider>
 	reset?: boolean
-}
+} & Omit<ComponentProps<typeof SidebarSearch>, 'onChange'>
 
 export const SidebarSearchComponent = ({
 	dividerProps,

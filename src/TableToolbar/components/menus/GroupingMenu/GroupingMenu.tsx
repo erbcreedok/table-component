@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useState } from 'react'
+import React, { useMemo, useState } from 'react'
 import Box from '@mui/material/Box'
 import Drawer from '@mui/material/Drawer'
 import Divider from '@mui/material/Divider'
@@ -47,7 +47,7 @@ export const GroupingMenu = <TData extends Record<string, any> = {}>({
 				.map((colId) => getCenterLeafColumns().find((col) => col?.id === colId))
 				.filter(
 					(col) =>
-						col.id !== 'member.id' && col.getIsVisible() && col.getCanGroup()
+						col?.id !== 'member.id' && col?.getIsVisible() && col?.getCanGroup()
 				)
 		}
 
@@ -67,9 +67,9 @@ export const GroupingMenu = <TData extends Record<string, any> = {}>({
 
 	const groupedList = useMemo(
 		() =>
-			grouping.map((colId) =>
-				getCenterLeafColumns().find((col) => col?.id === colId)
-			),
+			grouping
+				.map((colId) => getCenterLeafColumns().find((col) => col?.id === colId))
+				.filter(Boolean) as Table_Column<TData>[],
 		[grouping]
 	)
 
@@ -131,7 +131,7 @@ export const GroupingMenu = <TData extends Record<string, any> = {}>({
 									table={table}
 									allColumns={allColumns}
 									column={column}
-									key={`${index}-${column.id}`}
+									key={`${index}-${column?.id}`}
 									enableDrag={groupedList.length > 1}
 									hoveredColumn={hoveredColumn}
 									onColumnOrderChange={onColumnOrderChanged}

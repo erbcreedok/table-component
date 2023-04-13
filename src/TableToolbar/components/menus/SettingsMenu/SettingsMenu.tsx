@@ -1,3 +1,4 @@
+import { DeepKeys } from '@tanstack/react-table'
 import React, { useEffect, useMemo, useState } from 'react'
 import Box from '@mui/material/Box'
 import Drawer from '@mui/material/Drawer'
@@ -89,7 +90,10 @@ export const SettingsMenu = <TData extends Record<string, any> = {}>({
 	): void => {
 		setColumnIds((prev) => {
 			if (checked) {
-				prev.shown = [...prev.shown, column.columnDef.accessorKey]
+				prev.shown = [
+					...(prev.shown as string[]),
+					column.columnDef.accessorKey as string,
+				]
 				prev.hidden = [
 					...prev.hidden.filter((id) => id !== column.columnDef.accessorKey),
 				]
@@ -97,7 +101,7 @@ export const SettingsMenu = <TData extends Record<string, any> = {}>({
 				prev.shown = [
 					...prev.shown.filter((id) => id !== column.columnDef.accessorKey),
 				]
-				prev.hidden = [column.columnDef.accessorKey, ...prev.hidden]
+				prev.hidden = [column.columnDef.accessorKey as string, ...prev.hidden]
 			}
 
 			return { ...prev }
@@ -125,9 +129,11 @@ export const SettingsMenu = <TData extends Record<string, any> = {}>({
 			.map((col) => col.columnDef.accessorKey)
 
 		setColumnIds((prev) => ({
-			shown: [...required],
+			shown: [...required] as string[],
 			hidden: [
-				...prev.shown.filter((id) => !required.includes(id)),
+				...(prev.shown.filter(
+					(id) => !required.includes(id as DeepKeys<TData>)
+				) as string[]),
 				...prev.hidden,
 			],
 		}))
@@ -243,10 +249,10 @@ export const SettingsMenu = <TData extends Record<string, any> = {}>({
 							{groupedList.map((column, index) => (
 								<SettingsMenuItem
 									allColumns={allColumns}
-									column={column}
+									column={column as Table_Column<TData>}
 									hoveredColumn={hoveredColumn}
 									isSubMenu={false}
-									key={`${index}-${column.id}`}
+									key={`${index}-${column?.id}`}
 									setHoveredColumn={setHoveredColumn}
 									table={table}
 									onColumnVisibilityChange={onColumnVisibilityChange}
@@ -258,8 +264,9 @@ export const SettingsMenu = <TData extends Record<string, any> = {}>({
 							{allColumns
 								.filter(
 									(col) =>
-										columnIds.shown.includes(col.columnDef.accessorKey) &&
-										!grouping.includes(col.columnDef.accessorKey)
+										columnIds.shown.includes(
+											col.columnDef.accessorKey as string
+										) && !grouping.includes(col.columnDef.accessorKey as string)
 								)
 								.map((column, index) => (
 									<SettingsMenuItem
@@ -289,7 +296,9 @@ export const SettingsMenu = <TData extends Record<string, any> = {}>({
 									</ContentTitle>
 									{allColumns
 										.filter((col) =>
-											columnIds.hidden.includes(col.columnDef.accessorKey)
+											columnIds.hidden.includes(
+												col.columnDef.accessorKey as string
+											)
 										)
 										.map((column, index) => (
 											<SettingsMenuItem

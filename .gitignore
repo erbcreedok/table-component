@@ -9,6 +9,7 @@ log/
 .DS_Store
 /dist
 /web_build
+/web-build
 .rollup.cache/
 build/
 locales/

@@ -23,7 +23,7 @@ interface Props<TData extends Record<string, any> = {}> {
 	setHoveredColumn: Dispatch<SetStateAction<Table_Column<TData> | null>>
 	table: TableInstance<TData>
 	enableDrag?: boolean
-	onColumnVisibilityChange(id: Table_Column<TData>, checked: boolean): void
+	onColumnVisibilityChange?(id: Table_Column<TData>, checked: boolean): void
 	onColumnOrderChange(
 		draggedColumn: Table_Column<TData>,
 		targetColumn: Table_Column<TData>
