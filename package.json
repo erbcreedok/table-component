@@ -12,7 +12,7 @@
         "storybook:build": "build-storybook -o ./web-build/storybook",
         "test": "",
         "ci_stage1": "npm i && npm run build",
-        "ci_stage2": "npm publish ./dist --access=public && npm run build:storybook"
+        "ci_stage2": "npm publish --access=public && npm run build:storybook"
     },
     "repository": {
         "type": "git",
@@ -33,8 +33,7 @@
     "module": "dist/esm/table-component.esm.js",
     "files": [
         "dist",
-        "locales",
-        "src"
+        "locales"
     ],
     "size-limit": [
         {

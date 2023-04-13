@@ -23,16 +23,14 @@ try {
                         super_version = version.join(".")
                         print super_version
                         env.SUPER_VERSION = super_version
-                        sh "cd ./dist && npm version $super_version"
+                        sh "npm version $super_version --no-git-tag-version"
                     }
                     stage('Build'){
                         withCredentials([usernamePassword(credentialsId: 'auto-epm-dce-ci', passwordVariable: 'USERPASS', usernameVariable: 'USERNAME')]){
-                            dir("@core/icons") {
-                                sh """export USERPASS=$USERPASS && export USERNAME=$USERNAME && \
-                                    npm run ci_stage2
-                                """
-                                sh "cp -r ./web_build ../../core-env/core_nginx/"
-                            }
+                            sh """export USERPASS=$USERPASS && export USERNAME=$USERNAME && \
+                                npm run ci_stage2
+                            """
+                            sh "cp -r ./web_build ./core-env/core_nginx/"
                         }
                     }
                 }
