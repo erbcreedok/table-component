@@ -128,6 +128,7 @@ export interface Table_Localization {
 	save: string
 	search: string
 	select: string
+	selectAll: string
 	selectedCountOfRowCountRowsSelected: string
 	showAll: string
 	showAllColumns: string
@@ -156,6 +157,9 @@ export interface Table_Localization {
 	unpin: string
 	unpinAll: string
 	unsorted: string
+	removeAll: string
+	addFilter: string
+	isAnyOf: string
 }
 
 export interface Table_RowModel<TData extends Record<string, any> = {}> {

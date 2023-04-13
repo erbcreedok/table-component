@@ -1,7 +1,8 @@
 import { Meta, Story } from '@storybook/react'
 import React, { useEffect, useRef, useState } from 'react'
 import TableComponent from '../../index'
-import { TableComponentProps } from '../../TableComponent'
+import { TableComponentProps, Table_ColumnDef } from '../../TableComponent'
+import { TeamMember } from '../types/TeamMember'
 import { getSeparatedTeamMembers } from '../utils/getTeamMembers'
 import { getTeamMembersColumns } from '../utils/getTeamMembersColumns'
 import { sortByArrayOrder } from '../utils/sortByArrayOrder'
@@ -25,13 +26,18 @@ const groupsSorting = {
 const data = getSeparatedTeamMembers()
 const columns = getTeamMembersColumns()
 
+const isAnyOfColumns = columns.map((el) => ({
+	...el,
+	filterVariant: 'multi-select',
+})) as Table_ColumnDef<TeamMember>[]
+
 export const TeamsToolbar: Story<TableComponentProps> = () => {
 	const tableRef = useRef(null)
 
 	return (
 		<>
 			<TableComponent
-				columns={columns}
+				columns={isAnyOfColumns}
 				data={data}
 				enableAggregationRow={false}
 				enableTopToolbar

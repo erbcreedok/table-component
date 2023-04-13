@@ -75,6 +75,7 @@ export const Table_Localization_EN: Table_Localization = {
 	selectedCountOfRowCountRowsSelected:
 		'{selectedCount} of {rowCount} row(s) selected',
 	select: 'Select',
+	selectAll: 'Select all',
 	showAll: 'Show all',
 	showAllColumns: 'Show all columns',
 	showHideColumns: 'Show/Hide columns',
@@ -102,4 +103,7 @@ export const Table_Localization_EN: Table_Localization = {
 	showFiltering: 'Filters',
 	showSettings: 'Settings',
 	showPreset: 'Preset',
+	removeAll: 'Remove all',
+	addFilter: 'Add filter',
+	isAnyOf: 'is any of',
 }

@@ -1,6 +1,6 @@
 import styled from '@emotion/styled'
 import { Divider, TextField, InputAdornment, IconButton } from '@mui/material'
-import React, { useEffect, useState } from 'react'
+import React, { ComponentProps, useEffect, useState } from 'react'
 
 import { SearchIcon } from '../../icons/SearchIcon'
 import { CloseIcon } from '../../icons/CloseIcon'
@@ -28,10 +28,16 @@ const SidebarSearch = styled(TextField)`
 
 type Props = {
 	onChange(value: string): void
+	dividerProps?: ComponentProps<typeof Divider>
 	reset?: boolean
 }
 
-export const SidebarSearchComponent = ({ reset, onChange, ...rest }: Props) => {
+export const SidebarSearchComponent = ({
+	dividerProps,
+	reset,
+	onChange,
+	...rest
+}: Props) => {
 	const [input, setInput] = useState<string>('')
 
 	const handleInputChange = (e) => {
@@ -75,7 +81,7 @@ export const SidebarSearchComponent = ({ reset, onChange, ...rest }: Props) => {
 				onChange={handleInputChange}
 				{...rest}
 			/>
-			<Divider />
+			<Divider {...dividerProps} />
 		</>
 	)
 }

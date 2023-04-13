@@ -6,8 +6,10 @@ import {
 	getGroupedRowModel,
 	getPaginationRowModel,
 	getSortedRowModel,
+	getFacetedUniqueValues,
 	GroupingState,
 	TableState,
+	ColumnFiltersState,
 	useReactTable,
 } from '@tanstack/react-table'
 import React, { useCallback, useMemo, useRef, useState } from 'react'
@@ -76,6 +78,9 @@ export const useTable = <TData extends Record<string, any> = {}>(
 		)
 	)
 	const [columnOrder, setColumnOrder] = useState(initialState.columnOrder ?? [])
+	const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
+		[]
+	)
 	const [draggingColumn, setDraggingColumn] =
 		useState<Table_Column<TData> | null>(initialState.draggingColumn ?? null)
 	const [draggingRow, setDraggingRow] = useState<Table_Row<TData> | null>(
@@ -274,6 +279,7 @@ export const useTable = <TData extends Record<string, any> = {}>(
 
 	const state = {
 		columnFilterFns,
+		columnFilters,
 		columnOrder,
 		draggingColumn,
 		draggingRow,
@@ -302,6 +308,8 @@ export const useTable = <TData extends Record<string, any> = {}>(
 			getGroupedRowModel: getGroupedRowModel(),
 			getPaginationRowModel: getPaginationRowModel(),
 			getSortedRowModel: getSortedRowModel(),
+			getFacetedUniqueValues: getFacetedUniqueValues(),
+			onColumnFiltersChange: setColumnFilters,
 			onColumnOrderChange: setColumnOrder,
 			onGroupingChange: config.enableAggregationRow
 				? setGrouping
