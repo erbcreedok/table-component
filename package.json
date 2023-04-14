@@ -9,7 +9,7 @@
         "lint:fix": "eslint . --fix",
         "build": "rm -rf dist && rollup -c && size-limit",
         "storybook": "start-storybook -p 6006",
-        "storybook:build": "build-storybook -o ./web-build/storybook",
+        "storybook:build": "build-storybook -o ./web_build/storybook",
         "test": "",
         "ci_stage1": "npm i && npm run build",
         "ci_stage2": "npm publish --access=public && npm run storybook:build"
