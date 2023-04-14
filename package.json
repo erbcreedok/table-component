@@ -12,7 +12,7 @@
         "storybook:build": "build-storybook -o ./web-build/storybook",
         "test": "",
         "ci_stage1": "npm i && npm run build",
-        "ci_stage2": "npm publish --access=public && npm run build:storybook"
+        "ci_stage2": "npm publish --access=public && npm run storybook:build"
     },
     "repository": {
         "type": "git",
