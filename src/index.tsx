@@ -4,6 +4,7 @@ import { CopyButton } from './buttons/CopyButton'
 import { FilterOptionMenu } from './menus/FilterOptionMenu'
 import { FullScreenToggleButton } from './buttons/FullScreenToggleButton'
 import { GlobalFilterTextField } from './inputs/GlobalFilterTextField'
+import { RowActionMenuButton } from './buttons/RowActionMenuButton'
 import { ShowHideColumnsButton } from './buttons/ShowHideColumnsButton'
 import { TableMain } from './table/TableMain'
 import { TablePagination } from './toolbar/TablePagination'
@@ -26,6 +27,7 @@ export {
 	FilterOptionMenu,
 	FullScreenToggleButton,
 	GlobalFilterTextField,
+	RowActionMenuButton,
 	ShowHideColumnsButton,
 	TableMain,
 	TablePagination,

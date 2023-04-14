@@ -1,4 +1,4 @@
-import React, { FC, MouseEvent } from 'react'
+import React, { MouseEvent } from 'react'
 import Box from '@mui/material/Box'
 import ListItemIcon from '@mui/material/ListItemIcon'
 import Menu from '@mui/material/Menu'
@@ -8,21 +8,21 @@ import type { Table_Row, TableInstance } from '..'
 
 import { commonListItemStyles, commonMenuItemStyles } from './ColumnActionMenu'
 
-interface Props {
+interface Props<TData extends Record<string, any> = {}> {
 	anchorEl: HTMLElement | null
 	handleEdit: (event: MouseEvent) => void
-	row: Table_Row
+	row: Table_Row<TData>
 	setAnchorEl: (anchorEl: HTMLElement | null) => void
-	table: TableInstance
+	table: TableInstance<TData>
 }
 
-export const RowActionMenu: FC<Props> = ({
+export const RowActionMenu = <TData extends Record<string, any> = {}>({
 	anchorEl,
 	handleEdit,
 	row,
 	setAnchorEl,
 	table,
-}) => {
+}: Props<TData>) => {
 	const {
 		options: {
 			icons: { EditIcon },

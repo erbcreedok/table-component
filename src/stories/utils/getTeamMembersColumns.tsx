@@ -2,6 +2,7 @@ import { Avatar } from '@mui/material'
 import { TableCellProps } from '@mui/material/TableCell'
 import React from 'react'
 import { GroupedCellBase } from '../../body/GroupedCellBase'
+import { RowActionMenuButton } from '../../index'
 import { Flex } from '../../components/Flex'
 import { TextEllipsis } from '../../components/TextEllipsis'
 import { HeaderBase } from '../../head/HeaderBase'
@@ -40,7 +41,7 @@ export const getTeamMembersColumns = () =>
         {
             header: 'Team member',
             accessorKey: 'member.id',
-            Cell: ({ row }) => {
+            Cell: ({ row, table }) => {
                 const user = row.original.member;
                 return (
                     <Flex
@@ -64,6 +65,7 @@ export const getTeamMembersColumns = () =>
                                 {user.role}
                             </TextEllipsis>
                         </Flex>
+                        <RowActionMenuButton table={table} row={row} sx={{ ml: 'auto' }} />
                     </Flex>
                 );
             },
