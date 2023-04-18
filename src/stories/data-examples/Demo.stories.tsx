@@ -1,5 +1,5 @@
 import { Meta, Story } from '@storybook/react'
-import React, { useRef } from 'react'
+import React from 'react'
 import { Avatar } from '@mui/material';
 import TableComponent from '../../index'
 import { TableComponentProps, Table_ColumnDef, Table_Cell, } from '../../TableComponent'
@@ -15,9 +15,7 @@ import { Colors } from '../utils/constants'
 import { TeamMember } from '../types/TeamMember';
 import { getTeamsBorderColorSet } from '../utils/getTeamsBorderColorSet'
 import { createGetColors } from '../utils/createGetColors'
-import {
-	TableInstance,
-} from '../../TableComponent';
+
 
 const meta: Meta = {
 	title: 'Data Examples/DEMO',
@@ -139,10 +137,6 @@ const columns = [
 
 
 export const TableDemo: Story<TableComponentProps> = () => {
-	const tableRef = useRef<TableInstance>(null);
-	const rerender = React.useReducer(() => ({}), {})[1]
-
-
 	return (
 		<>
 			<TableComponent
@@ -164,7 +158,6 @@ export const TableDemo: Story<TableComponentProps> = () => {
 				isMultiSortEvent={() => true} //now no need to hold `shift` key to multi-sort
 				maxMultiSortColCount={3} //prevent more than 3 columns from being sorted at once
 				// enablePinning onSortingChange
-				tableInstanceRef={tableRef}
 				muiTableBodyCellProps={{
 					sx: {
 						verticalAlign: 'middle',

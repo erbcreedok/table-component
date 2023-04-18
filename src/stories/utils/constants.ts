@@ -7,5 +7,5 @@ export const Colors = {
 	leaf: '#6DBE72',
 	brick: '#B32424',
 	red1: '#FDE1E1',
-	red2: 'rgba(253, 225, 225, 0.3)'
+	red2: '#FFF6F6'
 }

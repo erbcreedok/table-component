@@ -41,6 +41,7 @@ export const getTeamMembersColumns = () =>
         {
             header: 'Team member',
             accessorKey: 'member.id',
+            id: 'teamMember',
             Cell: ({ row, table }) => {
                 const user = row.original.member;
                 return (
@@ -70,7 +71,6 @@ export const getTeamMembersColumns = () =>
                 );
             },
             GroupedCell: ColoredGroupedCell,
-            enableHiding: false,
             enableColumnOrdering: false,
         },
         {
