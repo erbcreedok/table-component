@@ -15,7 +15,11 @@ import { ColumnPinningButtons } from '../../../../buttons/ColumnPinningButtons'
 import { GrabHandleButton } from '../../buttons/GrabHandleButton'
 import type { Table_Column, TableInstance } from '../../../../index'
 import { TableSwitch } from '../../../../components/TableSwitch'
-import { DEFAULT_FONT_FAMILY, Text } from '../../../../components/styles'
+import {
+	Colors,
+	DEFAULT_FONT_FAMILY,
+	Text,
+} from '../../../../components/styles'
 import { LockIcon } from '../../icons/LockIcon'
 import { GroupIcon } from '../../icons/GroupIcon'
 
@@ -110,12 +114,14 @@ export const SettingsMenuItem = <TData extends Record<string, any> = {}>({
 					alignItems: 'center',
 					justifyContent: 'flex-start',
 					my: 0,
-					opacity: isDragging ? 0.5 : 1,
-					outline: isDragging
-						? `1px dashed ${theme.palette.divider}`
-						: hoveredColumn?.id === column.id
-						? `2px dashed ${theme.palette.primary.main}`
+					opacity: 1,
+					filter: isDragging
+						? 'filter: drop-shadow(0px 4px 22px rgba(29, 30, 38, 0.15))'
 						: 'none',
+					borderBottom:
+						hoveredColumn?.id === column.id
+							? `1px solid ${Colors.LightBlue}`
+							: 'none',
 					pl: `${(column.depth + 0.5) * 2}rem`,
 					py: '6px',
 					height: 48,
@@ -139,24 +145,16 @@ export const SettingsMenuItem = <TData extends Record<string, any> = {}>({
 						minWidth: 300,
 					}}
 				>
-					{!isSubMenu &&
-						columnDefType !== 'group' &&
-						enableColumnOrdering &&
-						!allColumns.some(
-							(col) => col.columnDef.columnDefType === 'group'
-						) &&
-						(columnDef.enableColumnOrdering && switchChecked && enableDrag ? (
-							<GrabHandleButton
-								onDragEnd={handleDragEnd}
-								onDragStart={handleDragStart}
-								table={table}
-								iconButtonProps={{ sx: { transform: 'translateX(-11px)' } }}
-							/>
-						) : (
-							<Box sx={{ width: '9px' }} />
-						))}
-					{!isSubMenu &&
-						enablePinning &&
+					{columnDef.enableColumnOrdering && switchChecked && enableDrag ? (
+						<GrabHandleButton
+							onDragEnd={handleDragEnd}
+							onDragStart={handleDragStart}
+							iconButtonProps={{ sx: { transform: 'translateX(-11px)' } }}
+						/>
+					) : (
+						<Box sx={{ width: '9px' }} />
+					)}
+					{enablePinning &&
 						(column.getCanPin() ? (
 							<ColumnPinningButtons column={column} table={table} />
 						) : (

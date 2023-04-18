@@ -1,17 +1,23 @@
+import styled from '@emotion/styled'
 import { Meta, Story } from '@storybook/react'
-import React, { useEffect, useRef, useState } from 'react'
-import TableComponent from '../../index'
-import { TableComponentProps, Table_ColumnDef } from '../../TableComponent'
-import { TeamMember } from '../types/TeamMember'
+import React from 'react'
+import { TableProvider } from '../../context/TableProvider'
+import { useTableContext } from '../../context/useTableContext'
+import { TableMain } from '../../table/TableMain'
+import { TableComponentProps } from '../../TableComponent'
+import { TableToolbar } from '../../TableToolbar/TableToolbar'
 import { getSeparatedTeamMembers } from '../utils/getTeamMembers'
 import { getTeamMembersColumns } from '../utils/getTeamMembersColumns'
 import { sortByArrayOrder } from '../utils/sortByArrayOrder'
 
-const toolbarMeta: Meta = {
+const meta: Meta = {
 	title: 'Data Examples/Table Toolbar',
 }
 
-export default toolbarMeta
+export default meta
+
+const data = getSeparatedTeamMembers()
+const columns = getTeamMembersColumns()
 
 const groupsSorting = {
 	impact: sortByArrayOrder(['Critical', 'High', 'Medium', 'Low']),
@@ -23,41 +29,61 @@ const groupsSorting = {
 	riskOfLeaving: sortByArrayOrder(['Leaver', 'High', 'Medium', 'Low']),
 }
 
-const data = getSeparatedTeamMembers()
-const columns = getTeamMembersColumns()
+const Wrapper = styled.div`
+	display: flex;
+	flex-direction: column;
+	background: #f5f5f5;
+	border-radius: 10px;
+	padding: 10px;
+`
+const ToolbarWrapper = styled.div`
+	font-family: sans-serif;
+	align-items: center;
+	display: flex;
+	padding: 10px;
+	margin-bottom: 20px;
+`
 
-const isAnyOfColumns = columns.map((el) => ({
-	...el,
-	filterVariant: 'multi-select',
-})) as Table_ColumnDef<TeamMember>[]
-
-export const TeamsToolbar: Story<TableComponentProps> = () => {
-	const tableRef = useRef(null)
+const TableExample = () => {
+	const { table } = useTableContext()
 
 	return (
 		<>
-			<TableComponent
-				columns={isAnyOfColumns}
-				data={data}
-				enableAggregationRow={false}
-				enableTopToolbar
-				enableGrouping
-				enableColumnResizing
-				enableColumnDragging={false}
-				enablePagination={false}
-				groupsSorting={groupsSorting}
-				groupBorder={{ left: '12px solid white', top: '20px solid white' }}
-				initialState={{
-					grouping: ['impact'],
-					columnSizing: { impact: 1, performance: 1 },
-					columnVisibility: {
-						location: false,
-					},
-				}}
-				uppercaseHeader
-				enableColumnOrdering
-				tableInstanceRef={tableRef}
-			/>
+			<ToolbarWrapper>
+				<div style={{ flexGrow: 1 }} />
+				<TableToolbar table={table} />
+			</ToolbarWrapper>
+			<Wrapper>
+				<TableMain />
+			</Wrapper>
 		</>
 	)
 }
+
+export const TeamsToolbar: Story<TableComponentProps> = () => (
+	<TableProvider
+		columns={columns}
+		data={data}
+		enableAggregationRow={false}
+		enableTopToolbar={false}
+		enableGrouping
+		enableColumnResizing
+		enableColumnDragging={false}
+		enablePagination={false}
+		enableMultiSort
+		enableMultiRemove
+		groupBorder={{ left: '12px solid white', top: '20px solid white' }}
+		uppercaseHeader
+		groupsSorting={groupsSorting}
+		initialState={{
+			grouping: ['impact'],
+			columnSizing: { impact: 1, performance: 1 },
+			columnVisibility: {
+				location: false,
+			},
+			sorting: [{ id: 'member.id', desc: false }],
+		}}
+	>
+		<TableExample />
+	</TableProvider>
+)

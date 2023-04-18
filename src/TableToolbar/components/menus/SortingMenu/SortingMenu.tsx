@@ -1,11 +1,10 @@
-import React, { useMemo, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import Box from '@mui/material/Box'
 import Drawer from '@mui/material/Drawer'
 
-import type { TableInstance } from '../../../../index'
+import type { TableInstance, Table_Column } from '../../../../index'
 import { SidebarHeaderComponent } from '../components/SIdebarHeader'
 import { SidebarSearchComponent } from '../components/SidebarSearch'
-import { Table_Column } from '../../../../index'
 import { SimpleMenuItem } from '../components/SimpleMenuItem'
 import { ButtonLink } from '../../../../components/ButtonLink'
 import { reorderColumn } from '../../../../column.utils'
@@ -18,88 +17,80 @@ interface Props<TData extends Record<string, any> = {}> {
 	table: TableInstance<TData>
 }
 
-export const GroupingMenu = <TData extends Record<string, any> = {}>({
+export const SortingMenu = <TData extends Record<string, any> = {}>({
 	anchorEl,
 	setAnchorEl,
 	table,
 }: Props<TData>) => {
-	const {
-		getState,
-		getAllColumns,
-		getLeftLeafColumns,
-		getCenterLeafColumns,
-		getRightLeafColumns,
-		setGrouping,
-	} = table
-	const { columnOrder, columnPinning, columnVisibility, grouping } = getState()
+	const { getAllColumns, getState, resetSorting } = table
+	const { columnPinning, columnOrder, columnVisibility, grouping, sorting } =
+		getState()
 	const [searchList, setSearchList] = useState<Array<Table_Column<TData>>>([])
 	const [hoveredColumn, setHoveredColumn] =
 		useState<Table_Column<TData> | null>(null)
+	const handleCloseCLick = () => setAnchorEl(null)
 
 	const allColumns = useMemo(() => {
 		const columns = getAllColumns()
 
-		if (columnOrder.length > 0) {
-			return Array.from(new Set(columnOrder))
-				.map((colId) => getCenterLeafColumns().find((col) => col?.id === colId))
-				.filter(
-					(col) =>
-						col?.id !== 'member.id' && col?.getIsVisible() && col?.getCanGroup()
-				)
-		}
-
-		return columns
-			.filter((col) => col.id !== 'member.id')
-			.filter((col) => col.getIsVisible())
+		return columns.filter((col) => col.getIsVisible() && col.getCanSort())
 	}, [
 		columnOrder,
 		columnPinning,
 		columnVisibility,
 		grouping,
+		sorting,
 		getAllColumns,
-		getCenterLeafColumns,
-		getLeftLeafColumns,
-		getRightLeafColumns,
 	]) as Array<Table_Column<TData>>
 
-	const groupedList = useMemo(
+	const sortedList = useMemo(
 		() =>
-			grouping.map((colId) =>
-				getCenterLeafColumns().find((col) => col?.id === colId)
-			),
-		[grouping]
+			sorting.map((item) => getAllColumns().find((col) => col?.id === item.id)),
+		[sorting]
 	)
 
-	const nonGroupedList = useMemo(
-		() => allColumns.filter((col) => !col.getIsGrouped()),
-		[allColumns, grouping, columnVisibility]
+	const nonSortedList = useMemo(
+		() => allColumns.filter((col) => !col.getIsSorted()),
+		[sorting]
 	)
 
-	const handleCloseCLick = () => setAnchorEl(null)
 	const handleOnSearchChange = (value: string) => {
 		setSearchList(
 			value.length >= 3
-				? getAllColumns().filter((col) =>
+				? allColumns.filter((col) =>
 						col.columnDef.header.toLowerCase().includes(value)
 				  )
 				: []
 		)
 	}
 
-	const removeAllGroup = () => {
-		allColumns.forEach((col) => {
-			if (col.getIsGrouped()) {
-				col.toggleGrouping()
-			}
-		})
-	}
-
 	const onColumnOrderChanged = (
 		column: Table_Column<TData>,
 		hovered: Table_Column<TData>
 	) => {
-		setGrouping((old) => reorderColumn(column, hovered, old))
+		const currentOrder = sorting.map((col) => col.id)
+		const newOrder = reorderColumn(column, hovered, currentOrder)
+
+		resetSorting()
+
+		newOrder.forEach((id) => {
+			const target = allColumns.find(
+				(col) => col.id === id
+			) as Table_Column<TData>
+			const targetDirection = sorting.find((item) => item.id === target.id)
+			target.toggleSorting(targetDirection?.desc, true)
+		})
 	}
+
+	const removeAllSorted = () => {
+		resetSorting(true)
+	}
+
+	useEffect(() => {
+		if (searchList.length) {
+			setSearchList([])
+		}
+	}, [sorting])
 
 	return (
 		<Drawer
@@ -108,11 +99,11 @@ export const GroupingMenu = <TData extends Record<string, any> = {}>({
 			onClose={handleCloseCLick}
 			transitionDuration={400}
 		>
-			<Box sx={{ minWidth: 500 }}>
-				<SidebarHeaderComponent title="Grouping" onClick={handleCloseCLick} />
+			<Box sx={{ minWidth: 600 }}>
+				<SidebarHeaderComponent title="Sorting" onClick={handleCloseCLick} />
 				<SidebarSearchComponent
-					onChange={handleOnSearchChange}
 					reset={!searchList.length}
+					onChange={handleOnSearchChange}
 				/>
 
 				<Box sx={{ marginTop: '12px' }}>
@@ -129,7 +120,7 @@ export const GroupingMenu = <TData extends Record<string, any> = {}>({
 							/>
 						))}
 
-					{Boolean(groupedList.length && !searchList.length) && (
+					{Boolean(sortedList.length && !searchList.length) && (
 						<>
 							<Box
 								sx={{
@@ -140,18 +131,19 @@ export const GroupingMenu = <TData extends Record<string, any> = {}>({
 									alignItems: 'center',
 								}}
 							>
-								<ListTitle>Grouped</ListTitle>
-								<ButtonLink onClick={removeAllGroup}>Remove all</ButtonLink>
+								<ListTitle>Sorted</ListTitle>
+								<ButtonLink onClick={removeAllSorted}>Remove all</ButtonLink>
 							</Box>
 
-							{groupedList.map((column) => (
+							{sortedList.map((column) => (
 								<SimpleMenuItem
 									column={column as Table_Column<TData>}
 									key={(column as Table_Column<TData>).id}
-									enableDrag={groupedList.length > 1}
+									enableDrag={sortedList.length > 1}
 									hoveredColumn={hoveredColumn}
 									onColumnOrderChange={onColumnOrderChanged}
 									setHoveredColumn={setHoveredColumn}
+									isSorting
 									isCompact
 								/>
 							))}
@@ -159,21 +151,22 @@ export const GroupingMenu = <TData extends Record<string, any> = {}>({
 					)}
 
 					<>
-						{!!groupedList.length &&
+						{!!sortedList.length &&
 							!searchList.length &&
-							!!nonGroupedList.length && (
+							!!nonSortedList.length && (
 								<ListTitle sx={{ padding: '0 24px', margin: '20px 0' }}>
 									Columns
 								</ListTitle>
 							)}
-						{Boolean(nonGroupedList.length && !searchList.length) &&
-							nonGroupedList.map((column) => (
+						{Boolean(nonSortedList.length && !searchList.length) &&
+							nonSortedList.map((column) => (
 								<SimpleMenuItem
 									column={column}
 									key={column.id}
 									hoveredColumn={hoveredColumn}
 									onColumnOrderChange={onColumnOrderChanged}
 									setHoveredColumn={setHoveredColumn}
+									isSorting
 									withClickOnItem
 								/>
 							))}

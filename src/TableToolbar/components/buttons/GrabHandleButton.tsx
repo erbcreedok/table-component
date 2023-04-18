@@ -2,21 +2,19 @@ import React, { DragEventHandler } from 'react'
 import IconButton from '@mui/material/IconButton'
 import type { IconButtonProps } from '@mui/material/IconButton'
 
-import type { TableInstance } from '../../../'
 import { DragIcon } from '../icons/DragIcon'
 
-interface Props<TData extends Record<string, any> = {}> {
+interface Props {
 	iconButtonProps?: IconButtonProps
 	onDragStart: DragEventHandler<HTMLButtonElement>
 	onDragEnd: DragEventHandler<HTMLButtonElement>
-	table: TableInstance<TData>
 }
 
-export const GrabHandleButton = <TData extends Record<string, any> = {}>({
+export const GrabHandleButton = ({
 	iconButtonProps,
 	onDragEnd,
 	onDragStart,
-}: Props<TData>) => {
+}: Props) => {
 	return (
 		<IconButton
 			disableRipple

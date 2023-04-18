@@ -80,6 +80,7 @@ export const getTeamMembersColumns = () =>
             Header: HeaderBase,
             muiTableBodyCellProps: coloredCellProps,
             enableColumnOrdering: true,
+            enableSorting: false
         },
         {
             header: 'Performance',
@@ -88,6 +89,9 @@ export const getTeamMembersColumns = () =>
             Header: HeaderBase,
             muiTableBodyCellProps: coloredCellProps,
             enableColumnOrdering: true,
+            sortingFn() {
+                console.log('CUSTOM SORTING')
+            }
         },
         {
             header: 'Risk of leaving',
@@ -96,6 +100,7 @@ export const getTeamMembersColumns = () =>
             Header: HeaderBase,
             muiTableBodyCellProps: coloredCellProps,
             enableColumnOrdering: true,
+            sortDescFirst: false
         },
         {
             header: 'Succession status',

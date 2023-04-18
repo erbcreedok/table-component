@@ -5,7 +5,6 @@ import { Typography } from '@mui/material'
 
 import type { TableInstance } from '../../../index'
 import { ToolbarIconButton } from '../../../components/ToolbarIconButton'
-import { ToolbarChip } from '../../../components/ToolbarChip'
 import { GroupingMenu } from '../menus/GroupingMenu/GroupingMenu'
 import { IconsColor } from '../../../components/styles'
 
@@ -25,10 +24,8 @@ export const GroupingButton = <TData extends Record<string, any> = {}>({
 			icons: { GroupIcon },
 			localization,
 		},
-		getState,
 	} = table
 	const disabled = false
-	const { grouping } = getState()
 	const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
 
 	const handleClick = (_event: MouseEvent<HTMLElement>) => {
@@ -50,7 +47,6 @@ export const GroupingButton = <TData extends Record<string, any> = {}>({
 					{enableCaption && (
 						<Typography>{localization.showGrouping}</Typography>
 					)}
-					{!!grouping.length && <ToolbarChip label={grouping.length} />}
 				</ToolbarIconButton>
 			</Tooltip>
 

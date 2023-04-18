@@ -6,7 +6,7 @@ import { Typography } from '@mui/material'
 import type { TableInstance } from '../../../index'
 import { ToolbarIconButton } from '../../../components/ToolbarIconButton'
 import { IconsColor } from '../../../components/styles'
-import { SortingMenu } from '../menus/SortingMenu'
+import { SortingMenu } from '../menus/SortingMenu/SortingMenu'
 
 interface Props<TData extends Record<string, any> = {}>
 	extends IconButtonProps {
