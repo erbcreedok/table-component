@@ -10,7 +10,6 @@ import { getCommonCellStyles } from '../column.utils'
 import type { Table_Header, TableInstance } from '..'
 
 import { TableHeadCellActionsButton } from './TableHeadCellActionsButton'
-import { TableHeadCellFilterContainer } from './TableHeadCellFilterContainer'
 import { TableHeadCellFilterLabel } from './TableHeadCellFilterLabel'
 import { TableHeadCellGrabHandle } from './TableHeadCellGrabHandle'
 import { TableHeadCellResizeHandle } from './TableHeadCellResizeHandle'
@@ -226,15 +225,17 @@ export const TableHeadCell: FC<Props> = ({ header, table }) => {
 								table={table}
 								disabled={!showColumnActions}
 							>
-								{(props) => (
+								{({ onClick, visible }) => (
 									<ExpandMoreIcon
 										sx={{
-											opacity: 0,
+											opacity: visible ? 1 : 0,
 											'th:hover &': { opacity: 1 },
 											color: '#6C6F80',
+											transform: visible ? 'rotate(180deg)' : undefined,
+											transition: '0.2s',
 										}}
 										height={12}
-										{...props}
+										onClick={onClick}
 									/>
 								)}
 							</TableHeadCellActionsButton>
@@ -260,9 +261,6 @@ export const TableHeadCell: FC<Props> = ({ header, table }) => {
 						<TableHeadCellResizeHandle header={header} table={table} />
 					)}
 				</Box>
-			)}
-			{column.getCanFilter() && (
-				<TableHeadCellFilterContainer header={header} table={table} />
 			)}
 		</TableCell>
 	)

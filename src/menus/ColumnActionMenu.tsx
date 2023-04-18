@@ -1,13 +1,12 @@
-import React, { FC, useState } from 'react'
 import Box from '@mui/material/Box'
 import IconButton from '@mui/material/IconButton'
 import ListItemIcon from '@mui/material/ListItemIcon'
 import Menu from '@mui/material/Menu'
 import MenuItem from '@mui/material/MenuItem'
+import React, { FC, useState } from 'react'
 
 import type { Table_Header, TableInstance } from '..'
 
-import { FilterOptionMenu } from './FilterOptionMenu'
 import { ShowHideColumnsMenu } from './ShowHideColumnsMenu'
 
 export const commonMenuItemStyles = {
@@ -40,8 +39,6 @@ export const ColumnActionMenu: FC<Props> = ({
 		toggleAllColumnsVisible,
 		setColumnOrder,
 		options: {
-			columnFilterModeOptions,
-			enableColumnFilterModes,
 			enableColumnFilters,
 			enableColumnResizing,
 			enableGrouping,
@@ -52,7 +49,6 @@ export const ColumnActionMenu: FC<Props> = ({
 				ArrowRightIcon,
 				ClearAllIcon,
 				ViewColumnIcon,
-				FiltersIcon,
 				FilterListOffIcon,
 				GroupIcon,
 				PushPinIcon,
@@ -64,15 +60,11 @@ export const ColumnActionMenu: FC<Props> = ({
 			localization,
 			renderColumnActionsMenuItems,
 		},
-		refs: { filterInputRefs },
-		setShowFilters,
 	} = table
 	const { column } = header
 	const { columnDef } = column
 	const { columnSizing, columnVisibility } = getState()
 
-	const [filterMenuAnchorEl, setFilterMenuAnchorEl] =
-		useState<null | HTMLElement>(null)
 	const [showHideColumnsMenuAnchorEl, setShowHideColumnsMenuAnchorEl] =
 		useState<null | HTMLElement>(null)
 
@@ -117,20 +109,9 @@ export const ColumnActionMenu: FC<Props> = ({
 		setAnchorEl(null)
 	}
 
-	const handleFilterByColumn = () => {
-		setShowFilters(true)
-		queueMicrotask(() => filterInputRefs.current[`${column.id}-0`]?.focus())
-		setAnchorEl(null)
-	}
-
 	const handleShowAllColumns = () => {
 		toggleAllColumnsVisible(true)
 		setAnchorEl(null)
-	}
-
-	const handleOpenFilterModeMenu = (event: React.MouseEvent<HTMLElement>) => {
-		event.stopPropagation()
-		setFilterMenuAnchorEl(event.currentTarget)
 	}
 
 	const handleOpenShowHideColumnsMenu = (
@@ -139,18 +120,6 @@ export const ColumnActionMenu: FC<Props> = ({
 		event.stopPropagation()
 		setShowHideColumnsMenuAnchorEl(event.currentTarget)
 	}
-
-	const isSelectFilter = !!columnDef.filterSelectOptions
-
-	const allowedColumnFilterOptions =
-		columnDef?.columnFilterModeOptions ?? columnFilterModeOptions
-
-	const showFilterModeSubMenu =
-		enableColumnFilterModes &&
-		columnDef.enableColumnFilterModes !== false &&
-		!isSelectFilter &&
-		(allowedColumnFilterOptions === undefined ||
-			!!allowedColumnFilterOptions?.length)
 
 	return (
 		<Menu
@@ -216,7 +185,7 @@ export const ColumnActionMenu: FC<Props> = ({
 			{enableColumnFilters &&
 				column.getCanFilter() &&
 				[
-					column.getFilterValue() ? (
+					column.getFilterValue() && (
 						<MenuItem
 							key={0}
 							onClick={handleClearFilter}
@@ -229,39 +198,6 @@ export const ColumnActionMenu: FC<Props> = ({
 								{localization.clearFilter}
 							</Box>
 						</MenuItem>
-					) : (
-						<MenuItem
-							key={1}
-							onClick={handleFilterByColumn}
-							sx={commonMenuItemStyles}
-						>
-							<Box sx={commonListItemStyles}>
-								<ListItemIcon>
-									<FiltersIcon />
-								</ListItemIcon>
-								{localization.filter}
-							</Box>
-							{showFilterModeSubMenu && (
-								<IconButton
-									onClick={handleOpenFilterModeMenu}
-									onMouseEnter={handleOpenFilterModeMenu}
-									size="small"
-									sx={{ p: 0 }}
-								>
-									<ArrowRightIcon />
-								</IconButton>
-							)}
-						</MenuItem>
-					),
-					showFilterModeSubMenu && (
-						<FilterOptionMenu
-							anchorEl={filterMenuAnchorEl}
-							header={header}
-							key={2}
-							onSelect={handleFilterByColumn}
-							setAnchorEl={setFilterMenuAnchorEl}
-							table={table}
-						/>
 					),
 				].filter(Boolean)}
 			{enableGrouping &&
