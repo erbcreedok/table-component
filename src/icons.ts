@@ -1,6 +1,7 @@
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward'
 import ArrowRightIcon from '@mui/icons-material/ArrowRight'
 import CancelIcon from '@mui/icons-material/Cancel'
+import CheckIcon from '@mui/icons-material/Check'
 import ClearAllIcon from '@mui/icons-material/ClearAll'
 import CloseIcon from '@mui/icons-material/Close'
 import DensityLargeIcon from '@mui/icons-material/DensityLarge'
@@ -35,11 +36,14 @@ import { SortDescIcon } from './TableToolbar/components/icons/SortDescIcon'
 import { SortIcon } from './TableToolbar/components/icons/SortIcon'
 import { FiltersIcon } from './TableToolbar/components/icons/FiltersIcon'
 import { SettingsIcon } from './TableToolbar/components/icons/SettingsIcon'
+import { PencilIcon } from './TableToolbar/components/icons/PencilIcon'
+import { TrashIcon } from './TableToolbar/components/icons/TrashIcon'
 
 export interface Table_Icons {
 	ArrowDownwardIcon: any
 	ArrowRightIcon: any
 	CancelIcon: any
+	CheckIcon: any
 	ClearAllIcon: any
 	CloseIcon: any
 	DensityLargeIcon: any
@@ -60,6 +64,7 @@ export interface Table_Icons {
 	HideIcon: any
 	MoreHorizIcon: any
 	MoreVertIcon: any
+	PencilIcon: any
 	PushPinIcon: any
 	RestartAltIcon: any
 	SaveIcon: any
@@ -68,6 +73,7 @@ export interface Table_Icons {
 	SortIcon: any
 	SortAscIcon: any
 	SortDescIcon: any
+	TrashIcon: any
 	ViewColumnIcon: any
 	VisibilityOffIcon: any
 	FiltersIcon: any
@@ -78,6 +84,7 @@ export const Default_Icons: Table_Icons = {
 	ArrowDownwardIcon,
 	ArrowRightIcon,
 	CancelIcon,
+	CheckIcon,
 	ClearAllIcon,
 	CloseIcon,
 	DensityLargeIcon,
@@ -96,6 +103,7 @@ export const Default_Icons: Table_Icons = {
 	KeyboardDoubleArrowDownIcon,
 	MoreHorizIcon,
 	MoreVertIcon,
+	PencilIcon,
 	PushPinIcon,
 	RestartAltIcon,
 	SaveIcon,
@@ -104,6 +112,7 @@ export const Default_Icons: Table_Icons = {
 	SortIcon,
 	SortAscIcon,
 	SortDescIcon,
+	TrashIcon,
 	ViewColumnIcon,
 	VisibilityOffIcon,
 	GroupIcon,

@@ -5,6 +5,7 @@ import { TableProvider } from '../../context/TableProvider'
 import { useTableContext } from '../../context/useTableContext'
 import { TableMain } from '../../table/TableMain'
 import { TableComponentProps } from '../../TableComponent'
+import { DEFAULT_PRESETS } from '../../TableToolbar/components/buttons/presetContants'
 import { TableToolbar } from '../../TableToolbar/TableToolbar'
 import { getSeparatedTeamMembers } from '../utils/getTeamMembers'
 import { getTeamMembersColumns } from '../utils/getTeamMembersColumns'
@@ -83,6 +84,13 @@ export const TeamsToolbar: Story<TableComponentProps> = () => (
 			},
 			sorting: [{ id: 'teamMember', desc: false }],
 		}}
+		onSavePresets={(presets) => {
+			localStorage.setItem('tablePresetsCustom', JSON.stringify(presets))
+		}}
+		onGetPresets={() => {
+			return JSON.parse(localStorage.getItem('tablePresetsCustom') as string)
+		}}
+		onGetDefaultPresets={() => DEFAULT_PRESETS}
 	>
 		<TableExample />
 	</TableProvider>

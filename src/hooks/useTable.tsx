@@ -11,9 +11,13 @@ import {
 	TableState,
 	ColumnFiltersState,
 	useReactTable,
+	VisibilityState,
+	SortingState,
+	ColumnOrderState,
 } from '@tanstack/react-table'
 import React, { useCallback, useMemo, useRef, useState } from 'react'
 
+import { DEFAULT_PRESETS } from '../TableToolbar/components/buttons/presetContants'
 import { ExpandAllButton } from '../buttons/ExpandAllButton'
 import { ExpandButton } from '../buttons/ExpandButton'
 import { ToggleRowActionMenuButton } from '../buttons/ToggleRowActionMenuButton'
@@ -77,7 +81,12 @@ export const useTable = <TData extends Record<string, any> = {}>(
 			)
 		)
 	)
-	const [columnOrder, setColumnOrder] = useState(initialState.columnOrder ?? [])
+	const [columnOrder, setColumnOrder] = useState<ColumnOrderState>(
+		initialState.columnOrder ?? []
+	)
+	const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(
+		initialState.columnVisibility ?? {}
+	)
 	const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
 		[]
 	)
@@ -118,6 +127,9 @@ export const useTable = <TData extends Record<string, any> = {}>(
 	)
 	const [showToolbarDropZone, setShowToolbarDropZone] = useState(
 		initialState?.showToolbarDropZone ?? false
+	)
+	const [sorting, setSorting] = useState<SortingState>(
+		initialState.sorting ?? []
 	)
 
 	const displayColumns = useMemo(
@@ -277,10 +289,22 @@ export const useTable = <TData extends Record<string, any> = {}>(
 		})
 	}, [])
 
+	const getPresets = useCallback(
+		() => JSON.parse(localStorage.getItem('tablePresets') as string),
+		[]
+	)
+
+	const savePresets = useCallback((presets) => {
+		localStorage.setItem('tablePresets', JSON.stringify(presets))
+	}, [])
+
+	const getDefaultPresets = useCallback(() => DEFAULT_PRESETS, [])
+
 	const state = {
 		columnFilterFns,
 		columnFilters,
 		columnOrder,
+		columnVisibility,
 		draggingColumn,
 		draggingRow,
 		editingCell,
@@ -294,6 +318,7 @@ export const useTable = <TData extends Record<string, any> = {}>(
 		showColumnFilters,
 		showGlobalFilter,
 		showToolbarDropZone,
+		sorting,
 		...config.state,
 	} as TableComponentState
 
@@ -309,12 +334,14 @@ export const useTable = <TData extends Record<string, any> = {}>(
 			getPaginationRowModel: getPaginationRowModel(),
 			getSortedRowModel: getSortedRowModel(),
 			getFacetedUniqueValues: getFacetedUniqueValues(),
+			getSubRows: (row) => row?.subRows,
 			onColumnFiltersChange: setColumnFilters,
 			onColumnOrderChange: setColumnOrder,
+			onColumnVisibilityChange: setColumnVisibility,
 			onGroupingChange: config.enableAggregationRow
 				? setGrouping
 				: setMergedGrouping,
-			getSubRows: (row) => row?.subRows,
+			onSortingChange: setSorting,
 			...config,
 			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 			// @ts-ignore
@@ -352,6 +379,9 @@ export const useTable = <TData extends Record<string, any> = {}>(
 		setShowGlobalFilter: config.onShowGlobalFilterChange ?? setShowGlobalFilter,
 		setShowToolbarDropZone:
 			config.onShowToolbarDropZoneChange ?? setShowToolbarDropZone,
+		getPresets: config.onGetPresets ?? getPresets,
+		savePresets: config.onSavePresets ?? savePresets,
+		getDefaultPresets: config.onGetDefaultPresets ?? getDefaultPresets,
 	} as TableInstance<TData>
 
 	if (config.tableInstanceRef) {

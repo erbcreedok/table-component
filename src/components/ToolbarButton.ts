@@ -4,11 +4,15 @@ import { Button } from '@mui/material'
 import { DEFAULT_FONT_FAMILY, Text, Colors } from './styles'
 
 export const ToolbarButton = styled(Button)`
+	display: flex;
+	justify-content: space-between;
+	min-width: 63px;
+	max-width: 180px;
 	color: ${Text.Primary};
 	border-color: #acafbf;
 	border-radius: 3px;
 	position: relative;
-	padding: 5px 6px;
+	padding: 4px 6px;
 	&:hover {
 		background-color: ${Colors.Lightgray};
 		border-color: #acafbf;

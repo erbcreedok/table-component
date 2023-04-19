@@ -48,6 +48,7 @@ import { Table_FilterFns } from './filterFns'
 import { Table_Icons } from './icons'
 import { Table_SortingFns } from './sortingFns'
 import { TableMain } from './table/TableMain'
+import { Preset } from './TableToolbar/components/buttons/PresetButton'
 
 /**
  * Most of this file is just TypeScript types
@@ -202,6 +203,9 @@ export type TableInstance<TData extends Record<string, any> = {}> = Omit<
 	getRowModel: () => Table_RowModel<TData>
 	getSelectedRowModel: () => Table_RowModel<TData>
 	getState: () => Table_TableState<TData>
+	getPresets: () => Preset[]
+	savePresets: (presets: Preset[]) => void
+	getDefaultPresets: () => Preset[]
 	options: TableComponentProps<TData> & {
 		icons: Table_Icons
 		localization: Table_Localization
@@ -984,6 +988,9 @@ export type TableComponentProps<TData extends Record<string, any> = {}> = Omit<
 	onShowFiltersChange?: OnChangeFn<boolean>
 	onShowGlobalFilterChange?: OnChangeFn<boolean>
 	onShowToolbarDropZoneChange?: OnChangeFn<boolean>
+	onGetPresets?: () => Preset[]
+	onSavePresets?: (presets: Preset[]) => void
+	onGetDefaultPresets?: () => Preset[]
 	positionActionsColumn?: 'first' | 'last'
 	positionExpandColumn?: 'first' | 'last'
 	positionGlobalFilter?: 'left' | 'right' | 'none'
