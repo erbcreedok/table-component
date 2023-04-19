@@ -44,12 +44,14 @@ export const GroupingMenu = <TData extends Record<string, any> = {}>({
 				.map((colId) => getCenterLeafColumns().find((col) => col?.id === colId))
 				.filter(
 					(col) =>
-						col?.id !== 'member.id' && col?.getIsVisible() && col?.getCanGroup()
+						col?.id !== 'teamMember' &&
+						col?.getIsVisible() &&
+						col?.getCanGroup()
 				)
 		}
 
 		return columns
-			.filter((col) => col.id !== 'member.id')
+			.filter((col) => col.id !== 'teamMember')
 			.filter((col) => col.getIsVisible())
 	}, [
 		columnOrder,

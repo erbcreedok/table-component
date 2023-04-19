@@ -72,6 +72,7 @@ export const getTeamMembersColumns = () =>
             },
             GroupedCell: ColoredGroupedCell,
             enableColumnOrdering: false,
+            enableHiding: false,
         },
         {
             header: 'Impact on the project',

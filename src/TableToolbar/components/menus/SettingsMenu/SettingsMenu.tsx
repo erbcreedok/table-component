@@ -1,4 +1,3 @@
-import { DeepKeys } from '@tanstack/react-table'
 import React, { useEffect, useMemo, useState } from 'react'
 import Box from '@mui/material/Box'
 import Drawer from '@mui/material/Drawer'
@@ -7,7 +6,7 @@ import { Typography } from '@mui/material'
 import type { Table_Column, TableInstance } from '../../../../index'
 import { ContentTitle } from '../../../../components/ContentTitle'
 import { ButtonLink } from '../../../../components/ButtonLink'
-import { reorderColumn } from '../../../../column.utils'
+import { getColumnId, reorderColumn } from '../../../../column.utils'
 import { SidebarSearchComponent } from '../components/SidebarSearch'
 import { SidebarHeaderComponent } from '../components/SIdebarHeader'
 
@@ -46,7 +45,9 @@ export const SettingsMenu = <TData extends Record<string, any> = {}>({
 			return [
 				...getLeftLeafColumns(),
 				...Array.from(new Set(columnOrder)).map((colId) =>
-					getCenterLeafColumns().find((col) => col?.id === colId)
+					getCenterLeafColumns().find(
+						(col) => getColumnId(col.columnDef) === colId
+					)
 				),
 				...getRightLeafColumns(),
 			].filter(Boolean)
@@ -66,16 +67,18 @@ export const SettingsMenu = <TData extends Record<string, any> = {}>({
 	const [columnIds, setColumnIds] = useState({
 		shown: allColumns
 			.filter((column) => column.getIsVisible())
-			.map((col) => col.id),
+			.map((col) => getColumnId(col.columnDef)),
 		hidden: allColumns
 			.filter((column) => !column.getIsVisible())
-			.map((col) => col.id),
+			.map((col) => getColumnId(col.columnDef)),
 	})
 
 	const groupedList = useMemo(
 		() =>
 			grouping.map((colId) =>
-				getCenterLeafColumns().find((col) => col?.id === colId)
+				getCenterLeafColumns().find(
+					(col) => getColumnId(col.columnDef) === colId
+				)
 			),
 		[grouping]
 	)
@@ -92,16 +95,16 @@ export const SettingsMenu = <TData extends Record<string, any> = {}>({
 			if (checked) {
 				prev.shown = [
 					...(prev.shown as string[]),
-					column.columnDef.accessorKey as string,
+					getColumnId(column.columnDef),
 				]
 				prev.hidden = [
-					...prev.hidden.filter((id) => id !== column.columnDef.accessorKey),
+					...prev.hidden.filter((id) => id !== getColumnId(column.columnDef)),
 				]
 			} else {
 				prev.shown = [
-					...prev.shown.filter((id) => id !== column.columnDef.accessorKey),
+					...prev.shown.filter((id) => id !== getColumnId(column.columnDef)),
 				]
-				prev.hidden = [column.columnDef.accessorKey as string, ...prev.hidden]
+				prev.hidden = [getColumnId(column.columnDef), ...prev.hidden]
 			}
 
 			return { ...prev }
@@ -126,14 +129,12 @@ export const SettingsMenu = <TData extends Record<string, any> = {}>({
 			.forEach((col) => col.toggleVisibility(false))
 		const required = allColumns
 			.filter((col) => !col.columnDef.enableHiding)
-			.map((col) => col.columnDef.accessorKey)
+			.map((col) => getColumnId(col.columnDef))
 
 		setColumnIds((prev) => ({
 			shown: [...required] as string[],
 			hidden: [
-				...(prev.shown.filter(
-					(id) => !required.includes(id as DeepKeys<TData>)
-				) as string[]),
+				...(prev.shown.filter((id) => !required.includes(id)) as string[]),
 				...prev.hidden,
 			],
 		}))
@@ -256,7 +257,7 @@ export const SettingsMenu = <TData extends Record<string, any> = {}>({
 									setHoveredColumn={setHoveredColumn}
 									table={table}
 									onColumnVisibilityChange={onColumnVisibilityChange}
-									enableDrag
+									enableDrag={groupedList.length > 1}
 									onColumnOrderChange={onColumnGroupingChange}
 								/>
 							))}
@@ -264,9 +265,8 @@ export const SettingsMenu = <TData extends Record<string, any> = {}>({
 							{allColumns
 								.filter(
 									(col) =>
-										columnIds.shown.includes(
-											col.columnDef.accessorKey as string
-										) && !grouping.includes(col.columnDef.accessorKey as string)
+										columnIds.shown.includes(getColumnId(col.columnDef)) &&
+										!grouping.includes(getColumnId(col.columnDef))
 								)
 								.map((column, index) => (
 									<SettingsMenuItem
@@ -296,9 +296,7 @@ export const SettingsMenu = <TData extends Record<string, any> = {}>({
 									</ContentTitle>
 									{allColumns
 										.filter((col) =>
-											columnIds.hidden.includes(
-												col.columnDef.accessorKey as string
-											)
+											columnIds.hidden.includes(getColumnId(col.columnDef))
 										)
 										.map((column, index) => (
 											<SettingsMenuItem

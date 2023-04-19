@@ -7,7 +7,7 @@ import { SidebarHeaderComponent } from '../components/SIdebarHeader'
 import { SidebarSearchComponent } from '../components/SidebarSearch'
 import { SimpleMenuItem } from '../components/SimpleMenuItem'
 import { ButtonLink } from '../../../../components/ButtonLink'
-import { reorderColumn } from '../../../../column.utils'
+import { getColumnId, reorderColumn } from '../../../../column.utils'
 import { ListTitle } from '../../../../components/ListTitle'
 
 interface Props<TData extends Record<string, any> = {}> {
@@ -45,7 +45,9 @@ export const SortingMenu = <TData extends Record<string, any> = {}>({
 
 	const sortedList = useMemo(
 		() =>
-			sorting.map((item) => getAllColumns().find((col) => col?.id === item.id)),
+			(sorting || []).map((item) =>
+				getAllColumns().find((col) => getColumnId(col.columnDef) === item.id)
+			),
 		[sorting]
 	)
 
@@ -75,7 +77,7 @@ export const SortingMenu = <TData extends Record<string, any> = {}>({
 
 		newOrder.forEach((id) => {
 			const target = allColumns.find(
-				(col) => col.id === id
+				(col) => getColumnId(col.columnDef) === id
 			) as Table_Column<TData>
 			const targetDirection = sorting.find((item) => item.id === target.id)
 			target.toggleSorting(targetDirection?.desc, true)
