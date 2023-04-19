@@ -81,7 +81,7 @@ export const TeamsToolbar: Story<TableComponentProps> = () => (
 			columnVisibility: {
 				location: false,
 			},
-			sorting: [{ id: 'member.id', desc: false }],
+			sorting: [{ id: 'teamMember', desc: false }],
 		}}
 	>
 		<TableExample />
