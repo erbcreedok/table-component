@@ -108,6 +108,7 @@ export interface Table_Localization {
 	groupBy: string
 	groupByColumn: string
 	groupedBy: string
+	groupedTableByColumn: string
 	hideAll: string
 	hideColumn: string
 	hideInView: string

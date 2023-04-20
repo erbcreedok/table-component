@@ -196,7 +196,13 @@ export const SettingsMenuItem = <TData extends Record<string, any> = {}>({
 						</Typography>
 					)}
 					{!column.getCanHide() && <LockIcon sx={{ marginLeft: 'auto' }} />}
-					{column.getIsGrouped() && <GroupIcon sx={{ marginLeft: 'auto' }} />}
+					{column.getIsGrouped() && (
+						<Tooltip placement="top" title={localization.groupedTableByColumn}>
+							<Box sx={{ marginLeft: 'auto' }}>
+								<GroupIcon />
+							</Box>
+						</Tooltip>
+					)}
 				</Box>
 			</MenuItem>
 		</>

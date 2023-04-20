@@ -52,6 +52,7 @@ export const Table_Localization_EN: Table_Localization = {
 	groupBy: 'Group by',
 	groupByColumn: 'Group by {column}',
 	groupedBy: 'Grouped by ',
+	groupedTableByColumn: 'Table is grouped by the column',
 	hideAll: 'Hide all',
 	hideColumn: 'Hide {column} column',
 	hideInView: 'Hide in View',
