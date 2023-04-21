@@ -7,7 +7,7 @@ export const Colors = {
 	leaf: '#6DBE72',
 	brick: '#B32424',
 	red1: '#FDE1E1',
-	red2: '#FFF6F6'
+	red2: '#FFF6F6',
 }
 
 export const MOCK_STATE_1 = {
@@ -83,7 +83,7 @@ export const MOCK_STATE_3 = {
 export const DEFAULT_TEAMS_PRESETS = [
 	{
 		id: 0,
-		name: 'Default Preset',
+		name: 'Default',
 		checked: true,
 		suggested: true,
 		state: MOCK_STATE_1,

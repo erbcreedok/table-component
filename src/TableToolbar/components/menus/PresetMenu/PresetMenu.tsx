@@ -76,7 +76,7 @@ export const PresetMenu = <TData extends Record<string, any> = {}>({
 						color: `${Text.Primary}`,
 					}}
 				>
-					Suggested View
+					Suggested presets
 				</Typography>
 				<MenuList dense sx={{ p: 0 }}>
 					{suggestedPresets.map(({ id, name }) => (

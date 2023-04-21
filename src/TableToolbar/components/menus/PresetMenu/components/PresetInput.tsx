@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, KeyboardEvent } from 'react'
 import {
 	Box,
 	Button,
@@ -49,6 +49,12 @@ export const PresetInput = ({
 
 	const handleResetValue = () => {
 		handleCloseEditMode()
+	}
+
+	const handleEnterKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
+		if (event.key === 'Enter' && value.length > 0) {
+			handleSave()
+		}
 	}
 
 	return (
@@ -102,6 +108,7 @@ export const PresetInput = ({
 					}
 					value={value}
 					onChange={handleInputChange}
+					onKeyDown={handleEnterKeyDown}
 				/>
 			</Box>
 		</ClickAwayListener>

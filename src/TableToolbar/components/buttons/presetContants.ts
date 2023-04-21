@@ -15,7 +15,7 @@ export const EMPTY_STATE = {
 export const DEFAULT_PRESETS = [
 	{
 		id: 0,
-		name: 'Default Preset',
+		name: 'Default',
 		checked: true,
 		suggested: true,
 		state: EMPTY_STATE,

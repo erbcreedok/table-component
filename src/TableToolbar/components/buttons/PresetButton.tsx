@@ -114,7 +114,7 @@ export const PresetButton = <TData extends Record<string, any> = {}>({
 		if (checkedPreset) {
 			setIsStateTheSame(getIsStateTheSame(checkedPreset?.state, tableState))
 		}
-	}, [checkedPreset, tableState])
+	}, [checkedPreset, tableState, presets])
 
 	return (
 		<ThemeProvider theme={theme}>
