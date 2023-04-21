@@ -62,7 +62,7 @@ export const PresetButton = <TData extends Record<string, any> = {}>({
 	const [isStateTheSame, setIsStateTheSame] = useState<boolean>(true)
 	const [isNotificationShowedOnce, setIsNotificationShowedOnce] =
 		useState<boolean>(false)
-	const [presets, setPresets] = useState<Preset[]>(getDefaultPresets())
+	const [presets, setPresets] = useState<Preset[]>(getDefaultPresets() ?? [])
 	const [checkedPreset, setCheckedPreset] = useState<Preset | undefined>(
 		presets.find(({ checked }) => checked)
 	)
