@@ -39,7 +39,6 @@ interface Props<TData extends Record<string, any> = {}> {
 }
 
 export const SettingsMenuItem = <TData extends Record<string, any> = {}>({
-	allColumns,
 	hoveredColumn,
 	setHoveredColumn,
 	column,
@@ -50,12 +49,7 @@ export const SettingsMenuItem = <TData extends Record<string, any> = {}>({
 	onColumnOrderChange,
 }: Props<TData>) => {
 	const {
-		options: {
-			enableColumnOrdering,
-			enableHiding,
-			enablePinning,
-			localization,
-		},
+		options: { enableHiding, enablePinning, localization },
 	} = table
 
 	const { columnDef } = column
@@ -76,6 +70,7 @@ export const SettingsMenuItem = <TData extends Record<string, any> = {}>({
 			if (col.getIsGrouped()) {
 				col.toggleGrouping()
 			}
+			col.clearSorting()
 			col.toggleVisibility()
 			onColumnVisibilityChange(col, !switchChecked)
 		}
@@ -110,7 +105,7 @@ export const SettingsMenuItem = <TData extends Record<string, any> = {}>({
 				disableRipple
 				ref={menuItemRef as any}
 				onDragEnter={handleDragEnter}
-				sx={(theme) => ({
+				sx={() => ({
 					alignItems: 'center',
 					justifyContent: 'flex-start',
 					my: 0,

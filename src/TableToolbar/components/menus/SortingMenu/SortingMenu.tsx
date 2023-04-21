@@ -73,7 +73,7 @@ export const SortingMenu = <TData extends Record<string, any> = {}>({
 		const currentOrder = sorting.map((col) => col.id)
 		const newOrder = reorderColumn(column, hovered, currentOrder)
 
-		resetSorting()
+		resetSorting(true)
 
 		newOrder.forEach((id) => {
 			const target = allColumns.find(
