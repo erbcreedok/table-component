@@ -37,6 +37,7 @@ export const TableBodyRow: FC<Props> = ({
 	const {
 		getIsSomeColumnsPinned,
 		getState,
+		getSelectedRowModel,
 		options: {
 			enableRowOrdering,
 			layoutMode,
@@ -59,6 +60,8 @@ export const TableBodyRow: FC<Props> = ({
 			setHoveredRow(row)
 		}
 	}
+
+	const selectedRows = getSelectedRowModel().rows
 
 	const rowRef = useRef<HTMLTableRowElement | null>(null)
 
@@ -111,6 +114,15 @@ export const TableBodyRow: FC<Props> = ({
 									? `${lighten(theme.palette.background.default, 0.12)}`
 									: `${darken(theme.palette.background.default, 0.05)}`
 								: undefined,
+						'& span': {
+							visibility: 'visible',
+						},
+					},
+					'& td span': {
+						visibility: selectedRows.length ? 'visible' : 'hidden',
+						'&:hover span': {
+							visibility: 'visible',
+						},
 					},
 					...(tableRowProps?.sx instanceof Function
 						? tableRowProps.sx(theme)

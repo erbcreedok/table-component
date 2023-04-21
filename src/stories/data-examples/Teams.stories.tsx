@@ -1,4 +1,5 @@
 import { Meta, Story } from '@storybook/react'
+import ModeIcon from '@mui/icons-material/Mode';
 import { ColumnOrderState, VisibilityState, SortingState } from '@tanstack/react-table'
 import React, { useState } from 'react'
 import { getColumnId } from '../../column.utils'
@@ -20,6 +21,7 @@ const dataTree = getExpandingTeamMembers(10)
 const columns = getTeamMembersColumns()
 
 type TeamsTableConfigs = TableComponentProps<TeamMember> & {
+	bulkActions?: object[]
 	disableHidingFor?: string[]
 	disableSortingFor?: string[]
 	defaultSorting?: SortingState
@@ -122,6 +124,18 @@ export const TeamsTableRowOrdering: Story<TeamsTableExample> = (args) => {
 const meta: Meta = {
 	title: 'Data Examples/Teams',
 	argTypes: {
+		bulkActions: {
+			control: 'object',
+			defaultValue: [{
+				icon: <ModeIcon />,
+				text: 'Console log',
+				action: (props) => console.log('log', props)
+			}],
+		},
+		enableRowSelection: {
+			defaultValue: (row) => row.original.impact !== 'Medium'
+			// defaultValue: (row) => true
+		},
 		uppercaseHeader: {
 			control: 'boolean',
 			defaultValue: true,

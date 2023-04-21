@@ -189,6 +189,8 @@ export const TableBodyCell: FC<Props> = ({
 			? getVisibleLeafRows(row, table).length
 			: 1
 
+	const isSelectCell = column.id === 'mrt-row-select'
+
 	return (
 		<MuiTableCell
 			rowSpan={rowSpan}
@@ -230,6 +232,12 @@ export const TableBodyCell: FC<Props> = ({
 								? `${lighten(theme.palette.background.default, 0.2)} !important`
 								: `${darken(theme.palette.background.default, 0.1)} !important`
 							: undefined,
+					'& span': {
+						visibility: 'visible',
+					},
+				},
+				'& span': {
+					visibility: isSelectCell ? 'hidden' : 'visible',
 				},
 				...getGroupBorders({ table, cell }),
 				...getCommonCellStyles({

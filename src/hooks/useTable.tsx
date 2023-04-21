@@ -15,7 +15,7 @@ import {
 	SortingState,
 	ColumnOrderState,
 } from '@tanstack/react-table'
-import React, { useCallback, useMemo, useRef, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
 import { DEFAULT_PRESETS } from '../TableToolbar/components/buttons/presetContants'
 import { ExpandAllButton } from '../buttons/ExpandAllButton'
@@ -90,6 +90,7 @@ export const useTable = <TData extends Record<string, any> = {}>(
 	const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
 		[]
 	)
+	const [rowSelection, setRowSelection] = React.useState({})
 	const [draggingColumn, setDraggingColumn] =
 		useState<Table_Column<TData> | null>(initialState.draggingColumn ?? null)
 	const [draggingRow, setDraggingRow] = useState<Table_Row<TData> | null>(
@@ -131,6 +132,12 @@ export const useTable = <TData extends Record<string, any> = {}>(
 	const [sorting, setSorting] = useState<SortingState>(
 		initialState.sorting ?? []
 	)
+
+	useEffect(() => {
+		if (config.enableRowSelection && !columnOrder.includes('mrt-row-select')) {
+			setColumnOrder(['mrt-row-select', ...columnOrder])
+		}
+	}, [columnOrder, config.enableRowSelection])
 
 	const displayColumns = useMemo(
 		() =>
@@ -303,6 +310,7 @@ export const useTable = <TData extends Record<string, any> = {}>(
 	const state = {
 		columnFilterFns,
 		columnFilters,
+		rowSelection,
 		columnOrder,
 		columnVisibility,
 		draggingColumn,
@@ -337,6 +345,7 @@ export const useTable = <TData extends Record<string, any> = {}>(
 			getSubRows: (row) => row?.subRows,
 			onColumnFiltersChange: setColumnFilters,
 			onColumnOrderChange: setColumnOrder,
+			onRowSelectionChange: setRowSelection,
 			onColumnVisibilityChange: setColumnVisibility,
 			onGroupingChange: config.enableAggregationRow
 				? setGrouping

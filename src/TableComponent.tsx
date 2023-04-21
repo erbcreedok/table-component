@@ -224,6 +224,7 @@ export type TableInstance<TData extends Record<string, any> = {}> = Omit<
 		topToolbarRef: MutableRefObject<HTMLDivElement>
 		tableToolbarRef: MutableRefObject<HTMLDivElement>
 	}
+	resetRowSelection: (defaultState?: boolean) => void
 	setColumnFilterFns: Dispatch<
 		SetStateAction<{ [key: string]: Table_FilterOption }>
 	>
@@ -616,6 +617,12 @@ export type Table_DisplayColumnIds =
 	| 'mrt-row-numbers'
 	| 'mrt-row-select'
 
+export type Table_Actions = {
+	text: string
+	icon: React.ReactNode
+	action: (rows: Table_Row[]) => void
+}
+
 /**
  * `columns` and `data` props are the only required props, but there are over 150 other optional props.
  *
@@ -659,6 +666,7 @@ export type TableComponentProps<TData extends Record<string, any> = {}> = Omit<
 	 * @link https://www.material-react-table.com/docs/getting-started/usage
 	 */
 	data: TData[]
+	bulkActions?: Table_Actions[]
 	/**
 	 * Instead of specifying a bunch of the same options for each column, you can just change an option in the `defaultColumn` prop to change a default option for all columns.
 	 */
