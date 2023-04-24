@@ -1,7 +1,7 @@
 import React, { FC, useEffect, useState } from 'react'
 
 import { useFilterControls } from '../../filter-bar-hooks/useFilterControls'
-import { ListFilterItem } from '../FilterChipList /ListFilterItem'
+import { ListFilterItem } from '../FilterChipList/ListFilterItem'
 import { NoOptions } from '../../NoOptions/NoOptions'
 
 interface FiltersSearchResultProps {

@@ -12,6 +12,7 @@ export const Colors = {
 	LightBlue: '#009ECC',
 	red: '#FA4B4B',
 	LightGreen: '#67A300',
+	White: '#fff',
 }
 
 export const IconsColor = {

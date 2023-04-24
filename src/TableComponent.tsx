@@ -207,6 +207,7 @@ export type TableInstance<TData extends Record<string, any> = {}> = Omit<
 	getPresets: () => Preset[]
 	savePresets: (presets: Preset[]) => void
 	getDefaultPresets: () => Preset[]
+	showSearchData: (searchId: string | null) => void
 	options: TableComponentProps<TData> & {
 		icons: Table_Icons
 		localization: Table_Localization
@@ -1000,6 +1001,7 @@ export type TableComponentProps<TData extends Record<string, any> = {}> = Omit<
 	onGetPresets?: () => Preset[]
 	onSavePresets?: (presets: Preset[]) => void
 	onGetDefaultPresets?: () => Preset[]
+	onSearchData?: () => void
 	positionActionsColumn?: 'first' | 'last'
 	positionExpandColumn?: 'first' | 'last'
 	positionGlobalFilter?: 'left' | 'right' | 'none'

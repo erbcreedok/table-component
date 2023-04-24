@@ -7,7 +7,7 @@ import { DropdownContentHeader } from '../DropdownContent/DropdownContentHeader'
 import { DropdownContentSearch } from '../DropdownContent/DropdownContentSearch'
 
 import { FiltersSearchResult } from './FilterChipSearch/FiltersSearchResult'
-import { FilterChipList } from './FilterChipList /FilterChipList'
+import { FilterChipList } from './FilterChipList/FilterChipList'
 
 type FilterChipProps = {
 	headerTile: string

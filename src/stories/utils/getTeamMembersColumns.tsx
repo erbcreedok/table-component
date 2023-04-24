@@ -6,36 +6,50 @@ import { RowActionMenuButton } from '../../index'
 import { Flex } from '../../components/Flex'
 import { TextEllipsis } from '../../components/TextEllipsis'
 import { HeaderBase } from '../../head/HeaderBase'
-import { Table_Cell, Table_Column, Table_ColumnDef, Table_Row, TableInstance } from '../../TableComponent'
+import {
+	Table_Cell,
+	Table_Column,
+	Table_ColumnDef,
+	Table_Row,
+	TableInstance,
+} from '../../TableComponent'
 import { TeamMember } from '../types/TeamMember'
 import { Colors } from './constants'
 import { createGetColors } from './createGetColors'
 import { getTeamsBorderColorSet } from './getTeamsBorderColorSet'
 import { getTeamsCellBackgroundSet } from './getTeamsCellBackgroundSet'
+import { HeaderSearch } from '../../head/HeaderSearch'
 
-const getBorderColors = createGetColors(getTeamsBorderColorSet(), { fallback: Colors.lightestGrey })
+const getBorderColors = createGetColors(getTeamsBorderColorSet(), {
+	fallback: Colors.lightestGrey,
+})
 const getBackgroundColors = createGetColors(getTeamsCellBackgroundSet())
 
 const ColoredGroupedCell: typeof GroupedCellBase = (props) => {
 	const columnId = props.cell.column.id
 	const value = props.cell.getValue()
 
-	return <GroupedCellBase borderColor={getBorderColors(columnId, value)} {...props} />
+	return (
+		<GroupedCellBase
+			borderColor={getBorderColors(columnId, value)}
+			{...props}
+		/>
+	)
 }
 
 const coloredCellProps = <TData extends Record<string, any> = {}>(props: {
-    cell: Table_Cell<TData>;
-    column: Table_Column<TData>;
-    row: Table_Row<TData>;
-    table: TableInstance<TData>;
+	cell: Table_Cell<TData>
+	column: Table_Column<TData>
+	row: Table_Row<TData>
+	table: TableInstance<TData>
 }): TableCellProps => {
-    const columnId = props.cell.column.id;
-    const value = props.cell.getValue();
+	const columnId = props.cell.column.id
+	const value = props.cell.getValue()
 
-    return {
-        sx: { backgroundColor: getBackgroundColors(columnId, value) },
-    };
-};
+	return {
+		sx: { backgroundColor: getBackgroundColors(columnId, value) },
+	}
+}
 export const getTeamMembersColumns = () =>
     [
         {

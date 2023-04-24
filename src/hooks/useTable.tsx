@@ -69,16 +69,16 @@ export const useTable = <TData extends Record<string, any> = {}>(
 	}>(() =>
 		Object.assign(
 			{},
-			...getAllLeafColumnDefs(config.columns as Table_ColumnDef<TData>[]).map(
-				(col) => ({
-					[getColumnId(col)]:
-						col.filterFn instanceof Function
-							? col.filterFn.name ?? 'custom'
-							: col.filterFn ??
-							  initialState?.columnFilterFns?.[getColumnId(col)] ??
-							  getDefaultColumnFilterFn(col),
-				})
-			)
+			...getAllLeafColumnDefs(
+				config.columns as Array<Table_ColumnDef<TData>>
+			).map((col) => ({
+				[getColumnId(col)]:
+					col.filterFn instanceof Function
+						? col.filterFn.name ?? 'custom'
+						: col.filterFn ??
+						  initialState?.columnFilterFns?.[getColumnId(col)] ??
+						  getDefaultColumnFilterFn(col),
+			}))
 		)
 	)
 	const [columnOrder, setColumnOrder] = useState<ColumnOrderState>(
@@ -132,6 +132,7 @@ export const useTable = <TData extends Record<string, any> = {}>(
 	const [sorting, setSorting] = useState<SortingState>(
 		initialState.sorting ?? []
 	)
+	const [searchId, setSearchId] = useState<string | null>(null)
 
 	useEffect(() => {
 		if (config.enableRowSelection && !columnOrder.includes('mrt-row-select')) {
@@ -201,7 +202,7 @@ export const useTable = <TData extends Record<string, any> = {}>(
 						...config.displayColumnDefOptions?.['mrt-row-numbers'],
 						id: 'mrt-row-numbers',
 					},
-				] as Table_ColumnDef<TData>[]
+				] as Array<Table_ColumnDef<TData>>
 			).filter(Boolean),
 		[
 			columnOrder,
@@ -245,8 +246,8 @@ export const useTable = <TData extends Record<string, any> = {}>(
 		]
 	)
 
-	const data: TData[] = useMemo(
-		() =>
+	const data: TData[] = useMemo(() => {
+		const tableData =
 			(config.state?.isLoading || config.state?.showSkeletons) &&
 			!config.data.length
 				? [
@@ -263,19 +264,29 @@ export const useTable = <TData extends Record<string, any> = {}>(
 							}))
 						)
 				  )
-				: config.data,
-		[config.data, config.state?.isLoading, config.state?.showSkeletons]
-	)
+				: config.data
+
+		return searchId
+			? data.filter((item) => item.member?.id === searchId)
+			: tableData
+	}, [
+		config.data,
+		config.state?.isLoading,
+		config.state?.showSkeletons,
+		searchId,
+	])
 
 	const setMergedGrouping = useCallback((setter) => {
-		const setColumnSizings = (grouping) => {
-			const newSizes = grouping.slice(0, grouping.length - 1).reduce(
-				(acc, columnId) => ({
-					...acc,
-					[columnId]: 1,
-				}),
-				{}
-			)
+		const setColumnSizings = (currentGrouping) => {
+			const newSizes = currentGrouping
+				.slice(0, currentGrouping.length - 1)
+				.reduce(
+					(acc, columnId) => ({
+						...acc,
+						[columnId]: 1,
+					}),
+					{}
+				)
 
 			table.setColumnSizing((oldSizes) =>
 				Object.entries(oldSizes).reduce(
@@ -307,6 +318,14 @@ export const useTable = <TData extends Record<string, any> = {}>(
 
 	const getDefaultPresets = useCallback(() => DEFAULT_PRESETS, [])
 
+	const searchData = (id: string | null) => {
+		setSearchId(id)
+
+		if (config.onSearchData) {
+			config.onSearchData()
+		}
+	}
+
 	const state = {
 		columnFilterFns,
 		columnFilters,
@@ -327,6 +346,7 @@ export const useTable = <TData extends Record<string, any> = {}>(
 		showGlobalFilter,
 		showToolbarDropZone,
 		sorting,
+		searchId,
 		...config.state,
 	} as TableComponentState
 
@@ -391,6 +411,7 @@ export const useTable = <TData extends Record<string, any> = {}>(
 		getPresets: config.onGetPresets ?? getPresets,
 		savePresets: config.onSavePresets ?? savePresets,
 		getDefaultPresets: config.onGetDefaultPresets ?? getDefaultPresets,
+		showSearchData: searchData,
 	} as TableInstance<TData>
 
 	if (config.tableInstanceRef) {
