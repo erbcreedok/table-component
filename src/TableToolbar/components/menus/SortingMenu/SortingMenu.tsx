@@ -70,7 +70,7 @@ export const SortingMenu = <TData extends Record<string, any> = {}>({
 		column: Table_Column<TData>,
 		hovered: Table_Column<TData>
 	) => {
-		const currentOrder = sorting.map((col) => col.id)
+		const currentOrder = sorting?.map((col) => col.id)
 		const newOrder = reorderColumn(column, hovered, currentOrder)
 
 		resetSorting(true)
@@ -79,7 +79,7 @@ export const SortingMenu = <TData extends Record<string, any> = {}>({
 			const target = allColumns.find(
 				(col) => getColumnId(col.columnDef) === id
 			) as Table_Column<TData>
-			const targetDirection = sorting.find((item) => item.id === target.id)
+			const targetDirection = sorting?.find((item) => item.id === target.id)
 			target.toggleSorting(targetDirection?.desc, true)
 		})
 	}
@@ -122,7 +122,7 @@ export const SortingMenu = <TData extends Record<string, any> = {}>({
 							/>
 						))}
 
-					{Boolean(sortedList.length && !searchList.length) && (
+					{Boolean(sortedList?.length && !searchList.length) && (
 						<>
 							<Box
 								sx={{
@@ -137,11 +137,11 @@ export const SortingMenu = <TData extends Record<string, any> = {}>({
 								<ButtonLink onClick={removeAllSorted}>Remove all</ButtonLink>
 							</Box>
 
-							{sortedList.map((column) => (
+							{sortedList?.map((column) => (
 								<SimpleMenuItem
 									column={column as Table_Column<TData>}
 									key={(column as Table_Column<TData>).id}
-									enableDrag={sortedList.length > 1}
+									enableDrag={sortedList?.length > 1}
 									hoveredColumn={hoveredColumn}
 									onColumnOrderChange={onColumnOrderChanged}
 									setHoveredColumn={setHoveredColumn}
@@ -153,7 +153,7 @@ export const SortingMenu = <TData extends Record<string, any> = {}>({
 					)}
 
 					<>
-						{!!sortedList.length &&
+						{!!sortedList?.length &&
 							!searchList.length &&
 							!!nonSortedList.length && (
 								<ListTitle sx={{ padding: '0 24px', margin: '20px 0' }}>

@@ -5,6 +5,7 @@ import Paper from '@mui/material/Paper'
 import { BottomToolbar } from '../toolbar/BottomToolbar'
 import type { TableInstance } from '..'
 import { TableToolbar } from '../TableToolbar/TableToolbar'
+import { TableFiltersBar } from '../TableFiltersBar/TableFiltersBar'
 
 import { TableContainer } from './TableContainer'
 
@@ -69,6 +70,8 @@ export const TablePaper: FC<Props> = ({ table }) => {
 					: renderTopToolbar ?? (
 							<>
 								<TableToolbar table={table} />
+
+								<TableFiltersBar table={table} />
 							</>
 					  ))}
 			<TableContainer table={table} />

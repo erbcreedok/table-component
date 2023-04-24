@@ -41,6 +41,7 @@ export const getTeamMembersColumns = () =>
         {
             header: 'Team member',
             accessorKey: 'member.id',
+            filterVariant: 'multi-select',
             id: 'teamMember',
             Cell: ({ row, table }) => {
                 const user = row.original.member;
@@ -77,6 +78,7 @@ export const getTeamMembersColumns = () =>
         {
             header: 'Impact on the project',
             accessorKey: 'impact',
+            filterVariant: 'multi-select',
             GroupedCell: ColoredGroupedCell,
             Header: HeaderBase,
             muiTableBodyCellProps: coloredCellProps,
@@ -86,6 +88,7 @@ export const getTeamMembersColumns = () =>
         {
             header: 'Performance',
             accessorKey: 'performance',
+            filterVariant: 'multi-select',
             GroupedCell: ColoredGroupedCell,
             Header: HeaderBase,
             muiTableBodyCellProps: coloredCellProps,
@@ -97,6 +100,7 @@ export const getTeamMembersColumns = () =>
         {
             header: 'Risk of leaving',
             accessorKey: 'riskOfLeaving',
+            filterVariant: 'multi-select',
             GroupedCell: ColoredGroupedCell,
             Header: HeaderBase,
             muiTableBodyCellProps: coloredCellProps,
@@ -106,6 +110,7 @@ export const getTeamMembersColumns = () =>
         {
             header: 'Succession status',
             accessorKey: 'successionStatus',
+            filterVariant: 'multi-select',
             GroupedCell: ColoredGroupedCell,
             Header: HeaderBase,
             enableColumnOrdering: true,
@@ -114,6 +119,7 @@ export const getTeamMembersColumns = () =>
         {
             header: 'Location',
             accessorKey: 'location',
+            filterVariant: 'multi-select',
             GroupedCell: ColoredGroupedCell,
             Header: HeaderBase,
             enableColumnOrdering: true,

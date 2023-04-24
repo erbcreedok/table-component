@@ -122,7 +122,7 @@ export const reorderColumn = <TData extends Record<string, any> = {}>(
 	targetColumn: Table_Column<TData>,
 	columnOrder: ColumnOrderState
 ): ColumnOrderState => {
-	if (draggedColumn.getCanPin()) {
+	if (draggedColumn?.getCanPin?.()) {
 		draggedColumn.pin(targetColumn.getIsPinned())
 	}
 	columnOrder.splice(

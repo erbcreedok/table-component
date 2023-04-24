@@ -15,7 +15,7 @@ export const SortingButtons = <TData extends Record<string, any> = {}>(
 	props: Props<TData>
 ) => {
 	const { column } = props
-	const sorting = column.getIsSorted()
+	const sorting = column?.getIsSorted()
 
 	return (
 		<Box
