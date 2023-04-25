@@ -2,16 +2,21 @@ import React, { useState, useRef } from 'react'
 import Box from '@mui/material/Box'
 import Divider from '@mui/material/Divider'
 import Typography from '@mui/material/Typography'
+import IconButton from '@mui/material/IconButton'
 
 import type { Table_Column, TableInstance } from '../../../../index'
-import type { FilterType } from '../FiltersMenu'
 import { ToolbarMultiselect } from '../../../../components/ToolbarMultiselect'
+import { DeleteIcon } from '../../icons/DeleteIcon'
+import { getNestedProp } from '../../../../utils/getNestedProp'
+
+import type { FilterType } from './FiltersMenu'
 
 interface Props<TData extends Record<string, any> = {}> {
 	table: TableInstance<TData>
 	filter: FilterType<TData>
 	firstInList: boolean
 	changeFilter(filter: FilterType<TData>, value: string[] | number[]): void
+	removeFilter(filter: FilterType<TData>): void
 }
 
 export const FiltersMenuAppliedFilter = <
@@ -21,6 +26,7 @@ export const FiltersMenuAppliedFilter = <
 	table,
 	filter,
 	changeFilter,
+	removeFilter,
 }: Props<TData>) => {
 	const {
 		options: { localization },
@@ -28,13 +34,26 @@ export const FiltersMenuAppliedFilter = <
 	const getColumnFilterOptions: (
 		column: Table_Column<TData>
 	) => { label: string; value: string }[] = (column) => {
+		const flatRows = column.getFacetedRowModel().flatRows
+
 		return Array.from(column.getFacetedUniqueValues().keys())
 			.sort()
 			.filter((el) => el)
-			.map((el) => ({
-				label: el,
-				value: el,
-			}))
+			.map((el) => {
+				let label = el
+				if (column.columnDef.displayDataKey) {
+					const row = flatRows.find(
+						(row) =>
+							getNestedProp(row.original, column.columnDef.accessorKey) === el
+					)
+					label = getNestedProp(row?.original, column.columnDef.displayDataKey)
+				}
+
+				return {
+					label,
+					value: el,
+				}
+			})
 	}
 
 	const getFilterAppliedValues = () => {
@@ -65,6 +84,9 @@ export const FiltersMenuAppliedFilter = <
 						width: '100%',
 						minWidth: 300,
 						boxSizing: 'border-box',
+						'&:hover button': {
+							visibility: 'visible',
+						},
 					}}
 				>
 					<Divider
@@ -83,31 +105,48 @@ export const FiltersMenuAppliedFilter = <
 					<Box
 						sx={{
 							display: 'flex',
+							justifyContent: 'space-between',
+							alignItems: 'center',
 							width: '100%',
 							boxSizing: 'border-box',
 							px: '24px',
 							mt: firstInList ? '18px' : '24px',
 						}}
 					>
-						<Typography
+						<Box
 							sx={{
-								color: '#303240',
-								fontWeight: 600,
-								fontSize: '14px',
+								display: 'flex',
+								boxSizing: 'border-box',
 							}}
 						>
-							{filter.column.columnDef.header}
-						</Typography>
-						<Typography
-							sx={{
-								color: '#6C6F80',
-								fontWeight: 600,
-								fontSize: '14px',
-								ml: '9px',
-							}}
+							<Typography
+								sx={{
+									color: '#303240',
+									fontWeight: 600,
+									fontSize: '14px',
+								}}
+							>
+								{filter.column.columnDef.header}
+							</Typography>
+							<Typography
+								sx={{
+									color: '#6C6F80',
+									fontWeight: 600,
+									fontSize: '14px',
+									ml: '9px',
+								}}
+							>
+								{localization.isAnyOf}
+							</Typography>
+						</Box>
+						<IconButton
+							sx={{ visibility: 'hidden' }}
+							disableRipple
+							onClick={() => removeFilter(filter)}
+							size="small"
 						>
-							{localization.isAnyOf}
-						</Typography>
+							<DeleteIcon />
+						</IconButton>
 					</Box>
 					<ToolbarMultiselect
 						table={table}

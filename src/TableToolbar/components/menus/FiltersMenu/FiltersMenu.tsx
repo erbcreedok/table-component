@@ -4,12 +4,13 @@ import Button from '@mui/material/Button'
 import Drawer from '@mui/material/Drawer'
 import Divider from '@mui/material/Divider'
 
-import type { Table_Column, TableInstance } from '../../../index'
+import type { Table_Column, TableInstance } from '../../../../index'
+import { Table_DisplayColumnIdsArray } from '../../../../column.utils'
+import { SidebarHeaderComponent } from '../components/SidebarHeader'
+import { SidebarSearchComponent } from '../components/SidebarSearch'
 
-import { SidebarHeaderComponent } from './components/SIdebarHeader'
-import { SidebarSearchComponent } from './components/SidebarSearch'
-import { FiltersMenuListItem } from './filters/FiltersMenuListItem'
-import { FiltersMenuAppliedFilter } from './filters/FiltersMenuAppliedFilter'
+import { FiltersMenuListItem } from './FiltersMenuListItem'
+import { FiltersMenuAppliedFilter } from './FiltersMenuAppliedFilter'
 
 interface Props<TData extends Record<string, any> = {}> {
 	anchorEl: HTMLElement | null
@@ -41,7 +42,9 @@ export const FiltersMenu = <TData extends Record<string, any> = {}>({
 	const allColumns = useMemo(() => {
 		const columns = getAllColumns()
 
-		return columns
+		return columns.filter(
+			(column) => !Table_DisplayColumnIdsArray.includes(column.id)
+		)
 	}, [getAllColumns])
 
 	const getActiveFiltersData = useCallback(() => {
@@ -107,6 +110,17 @@ export const FiltersMenu = <TData extends Record<string, any> = {}>({
 		resetColumnFilters()
 	}
 
+	const handleRemoveFilter = (filter) => {
+		setAppliedFilters(
+			appliedFilters.filter((applied) => applied.id !== filter.id)
+		)
+		filter.column.setFilterValue()
+
+		if (appliedFilters.length === 1) {
+			setIsFilterAddition(true)
+		}
+	}
+
 	return (
 		<Drawer
 			anchor="right"
@@ -127,6 +141,7 @@ export const FiltersMenu = <TData extends Record<string, any> = {}>({
 									table={table}
 									filter={filter}
 									changeFilter={changeFilter}
+									removeFilter={handleRemoveFilter}
 									key={`${index}-${index}`}
 								/>
 							))}

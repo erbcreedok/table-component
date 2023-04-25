@@ -8,7 +8,7 @@ import { ContentTitle } from '../../../../components/ContentTitle'
 import { ButtonLink } from '../../../../components/ButtonLink'
 import { getColumnId, reorderColumn } from '../../../../column.utils'
 import { SidebarSearchComponent } from '../components/SidebarSearch'
-import { SidebarHeaderComponent } from '../components/SIdebarHeader'
+import { SidebarHeaderComponent } from '../components/SidebarHeader'
 
 import { SettingsMenuItem } from './SettingsMenuItem'
 

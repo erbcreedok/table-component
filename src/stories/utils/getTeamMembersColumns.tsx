@@ -55,6 +55,7 @@ export const getTeamMembersColumns = () =>
 		{
 			header: 'Team member',
 			accessorKey: 'member.fullName',
+            displayDataKey: 'member.fullName',
 			filterVariant: 'multi-select',
 			id: 'teamMember',
 			Cell: ({ row, table }) => {

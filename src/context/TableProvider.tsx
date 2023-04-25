@@ -69,6 +69,7 @@ export const TableProvider = <TData extends Record<string, any> = {}>({
 	rowNumberMode = 'original',
 	selectAllMode = 'page',
 	sortingFns,
+	columns,
 	...rest
 }: TableComponentProps<TData> & {
 	children?: ReactNode | null
@@ -102,6 +103,21 @@ export const TableProvider = <TData extends Record<string, any> = {}>({
 			...defaultDisplayColumn,
 		}),
 		[defaultDisplayColumn]
+	)
+
+	const _columns = useMemo(
+		() =>
+			columns.map((col) => {
+				if (col.filterVariant) {
+					return col
+				}
+
+				return {
+					...col,
+					filterVariant: 'multi-select',
+				}
+			}),
+		[columns]
 	)
 
 	if (rest.enableRowVirtualization || rest.enableColumnVirtualization) {
@@ -176,6 +192,7 @@ export const TableProvider = <TData extends Record<string, any> = {}>({
 		rowNumberMode,
 		selectAllMode,
 		sortingFns: _sortingFns,
+		columns: _columns,
 		...rest,
 	} as TableComponentProps<{}> & { localization: Table_Localization }
 

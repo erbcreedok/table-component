@@ -27,6 +27,7 @@ type TeamsTableConfigs = TableComponentProps<TeamMember> & {
 	defaultSorting?: SortingState
 	defaultColumnOrder?: ColumnOrderState
 	defaultColumnVisibility?: VisibilityState
+	defaultColumnFilterFns?: string[]
 }
 
 type TeamsTableExample = Omit<TeamsTableConfigs, 'data' | 'columns'>
@@ -44,13 +45,27 @@ const disableHidingForColumns = ( disableHidingFor: string[], columns: Table_Col
 	}))
 }
 
+const setColumnFilterFns = (filterFns: string[], columns: Table_ColumnDef<TeamMember>[]) => {
+	columns.map((column) => {
+		if (column.id  && filterFns.hasOwnProperty(column.id) && filterFns[column.id]) {
+			column.filterFn = filterFns[column.id]
+		}
+		if (column.accessorKey  && filterFns.hasOwnProperty(column.accessorKey) && filterFns[column.accessorKey]) {
+			column.filterFn = filterFns[column.accessorKey]
+		}
+		return column;
+	})
+
+	return columns
+}
+
 const getPropsHandledColumns = (columns: Table_ColumnDef<TeamMember>[], args: TeamsTableConfigs) => {
-	const { disableSortingFor, disableHidingFor } = args
+	const { disableSortingFor, disableHidingFor, defaultColumnFilterFns } = args
 	return disableHidingForColumns(
 		[(disableHidingFor ?? [])].flat(),
 		disableSortingForColumns(
 			[(disableSortingFor ?? [])].flat(),
-			columns,
+			setColumnFilterFns(defaultColumnFilterFns ?? [], columns),
 		),
 	)
 }
@@ -230,6 +245,15 @@ const meta: Meta = {
 			description: '***THIS IS NOT A PROP***\n' +
 				'Set Default column visibility for Table. Rerender Table to apply value',
 		},
+		defaultColumnFilterFns: {
+			control: { type: 'object' },
+			defaultValue: columns.map(getColumnId).reduce((acc, columnId) => ({
+				...acc,
+				[columnId]: undefined,
+			}), {}),
+			description: '***THIS IS NOT A PROP***\n' +
+				'Set Default column filter function for Table. Rerender Table to apply value',
+		}
 	},
 };
 

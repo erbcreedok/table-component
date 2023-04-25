@@ -295,6 +295,14 @@ export const getCommonCellStyles = ({
 	width: header?.getSize() ?? column.getSize(),
 })
 
+export const Table_DisplayColumnIdsArray = [
+	'mrt-row-actions',
+	'mrt-row-drag',
+	'mrt-row-expand',
+	'mrt-row-numbers',
+	'mrt-row-select',
+]
+
 export const Table_DefaultColumn = {
 	minSize: 40,
 	maxSize: 1000,

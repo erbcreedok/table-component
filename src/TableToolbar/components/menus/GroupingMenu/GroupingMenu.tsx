@@ -3,7 +3,7 @@ import Box from '@mui/material/Box'
 import Drawer from '@mui/material/Drawer'
 
 import type { TableInstance } from '../../../../index'
-import { SidebarHeaderComponent } from '../components/SIdebarHeader'
+import { SidebarHeaderComponent } from '../components/SidebarHeader'
 import { SidebarSearchComponent } from '../components/SidebarSearch'
 import { Table_Column } from '../../../../index'
 import { SimpleMenuItem } from '../components/SimpleMenuItem'

@@ -536,6 +536,7 @@ export type Table_DefinedColumnDef<TData extends Record<string, any> = {}> =
 	Omit<Table_ColumnDef<TData>, 'id' | 'defaultDisplayColumn'> & {
 		defaultDisplayColumn: Partial<Table_ColumnDef<TData>>
 		id: string
+		displayDataKey: string
 		_filterFn: Table_FilterOption
 	}
 
