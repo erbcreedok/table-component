@@ -16,9 +16,5 @@ type Props<TData extends Record<string, any>> = {
 export const HeaderBase = <T extends Record<string, any>>({
 	column,
 }: Props<T>) => {
-	return (
-		<Box style={{ minWidth: column.getSize() }} title={column.columnDef.header}>
-			{column.columnDef.header}
-		</Box>
-	)
+	return <Box title={column.columnDef.header}>{column.columnDef.header}</Box>
 }

@@ -1,5 +1,5 @@
 import { faker } from '@faker-js/faker'
-import { TeamMember, User } from '../types/TeamMember'
+import { TeamMember, UnitTreeItem, User } from '../types/TeamMember'
 import { getRandomFromArray } from './getRandomFromArray'
 
 const impacts = ['Critical', 'High', 'Medium', 'Low', null];
@@ -42,6 +42,34 @@ export const getExpandingTeamMembers = (length = 200, prefix = ''): TeamMember[]
 		members[i].subRows = getTeamMembers(3, `${prefix}${i + 1}.`)
 	}
 	return members
+}
+
+
+export const getUnitTreeItems = (maxDepth = 5, depth = 0, prefix = ''): UnitTreeItem[] => {
+	if (depth >= maxDepth) return []
+	const unitTree: UnitTreeItem[] = []
+	const length = Math.pow(2, depth)
+	for (let i = 0; i < length; i += 1) {
+		unitTree.push({
+			id: faker.datatype.uuid(),
+			name: `${prefix}${i + 1}. ${faker.company.name()}`,
+			type: faker.company.companySuffix(),
+			keyMembers: getUsers(Math.round(Math.random() * 3 + 2), `${prefix}${i + 1}.`),
+			subRows: [
+				...(depth > 1 ? getTeamMembers(Math.round(Math.random() * length), `${prefix}${i + 1}.`) : []),
+				...getUnitTreeItems(maxDepth, depth + 1, `${prefix}${i + 1}.`),
+			]
+		})
+	}
+
+	return unitTree
+}
+
+export const isUnitTreeItem = (item: unknown): item is UnitTreeItem => {
+	return item?.hasOwnProperty('keyMembers') ?? false
+}
+export const isTeamMember = (item: unknown): item is TeamMember => {
+	return item?.hasOwnProperty('member') ?? false
 }
 
 export const getSeparatedTeamMembers = (length = 200): TeamMember[] => [...Array(length)].map(() => getTeamMember(getRandomFromArray(savedUsers)));

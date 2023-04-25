@@ -41,11 +41,11 @@ export const TableContainer: FC<Props> = ({ table }) => {
 			: muiTableContainerProps
 
 	const selectMessage =
-		getSelectedRowModel().rows.length > 0
+		getSelectedRowModel().flatRows.length > 0
 			? localization.selectedCountOfRowCountRowsSelected
 					?.replace(
 						'{selectedCount}',
-						getSelectedRowModel().rows.length.toString()
+						getSelectedRowModel().flatRows.length.toString()
 					)
 					?.replace(
 						'{rowCount}',
@@ -98,7 +98,7 @@ export const TableContainer: FC<Props> = ({ table }) => {
 			}}
 		>
 			<Table table={table} />
-			{!!getSelectedRowModel().rows.length && (
+			{!!getSelectedRowModel().flatRows.length && (
 				<Box
 					sx={{
 						boxSizing: 'border-box',

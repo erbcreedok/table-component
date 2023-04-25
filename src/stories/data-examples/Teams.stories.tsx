@@ -2,13 +2,21 @@ import { Meta, Story } from '@storybook/react'
 import ModeIcon from '@mui/icons-material/Mode';
 import { ColumnOrderState, VisibilityState, SortingState } from '@tanstack/react-table'
 import React, { useState } from 'react'
+import { TableBodyRow } from '../../body/TableBodyRow'
 import { getColumnId } from '../../column.utils'
 import TableComponent, { Table_ColumnDef, Table_Row, TableComponentProps } from '../../index'
-import { TeamMember } from '../types/TeamMember'
-import { getExpandingTeamMembers, getSeparatedTeamMembers, getTeamMembers } from '../utils/getTeamMembers'
+import { TeamMember, UnitTreeItem } from '../types/TeamMember'
+import {
+	getExpandingTeamMembers,
+	getSeparatedTeamMembers,
+	getTeamMembers,
+	getUnitTreeItems,
+	isUnitTreeItem
+} from '../utils/getTeamMembers'
 import { getTeamMembersColumns } from '../utils/getTeamMembersColumns'
 import { getDefaultRowActionMenuItems } from '../utils/rowActionMenuItems'
 import { sortByArrayOrder } from '../utils/sortByArrayOrder'
+import { UnitRow } from './components/UnitRow'
 
 const groupsSorting = {
 	impact: sortByArrayOrder(['Critical', 'High', 'Medium', 'Low']),
@@ -96,8 +104,8 @@ export const TeamsTableSubtree: Story<TeamsTableExample> = (args) => (
 	<TeamsTable
 		columns={columns}
 		data={dataTree}
-		enableExpanding
 		{...args}
+		enableExpanding
 	/>
 );
 
@@ -135,6 +143,33 @@ export const TeamsTableRowOrdering: Story<TeamsTableExample> = (args) => {
 	);
 }
 
+export const HierarchyGroupTableExample: Story = (args) => {
+	const [data] = useState(getUnitTreeItems(3))
+
+	return (
+		<>
+			<TableComponent
+				columns={columns as unknown as Table_ColumnDef<UnitTreeItem>[]}
+				data={data}
+				CustomRow={({ ...rest }) => {
+					if (isUnitTreeItem(rest.row.original)) {
+						return <UnitRow {...rest} unit={rest.row.original} />
+					}
+
+					return <TableBodyRow {...rest} />
+				}}
+				{...args}
+				enableExpanding
+				enableBottomToolbar={false}
+				hideRowExpandColumn
+				hideTableHead
+				filterFromLeafRows
+				enableGrouping={false}
+			/>
+		</>
+	)
+}
+
 
 const meta: Meta = {
 	title: 'Data Examples/Teams',
@@ -154,6 +189,10 @@ const meta: Meta = {
 		uppercaseHeader: {
 			control: 'boolean',
 			defaultValue: true,
+		},
+		enableExpanding: {
+			control: 'boolean',
+			defaultValue: false,
 		},
 		enableGrouping: {
 			control: 'boolean',
@@ -232,7 +271,7 @@ const meta: Meta = {
 		},
 		defaultColumnOrder: {
 			control: { type: 'object' },
-			defaultValue: columns.map(getColumnId),
+			defaultValue: ['mrt-row-expand', ...columns.map(getColumnId)],
 			description: '***THIS IS NOT A PROP***\n' +
 				'Set Default column order for Table. Rerender Table to apply value',
 		},

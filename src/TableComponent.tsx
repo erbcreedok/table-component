@@ -1,6 +1,7 @@
 /* eslint-disable no-param-reassign */
 import React, {
 	Dispatch,
+	FC,
 	MutableRefObject,
 	ReactNode,
 	SetStateAction,
@@ -43,6 +44,7 @@ import type {
 import type { VirtualizerOptions, Virtualizer } from '@tanstack/react-virtual'
 
 import { Table_AggregationFns } from './aggregationFns'
+import { TableBodyRowProps } from './body/TableBodyRow'
 import { TableProvider } from './context/TableProvider'
 import { Table_FilterFns } from './filterFns'
 import { Table_Icons } from './icons'
@@ -248,6 +250,7 @@ export type TableInstance<TData extends Record<string, any> = {}> = Omit<
 	setShowFilters: Dispatch<SetStateAction<boolean>>
 	setShowGlobalFilter: Dispatch<SetStateAction<boolean>>
 	setShowToolbarDropZone: Dispatch<SetStateAction<boolean>>
+	CustomRow?: FC<TableBodyRowProps>
 }
 
 export type Table_TableState<TData extends Record<string, any> = {}> =
@@ -358,10 +361,12 @@ export type Table_ColumnDef<TData extends Record<string, any> = {}> = Omit<
 				column,
 				header,
 				table,
+				parentRow,
 		  }: {
 				column: Table_Column<TData>
 				header: Table_Header<TData>
 				table: TableInstance<TData>
+				parentRow?: Table_Row<TData>
 		  }) => ReactNode)
 	/**
 	 * Either an `accessorKey` or a combination of an `accessorFn` and `id` are required for a data column definition.
@@ -728,6 +733,8 @@ export type TableComponentProps<TData extends Record<string, any> = {}> = Omit<
 	globalFilterModeOptions?: Table_FilterOption[] | null
 	groupsSorting?: any
 	groupBorder?: string | { left: string; top: string }
+	hideRowExpandColumn?: boolean
+	hideTableHead?: boolean
 	icons?: Partial<Table_Icons>
 	initialState?: Partial<Table_TableState<TData>>
 	/**
@@ -1129,6 +1136,7 @@ export type TableComponentProps<TData extends Record<string, any> = {}> = Omit<
 	 */
 	virtualizerProps?: any
 	detailedRowBackgroundColor?: string
+	CustomRow?: FC<TableBodyRowProps>
 }
 
 const TableComponent = <TData extends Record<string, any> = {}>(

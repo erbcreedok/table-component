@@ -3,7 +3,12 @@ import TableRow from '@mui/material/TableRow'
 import { alpha, lighten } from '@mui/material/styles'
 import type { VirtualItem } from '@tanstack/react-virtual'
 
-import type { Table_Header, Table_HeaderGroup, TableInstance } from '..'
+import type {
+	Table_Header,
+	Table_HeaderGroup,
+	Table_Row,
+	TableInstance,
+} from '..'
 
 import { TableHeadCell } from './TableHeadCell'
 
@@ -13,6 +18,7 @@ interface Props {
 	virtualColumns?: VirtualItem[]
 	virtualPaddingLeft?: number
 	virtualPaddingRight?: number
+	parentRow?: Table_Row
 }
 
 export const TableHeadRow: FC<Props> = ({
@@ -21,6 +27,7 @@ export const TableHeadRow: FC<Props> = ({
 	virtualColumns,
 	virtualPaddingLeft,
 	virtualPaddingRight,
+	parentRow,
 }) => {
 	const {
 		options: { layoutMode, muiTableHeadRowProps },
@@ -53,7 +60,14 @@ export const TableHeadRow: FC<Props> = ({
 					? headerGroup.headers[headerOrVirtualHeader.index]
 					: (headerOrVirtualHeader as Table_Header)
 
-				return <TableHeadCell header={header} key={header.id} table={table} />
+				return (
+					<TableHeadCell
+						parentRow={parentRow}
+						header={header}
+						key={header.id}
+						table={table}
+					/>
+				)
 			})}
 			{virtualPaddingRight ? (
 				// eslint-disable-next-line jsx-a11y/control-has-associated-label

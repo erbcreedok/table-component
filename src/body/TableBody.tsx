@@ -48,6 +48,7 @@ export const TableBody: FC<Props> = ({
 			virtualizerProps,
 		},
 		refs: { tableContainerRef, tablePaperRef },
+		CustomRow,
 	} = table
 	const { columnFilters, globalFilter, pagination, sorting } = getState()
 
@@ -190,6 +191,8 @@ export const TableBody: FC<Props> = ({
 							return memoMode === 'rows' ? (
 								// eslint-disable-next-line react/jsx-pascal-case
 								<Memo_TableBodyRow {...props} />
+							) : CustomRow ? (
+								<CustomRow {...props} />
 							) : (
 								<TableBodyRow {...props} />
 							)

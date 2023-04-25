@@ -42,7 +42,7 @@ export const TableProvider = <TData extends Record<string, any> = {}>({
 	enableHiding = true,
 	enableMultiRowSelection = true,
 	enableMultiSort = true,
-	enablePagination = true,
+	enablePagination = false,
 	enablePinning = false,
 	enableRowSelection = false,
 	enableSelectAll = true,

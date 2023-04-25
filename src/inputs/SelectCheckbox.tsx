@@ -10,9 +10,15 @@ interface Props {
 	row?: Table_Row
 	selectAll?: boolean
 	table: TableInstance
+	parentRow?: Table_Row
 }
 
-export const SelectCheckbox: FC<Props> = ({ row, selectAll, table }) => {
+export const SelectCheckbox: FC<Props> = ({
+	row,
+	selectAll,
+	table,
+	parentRow,
+}) => {
 	const {
 		getState,
 		options: {
@@ -34,7 +40,9 @@ export const SelectCheckbox: FC<Props> = ({ row, selectAll, table }) => {
 		: muiSelectCheckboxProps
 
 	const commonProps = {
-		checked: selectAll
+		checked: parentRow
+			? parentRow.getIsAllSubRowsSelected()
+			: selectAll
 			? selectAllMode === 'page'
 				? table.getIsAllPageRowsSelected()
 				: table.getIsAllRowsSelected()
@@ -45,7 +53,10 @@ export const SelectCheckbox: FC<Props> = ({ row, selectAll, table }) => {
 				? localization.toggleSelectAll
 				: localization.toggleSelectRow,
 		},
-		onChange: row
+		onChange: parentRow
+			? (e) =>
+					parentRow.subRows?.map((row) => row.getToggleSelectedHandler()(e))
+			: row
 			? row.getToggleSelectedHandler()
 			: selectAllMode === 'all'
 			? table.getToggleAllRowsSelectedHandler()
@@ -84,7 +95,9 @@ export const SelectCheckbox: FC<Props> = ({ row, selectAll, table }) => {
 			) : (
 				<Checkbox
 					indeterminate={
-						selectAll
+						parentRow
+							? parentRow.getIsSomeSelected()
+							: selectAll
 							? table.getIsSomeRowsSelected() &&
 							  !(selectAllMode === 'page'
 									? table.getIsAllPageRowsSelected()

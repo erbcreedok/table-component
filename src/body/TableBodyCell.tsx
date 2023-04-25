@@ -264,7 +264,7 @@ export const TableBodyCell: FC<Props> = ({
 			: 1
 
 	const isSelectCell = column.id === 'mrt-row-select'
-	const isAnyRowSelected = table.getSelectedRowModel().rows.length > 0
+	const isAnyRowSelected = table.getSelectedRowModel().flatRows.length > 0
 	const hideCheckBoxSpan = isSelectCell && !isAnyRowSelected
 
 	const isCurrentCellClicked =

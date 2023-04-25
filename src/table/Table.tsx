@@ -11,6 +11,7 @@ import { TableHead } from '../head/TableHead'
 import { Memo_TableBody, TableBody } from '../body/TableBody'
 import { TableFooter } from '../footer/TableFooter'
 import type { TableInstance } from '..'
+import { TableHeadInvisible } from '../head/TableHeadInvisible'
 
 interface Props {
 	table: TableInstance
@@ -28,6 +29,7 @@ export const Table: FC<Props> = ({ table }) => {
 			enableStickyHeader,
 			enableTableFooter,
 			enableTableHead,
+			hideTableHead,
 			layoutMode,
 			memoMode,
 			muiTableProps,
@@ -140,7 +142,8 @@ export const Table: FC<Props> = ({ table }) => {
 					: (tableProps?.sx as any)),
 			})}
 		>
-			{enableTableHead && <TableHead {...props} />}
+			{enableTableHead && !hideTableHead && <TableHead {...props} />}
+			{hideTableHead && <TableHeadInvisible table={table} />}
 			{memoMode === 'table-body' ? (
 				// eslint-disable-next-line react/jsx-pascal-case
 				<Memo_TableBody columnVirtualizer={columnVirtualizer} {...props} />

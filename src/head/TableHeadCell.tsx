@@ -7,7 +7,7 @@ import type { Theme } from '@mui/material/styles'
 
 import { getGroupBorders } from '../utils/getGroupBorders'
 import { getCommonCellStyles } from '../column.utils'
-import type { Table_Header, TableInstance } from '..'
+import type { Table_Header, Table_Row, TableInstance } from '..'
 import { Colors } from '../components/styles'
 
 import { TableHeadCellActionsButton } from './TableHeadCellActionsButton'
@@ -19,9 +19,10 @@ import { TableHeadCellSortLabel } from './TableHeadCellSortLabel'
 interface Props {
 	header: Table_Header
 	table: TableInstance
+	parentRow?: Table_Row
 }
 
-export const TableHeadCell: FC<Props> = ({ header, table }) => {
+export const TableHeadCell: FC<Props> = ({ header, table, parentRow }) => {
 	const theme = useTheme()
 	const {
 		getState,
@@ -115,6 +116,7 @@ export const TableHeadCell: FC<Props> = ({ header, table }) => {
 					column,
 					header,
 					table,
+					parentRow,
 			  })
 			: columnDef?.Header ?? (columnDef.header as ReactNode)
 
@@ -235,6 +237,7 @@ export const TableHeadCell: FC<Props> = ({ header, table }) => {
 										sx={{
 											opacity: visible ? 1 : 0,
 											'th:hover &': { opacity: 1 },
+											'td:hover &': { opacity: 1 },
 											color: '#6C6F80',
 											transform: visible ? 'rotate(180deg)' : undefined,
 											transition: '0.2s',

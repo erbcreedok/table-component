@@ -172,6 +172,7 @@ export const useTable = <TData extends Record<string, any> = {}>(
 						id: 'mrt-row-actions',
 					},
 					columnOrder.includes('mrt-row-expand') &&
+						!config.hideRowExpandColumn &&
 						showExpandColumn(config) && {
 							Cell: ({ row }) => (
 								<ExpandButton row={row as any} table={table as any} />
@@ -191,7 +192,13 @@ export const useTable = <TData extends Record<string, any> = {}>(
 						),
 						Header:
 							config.enableSelectAll && config.enableMultiRowSelection
-								? () => <SelectCheckbox selectAll table={table as any} />
+								? ({ parentRow }) => (
+										<SelectCheckbox
+											selectAll={!parentRow}
+											parentRow={parentRow as any}
+											table={table as any}
+										/>
+								  )
 								: null,
 						header: config.localization.select,
 						size: 60,
@@ -429,6 +436,7 @@ export const useTable = <TData extends Record<string, any> = {}>(
 		getDefaultPresets: config.onGetDefaultPresets ?? getDefaultPresets,
 		showSearchData: searchData,
 		setHighlightHeadCellId: highlightCellId,
+		CustomRow: config.CustomRow,
 	} as TableInstance<TData>
 
 	if (config.tableInstanceRef) {

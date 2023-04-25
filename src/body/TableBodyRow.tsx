@@ -8,7 +8,7 @@ import type { Table_Cell, Table_Row, TableInstance } from '..'
 import { Memo_TableBodyCell, TableBodyCell } from './TableBodyCell'
 import { TableDetailPanel } from './TableDetailPanel'
 
-interface Props {
+export interface TableBodyRowProps {
 	columnVirtualizer?: Virtualizer<HTMLDivElement, HTMLTableCellElement>
 	measureElement?: (element: HTMLTableRowElement) => void
 	numRows: number
@@ -21,7 +21,7 @@ interface Props {
 	virtualRow?: VirtualItem
 }
 
-export const TableBodyRow: FC<Props> = ({
+export const TableBodyRow: FC<TableBodyRowProps> = ({
 	columnVirtualizer,
 	measureElement,
 	numRows,

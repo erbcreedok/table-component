@@ -14,3 +14,14 @@ export type TeamMember = {
 	location: string;
 	subRows?: TeamMember[]
 }
+
+export type UnitTreeItem = {
+	id: string;
+	name: string;
+	type: string;
+	attritionRisk?: number;
+	performance?: number;
+	seniority?: number;
+	keyMembers?: User[];
+	subRows?: (UnitTreeItem | TeamMember)[];
+}

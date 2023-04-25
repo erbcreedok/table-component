@@ -13,9 +13,11 @@ import {
 	Table_Row,
 	TableInstance,
 } from '../../TableComponent'
+import { getNestedProp } from '../../utils/getNestedProp'
 import { TeamMember } from '../types/TeamMember'
 import { Colors } from './constants'
 import { createGetColors } from './createGetColors'
+import { isTeamMember } from './getTeamMembers'
 import { getTeamsBorderColorSet } from './getTeamsBorderColorSet'
 import { getTeamsCellBackgroundSet } from './getTeamsCellBackgroundSet'
 import { HeaderSearch } from '../../head/HeaderSearch'
@@ -51,12 +53,19 @@ const coloredCellProps = <TData extends Record<string, any> = {}>(props: {
 		sx: { backgroundColor: getBackgroundColors(columnId, value) },
 	}
 }
+
+export const teamMemberAccessorFn = (accessorKey: string) => (item: TeamMember) => {
+	if (isTeamMember(item)) {
+		return getNestedProp(item, accessorKey)
+	}
+	return ''
+}
 export const getTeamMembersColumns = () =>
 	[
 		{
 			header: 'Team member',
-			accessorKey: 'member.fullName',
-            displayDataKey: 'member.fullName',
+			accessorFn: teamMemberAccessorFn('member.fullName'),
+			displayDataKey: 'member.fullName',
 			filterVariant: 'multi-select',
 			id: 'teamMember',
 			Cell: ({ row, table }) => {
@@ -106,7 +115,8 @@ export const getTeamMembersColumns = () =>
 		},
 		{
 			header: 'Impact on the project',
-			accessorKey: 'impact',
+			id: 'impact',
+			accessorFn: teamMemberAccessorFn('impact'),
 			filterVariant: 'multi-select',
 			GroupedCell: ColoredGroupedCell,
 			Header: HeaderBase,
@@ -116,7 +126,8 @@ export const getTeamMembersColumns = () =>
 		},
 		{
 			header: 'Performance',
-			accessorKey: 'performance',
+			id: 'performance',
+			accessorFn: teamMemberAccessorFn('performance'),
 			filterVariant: 'multi-select',
 			GroupedCell: ColoredGroupedCell,
 			Header: HeaderBase,
@@ -128,7 +139,8 @@ export const getTeamMembersColumns = () =>
 		},
 		{
 			header: 'Risk of leaving',
-			accessorKey: 'riskOfLeaving',
+			id: 'riskOfLeaving',
+			accessorFn: teamMemberAccessorFn('riskOfLeaving'),
 			filterVariant: 'multi-select',
 			GroupedCell: ColoredGroupedCell,
 			Header: HeaderBase,
@@ -138,7 +150,8 @@ export const getTeamMembersColumns = () =>
 		},
 		{
 			header: 'Succession status',
-			accessorKey: 'successionStatus',
+			id: 'successionStatus',
+			accessorFn: teamMemberAccessorFn('successionStatus'),
 			filterVariant: 'multi-select',
 			GroupedCell: ColoredGroupedCell,
 			Header: HeaderBase,
@@ -147,7 +160,8 @@ export const getTeamMembersColumns = () =>
 		},
 		{
 			header: 'Location',
-			accessorKey: 'location',
+			id: 'location',
+			accessorFn: teamMemberAccessorFn('location'),
 			filterVariant: 'multi-select',
 			GroupedCell: ColoredGroupedCell,
 			Header: HeaderBase,
