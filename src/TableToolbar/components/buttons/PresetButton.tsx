@@ -24,11 +24,11 @@ interface PresetButtonProps<TData extends Record<string, any> = {}> {
 }
 
 export interface PresetState {
-	columnOrder: ColumnOrderState
-	grouping: GroupingState
-	sorting: SortingState
-	columnFilters: ColumnFiltersState
-	columnVisibility: VisibilityState
+	columnOrder?: ColumnOrderState
+	grouping?: GroupingState
+	sorting?: SortingState
+	columnFilters?: ColumnFiltersState
+	columnVisibility?: VisibilityState
 }
 export interface Preset {
 	id: number
@@ -84,12 +84,22 @@ export const PresetButton = <TData extends Record<string, any> = {}>({
 		sorting,
 		columnFilters,
 		columnVisibility,
-	}) => {
-		setColumnOrder(columnOrder)
-		setGrouping(() => grouping)
-		setSorting(sorting)
-		setColumnFilters(columnFilters)
-		setColumnVisibility(columnVisibility)
+	}: PresetState) => {
+		if (columnOrder) {
+			setColumnOrder(columnOrder)
+		}
+		if (grouping) {
+			setGrouping(() => grouping)
+		}
+		if (sorting) {
+			setSorting(sorting)
+		}
+		if (columnFilters) {
+			setColumnFilters(columnFilters)
+		}
+		if (columnVisibility) {
+			setColumnVisibility(columnVisibility)
+		}
 	}
 
 	useEffect(() => {

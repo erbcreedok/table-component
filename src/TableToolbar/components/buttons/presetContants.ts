@@ -4,7 +4,9 @@ import {
 	DEFAULT_FONT_FAMILY,
 } from '../../../components/styles'
 
-export const EMPTY_STATE = {
+import { PresetState } from './PresetButton'
+
+export const EMPTY_STATE: PresetState = {
 	columnOrder: [],
 	grouping: [],
 	sorting: [],
@@ -21,6 +23,14 @@ export const DEFAULT_PRESETS = [
 		state: EMPTY_STATE,
 	},
 ]
+
+export const getDefaultPreset = (state: Partial<PresetState>) => ({
+	id: 0,
+	name: 'Default Preset',
+	checked: true,
+	suggested: true,
+	state: { ...EMPTY_STATE, ...state },
+})
 
 export const PRESET_THEME = {
 	palette: {

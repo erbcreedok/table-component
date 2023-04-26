@@ -39,8 +39,8 @@ export const getDefaultRowActionMenuItems = <TData extends Record<string, any> =
 		closeMenu?.()
 	}
 	return [
-		<ViewProfileActionMenuItem onClick={onClick} />,
-		<RemoveActionMenuItem onClick={onClick} />,
-		<ShareActionMenuItem onClick={onClick} />
+		<ViewProfileActionMenuItem key="view-profile" onClick={onClick} />,
+		<RemoveActionMenuItem key="remove" onClick={onClick} />,
+		<ShareActionMenuItem key="share" onClick={onClick} />
 	]
 }

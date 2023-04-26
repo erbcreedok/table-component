@@ -164,6 +164,10 @@ const meta: Meta = {
 			control: 'boolean',
 			defaultValue: true,
 		},
+		enableMultiSort: {
+			control: 'boolean',
+			defaultValue: true,
+		},
 		enableRowActions: {
 			control: 'boolean',
 			defaultValue: false,

@@ -17,7 +17,7 @@ import {
 } from '@tanstack/react-table'
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
-import { DEFAULT_PRESETS } from '../TableToolbar/components/buttons/presetContants'
+import { getDefaultPreset } from '../TableToolbar/components/buttons/presetContants'
 import { ExpandAllButton } from '../buttons/ExpandAllButton'
 import { ExpandButton } from '../buttons/ExpandButton'
 import { ToggleRowActionMenuButton } from '../buttons/ToggleRowActionMenuButton'
@@ -316,7 +316,10 @@ export const useTable = <TData extends Record<string, any> = {}>(
 		localStorage.setItem('tablePresets', JSON.stringify(presets))
 	}, [])
 
-	const getDefaultPresets = useCallback(() => DEFAULT_PRESETS, [])
+	const getDefaultPresets = useCallback(
+		() => [getDefaultPreset(initialState)],
+		[]
+	)
 
 	const searchData = (id: string | null) => {
 		setSearchId(id)

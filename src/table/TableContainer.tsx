@@ -98,7 +98,7 @@ export const TableContainer: FC<Props> = ({ table }) => {
 			}}
 		>
 			<Table table={table} />
-			{getSelectedRowModel().rows.length && (
+			{!!getSelectedRowModel().rows.length && (
 				<Box
 					sx={{
 						boxSizing: 'border-box',

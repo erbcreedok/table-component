@@ -45,6 +45,7 @@ export const ColumnActionMenu: FC<Props> = ({
 			enableHiding,
 			enablePinning,
 			enableSorting,
+			enableMultiSort,
 			icons: {
 				ArrowRightIcon,
 				ClearAllIcon,
@@ -74,12 +75,12 @@ export const ColumnActionMenu: FC<Props> = ({
 	}
 
 	const handleSortAsc = () => {
-		column.toggleSorting(false)
+		column.toggleSorting(false, enableMultiSort)
 		setAnchorEl(null)
 	}
 
 	const handleSortDesc = () => {
-		column.toggleSorting(true)
+		column.toggleSorting(true, enableMultiSort)
 		setAnchorEl(null)
 	}
 

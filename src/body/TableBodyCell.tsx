@@ -190,6 +190,8 @@ export const TableBodyCell: FC<Props> = ({
 			: 1
 
 	const isSelectCell = column.id === 'mrt-row-select'
+	const isAnyRowSelected = table.getSelectedRowModel().rows.length > 0
+	const hideCheckBoxSpan = isSelectCell && !isAnyRowSelected
 
 	return (
 		<MuiTableCell
@@ -237,7 +239,7 @@ export const TableBodyCell: FC<Props> = ({
 					},
 				},
 				'& span': {
-					visibility: isSelectCell ? 'hidden' : 'visible',
+					visibility: hideCheckBoxSpan ? 'hidden' : 'visible',
 				},
 				...getGroupBorders({ table, cell }),
 				...getCommonCellStyles({

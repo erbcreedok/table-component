@@ -1,3 +1,5 @@
+import { PresetState } from '../PresetButton'
+
 const getIsArrayTheSame = (firstState, secondState) =>
 	JSON.stringify(firstState) === JSON.stringify(secondState)
 
@@ -55,7 +57,10 @@ const getIsVisibilityTheSame = (presetVisibility, tableVisibility) => {
 	return getIsArrayTheSame(hiddenPresetColumns, hiddenTableColumns)
 }
 
-export const getIsStateTheSame = (presetState, tableState) => {
+export const getIsStateTheSame = (
+	presetState: PresetState,
+	tableState: PresetState
+) => {
 	const {
 		columnOrder: presetColumnOrder,
 		grouping: presetGrouping,
@@ -72,18 +77,27 @@ export const getIsStateTheSame = (presetState, tableState) => {
 		columnVisibility: tableColumnVisibility,
 	} = tableState
 
-	const isOrderTheSame = getIsArrayTheSame(presetColumnOrder, tableColumnOrder)
+	const isOrderTheSame = getIsArrayTheSame(
+		presetColumnOrder ?? [],
+		tableColumnOrder ?? []
+	)
 	// grouping is working not properly, because after ungroup -> group by,
 	// new column("mrt-row-expand") is pushed to the beggining of the columnOrder array
-	const isGroupingTheSame = getIsArrayTheSame(presetGrouping, tableGrouping)
-	const isSortingTheSame = getIsSortingTheSame(presetSorting, tableSorting)
+	const isGroupingTheSame = getIsArrayTheSame(
+		presetGrouping ?? [],
+		tableGrouping ?? []
+	)
+	const isSortingTheSame = getIsSortingTheSame(
+		presetSorting ?? [],
+		tableSorting ?? []
+	)
 	const isFiltersTheSame = getIsFiltersTheSame(
-		presetColumnFilters,
-		tableColumnFilters
+		presetColumnFilters ?? [],
+		tableColumnFilters ?? []
 	)
 	const isVisibilityTheSame = getIsVisibilityTheSame(
-		presetColumnVisibility,
-		tableColumnVisibility
+		presetColumnVisibility ?? {},
+		tableColumnVisibility ?? {}
 	)
 
 	return (
