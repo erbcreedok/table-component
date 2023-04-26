@@ -267,7 +267,7 @@ export const useTable = <TData extends Record<string, any> = {}>(
 				: config.data
 
 		return searchId
-			? data.filter((item) => item.member?.id === searchId)
+			? tableData.filter((item) => item.id === searchId)
 			: tableData
 	}, [
 		config.data,

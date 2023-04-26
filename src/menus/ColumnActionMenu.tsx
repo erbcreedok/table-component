@@ -90,6 +90,10 @@ export const ColumnActionMenu: FC<Props> = ({
 
 	const handleHideColumn = () => {
 		column.toggleVisibility(false)
+		if (column.getIsGrouped()) {
+			column.toggleGrouping()
+		}
+		column.clearSorting()
 		setAnchorEl(null)
 	}
 

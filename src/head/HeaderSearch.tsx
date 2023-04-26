@@ -154,13 +154,13 @@ export const HeaderSearch = <T extends Record<string, any>>({
 							<Typography
 								key={item.id}
 								onClick={() => {
-									setInput(getValueFromObj(item, searchPath, input))
-									table.showSearchData(item.member.id)
+									setInput(getValueFromObj<string>(item, searchPath, input))
+									table.showSearchData(item.id)
 									setFiltered([])
 									setAnchorElPopover(null)
 								}}
 							>
-								{item.member.fullName}
+								{getValueFromObj(item, searchPath, '')}
 							</Typography>
 						))}
 					</Popper>

@@ -27,7 +27,7 @@ export const getValueFromObj = <T>(
 	path = stringToPath(path)
 
 	// Cache the current object
-	let current = def
+	let current: Record<string, any> | T = obj
 
 	// For each item in the path, dig into the object
 	for (let i = 0; i < path.length; i++) {
@@ -38,5 +38,5 @@ export const getValueFromObj = <T>(
 		current = current[path[i]]
 	}
 
-	return current
+	return typeof current === 'object' ? def : current
 }

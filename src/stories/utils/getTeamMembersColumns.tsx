@@ -51,91 +51,104 @@ const coloredCellProps = <TData extends Record<string, any> = {}>(props: {
 	}
 }
 export const getTeamMembersColumns = () =>
-    [
-        {
-            header: 'Team member',
-            accessorKey: 'member.id',
-            filterVariant: 'multi-select',
-            id: 'teamMember',
-            Cell: ({ row, table }) => {
-                const user = row.original.member;
-                return (
-                    <Flex
-                        center="y"
-                        gap="0.75rem"
-                        style={{ minWidth: '100%', padding: '0 0.575rem' }}
-                        title={user.fullName}
-                    >
-                        <Avatar
-                            sx={{ width: 24, height: 24 }}
-                            src={user.avatarUrl}
-                            alt={user.fullName}
-                        />
-                        <Flex column style={{ overflow: 'hidden' }}>
-                            <TextEllipsis style={{ fontSize: '0.875rem' }}>
-                                {user.fullName}
-                            </TextEllipsis>
-                            <TextEllipsis
-                                style={{ color: '#6C6F80', fontSize: '0.75rem', fontWeight: '400' }}
-                            >
-                                {user.role}
-                            </TextEllipsis>
-                        </Flex>
-                        <RowActionMenuButton table={table} row={row} sx={{ ml: 'auto' }} />
-                    </Flex>
-                );
-            },
-            GroupedCell: ColoredGroupedCell,
-            enableColumnOrdering: false,
-            enableHiding: false,
-        },
-        {
-            header: 'Impact on the project',
-            accessorKey: 'impact',
-            filterVariant: 'multi-select',
-            GroupedCell: ColoredGroupedCell,
-            Header: HeaderBase,
-            muiTableBodyCellProps: coloredCellProps,
-            enableColumnOrdering: true,
-            enableSorting: false
-        },
-        {
-            header: 'Performance',
-            accessorKey: 'performance',
-            filterVariant: 'multi-select',
-            GroupedCell: ColoredGroupedCell,
-            Header: HeaderBase,
-            muiTableBodyCellProps: coloredCellProps,
-            enableColumnOrdering: true,
-            sortingFn() {
-                console.log('CUSTOM SORTING')
-            }
-        },
-        {
-            header: 'Risk of leaving',
-            accessorKey: 'riskOfLeaving',
-            filterVariant: 'multi-select',
-            GroupedCell: ColoredGroupedCell,
-            Header: HeaderBase,
-            muiTableBodyCellProps: coloredCellProps,
-            enableColumnOrdering: true,
-            sortDescFirst: false
-        },
-        {
-            header: 'Succession status',
-            accessorKey: 'successionStatus',
-            filterVariant: 'multi-select',
-            GroupedCell: ColoredGroupedCell,
-            Header: HeaderBase,
-            enableColumnOrdering: true,
-            enableGrouping: false
-        },
-        {
-            header: 'Location',
-            accessorKey: 'location',
-            filterVariant: 'multi-select',
-            GroupedCell: ColoredGroupedCell,
-            Header: HeaderBase,
-            enableColumnOrdering: true,
-        },
-    ] as Array<Table_ColumnDef<TeamMember>>;
+	[
+		{
+			header: 'Team member',
+			accessorKey: 'member.id',
+			filterVariant: 'multi-select',
+			id: 'teamMember',
+			Cell: ({ row, table }) => {
+				const user = row.original.member
+				return (
+					<Flex
+						center="y"
+						gap="0.75rem"
+						style={{ minWidth: '100%', padding: '0 0.575rem' }}
+						title={user.fullName}
+					>
+						<Avatar
+							sx={{ width: 24, height: 24 }}
+							src={user.avatarUrl}
+							alt={user.fullName}
+						/>
+						<Flex column style={{ overflow: 'hidden' }}>
+							<TextEllipsis style={{ fontSize: '0.875rem' }}>
+								{user.fullName}
+							</TextEllipsis>
+							<TextEllipsis
+								style={{
+									color: '#6C6F80',
+									fontSize: '0.75rem',
+									fontWeight: '400',
+								}}
+							>
+								{user.role}
+							</TextEllipsis>
+						</Flex>
+						<RowActionMenuButton table={table} row={row} sx={{ ml: 'auto' }} />
+					</Flex>
+				)
+			},
+			GroupedCell: ColoredGroupedCell,
+			enableColumnOrdering: false,
+			enableHiding: false,
+			Header: ({ column, header, table }) => (
+				<HeaderSearch
+					column={column}
+					header={header}
+					table={table}
+					searchPath="member.fullName"
+					placeHolder="Search for employee"
+				/>
+			),
+		},
+		{
+			header: 'Impact on the project',
+			accessorKey: 'impact',
+			filterVariant: 'multi-select',
+			GroupedCell: ColoredGroupedCell,
+			Header: HeaderBase,
+			muiTableBodyCellProps: coloredCellProps,
+			enableColumnOrdering: true,
+			enableSorting: false,
+		},
+		{
+			header: 'Performance',
+			accessorKey: 'performance',
+			filterVariant: 'multi-select',
+			GroupedCell: ColoredGroupedCell,
+			Header: HeaderBase,
+			muiTableBodyCellProps: coloredCellProps,
+			enableColumnOrdering: true,
+			sortingFn() {
+				console.log('CUSTOM SORTING')
+			},
+		},
+		{
+			header: 'Risk of leaving',
+			accessorKey: 'riskOfLeaving',
+			filterVariant: 'multi-select',
+			GroupedCell: ColoredGroupedCell,
+			Header: HeaderBase,
+			muiTableBodyCellProps: coloredCellProps,
+			enableColumnOrdering: true,
+			sortDescFirst: false,
+		},
+		{
+			header: 'Succession status',
+			accessorKey: 'successionStatus',
+			filterVariant: 'multi-select',
+			GroupedCell: ColoredGroupedCell,
+			Header: HeaderBase,
+			enableColumnOrdering: true,
+			enableGrouping: false,
+		},
+		{
+			header: 'Location',
+			accessorKey: 'location',
+			filterVariant: 'multi-select',
+			GroupedCell: ColoredGroupedCell,
+			Header: HeaderBase,
+			enableColumnOrdering: true,
+		},
+	] as Array<Table_ColumnDef<TeamMember>>
