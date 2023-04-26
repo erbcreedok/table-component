@@ -86,13 +86,13 @@ export const FilterChip: FC<FilterChipProps> = ({
 		<div>
 			<CommonChipWithPopover
 				textAlignSelf="end"
-				Text={
+				text={
 					currentFilterValues?.reduce?.(
 						(acc, label, index) => (index === 0 ? label : `${acc}, ${label}`),
 						''
 					) || ''
 				}
-				Title={
+				title={
 					<Typography
 						variant="body1"
 						style={{ fontWeight: 600, fontSize: 12, color: '#6C6F80' }}
@@ -100,7 +100,7 @@ export const FilterChip: FC<FilterChipProps> = ({
 						{currentFilterHeader}:&nbsp;
 					</Typography>
 				}
-				DropdownContent={DropdownContent}
+				dropdownContent={DropdownContent}
 			/>
 		</div>
 	)

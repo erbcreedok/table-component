@@ -1,8 +1,10 @@
 import { useMemo } from 'react'
 
-import { Table_Column } from 'src'
+import { Table_Column, TableInstance } from '../../'
 
-export const useGroupingControls = (table) => {
+export const useGroupingControls = <TData extends Record<string, any> = {}>(
+	table: TableInstance<TData>
+) => {
 	const {
 		getState,
 		getAllColumns,

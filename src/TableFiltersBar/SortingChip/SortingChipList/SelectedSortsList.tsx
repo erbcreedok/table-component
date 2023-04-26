@@ -1,21 +1,23 @@
-import React, { FC, useState } from 'react'
+import { ColumnSort } from '@tanstack/react-table'
+import React, { useState } from 'react'
 
-import { Table_Column } from 'src'
-
+import { Table_Column, TableInstance } from '../../../'
 import { reorderColumn } from '../../../column.utils'
 import { NoOptions } from '../../NoOptions/NoOptions'
 
 import { ListItemSort } from './ListItemSort'
 
-interface SelectedSortsListProps {
-	sortedList: any
-	resetSorting: any
-	allColumns: any
-	sorting: any
-	table: any
+interface SelectedSortsListProps<TData extends Record<string, any> = {}> {
+	sortedList?: (Table_Column<TData> | undefined)[]
+	resetSorting(): void
+	allColumns: Table_Column<TData>[]
+	sorting: ColumnSort[]
+	table: TableInstance<TData>
 }
 
-export const SelectedSortsList: FC<SelectedSortsListProps> = (props) => {
+export const SelectedSortsList = <TData extends Record<string, any> = {}>(
+	props: SelectedSortsListProps<TData>
+) => {
 	const { resetSorting, sortedList, allColumns, sorting, table } = props
 
 	const [hoveredColumn, setHoveredColumn] = useState<any>(null)
@@ -38,7 +40,7 @@ export const SelectedSortsList: FC<SelectedSortsListProps> = (props) => {
 		})
 	}
 
-	if (!sortedList.length) {
+	if (!sortedList?.length) {
 		return <NoOptions />
 	}
 

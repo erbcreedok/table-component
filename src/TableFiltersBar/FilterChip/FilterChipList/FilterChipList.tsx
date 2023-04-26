@@ -40,7 +40,7 @@ export const FilterChipList: FC<FilterChipListProps> = (props) => {
 
 	return (
 		<div>
-			{Array.from(new Set(currentFilterValues)).map((value) => {
+			{(Array.from(new Set(currentFilterValues)) as string[]).map((value) => {
 				return (
 					<ListFilterItem
 						key={value}

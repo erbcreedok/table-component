@@ -19,7 +19,9 @@ interface SortingChipProps<TData extends Record<string, any> = {}> {
 	onMount: (value: boolean) => void
 }
 
-export const SortingChip = (props: SortingChipProps) => {
+export const SortingChip = <TData extends Record<string, any> = {}>(
+	props: SortingChipProps<TData>
+) => {
 	const { table, isMounted, onMount } = props
 	const { getAllColumns, getState, resetSorting } = table
 
@@ -58,7 +60,7 @@ export const SortingChip = (props: SortingChipProps) => {
 		[sorting]
 	)
 
-	const firstSorting = sorting?.find((item) => sortedList[0].id === item.id)
+	const firstSorting = sorting?.find((item) => sortedList[0]?.id === item.id)
 
 	const handleClearAll = () => {
 		resetSorting()
@@ -119,7 +121,7 @@ export const SortingChip = (props: SortingChipProps) => {
 
 	const getSortingChipText = () => {
 		if (sortedList?.length === 1) {
-			return sortedList[0]?.columnDef?.header
+			return sortedList[0]?.columnDef?.header ?? ''
 		}
 
 		if (sortedList?.length > 1) {
@@ -141,8 +143,8 @@ export const SortingChip = (props: SortingChipProps) => {
 
 	return (
 		<CommonChipWithPopover
-			Text={getSortingChipText()}
-			Icon={
+			text={getSortingChipText()}
+			icon={
 				<>
 					{sortedList?.length > 1 ? (
 						<SortIcon />
@@ -153,7 +155,7 @@ export const SortingChip = (props: SortingChipProps) => {
 					)}
 				</>
 			}
-			DropdownContent={DropdownContent}
+			dropdownContent={DropdownContent}
 		/>
 	)
 }

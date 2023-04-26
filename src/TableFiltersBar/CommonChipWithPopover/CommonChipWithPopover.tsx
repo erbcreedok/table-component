@@ -6,17 +6,17 @@ import {
 } from '@mui/icons-material'
 
 type CommonChipWithPopoverProps = {
-	Text: string
+	text: string
 	textAlignSelf?: string
-	Icon?: JSX.Element
-	Title?: JSX.Element | string
-	DropdownContent: JSX.Element
+	icon?: JSX.Element
+	title?: JSX.Element | string
+	dropdownContent: JSX.Element
 }
 
 export const CommonChipWithPopover: FC<CommonChipWithPopoverProps> = (
 	props
 ) => {
-	const { textAlignSelf, Text, Title, Icon, DropdownContent } = props
+	const { textAlignSelf, text, title, icon, dropdownContent } = props
 
 	const [open, setOpen] = useState(false)
 	const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null)
@@ -41,8 +41,8 @@ export const CommonChipWithPopover: FC<CommonChipWithPopoverProps> = (
 			label={
 				<div style={{ display: 'flex', alignItems: 'center' }}>
 					<Box sx={{ display: 'flex', alignItems: 'center', maxWidth: 190 }}>
-						{Boolean(Icon) && <div style={{ marginRight: 8 }}>{Icon}</div>}
-						{Boolean(Title) && Title}
+						{Boolean(icon) && <div style={{ marginRight: 8 }}>{icon}</div>}
+						{Boolean(title) && title}
 						<Typography
 							variant="body2"
 							style={{
@@ -53,7 +53,7 @@ export const CommonChipWithPopover: FC<CommonChipWithPopoverProps> = (
 								alignSelf: textAlignSelf,
 							}}
 						>
-							{Text}
+							{text}
 						</Typography>
 					</Box>
 					{open ? <KeyboardArrowUpOutlined /> : <KeyboardArrowDownOutlined />}
@@ -65,8 +65,8 @@ export const CommonChipWithPopover: FC<CommonChipWithPopoverProps> = (
 	return (
 		<div>
 			<Box onClick={handleOpenClose}>
-				{Text.length > 20 ? (
-					<Tooltip title={Text} placement="top">
+				{text.length > 20 ? (
+					<Tooltip title={text} placement="top">
 						{ChipContent}
 					</Tooltip>
 				) : (
@@ -84,7 +84,7 @@ export const CommonChipWithPopover: FC<CommonChipWithPopoverProps> = (
 					horizontal: 'left',
 				}}
 			>
-				{DropdownContent}
+				{dropdownContent}
 			</Popover>
 		</div>
 	)

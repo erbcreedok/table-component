@@ -91,13 +91,13 @@ export const GroupingChip: FC<GroupingChipProps> = (props) => {
 
 	return (
 		<CommonChipWithPopover
-			Icon={<GroupIcon />}
-			Text={groupedList.reduce(
+			icon={<GroupIcon />}
+			text={groupedList.reduce(
 				(acc, { columnDef: { header } }, index) =>
 					index === 0 ? header : `${acc}, ${header}`,
 				''
 			)}
-			DropdownContent={DropdownContent}
+			dropdownContent={DropdownContent}
 		/>
 	)
 }

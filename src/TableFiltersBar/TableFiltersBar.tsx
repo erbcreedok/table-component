@@ -1,4 +1,4 @@
-import React, { ReactElement, useEffect, useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import Box from '@mui/material/Box'
 import { Typography } from '@mui/material'
 
@@ -21,10 +21,10 @@ export const TableFiltersBar = <TData extends Record<string, any> = {}>({
 }: Props<TData>) => {
 	const { resetSorting, resetColumnFilters } = table
 
-	const barRef = useRef(null)
+	const barRef = useRef<HTMLDivElement>(null)
 
-	const [visibleElements, setVisibleElements] = useState<ReactElement[]>([])
-	const [hiddenElements, setHiddenElements] = useState([])
+	const [visibleElements, setVisibleElements] = useState<Element[]>([])
+	const [hiddenElements, setHiddenElements] = useState<Element[]>([])
 
 	const { removeAllGroup } = useGroupingControls(table)
 	const {
@@ -74,8 +74,8 @@ export const TableFiltersBar = <TData extends Record<string, any> = {}>({
 
 		if (totalElementsWidth > conatinerWidth) {
 			let total = 0
-			const hidden = []
-			const visible = []
+			const hidden: Element[] = []
+			const visible: Element[] = []
 
 			elements.forEach((element) => {
 				if (total > conatinerWidth - 860) {
@@ -127,11 +127,11 @@ export const TableFiltersBar = <TData extends Record<string, any> = {}>({
 
 			{isSomeChipMounted && Boolean(hiddenElements.length) && (
 				<CommonChipWithPopover
-					Text={`+${hiddenElements.length} more`}
-					DropdownContent={
+					text={`+${hiddenElements.length} more`}
+					dropdownContent={
 						<div style={{ padding: 12 }}>
 							{hiddenElements.map((element) => (
-								<div key={element} style={{ marginBottom: 4 }}>
+								<div key={element.id} style={{ marginBottom: 4 }}>
 									{element}
 								</div>
 							))}
