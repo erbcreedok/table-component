@@ -19,6 +19,7 @@ import { createGetColors } from './createGetColors'
 import { getTeamsBorderColorSet } from './getTeamsBorderColorSet'
 import { getTeamsCellBackgroundSet } from './getTeamsCellBackgroundSet'
 import { HeaderSearch } from '../../head/HeaderSearch'
+import { sortByArrayOrder } from './sortByArrayOrder'
 
 const getBorderColors = createGetColors(getTeamsBorderColorSet(), {
 	fallback: Colors.lightestGrey,
@@ -121,8 +122,8 @@ export const getTeamMembersColumns = () =>
 			Header: HeaderBase,
 			muiTableBodyCellProps: coloredCellProps,
 			enableColumnOrdering: true,
-			sortingFn() {
-				console.log('CUSTOM SORTING')
+			sortingFn(rowA, rowB) {
+				return sortByArrayOrder(['Often exceeds', 'Sometimes exceeds', 'Meets'])(rowA.getValue('performance'),  rowB.getValue('performance'))
 			},
 		},
 		{
