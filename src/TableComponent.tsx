@@ -208,6 +208,7 @@ export type TableInstance<TData extends Record<string, any> = {}> = Omit<
 	savePresets: (presets: Preset[]) => void
 	getDefaultPresets: () => Preset[]
 	showSearchData: (searchId: string | null) => void
+	setHighlightHeadCellId: (colId: string | null) => void
 	options: TableComponentProps<TData> & {
 		icons: Table_Icons
 		localization: Table_Localization
@@ -265,6 +266,8 @@ export type Table_TableState<TData extends Record<string, any> = {}> =
 		showProgressBars: boolean
 		showSkeletons: boolean
 		showToolbarDropZone: boolean
+		searchId: string | null
+		highlightHeadCellId: string | null
 	}
 
 export type Table_ColumnDef<TData extends Record<string, any> = {}> = Omit<

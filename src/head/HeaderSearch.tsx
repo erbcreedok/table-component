@@ -11,9 +11,15 @@ import {
 import { Table_Column, Table_Header, TableInstance } from '../TableComponent'
 import { HeaderSearchIcon } from '../TableToolbar/components/icons/HeaderSearchIcon'
 import { CloseIcon } from '../TableToolbar/components/icons/CloseIcon'
-import { Colors, DEFAULT_FONT_FAMILY, Text } from '../components/styles'
+import {
+	Colors,
+	DEFAULT_FONT_FAMILY,
+	IconsColor,
+	Text,
+} from '../components/styles'
 import { useDelay } from '../hooks/useDelay'
 import { getValueFromObj } from '../utils/getValueFromObj'
+import { getColumnId } from '../column.utils'
 
 const EllipsisOverflow = styled('div')`
 	white-space: nowrap;
@@ -66,8 +72,10 @@ export const HeaderSearch = <T extends Record<string, any>>({
 			setFiltered([])
 			setAnchorElPopover(null)
 			table.showSearchData(null)
+			table.setHighlightHeadCellId(null)
 		} else {
 			setIsSearch(true)
+			table.setHighlightHeadCellId(getColumnId(column.columnDef))
 		}
 	}
 
@@ -107,13 +115,20 @@ export const HeaderSearch = <T extends Record<string, any>>({
 						InputProps={{
 							startAdornment: (
 								<InputAdornment position="start">
-									<HeaderSearchIcon />
+									<HeaderSearchIcon htmlColor={IconsColor.disabled} />
 								</InputAdornment>
 							),
 							endAdornment: (
 								<InputAdornment position="end">
-									<IconButton onClick={toggleSearch} disableRipple>
-										<CloseIcon style={{ width: 18, height: 18 }} />
+									<IconButton
+										onClick={toggleSearch}
+										disableRipple
+										sx={{ '&:hover svg': { color: IconsColor.active } }}
+									>
+										<CloseIcon
+											style={{ width: 18, height: 18 }}
+											htmlColor={IconsColor.default}
+										/>
 									</IconButton>
 								</InputAdornment>
 							),
@@ -170,8 +185,13 @@ export const HeaderSearch = <T extends Record<string, any>>({
 			)}
 
 			{!isSearch && (
-				<IconButton disableRipple size="small" onClick={toggleSearch}>
-					<HeaderSearchIcon />
+				<IconButton
+					disableRipple
+					size="small"
+					onClick={toggleSearch}
+					sx={{ '&:hover svg': { color: IconsColor.active } }}
+				>
+					<HeaderSearchIcon htmlColor={IconsColor.default} />
 				</IconButton>
 			)}
 		</EllipsisOverflow>

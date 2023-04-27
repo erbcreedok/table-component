@@ -8,6 +8,7 @@ import type { Theme } from '@mui/material/styles'
 import { getGroupBorders } from '../utils/getGroupBorders'
 import { getCommonCellStyles } from '../column.utils'
 import type { Table_Header, TableInstance } from '..'
+import { Colors } from '../components/styles'
 
 import { TableHeadCellActionsButton } from './TableHeadCellActionsButton'
 import { TableHeadCellFilterLabel } from './TableHeadCellFilterLabel'
@@ -37,7 +38,8 @@ export const TableHeadCell: FC<Props> = ({ header, table }) => {
 		refs: { tableHeadCellRefs },
 		setHoveredColumn,
 	} = table
-	const { draggingColumn, grouping, hoveredColumn } = getState()
+	const { draggingColumn, grouping, hoveredColumn, highlightHeadCellId } =
+		getState()
 	const { column } = header
 	const { columnDef } = column
 	const { columnDefType } = columnDef
@@ -156,6 +158,9 @@ export const TableHeadCell: FC<Props> = ({ header, table }) => {
 				}),
 				backgroundColor: '#FAFAFC',
 				...draggingBorders,
+				...(highlightHeadCellId === column.id && {
+					border: `1px solid ${Colors.LightBlue}`,
+				}),
 			})}
 		>
 			{header.isPlaceholder ? null : (

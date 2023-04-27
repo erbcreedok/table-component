@@ -133,6 +133,9 @@ export const useTable = <TData extends Record<string, any> = {}>(
 		initialState.sorting ?? []
 	)
 	const [searchId, setSearchId] = useState<string | null>(null)
+	const [highlightHeadCellId, setHighlightHeadCellId] = useState<string | null>(
+		null
+	)
 
 	useEffect(() => {
 		if (config.enableRowSelection && !columnOrder.includes('mrt-row-select')) {
@@ -329,6 +332,10 @@ export const useTable = <TData extends Record<string, any> = {}>(
 		}
 	}
 
+	const highlightCellId = (id: string | null) => {
+		setHighlightHeadCellId(id)
+	}
+
 	const state = {
 		columnFilterFns,
 		columnFilters,
@@ -350,6 +357,7 @@ export const useTable = <TData extends Record<string, any> = {}>(
 		showToolbarDropZone,
 		sorting,
 		searchId,
+		highlightHeadCellId,
 		...config.state,
 	} as TableComponentState
 
@@ -415,6 +423,7 @@ export const useTable = <TData extends Record<string, any> = {}>(
 		savePresets: config.onSavePresets ?? savePresets,
 		getDefaultPresets: config.onGetDefaultPresets ?? getDefaultPresets,
 		showSearchData: searchData,
+		setHighlightHeadCellId: highlightCellId,
 	} as TableInstance<TData>
 
 	if (config.tableInstanceRef) {

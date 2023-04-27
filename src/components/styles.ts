@@ -18,4 +18,5 @@ export const Colors = {
 export const IconsColor = {
 	default: '#6C6F80',
 	disabled: '#ACAFBF',
+	active: '#474A59',
 }
