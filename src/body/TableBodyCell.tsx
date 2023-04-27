@@ -60,6 +60,9 @@ export const TableBodyCell: FC<Props> = ({
 			muiTableBodyCellProps,
 			muiTableBodyCellSkeletonProps,
 			rowNumberMode,
+			enableDetailedPanel,
+			notClickableCells,
+			detailedRowBackgroundColor,
 		},
 		refs: { editInputRefs },
 		setEditingCell,
@@ -165,6 +168,77 @@ export const TableBodyCell: FC<Props> = ({
 		}
 	}
 
+	const clickedCells = table?.getState()?.clickedCells || []
+
+	const closeClickedCell = (cellToRemove: Table_Cell) => {
+		cellToRemove.row.toggleExpanded()
+
+		table.setClickedCells([
+			...clickedCells.filter(
+				(clickedCell) => clickedCell?.id !== cellToRemove.id
+			),
+		])
+	}
+
+	const openClickedCell = (
+		cellToOpen: Table_Cell,
+		isPanelExpanded: boolean
+	) => {
+		if (!isPanelExpanded) {
+			cellToOpen.row.toggleExpanded()
+		}
+
+		table.setClickedCells([...clickedCells, cellToOpen])
+	}
+
+	const handleSingleClick = () => {
+		if (!enableDetailedPanel) {
+			return
+		}
+
+		const columnId = cell?.column?.id
+		const isNotClickableCell =
+			Array.isArray(notClickableCells) && notClickableCells?.includes(columnId)
+
+		if (isNotClickableCell) {
+			return
+		}
+
+		const cellId = cell?.id
+		const rowId = cell?.row?.id
+		const isPanelExpanded = cell?.row?.getIsExpanded()
+
+		const isCellClicked = clickedCells.some(
+			(clickedCell) => clickedCell?.id === cellId
+		)
+
+		if (isCellClicked) {
+			closeClickedCell(cell)
+
+			return
+		}
+
+		const anotherClickedCellInRow = clickedCells.find(
+			(clickedCell) => clickedCell?.row.id === rowId
+		)
+
+		if (anotherClickedCellInRow?.id) {
+			table.setClickedCells([
+				...clickedCells.filter(
+					(clickedCell) => clickedCell?.id !== anotherClickedCellInRow.id
+				),
+				cell,
+			])
+
+			anotherClickedCellInRow.row.toggleExpanded()
+			cell.row.toggleExpanded()
+
+			return
+		}
+
+		openClickedCell(cell, isPanelExpanded)
+	}
+
 	const handleDragEnter = (e: DragEvent<HTMLTableCellElement>) => {
 		tableCellProps?.onDragEnter?.(e)
 		if (enableGrouping && hoveredColumn?.id === 'drop-zone') {
@@ -193,6 +267,12 @@ export const TableBodyCell: FC<Props> = ({
 	const isAnyRowSelected = table.getSelectedRowModel().rows.length > 0
 	const hideCheckBoxSpan = isSelectCell && !isAnyRowSelected
 
+	const isCurrentCellClicked =
+		enableDetailedPanel &&
+		clickedCells.some((clickedCell) => {
+			return clickedCell?.id === cell?.id
+		})
+
 	return (
 		<MuiTableCell
 			rowSpan={rowSpan}
@@ -205,6 +285,7 @@ export const TableBodyCell: FC<Props> = ({
 			{...tableCellProps}
 			onDragEnter={handleDragEnter}
 			onDoubleClick={handleDoubleClick}
+			onClick={handleSingleClick}
 			sx={(theme) => ({
 				alignItems: layoutMode === 'grid' ? 'center' : undefined,
 				cursor: isEditable && editingMode === 'cell' ? 'pointer' : 'inherit',
@@ -249,6 +330,9 @@ export const TableBodyCell: FC<Props> = ({
 					tableCellProps,
 				}),
 				...draggingBorders,
+				...(isCurrentCellClicked && detailedRowBackgroundColor
+					? { borderBottom: 'none', background: detailedRowBackgroundColor }
+					: {}),
 			})}
 		>
 			{enableAggregationRow && cell.getIsGrouped() && (

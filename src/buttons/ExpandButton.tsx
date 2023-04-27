@@ -16,6 +16,7 @@ export const ExpandButton: FC<Props> = ({ row, table }) => {
 			localization,
 			muiExpandButtonProps,
 			renderDetailPanel,
+			enableDetailedPanel,
 		},
 	} = table
 
@@ -28,6 +29,19 @@ export const ExpandButton: FC<Props> = ({ row, table }) => {
 	const isExpanded = row.getIsExpanded()
 
 	const handleToggleExpand = (event: MouseEvent<HTMLButtonElement>) => {
+		if (enableDetailedPanel) {
+			const rowId = row.id
+			const clickedCells = table.getState().clickedCells
+
+			if (clickedCells?.length) {
+				const filteredClickedCells = clickedCells.filter(
+					(cell) => cell.row.id !== rowId
+				)
+
+				table.setClickedCells(filteredClickedCells)
+			}
+		}
+
 		event.stopPropagation()
 		row.toggleExpanded()
 		iconButtonProps?.onClick?.(event)

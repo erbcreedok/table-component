@@ -241,6 +241,8 @@ export type TableInstance<TData extends Record<string, any> = {}> = Omit<
 	setHoveredRow: Dispatch<
 		SetStateAction<Table_Row<TData> | { id: string } | null>
 	>
+	setClickedCell: Dispatch<SetStateAction<Table_Cell<TData> | null>>
+	setClickedCells: Dispatch<SetStateAction<Table_Cell<TData>[] | null>>
 	setIsFullScreen: Dispatch<SetStateAction<boolean>>
 	setShowAlertBanner: Dispatch<SetStateAction<boolean>>
 	setShowFilters: Dispatch<SetStateAction<boolean>>
@@ -257,6 +259,7 @@ export type Table_TableState<TData extends Record<string, any> = {}> =
 		editingRow: Table_Row<TData> | null
 		globalFilterFn: Table_FilterOption
 		hoveredColumn: Table_Column<TData> | { id: string } | null
+		clickedCells: Table_Cell<TData>[] | null
 		hoveredRow: Table_Row<TData> | { id: string } | null
 		isFullScreen: boolean
 		isLoading: boolean
@@ -696,6 +699,8 @@ export type TableComponentProps<TData extends Record<string, any> = {}> = Omit<
 	enableDensityToggle?: boolean
 	enableEditing?: boolean
 	enableExpandAll?: boolean
+	enableDetailedPanel?: boolean
+	notClickableCells?: string[]
 	enableFullScreenToggle?: boolean
 	enableGlobalFilterModes?: boolean
 	enableGlobalFilterRankedResults?: boolean
@@ -1123,6 +1128,7 @@ export type TableComponentProps<TData extends Record<string, any> = {}> = Omit<
 	 * @deprecated Use `rowVirtualizerProps` instead
 	 */
 	virtualizerProps?: any
+	detailedRowBackgroundColor?: string
 }
 
 const TableComponent = <TData extends Record<string, any> = {}>(

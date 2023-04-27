@@ -114,6 +114,9 @@ export const useTable = <TData extends Record<string, any> = {}>(
 	const [hoveredRow, setHoveredRow] = useState<
 		Table_Row<TData> | { id: string } | null
 	>(initialState.hoveredRow ?? null)
+	const [clickedCells, setClickedCells] = useState<Table_Cell<TData>[] | null>(
+		null
+	)
 	const [isFullScreen, setIsFullScreen] = useState(
 		initialState?.isFullScreen ?? false
 	)
@@ -350,6 +353,7 @@ export const useTable = <TData extends Record<string, any> = {}>(
 		grouping,
 		hoveredColumn,
 		hoveredRow,
+		clickedCells,
 		isFullScreen,
 		showAlertBanner,
 		showColumnFilters,
@@ -413,6 +417,7 @@ export const useTable = <TData extends Record<string, any> = {}>(
 		setGlobalFilterFn: config.onGlobalFilterFnChange ?? setGlobalFilterFn,
 		setHoveredColumn: config.onHoveredColumnChange ?? setHoveredColumn,
 		setHoveredRow: config.onHoveredRowChange ?? setHoveredRow,
+		setClickedCells,
 		setIsFullScreen: config.onIsFullScreenChange ?? setIsFullScreen,
 		setShowAlertBanner: config.onShowAlertBannerChange ?? setShowAlertBanner,
 		setShowFilters: config.onShowFiltersChange ?? setShowFilters,

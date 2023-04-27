@@ -28,6 +28,8 @@ export const TableDetailPanel: FC<Props> = ({
 			muiTableBodyRowProps,
 			muiTableDetailPanelProps,
 			renderDetailPanel,
+			enableDetailedPanel,
+			detailedRowBackgroundColor,
 		},
 	} = table
 	const { isLoading } = getState()
@@ -79,6 +81,9 @@ export const TableDetailPanel: FC<Props> = ({
 					...(tableCellProps?.sx instanceof Function
 						? tableCellProps.sx(theme)
 						: (tableCellProps?.sx as any)),
+					...(enableDetailedPanel && detailedRowBackgroundColor
+						? { background: detailedRowBackgroundColor }
+						: {}),
 				})}
 			>
 				{renderDetailPanel && (
