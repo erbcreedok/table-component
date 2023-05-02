@@ -17,6 +17,11 @@ import { ToggleRowActionMenuButton } from './buttons/ToggleRowActionMenuButton'
 import { TopToolbar } from './toolbar/TopToolbar'
 import { BottomToolbar } from './toolbar/BottomToolbar'
 import { createTheme } from './theme/createTheme'
+import { TableToolbar } from './TableToolbar'
+import { TableProvider } from './context/TableProvider'
+import { useTableContext } from './context/useTableContext'
+import { HeaderSearch } from './head/HeaderSearch'
+import { HeaderBase } from './head/HeaderBase'
 
 export default TableComponent
 export * from './TableComponent'
@@ -40,4 +45,9 @@ export {
 	TopToolbar,
 	BottomToolbar,
 	createTheme,
+	TableToolbar,
+	TableProvider,
+	useTableContext,
+	HeaderBase,
+	HeaderSearch,
 }
