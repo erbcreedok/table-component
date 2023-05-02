@@ -9,6 +9,7 @@ import MuiTable from '@mui/material/Table'
 
 import { TableHead } from '../head/TableHead'
 import { Memo_TableBody, TableBody } from '../body/TableBody'
+import { TableBodyRow } from '../body/TableBodyRow'
 import { TableFooter } from '../footer/TableFooter'
 import type { TableInstance } from '..'
 import { TableHeadInvisible } from '../head/TableHeadInvisible'
@@ -33,6 +34,7 @@ export const Table: FC<Props> = ({ table }) => {
 			layoutMode,
 			memoMode,
 			muiTableProps,
+			summaryRowCellValue,
 		},
 		refs: { tableContainerRef },
 	} = table
@@ -128,6 +130,18 @@ export const Table: FC<Props> = ({ table }) => {
 		virtualPaddingRight,
 	}
 
+	const summaryRowProps = {
+		columnVirtualizer,
+		key: 'summaryRow',
+		numRows: table.getRowModel().rows.length,
+		rowIndex: -1,
+		table,
+		row: {
+			getIsSelected: () => false,
+			getVisibleCells: table.getRowModel().rows[0].getVisibleCells,
+		},
+	}
+
 	return (
 		<MuiTable
 			stickyHeader={enableStickyHeader || isFullScreen}
@@ -142,6 +156,9 @@ export const Table: FC<Props> = ({ table }) => {
 					: (tableProps?.sx as any)),
 			})}
 		>
+			{/* eslint-disable-next-line @typescript-eslint/ban-ts-comment */}
+			{/* @ts-ignore */}
+			{summaryRowCellValue && <TableBodyRow summaryRow {...summaryRowProps} />}
 			{enableTableHead && !hideTableHead && <TableHead {...props} />}
 			{hideTableHead && <TableHeadInvisible table={table} />}
 			{memoMode === 'table-body' ? (

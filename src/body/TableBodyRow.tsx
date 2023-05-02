@@ -19,6 +19,7 @@ export interface TableBodyRowProps {
 	virtualPaddingLeft?: number
 	virtualPaddingRight?: number
 	virtualRow?: VirtualItem
+	summaryRow?: boolean
 }
 
 export const TableBodyRow: FC<TableBodyRowProps> = ({
@@ -32,6 +33,7 @@ export const TableBodyRow: FC<TableBodyRowProps> = ({
 	virtualPaddingLeft,
 	virtualPaddingRight,
 	virtualRow,
+	summaryRow = false,
 }) => {
 	const theme = useTheme()
 	const {
@@ -140,6 +142,7 @@ export const TableBodyRow: FC<TableBodyRowProps> = ({
 						virtualCell: columnVirtualizer
 							? (cellOrVirtualCell as VirtualItem)
 							: undefined,
+						summaryRowCell: summaryRow,
 					}
 
 					return memoMode === 'cells' &&
