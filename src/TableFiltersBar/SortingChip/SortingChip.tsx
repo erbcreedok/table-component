@@ -9,30 +9,29 @@ import { AscIcon } from '../../TableToolbar/components/icons/AscIcon'
 import { DescIcon } from '../../TableToolbar/components/icons/DescIcon'
 import { DropdownContentHeader } from '../DropdownContent/DropdownContentHeader'
 import { DropdownContentSearch } from '../DropdownContent/DropdownContentSearch'
+import { useSortingControls } from '../filter-bar-hooks/useSortingControls'
 
 import { SelectedSortsList } from './SortingChipList/SelectedSortsList'
 import { SortingSearchResult } from './SortingChipSearch/SortingSearchResult'
 
 interface SortingChipProps<TData extends Record<string, any> = {}> {
 	table: TableInstance<TData>
-	isMounted: boolean
-	onMount: (value: boolean) => void
 }
 
 export const SortingChip = <TData extends Record<string, any> = {}>(
 	props: SortingChipProps<TData>
 ) => {
-	const { table, isMounted, onMount } = props
+	const { table } = props
 	const { getAllColumns, getState, resetSorting } = table
 
-	const { columnPinning, columnOrder, columnVisibility, grouping, sorting } =
-		getState()
+	const { sorting } = getState()
 	const isSortingExists = Boolean(sorting?.length)
 
 	const [isSearchActive, setIsSearchActive] = useState(false)
 
 	const [searchValue, setSearchValue] = useState('')
 	const [selectedSearchedItems, setSelectedSearchedItems] = useState<any>([])
+	const [isOpen, setIsOpen] = useState(false)
 
 	const sortedList = useMemo(
 		() =>
@@ -42,18 +41,7 @@ export const SortingChip = <TData extends Record<string, any> = {}>(
 		[sorting]
 	)
 
-	const allColumns = useMemo(() => {
-		const columns = getAllColumns()
-
-		return columns.filter((col) => col.getIsVisible() && col.getCanSort())
-	}, [
-		columnOrder,
-		columnPinning,
-		columnVisibility,
-		grouping,
-		sorting,
-		getAllColumns,
-	])
+	const { allColumns } = useSortingControls(table)
 
 	const nonSortedList = useMemo(
 		() => allColumns.filter((col) => !col.getIsSorted()),
@@ -67,14 +55,6 @@ export const SortingChip = <TData extends Record<string, any> = {}>(
 	}
 
 	const applySelectedItems = () => {
-		selectedSearchedItems.forEach((id) => {
-			const column = allColumns.find((col) => col.id === id)
-
-			if (column) {
-				column.toggleSorting(false, true)
-			}
-		})
-
 		setIsSearchActive(false)
 		setSelectedSearchedItems([])
 	}
@@ -102,6 +82,7 @@ export const SortingChip = <TData extends Record<string, any> = {}>(
 							nonSortedList={nonSortedList}
 							selectedSearchedItems={selectedSearchedItems}
 							setSelectedSearchedItems={setSelectedSearchedItems}
+							table={table}
 						/>
 					)}
 
@@ -131,27 +112,24 @@ export const SortingChip = <TData extends Record<string, any> = {}>(
 		return ''
 	}
 
-	useEffect(() => {
-		if (isSortingExists) {
-			onMount(true)
-		}
-	}, [isSortingExists])
-
-	if (!isSortingExists && !isMounted) {
+	if (!isSortingExists) {
 		return <></>
 	}
 
+	const iconColor = isOpen ? '#FAFAFC' : '#6C6F80'
+
 	return (
 		<CommonChipWithPopover
+			setIsOpen={setIsOpen}
 			text={getSortingChipText()}
 			icon={
 				<>
 					{sortedList?.length > 1 ? (
 						<SortIcon />
 					) : firstSorting?.desc ? (
-						<DescIcon />
+						<DescIcon fill={iconColor} />
 					) : (
-						<AscIcon />
+						<AscIcon fill={iconColor} />
 					)}
 				</>
 			}

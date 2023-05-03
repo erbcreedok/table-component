@@ -8,6 +8,7 @@ interface SortingSearchResultProps {
 	searchValue: string
 	selectedSearchedItems: any
 	nonSortedList: any
+	table: any
 	setSelectedSearchedItems: any
 }
 
@@ -15,6 +16,7 @@ export const SortingSearchResult: FC<SortingSearchResultProps> = (props) => {
 	const {
 		searchValue,
 		nonSortedList,
+		table,
 		selectedSearchedItems,
 		setSelectedSearchedItems,
 	} = props
@@ -48,6 +50,7 @@ export const SortingSearchResult: FC<SortingSearchResultProps> = (props) => {
 					<ListSearchSortingItem
 						key={item?.id}
 						item={item}
+						table={table}
 						selectedSearchedItems={selectedSearchedItems}
 						setSelectedSearchedItems={setSelectedSearchedItems}
 					/>

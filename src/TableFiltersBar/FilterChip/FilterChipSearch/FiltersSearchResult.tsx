@@ -21,7 +21,7 @@ export const FiltersSearchResult: FC<FiltersSearchResultProps> = (props) => {
 		setSelectedSearchedItems,
 	} = props
 
-	const { filtedList, filterOptions, currentFilterValues } = useFilterControls(
+	const { currentFilterColumn, filtedList, filterOptions } = useFilterControls(
 		table,
 		filterId
 	)
@@ -50,14 +50,18 @@ export const FiltersSearchResult: FC<FiltersSearchResultProps> = (props) => {
 
 	const handleCheck = (value) => {
 		if (selectedSearchedItems?.includes?.(value)) {
-			setSelectedSearchedItems(
-				selectedSearchedItems.filter((item) => item !== value)
+			const filteredItems = selectedSearchedItems.filter(
+				(item) => item !== value
 			)
+			setSelectedSearchedItems(filteredItems)
+			currentFilterColumn.setFilterValue(filteredItems)
 
 			return
 		}
 
-		setSelectedSearchedItems([...selectedSearchedItems, value])
+		const updatedItems = [...selectedSearchedItems, value]
+		setSelectedSearchedItems(updatedItems)
+		currentFilterColumn.setFilterValue(updatedItems)
 	}
 
 	if (!searchedElements?.length) {
@@ -65,21 +69,17 @@ export const FiltersSearchResult: FC<FiltersSearchResultProps> = (props) => {
 	}
 
 	return (
-		<>
-			{searchedElements
-				.filter(({ value }) => {
-					return !currentFilterValues?.includes?.(value)
-				})
-				.map(({ value }) => {
-					return (
-						<ListFilterItem
-							key={value}
-							isChecked={selectedSearchedItems?.includes?.(value)}
-							title={value}
-							onCheck={() => handleCheck(value)}
-						/>
-					)
-				})}
-		</>
+		<div style={{ maxHeight: 200, overflowY: 'auto' }}>
+			{searchedElements.map(({ value }) => {
+				return (
+					<ListFilterItem
+						key={value}
+						isChecked={selectedSearchedItems?.includes?.(value)}
+						title={value}
+						onCheck={() => handleCheck(value)}
+					/>
+				)
+			})}
+		</div>
 	)
 }

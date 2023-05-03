@@ -2,15 +2,22 @@ import { FC } from 'react'
 import CheckIcon from '@mui/icons-material/Check'
 import { Typography } from '@mui/material'
 
+import { useGroupingControls } from '../../../TableFiltersBar/filter-bar-hooks/useGroupingControls'
 import { ItemBoxSearchedGroupingStyled } from '../GroupingChip.styled'
 
 export const ListSearchedGroupItem: FC<any> = (props) => {
-	const { item, selectedSearchedItems, setSelectedSearchedItems } = props
+	const { item, table, selectedSearchedItems, setSelectedSearchedItems } = props
 	const { id, columnDef } = item
 	const { header } = columnDef
 	const isChecked = selectedSearchedItems.includes(item.id)
 
+	const { allColumns } = useGroupingControls(table)
+
 	const handleSelect = () => {
+		const column = allColumns.find((col) => col.id === id)
+
+		column?.toggleGrouping?.()
+
 		if (isChecked) {
 			setSelectedSearchedItems(
 				selectedSearchedItems.filter((id) => id !== item.id)

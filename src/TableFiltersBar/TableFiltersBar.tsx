@@ -9,7 +9,6 @@ import { useGroupingControls } from './filter-bar-hooks/useGroupingControls'
 import { SortingChip } from './SortingChip/SortingChip'
 import { FilterChip } from './FilterChip/FilterChip'
 import { useFilterControls } from './filter-bar-hooks/useFilterControls'
-import { useChipsMounted } from './filter-bar-hooks/useChipsMounted'
 import { CommonChipWithPopover } from './CommonChipWithPopover/CommonChipWithPopover'
 
 interface Props<TData extends Record<string, any> = {}> {
@@ -19,7 +18,9 @@ interface Props<TData extends Record<string, any> = {}> {
 export const TableFiltersBar = <TData extends Record<string, any> = {}>({
 	table,
 }: Props<TData>) => {
-	const { resetSorting, resetColumnFilters } = table
+	const { getState, resetSorting, resetColumnFilters } = table
+
+	const { grouping, sorting } = getState()
 
 	const barRef = useRef<HTMLDivElement>(null)
 
@@ -27,22 +28,20 @@ export const TableFiltersBar = <TData extends Record<string, any> = {}>({
 	const [hiddenElements, setHiddenElements] = useState<Element[]>([])
 
 	const { removeAllGroup } = useGroupingControls(table)
-	const {
-		isSomeChipMounted,
-		handleClearAllChips,
-		handleSetMountedChip,
-		handleCheckIsChipMounted,
-	} = useChipsMounted()
 	const { columnFilters = [], columnsIdToHeaderMap } = useFilterControls(table)
 
 	const handleClearAll = () => {
 		removeAllGroup()
 		resetSorting()
 		resetColumnFilters()
-		handleClearAllChips()
 		setVisibleElements([])
 		setHiddenElements([])
 	}
+
+	const isGroupingExists = Boolean(grouping?.length)
+	const isSortingExists = Boolean(sorting?.length)
+	const isFiltersExists = Boolean(columnFilters?.length)
+	const isShowClearAll = isGroupingExists || isSortingExists || isFiltersExists
 
 	useEffect(() => {
 		if (!barRef?.current || !columnFilters.length) {
@@ -56,7 +55,6 @@ export const TableFiltersBar = <TData extends Record<string, any> = {}>({
 			return (
 				<FilterChip
 					key={filter.id}
-					onMount={handleSetMountedChip(`FILTER-${filter.id}}`)}
 					filterId={filter.id}
 					headerTile={columnsIdToHeaderMap[filter.id].header}
 					table={table}
@@ -109,23 +107,15 @@ export const TableFiltersBar = <TData extends Record<string, any> = {}>({
 				padding: '12px',
 			}}
 		>
-			<GroupingChip
-				table={table}
-				onMount={handleSetMountedChip('GROUP')}
-				isMounted={handleCheckIsChipMounted('GROUP')}
-			/>
+			<GroupingChip table={table} />
 
-			<SortingChip
-				table={table}
-				onMount={handleSetMountedChip('SORT')}
-				isMounted={handleCheckIsChipMounted('SORT')}
-			/>
+			<SortingChip table={table} />
 
 			{visibleElements.map((element) => {
 				return element
 			})}
 
-			{isSomeChipMounted && Boolean(hiddenElements.length) && (
+			{Boolean(hiddenElements.length) && (
 				<CommonChipWithPopover
 					text={`+${hiddenElements.length} more`}
 					dropdownContent={
@@ -140,7 +130,7 @@ export const TableFiltersBar = <TData extends Record<string, any> = {}>({
 				/>
 			)}
 
-			{isSomeChipMounted && (
+			{isShowClearAll && (
 				<Typography
 					onClick={handleClearAll}
 					style={{ color: '#009ECC', cursor: 'pointer' }}

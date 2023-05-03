@@ -13,14 +13,11 @@ type FilterChipProps = {
 	headerTile: string
 	table: any
 	filterId: string
-
-	onMount: (value: boolean) => void
 }
 
 export const FilterChip: FC<FilterChipProps> = ({
 	table,
 	filterId,
-	onMount,
 	headerTile,
 }) => {
 	const { resetColumnFilters } = table
@@ -74,14 +71,6 @@ export const FilterChip: FC<FilterChipProps> = ({
 		</Box>
 	)
 
-	useEffect(() => {
-		onMount(true)
-
-		return () => {
-			onMount(false)
-		}
-	}, [])
-
 	return (
 		<div>
 			<CommonChipWithPopover
@@ -92,14 +81,7 @@ export const FilterChip: FC<FilterChipProps> = ({
 						''
 					) || ''
 				}
-				title={
-					<Typography
-						variant="body1"
-						style={{ fontWeight: 600, fontSize: 12, color: '#6C6F80' }}
-					>
-						{currentFilterHeader}:&nbsp;
-					</Typography>
-				}
+				title={`${currentFilterHeader}: `}
 				dropdownContent={DropdownContent}
 			/>
 		</div>

@@ -11,12 +11,13 @@ type CommonChipWithPopoverProps = {
 	icon?: JSX.Element
 	title?: JSX.Element | string
 	dropdownContent: JSX.Element
+	setIsOpen?: (isOpen: boolean) => void
 }
 
 export const CommonChipWithPopover: FC<CommonChipWithPopoverProps> = (
 	props
 ) => {
-	const { textAlignSelf, text, title, icon, dropdownContent } = props
+	const { textAlignSelf, text, title, icon, dropdownContent, setIsOpen } = props
 
 	const [open, setOpen] = useState(false)
 	const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null)
@@ -24,6 +25,7 @@ export const CommonChipWithPopover: FC<CommonChipWithPopoverProps> = (
 	const handleOpenClose = (event: any) => {
 		setAnchorEl(event.currentTarget)
 		setOpen(!open)
+		setIsOpen?.(!open)
 	}
 
 	const id = open ? 'simple-popover' : undefined
@@ -42,7 +44,19 @@ export const CommonChipWithPopover: FC<CommonChipWithPopoverProps> = (
 				<div style={{ display: 'flex', alignItems: 'center' }}>
 					<Box sx={{ display: 'flex', alignItems: 'center', maxWidth: 190 }}>
 						{Boolean(icon) && <div style={{ marginRight: 8 }}>{icon}</div>}
-						{Boolean(title) && title}
+						{Boolean(title) && (
+							<Typography
+								variant="body1"
+								style={{
+									fontWeight: 600,
+									fontSize: 12,
+									color: open ? '#FAFAFC' : '#6C6F80',
+									marginRight: 3,
+								}}
+							>
+								{title}
+							</Typography>
+						)}
 						<Typography
 							variant="body2"
 							style={{

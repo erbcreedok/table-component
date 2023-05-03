@@ -51,6 +51,7 @@ export const GroupSearchResult: FC<GroupSearchResultProps> = (props) => {
 					<ListSearchedGroupItem
 						key={item?.id}
 						item={item}
+						table={table}
 						selectedSearchedItems={selectedSearchedItems}
 						setSelectedSearchedItems={setSelectedSearchedItems}
 					/>
