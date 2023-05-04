@@ -1,4 +1,4 @@
-import { FC, useEffect, useState } from 'react'
+import { Dispatch, FC, SetStateAction, useEffect, useState } from 'react'
 
 import { useGroupingControls } from '../../filter-bar-hooks/useGroupingControls'
 import { NoOptions } from '../..//NoOptions/NoOptions'
@@ -10,12 +10,14 @@ interface GroupSearchResultProps {
 	searchValue: string
 	selectedSearchedItems: any
 	setSelectedSearchedItems: any
+	setSearchValue: Dispatch<SetStateAction<string>>
 }
 
 export const GroupSearchResult: FC<GroupSearchResultProps> = (props) => {
 	const {
 		table,
 		searchValue,
+		setSearchValue,
 		selectedSearchedItems,
 		setSelectedSearchedItems,
 	} = props
@@ -54,6 +56,7 @@ export const GroupSearchResult: FC<GroupSearchResultProps> = (props) => {
 						table={table}
 						selectedSearchedItems={selectedSearchedItems}
 						setSelectedSearchedItems={setSelectedSearchedItems}
+						setSearchValue={setSearchValue}
 					/>
 				)
 			})}

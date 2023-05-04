@@ -1,15 +1,20 @@
 import { FC } from 'react'
-import CheckIcon from '@mui/icons-material/Check'
 import { Typography } from '@mui/material'
 
 import { ItemBoxSearchedSortingStyled } from '../SortingChip.styled'
 import { useSortingControls } from '../../filter-bar-hooks/useSortingControls'
+import { ButtonLink } from '../../../components/ButtonLink'
 
 export const ListSearchSortingItem: FC<any> = (props) => {
-	const { item, table, selectedSearchedItems, setSelectedSearchedItems } = props
+	const {
+		item,
+		table,
+		setSearchValue,
+		selectedSearchedItems,
+		setSelectedSearchedItems,
+	} = props
 	const { id, columnDef } = item
 	const { header } = columnDef
-	const isChecked = selectedSearchedItems.includes(item.id)
 
 	const { allColumns } = useSortingControls(table)
 
@@ -18,15 +23,8 @@ export const ListSearchSortingItem: FC<any> = (props) => {
 
 		column?.toggleSorting?.(false, true)
 
-		if (isChecked) {
-			setSelectedSearchedItems(
-				selectedSearchedItems.filter((id) => id !== item.id)
-			)
-
-			return
-		}
-
 		setSelectedSearchedItems([...selectedSearchedItems, id])
+		setSearchValue('')
 	}
 
 	return (
@@ -35,7 +33,7 @@ export const ListSearchSortingItem: FC<any> = (props) => {
 				{header}
 			</Typography>
 
-			{isChecked && <CheckIcon style={{ fill: '#009ECC', fontSize: '16px' }} />}
+			<ButtonLink style={{ fontWeight: 600 }}>+</ButtonLink>
 		</ItemBoxSearchedSortingStyled>
 	)
 }

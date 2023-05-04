@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useState } from 'react'
+import React, { Dispatch, FC, SetStateAction, useEffect, useState } from 'react'
 
 import { useFilterControls } from '../../filter-bar-hooks/useFilterControls'
 import { ListFilterItem } from '../FilterChipList/ListFilterItem'
@@ -10,6 +10,8 @@ interface FiltersSearchResultProps {
 	filterId: string
 	selectedSearchedItems: any
 	setSelectedSearchedItems: any
+	setSearchValue: Dispatch<SetStateAction<string>>
+	setIsSearchActive: Dispatch<SetStateAction<boolean>>
 }
 
 export const FiltersSearchResult: FC<FiltersSearchResultProps> = (props) => {
@@ -19,17 +21,17 @@ export const FiltersSearchResult: FC<FiltersSearchResultProps> = (props) => {
 		filterId,
 		selectedSearchedItems,
 		setSelectedSearchedItems,
+		setSearchValue,
+		setIsSearchActive,
 	} = props
 
-	const { currentFilterColumn, filtedList, filterOptions } = useFilterControls(
-		table,
-		filterId
-	)
+	const { currentFilterColumn, currentFilterValues, filterOptions } =
+		useFilterControls(table, filterId)
 
 	const [searchedElements, setSearchedElements] = useState<any>([])
 
-	const nonSelectedFilterOptions = filterOptions.filter((item) => {
-		return !filtedList.includes(item)
+	const nonSelectedFilterOptions = filterOptions.filter(({ value }) => {
+		return !currentFilterValues.includes(value)
 	})
 
 	useEffect(() => {}, [])
@@ -37,7 +39,10 @@ export const FiltersSearchResult: FC<FiltersSearchResultProps> = (props) => {
 	useEffect(() => {
 		if (searchValue) {
 			const filteredList = nonSelectedFilterOptions.filter((item) => {
-				return item?.label?.toLowerCase().includes(searchValue.toLowerCase())
+				return (
+					item?.label?.toLowerCase().includes(searchValue.toLowerCase()) &&
+					!currentFilterValues?.includes?.(item?.value)
+				)
 			})
 
 			setSearchedElements(filteredList)
@@ -45,10 +50,17 @@ export const FiltersSearchResult: FC<FiltersSearchResultProps> = (props) => {
 			return
 		}
 
-		setSearchedElements(nonSelectedFilterOptions)
+		setSearchedElements(
+			nonSelectedFilterOptions.filter(
+				(item) => !currentFilterValues?.includes?.(item?.value)
+			)
+		)
 	}, [searchValue])
 
 	const handleCheck = (value) => {
+		setIsSearchActive(false)
+		setSearchValue('')
+
 		if (selectedSearchedItems?.includes?.(value)) {
 			const filteredItems = selectedSearchedItems.filter(
 				(item) => item !== value
@@ -61,7 +73,10 @@ export const FiltersSearchResult: FC<FiltersSearchResultProps> = (props) => {
 
 		const updatedItems = [...selectedSearchedItems, value]
 		setSelectedSearchedItems(updatedItems)
-		currentFilterColumn.setFilterValue(updatedItems)
+		currentFilterColumn.setFilterValue([
+			...currentFilterValues,
+			...updatedItems,
+		])
 	}
 
 	if (!searchedElements?.length) {

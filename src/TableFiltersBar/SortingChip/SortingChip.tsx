@@ -83,6 +83,7 @@ export const SortingChip = <TData extends Record<string, any> = {}>(
 							selectedSearchedItems={selectedSearchedItems}
 							setSelectedSearchedItems={setSelectedSearchedItems}
 							table={table}
+							setSearchValue={setSearchValue}
 						/>
 					)}
 

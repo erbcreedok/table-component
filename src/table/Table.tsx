@@ -138,7 +138,7 @@ export const Table: FC<Props> = ({ table }) => {
 		table,
 		row: {
 			getIsSelected: () => false,
-			getVisibleCells: table.getRowModel().rows[0].getVisibleCells,
+			getVisibleCells: table.getRowModel()?.rows[0]?.getVisibleCells,
 		},
 	}
 

@@ -8,17 +8,21 @@ export const useFilterControls = (table: any, filterId?: string) => {
 	const { columnFilters } = getState()
 
 	const columns = getAllColumns()
-	const columnsIdToHeaderMap = columns.reduce((acc, column) => {
-		const {
-			id,
-			columnDef: { header },
-		} = column
+	const columnsIdToHeaderMap = useMemo(
+		() =>
+			columns.reduce((acc, column) => {
+				const {
+					id,
+					columnDef: { header },
+				} = column
 
-		return {
-			...acc,
-			[id]: { header, column },
-		}
-	}, {})
+				return {
+					...acc,
+					[id]: { header, column },
+				}
+			}, {}),
+		[columns, columnFilters]
+	)
 
 	const nonFilteringList = useMemo(
 		() => columns.filter((col) => !col.getIsFiltered()),

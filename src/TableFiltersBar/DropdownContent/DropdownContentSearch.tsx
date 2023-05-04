@@ -1,4 +1,4 @@
-import React, { FC, useState, SyntheticEvent } from 'react'
+import React, { FC, useEffect, SyntheticEvent } from 'react'
 import { Divider, IconButton, InputAdornment, TextField } from '@mui/material'
 import styled from '@emotion/styled'
 
@@ -12,6 +12,7 @@ type DropdownContentSearchProps = {
 	setIsSearchActive: (value: boolean) => void
 	onApplySelectedItems: () => void
 	onChange: (value: any) => void
+	onClick?: () => void
 }
 
 const SearchInput = styled(TextField)`
@@ -43,6 +44,7 @@ export const DropdownContentSearch: FC<DropdownContentSearchProps> = (
 		setIsSearchActive,
 		onApplySelectedItems,
 		onChange,
+		onClick = () => {},
 	} = props
 
 	const handleSearchChange = (e: any) => {
@@ -55,9 +57,13 @@ export const DropdownContentSearch: FC<DropdownContentSearchProps> = (
 		e.stopPropagation()
 
 		onChange('')
-		setIsSearchActive(false)
+		setIsSearchActive?.(false)
 		onApplySelectedItems()
 	}
+
+	useEffect(() => {
+		setIsSearchActive?.(Boolean(searchValue?.length))
+	}, [searchValue])
 
 	return (
 		<>
@@ -84,7 +90,7 @@ export const DropdownContentSearch: FC<DropdownContentSearchProps> = (
 				}}
 				value={searchValue}
 				onChange={handleSearchChange}
-				onClick={() => setIsSearchActive(true)}
+				onClick={onClick}
 			/>
 			<Divider />
 		</>

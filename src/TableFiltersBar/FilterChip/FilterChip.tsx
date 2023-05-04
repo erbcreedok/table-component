@@ -20,9 +20,7 @@ export const FilterChip: FC<FilterChipProps> = ({
 	filterId,
 	headerTile,
 }) => {
-	const { resetColumnFilters } = table
-
-	const { currentFilterValues, currentFilterHeader, currentFilterColumn } =
+	const { currentFilterColumn, currentFilterValues, currentFilterHeader } =
 		useFilterControls(table, filterId)
 
 	const [isSearchActive, setIsSearchActive] = useState(false)
@@ -31,11 +29,11 @@ export const FilterChip: FC<FilterChipProps> = ({
 	const [selectedSearchedItems, setSelectedSearchedItems] = useState<any>([])
 
 	const handleClearAll = () => {
-		resetColumnFilters()
+		currentFilterColumn.setFilterValue([])
 	}
 	const applySelectedFilters = () => {
-		const updatedFilters = [...currentFilterValues, ...selectedSearchedItems]
-		currentFilterColumn.setFilterValue(updatedFilters)
+		setSearchValue('')
+		setSelectedSearchedItems([])
 	}
 
 	const DropdownContent = (
@@ -51,6 +49,7 @@ export const FilterChip: FC<FilterChipProps> = ({
 				isSearchActive={isSearchActive}
 				setIsSearchActive={setIsSearchActive}
 				onApplySelectedItems={applySelectedFilters}
+				onClick={() => setIsSearchActive(true)}
 			/>
 
 			<>
@@ -61,6 +60,8 @@ export const FilterChip: FC<FilterChipProps> = ({
 						filterId={filterId}
 						selectedSearchedItems={selectedSearchedItems}
 						setSelectedSearchedItems={setSelectedSearchedItems}
+						setSearchValue={setSearchValue}
+						setIsSearchActive={setIsSearchActive}
 					/>
 				)}
 

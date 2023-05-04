@@ -60,6 +60,7 @@ export const GroupingChip: FC<GroupingChipProps> = (props) => {
 						searchValue={searchValue}
 						selectedSearchedItems={selectedSearchedItems}
 						setSelectedSearchedItems={setSelectedSearchedItems}
+						setSearchValue={setSearchValue}
 					/>
 				)}
 
