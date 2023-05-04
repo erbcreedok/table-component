@@ -24,14 +24,14 @@ export const commonListItemStyles = {
 interface Props {
 	anchorEl: HTMLElement | null
 	header: Table_Header
-	setAnchorEl: (anchorEl: HTMLElement | null) => void
+	setVisible: (visible: boolean) => void
 	table: TableInstance
 }
 
 export const ColumnActionMenu: FC<Props> = ({
 	anchorEl,
 	header,
-	setAnchorEl,
+	setVisible,
 	table,
 }) => {
 	const {
@@ -71,22 +71,22 @@ export const ColumnActionMenu: FC<Props> = ({
 
 	const handleClearSort = () => {
 		column.clearSorting()
-		setAnchorEl(null)
+		setVisible(false)
 	}
 
 	const handleSortAsc = () => {
 		column.toggleSorting(false, enableMultiSort)
-		setAnchorEl(null)
+		setVisible(false)
 	}
 
 	const handleSortDesc = () => {
 		column.toggleSorting(true, enableMultiSort)
-		setAnchorEl(null)
+		setVisible(false)
 	}
 
 	const handleResetColumnSize = () => {
 		column.resetSize()
-		setAnchorEl(null)
+		setVisible(false)
 	}
 
 	const handleHideColumn = () => {
@@ -95,28 +95,28 @@ export const ColumnActionMenu: FC<Props> = ({
 			column.toggleGrouping()
 		}
 		column.clearSorting()
-		setAnchorEl(null)
+		setVisible(false)
 	}
 
 	const handlePinColumn = (pinDirection: 'left' | 'right' | false) => {
 		column.pin(pinDirection)
-		setAnchorEl(null)
+		setVisible(false)
 	}
 
 	const handleGroupByColumn = () => {
 		column.toggleGrouping()
 		setColumnOrder((old: any) => ['mrt-row-expand', ...old])
-		setAnchorEl(null)
+		setVisible(false)
 	}
 
 	const handleClearFilter = () => {
 		column.setFilterValue('')
-		setAnchorEl(null)
+		setVisible(false)
 	}
 
 	const handleShowAllColumns = () => {
 		toggleAllColumnsVisible(true)
-		setAnchorEl(null)
+		setVisible(false)
 	}
 
 	const handleOpenShowHideColumnsMenu = (
@@ -130,15 +130,15 @@ export const ColumnActionMenu: FC<Props> = ({
 		<Menu
 			anchorEl={anchorEl}
 			open={!!anchorEl}
-			onClose={() => setAnchorEl(null)}
+			onClose={() => setVisible(false)}
 		>
 			{columnDef.renderColumnActionsMenuItems?.({
-				closeMenu: () => setAnchorEl(null),
+				closeMenu: () => setVisible(false),
 				column,
 				table,
 			}) ??
 				renderColumnActionsMenuItems?.({
-					closeMenu: () => setAnchorEl(null),
+					closeMenu: () => setVisible(false),
 					column,
 					table,
 				}) ??

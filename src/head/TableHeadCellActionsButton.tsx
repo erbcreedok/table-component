@@ -16,6 +16,7 @@ type Props = {
 	table: TableInstance
 	disabled?: boolean
 	children(props: { onClick: MouseEventHandler; visible: boolean }): ReactNode
+	anchorEl: HTMLElement | null
 }
 
 export const TableHeadCellActionsButton: FC<Props> = ({
@@ -23,19 +24,20 @@ export const TableHeadCellActionsButton: FC<Props> = ({
 	table,
 	children,
 	disabled,
+	anchorEl,
 }) => {
 	const {
 		options: { localization },
 	} = table
 
-	const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
+	const [visible, setVisible] = useState(false)
 
 	const handleClick = useCallback(
 		(event: MouseEvent<HTMLElement>) => {
 			if (disabled) return
 			event.stopPropagation()
 			event.preventDefault()
-			setAnchorEl(event.currentTarget)
+			setVisible(true)
 		},
 		[disabled]
 	)
@@ -43,10 +45,10 @@ export const TableHeadCellActionsButton: FC<Props> = ({
 	const props = useMemo(
 		() => ({
 			onClick: handleClick,
-			visible: !!anchorEl,
+			visible,
 			'aria-label': localization.columnActions,
 		}),
-		[anchorEl, handleClick, localization.columnActions]
+		[visible, handleClick, localization.columnActions]
 	)
 
 	return (
@@ -54,9 +56,9 @@ export const TableHeadCellActionsButton: FC<Props> = ({
 			{children(props)}
 			{anchorEl && (
 				<ColumnActionMenu
-					anchorEl={anchorEl}
+					anchorEl={visible ? anchorEl : null}
 					header={header}
-					setAnchorEl={setAnchorEl}
+					setVisible={setVisible}
 					table={table}
 				/>
 			)}

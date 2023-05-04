@@ -29,6 +29,7 @@ import SearchOffIcon from '@mui/icons-material/SearchOff'
 import ViewColumnIcon from '@mui/icons-material/ViewColumn'
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff'
 
+import { AnalyticsIcon } from './TableToolbar/components/icons/AnalyticsIcon'
 import { GroupIcon } from './TableToolbar/components/icons/GroupIcon'
 import { HideIcon } from './TableToolbar/components/icons/HideIcon'
 import { SortAscIcon } from './TableToolbar/components/icons/SortAscIcon'
@@ -40,6 +41,7 @@ import { PencilIcon } from './TableToolbar/components/icons/PencilIcon'
 import { TrashIcon } from './TableToolbar/components/icons/TrashIcon'
 
 export interface Table_Icons {
+	AnalyticsIcon: any
 	ArrowDownwardIcon: any
 	ArrowRightIcon: any
 	CancelIcon: any
@@ -81,6 +83,7 @@ export interface Table_Icons {
 }
 
 export const Default_Icons: Table_Icons = {
+	AnalyticsIcon,
 	ArrowDownwardIcon,
 	ArrowRightIcon,
 	CancelIcon,

@@ -13,6 +13,7 @@ import {
 	Table_Row,
 	TableInstance,
 } from '../../TableComponent'
+import { AnalyticsIcon } from '../../TableToolbar/components/icons/AnalyticsIcon'
 import { getNestedProp } from '../../utils/getNestedProp'
 import { TeamMember } from '../types/TeamMember'
 import { Colors } from './constants'
@@ -130,7 +131,7 @@ export const getTeamMembersColumns = () =>
 			accessorFn: teamMemberAccessorFn('performance'),
 			filterVariant: 'multi-select',
 			GroupedCell: ColoredGroupedCell,
-			Header: HeaderBase,
+			Header: ({ column }) => <Flex center="y" sx={{ justifyContent: 'space-between'}}>{column.columnDef.header}<AnalyticsIcon /></Flex>,
 			muiTableBodyCellProps: coloredCellProps,
 			enableColumnOrdering: true,
 			sortingFn(rowA, rowB) {

@@ -21,6 +21,7 @@ export const TableHeadCellResizeHandle: FC<Props> = ({ header, table }) => {
 
 	return (
 		<Box
+			onClick={(e) => e.stopPropagation()}
 			onDoubleClick={() => column.resetSize()}
 			onMouseDown={header.getResizeHandler()}
 			onTouchStart={header.getResizeHandler()}

@@ -291,7 +291,7 @@ export const getCommonCellStyles = ({
 		table.options.layoutMode === 'grid'
 			? `${column.getSize()} 0 auto`
 			: undefined,
-	minWidth: `max(${column.getSize()}px, ${column.columnDef.minSize ?? 30}px)`,
+	minWidth: `max(${column.getSize()}px, ${column.columnDef.minSize ?? 24}px)`,
 	width: header?.getSize() ?? column.getSize(),
 })
 
@@ -304,7 +304,7 @@ export const Table_DisplayColumnIdsArray = [
 ]
 
 export const Table_DefaultColumn = {
-	minSize: 40,
+	minSize: 24,
 	maxSize: 1000,
 	size: 180,
 }
