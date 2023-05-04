@@ -737,6 +737,13 @@ export type TableComponentProps<TData extends Record<string, any> = {}> = Omit<
 	hideTableHead?: boolean
 	icons?: Partial<Table_Icons>
 	initialState?: Partial<Table_TableState<TData>>
+	isRowGroupable?: ({
+		row,
+		table,
+	}: {
+		row: Table_Row<TData>
+		table: TableInstance<TData>
+	}) => boolean
 	/**
 	 * Changes which kind of CSS layout is used to render the table. `semantic` uses default semantic HTML elements, while `grid` adds CSS grid and flexbox styles
 	 */

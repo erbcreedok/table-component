@@ -73,7 +73,7 @@ export const TeamsToolbar: Story<TableComponentProps> = () => (
 		enablePagination={false}
 		enableMultiSort
 		enableMultiRemove
-		groupBorder={{ left: '12px solid white', top: '20px solid white' }}
+		groupBorder={{ left: '12px solid #f5f5f5', top: '20px solid #f5f5f5' }}
 		uppercaseHeader
 		groupsSorting={groupsSorting}
 		initialState={{

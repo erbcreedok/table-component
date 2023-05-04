@@ -103,7 +103,9 @@ export const getTeamMembersColumns = () =>
 			},
 			GroupedCell: ColoredGroupedCell,
 			enableColumnOrdering: false,
+			enableGrouping: false,
 			enableHiding: false,
+			minSize: 250,
 			Header: ({ column, header, table }) => (
 				<HeaderSearch
 					column={column}

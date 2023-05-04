@@ -2,7 +2,6 @@ import { Meta, Story } from '@storybook/react'
 import ModeIcon from '@mui/icons-material/Mode';
 import { ColumnOrderState, VisibilityState, SortingState } from '@tanstack/react-table'
 import React, { useState } from 'react'
-import { TableBodyRow } from '../../body/TableBodyRow'
 import { getColumnId } from '../../column.utils'
 import TableComponent, { Table_ColumnDef, Table_Row, TableComponentProps } from '../../index'
 import { TeamMember, UnitTreeItem } from '../types/TeamMember'
@@ -11,18 +10,10 @@ import {
 	getSeparatedTeamMembers,
 	getTeamMembers,
 	getUnitTreeItems,
-	isUnitTreeItem
 } from '../utils/getTeamMembers'
 import { getTeamMembersColumns } from '../utils/getTeamMembersColumns'
 import { getDefaultRowActionMenuItems } from '../utils/rowActionMenuItems'
-import { sortByArrayOrder } from '../utils/sortByArrayOrder'
 import { UnitRow } from './components/UnitRow'
-
-const groupsSorting = {
-	impact: sortByArrayOrder(['Critical', 'High', 'Medium', 'Low']),
-	performance: sortByArrayOrder(['Often exceeds', 'Sometimes exceeds', 'Meets']),
-	riskOfLeaving: sortByArrayOrder(['Leaver', 'High', 'Medium', 'Low']),
-}
 
 const data = getSeparatedTeamMembers()
 const dataTree = getExpandingTeamMembers(10)
@@ -79,13 +70,12 @@ const getPropsHandledColumns = (columns: Table_ColumnDef<TeamMember>[], args: Te
 }
 
 const TeamsTable: Story<TeamsTableConfigs> = (args) => {
-	const { columns, defaultSorting, defaultColumnOrder, defaultColumnVisibility, ...rest } = args
+	const { columns, defaultSorting, defaultColumnOrder, defaultColumnVisibility, initialState = {}, ...rest } = args
 	return (
 		<TableComponent
 			columns={getPropsHandledColumns(columns, args)}
-			groupsSorting={groupsSorting}
 			groupBorder={{ left: '12px solid white', top: '20px solid white' }}
-			initialState={{ sorting: defaultSorting, columnOrder: defaultColumnOrder, columnVisibility: defaultColumnVisibility }}
+			initialState={{ sorting: defaultSorting, columnOrder: defaultColumnOrder, columnVisibility: defaultColumnVisibility, ...initialState }}
 			renderRowActionMenuItems={getDefaultRowActionMenuItems}
 			{...rest}
 		/>
@@ -104,6 +94,7 @@ export const TeamsTableSubtree: Story<TeamsTableExample> = (args) => (
 	<TeamsTable
 		columns={columns}
 		data={dataTree}
+		groupBorder={{ left: '12px solid white', top: '20px solid white' }}
 		{...args}
 		enableExpanding
 	/>
@@ -144,27 +135,20 @@ export const TeamsTableRowOrdering: Story<TeamsTableExample> = (args) => {
 }
 
 export const HierarchyGroupTableExample: Story = (args) => {
-	const [data] = useState(getUnitTreeItems(3))
+	const [data] = useState(getUnitTreeItems(3, 10))
 
 	return (
 		<>
 			<TableComponent
 				columns={columns as unknown as Table_ColumnDef<UnitTreeItem>[]}
 				data={data}
-				CustomRow={({ ...rest }) => {
-					if (isUnitTreeItem(rest.row.original)) {
-						return <UnitRow {...rest} unit={rest.row.original} />
-					}
-
-					return <TableBodyRow {...rest} />
-				}}
+				CustomRow={UnitRow}
+				groupBorder={{ left: '12px solid white', top: '20px solid white' }}
 				{...args}
 				enableExpanding
-				enableBottomToolbar={false}
 				hideRowExpandColumn
 				hideTableHead
 				filterFromLeafRows
-				enableGrouping={false}
 			/>
 		</>
 	)
@@ -232,6 +216,11 @@ const meta: Meta = {
 			defaultValue: false,
 			description: 'Pin columns to left or right side of the table',
 		},
+		enableAggregationRow: {
+			control: 'boolean',
+			defaultValue: false,
+			description: 'Enable aggregation row, when grouping is enabled',
+		},
 		disableHidingFor: {
 			options: columns.map((column) => getColumnId(column)),
 			control: {
@@ -292,7 +281,12 @@ const meta: Meta = {
 			}), {}),
 			description: '***THIS IS NOT A PROP***\n' +
 				'Set Default column filter function for Table. Rerender Table to apply value',
-		}
+		},
+		initialState: {
+			control: { type: 'object' },
+			defaultValue: {},
+			description: 'Set initial state for Table, this property rewrites `defaultSorting`, `defaultColumnVisibility`, `defaultColumnOrder`',
+		},
 	},
 };
 

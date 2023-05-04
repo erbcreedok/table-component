@@ -1,17 +1,25 @@
-import { Table_Cell, Table_Header, TableInstance } from '../TableComponent'
-
-import { getIsFirstOfGroup } from './getIsFirstOfGroup'
+import { Table_Header, TableInstance } from '../TableComponent'
 
 type CellProps = {
-	cell: Table_Cell
 	table: TableInstance
+	colIndex: number
+	rowIndex: number
+	isFirstOfGroup: boolean
+	isGroupedColumn: boolean
 }
 type HeaderProps = {
 	header: Table_Header
 	table: TableInstance
 }
+export type GroupBorders = { [key: string]: string | undefined }
 
-const getCellBorders = ({ cell, table }: CellProps) => {
+export const getCellGroupBorders = ({
+	table,
+	rowIndex,
+	colIndex,
+	isFirstOfGroup,
+	isGroupedColumn,
+}: CellProps) => {
 	const groupBorder = table.options.groupBorder
 	const borderLeft = groupBorder
 		? typeof groupBorder === 'string'
@@ -23,40 +31,28 @@ const getCellBorders = ({ cell, table }: CellProps) => {
 			? groupBorder
 			: groupBorder.top
 		: undefined
-	const borders: { [key: string]: string | undefined } = {}
-	const rows = table.getPaginationRowModel().rows
-	const { row, column } = cell
-	const index = rows.findIndex((r) => r.id === row.id)
-	const colIndex = table
-		.getVisibleLeafColumns()
-		.findIndex((c) => c.id === column.id)
-	const grouping = table.getState().grouping
+	const borders: GroupBorders = {}
 
-	if (column.getIsGrouped()) {
-		borders.borderBottom = 'none'
-	}
+	borders.borderBottom = 'none'
 
-	if (colIndex > 0 && column.getIsGrouped()) {
+	if (isGroupedColumn && colIndex > 0) {
 		borders.borderLeft = borderLeft
 	}
-	if (
-		index > grouping.length &&
-		grouping.some((columnId) => getIsFirstOfGroup({ table, cell, columnId }))
-	) {
+	if (isFirstOfGroup && rowIndex > 0) {
 		borders.borderTop = borderTop
 	}
 
 	return borders
 }
 
-const getHeaderBorders = ({ header, table }: HeaderProps) => {
+export const getHeaderGroupBorders = ({ header, table }: HeaderProps) => {
 	const groupBorder = table.options.groupBorder
 	const borderLeft = groupBorder
 		? typeof groupBorder === 'string'
 			? groupBorder
 			: groupBorder.left
 		: undefined
-	const borders: { [key: string]: string | undefined } = {}
+	const borders: GroupBorders = {}
 	const { column } = header
 	const colIndex = table
 		.getVisibleLeafColumns()
@@ -67,13 +63,4 @@ const getHeaderBorders = ({ header, table }: HeaderProps) => {
 	}
 
 	return borders
-}
-export const getGroupBorders = (props: CellProps | HeaderProps) => {
-	if (props.table.options.enableAggregationRow) return {}
-
-	if ('cell' in props) {
-		return getCellBorders(props)
-	}
-
-	return getHeaderBorders(props)
 }

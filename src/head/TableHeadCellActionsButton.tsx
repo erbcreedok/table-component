@@ -2,6 +2,7 @@ import React, {
 	FC,
 	MouseEvent,
 	MouseEventHandler,
+	MutableRefObject,
 	ReactNode,
 	useCallback,
 	useMemo,
@@ -16,7 +17,7 @@ type Props = {
 	table: TableInstance
 	disabled?: boolean
 	children(props: { onClick: MouseEventHandler; visible: boolean }): ReactNode
-	anchorEl: HTMLElement | null
+	anchorElRef: MutableRefObject<HTMLElement | null>
 }
 
 export const TableHeadCellActionsButton: FC<Props> = ({
@@ -24,7 +25,7 @@ export const TableHeadCellActionsButton: FC<Props> = ({
 	table,
 	children,
 	disabled,
-	anchorEl,
+	anchorElRef,
 }) => {
 	const {
 		options: { localization },
@@ -34,12 +35,13 @@ export const TableHeadCellActionsButton: FC<Props> = ({
 
 	const handleClick = useCallback(
 		(event: MouseEvent<HTMLElement>) => {
-			if (disabled) return
+			const anchorEl = anchorElRef.current
+			if (disabled || !anchorEl) return
 			event.stopPropagation()
 			event.preventDefault()
 			setVisible(true)
 		},
-		[disabled]
+		[anchorElRef, disabled]
 	)
 
 	const props = useMemo(
@@ -54,14 +56,12 @@ export const TableHeadCellActionsButton: FC<Props> = ({
 	return (
 		<>
 			{children(props)}
-			{anchorEl && (
-				<ColumnActionMenu
-					anchorEl={visible ? anchorEl : null}
-					header={header}
-					setVisible={setVisible}
-					table={table}
-				/>
-			)}
+			<ColumnActionMenu
+				anchorEl={visible ? anchorElRef.current : null}
+				header={header}
+				setVisible={setVisible}
+				table={table}
+			/>
 		</>
 	)
 }

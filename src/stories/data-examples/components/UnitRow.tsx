@@ -1,10 +1,9 @@
 import styled from "@emotion/styled"
 import Box from '@mui/material/Box'
 import React from 'react'
-import { TableBodyRowProps } from '../../../body/TableBodyRow'
+import { TableBodyRow, TableBodyRowProps } from '../../../body/TableBodyRow'
 import { ExpandButton } from '../../../buttons/ExpandButton'
 import { TableHeadRow } from '../../../head/TableHeadRow'
-import { UnitTreeItem } from '../../types/TeamMember'
 import { isUnitTreeItem } from '../../utils/getTeamMembers'
 
 const Wrapper = styled(Box)`
@@ -17,20 +16,19 @@ const Wrapper = styled(Box)`
 	padding-bottom: 8px;
 `
 
-interface Props<TData extends Record<string, any> = {}> extends TableBodyRowProps {
-	unit: UnitTreeItem
-}
+type Props<TData extends Record<string, any> = {}> = TableBodyRowProps
 
-export const UnitRow = <TData extends Record<string, any> = {}>({ unit, row, table, virtualColumns, virtualPaddingLeft,virtualPaddingRight }: Props<TData>) => {
+export const UnitRow = <TData extends Record<string, any> = {}>(props: Props<TData>) => {
+	const { row, table, virtualColumns, virtualPaddingLeft, virtualPaddingRight } = props
 	const { getVisibleLeafColumns, getHeaderGroups, getPaginationRowModel } = table
 
+	const unit = isUnitTreeItem(row.original) ? row.original : null
 	const index = getPaginationRowModel().rows.findIndex((r) => r.id === row.id)
 	const nextRow = getPaginationRowModel().rows[index + 1]
 	const isNextRowIsUnit = isUnitTreeItem(nextRow?.original)
-	const showTableHeader = nextRow && !isNextRowIsUnit && row.getIsExpanded()
+	const showTableHeader = unit && nextRow && !isNextRowIsUnit && row.getIsExpanded() || (!unit && index == 0)
 
-	return (
-		<>
+	const unitRow = unit ? (
 		<tr>
 			<td colSpan={getVisibleLeafColumns().length}>
 				<Wrapper sx={{ pl: `${(row.depth + 1) * 12}px` }}>
@@ -42,17 +40,29 @@ export const UnitRow = <TData extends Record<string, any> = {}>({ unit, row, tab
 				</Wrapper>
 			</td>
 		</tr>
-			{showTableHeader ? getHeaderGroups().map((headerGroup) => (
-				<TableHeadRow
-					parentRow={row}
-					headerGroup={headerGroup as any}
-					key={headerGroup.id}
-					table={table}
-					virtualColumns={virtualColumns}
-					virtualPaddingLeft={virtualPaddingLeft}
-					virtualPaddingRight={virtualPaddingRight}
-				/>
-			)) : null}
+	) : null
+
+	const memberRow = !unit ? (
+		<TableBodyRow {...props} />
+	) : null
+
+	const tableHeader = showTableHeader ? getHeaderGroups().map((headerGroup) => (
+		<TableHeadRow
+			parentRow={row}
+			headerGroup={headerGroup as any}
+			key={headerGroup.id}
+			table={table}
+			virtualColumns={virtualColumns}
+			virtualPaddingLeft={virtualPaddingLeft}
+			virtualPaddingRight={virtualPaddingRight}
+		/>
+	)) : null
+
+	return (
+		<>
+			{unitRow}
+			{tableHeader}
+			{memberRow}
 		</>
 	)
 }

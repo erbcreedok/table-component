@@ -1,12 +1,19 @@
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
-import React, { DragEvent, FC, ReactNode, useMemo } from 'react'
+import React, {
+	DragEvent,
+	FC,
+	ReactNode,
+	useEffect,
+	useMemo,
+	useRef,
+} from 'react'
 import Box from '@mui/material/Box'
 import TableCell from '@mui/material/TableCell'
 import { useTheme } from '@mui/material/styles'
 import type { Theme } from '@mui/material/styles'
 
-import { getGroupBorders } from '../utils/getGroupBorders'
-import { getCommonCellStyles } from '../column.utils'
+import { GroupBorders } from '../utils/getGroupBorders'
+import { getCommonCellStyles, Table_DefaultColumn } from '../column.utils'
 import type { Table_Header, Table_Row, TableInstance } from '..'
 import { Colors } from '../components/styles'
 
@@ -20,9 +27,15 @@ interface Props {
 	header: Table_Header
 	table: TableInstance
 	parentRow?: Table_Row
+	groupBorders?: GroupBorders
 }
 
-export const TableHeadCell: FC<Props> = ({ header, table, parentRow }) => {
+export const TableHeadCell: FC<Props> = ({
+	header,
+	table,
+	parentRow,
+	groupBorders,
+}) => {
 	const theme = useTheme()
 	const {
 		getState,
@@ -39,6 +52,7 @@ export const TableHeadCell: FC<Props> = ({ header, table, parentRow }) => {
 		refs: { tableHeadCellRefs },
 		setHoveredColumn,
 	} = table
+	const localRef = useRef<HTMLTableCellElement>(null)
 	const { draggingColumn, grouping, hoveredColumn, highlightHeadCellId } =
 		getState()
 	const { column } = header
@@ -120,9 +134,15 @@ export const TableHeadCell: FC<Props> = ({ header, table, parentRow }) => {
 			  })
 			: columnDef?.Header ?? (columnDef.header as ReactNode)
 
+	useEffect(() => {
+		if (localRef.current) {
+			tableHeadCellRefs.current[column.id] = localRef.current
+		}
+	}, [column.id, tableHeadCellRefs])
+
 	return (
 		<TableHeadCellActionsButton
-			anchorEl={tableHeadCellRefs.current[column.id]}
+			anchorElRef={localRef}
 			header={header}
 			table={table}
 			disabled={!showColumnActions}
@@ -133,14 +153,11 @@ export const TableHeadCell: FC<Props> = ({ header, table, parentRow }) => {
 					colSpan={header.colSpan}
 					onDragEnter={handleDragEnter}
 					onClick={onClick}
-					ref={(node: HTMLTableCellElement) => {
-						if (node) {
-							tableHeadCellRefs.current[column.id] = node
-						}
-					}}
+					ref={localRef}
 					{...tableCellProps}
 					sx={(theme: Theme) => ({
-						boxSizing: 'border-box',
+						boxSizing: 'border-ox',
+						cursor: showColumnActions ? 'pointer' : undefined,
 						fontSize: theme.typography.subtitle2.fontSize,
 						flexDirection: layoutMode === 'grid' ? 'column' : undefined,
 						fontWeight: 'bold',
@@ -163,7 +180,7 @@ export const TableHeadCell: FC<Props> = ({ header, table, parentRow }) => {
 								: column.getIsPinned() && columnDefType !== 'group'
 								? 2
 								: 1,
-						...getGroupBorders({ header, table }),
+						...groupBorders,
 						...getCommonCellStyles({
 							column,
 							header,
@@ -195,9 +212,7 @@ export const TableHeadCell: FC<Props> = ({ header, table, parentRow }) => {
 										: 'flex-start',
 								position: 'relative',
 								mx: 'auto',
-								width: `max(calc(100% - 1.4rem), ${
-									column.columnDef.minSize ?? 24
-								}px)`,
+								width: `max(calc(100% - 1.4rem), ${Table_DefaultColumn.minSize}px)`,
 							}}
 						>
 							<Box
@@ -270,9 +285,7 @@ export const TableHeadCell: FC<Props> = ({ header, table, parentRow }) => {
 										<TableHeadCellGrabHandle
 											column={column}
 											table={table}
-											tableHeadCellRef={{
-												current: tableHeadCellRefs.current[column.id],
-											}}
+											tableHeadCellRef={localRef}
 										/>
 									)}
 								</Box>

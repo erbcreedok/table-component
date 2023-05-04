@@ -221,6 +221,28 @@ export const getTotalRight = (table: TableInstance, column: Table_Column) => {
 	)
 }
 
+export const getColumnWidth = ({
+	column,
+	header,
+}: {
+	header?: Table_Header
+	column: Table_Column
+}) => {
+	const minSize = column.columnDef.minSize ?? 24
+	const size = header?.getSize() ?? column.getSize()
+	if (column.getIsGrouped()) {
+		return {
+			minWidth: `max(${column.getSize()}px, ${Math.max(minSize, 48)}px)`,
+			width: Math.max(size, 48),
+		}
+	}
+
+	return {
+		minWidth: `max(${column.getSize()}px, ${minSize}px)`,
+		width: header?.getSize() ?? column.getSize(),
+	}
+}
+
 export const getCommonCellStyles = ({
 	column,
 	header,
@@ -291,8 +313,7 @@ export const getCommonCellStyles = ({
 		table.options.layoutMode === 'grid'
 			? `${column.getSize()} 0 auto`
 			: undefined,
-	minWidth: `max(${column.getSize()}px, ${column.columnDef.minSize ?? 24}px)`,
-	width: header?.getSize() ?? column.getSize(),
+	...getColumnWidth({ column, header }),
 })
 
 export const Table_DisplayColumnIdsArray = [

@@ -1,6 +1,7 @@
 import React, {
 	DragEvent,
 	FC,
+	HTMLProps,
 	memo,
 	MouseEvent,
 	RefObject,
@@ -13,13 +14,11 @@ import MuiTableCell from '@mui/material/TableCell'
 import { darken, lighten, useTheme } from '@mui/material/styles'
 import type { VirtualItem } from '@tanstack/react-virtual'
 
-import { ExpandButton } from '../buttons/ExpandButton'
 import { EditCellTextField } from '../inputs/EditCellTextField'
 import { CopyButton } from '../buttons/CopyButton'
-import { getGroupBorders } from '../utils/getGroupBorders'
+import { GroupBorders } from '../utils/getGroupBorders'
 import { getCommonCellStyles } from '../column.utils'
 import type { Table_Cell, TableInstance, Table_ColumnDef } from '..'
-import { getVisibleLeafRows } from '../utils/getVisibleLeafRows'
 
 import { TableBodyRowGrabHandle } from './TableBodyRowGrabHandle'
 import { TableBodyCellValue } from './TableBodyCellValue'
@@ -31,28 +30,33 @@ interface Props {
 	numRows: number
 	rowIndex: number
 	rowRef: RefObject<HTMLTableRowElement>
+	rowSpan?: HTMLProps<HTMLTableCellElement>['rowSpan']
 	table: TableInstance
 	virtualCell?: VirtualItem
 	summaryRowCell?: boolean
+	isGroupedCell?: boolean
+	groupBorders?: GroupBorders
 }
 
 export const TableBodyCell: FC<Props> = ({
+	isGroupedCell,
 	cell,
 	enableHover,
 	measureElement,
 	numRows,
 	rowIndex,
 	rowRef,
+	rowSpan,
 	table,
 	virtualCell,
 	summaryRowCell,
+	groupBorders,
 }) => {
 	const theme = useTheme()
 	const {
 		getState,
 		options: {
 			editingMode,
-			enableAggregationRow,
 			enableClickToCopy,
 			enableColumnOrdering,
 			enableEditing,
@@ -252,20 +256,6 @@ export const TableBodyCell: FC<Props> = ({
 		}
 	}
 
-	if (!enableAggregationRow && row.getIsGrouped() && !cell.getIsGrouped()) {
-		return null
-	}
-	if (!enableAggregationRow && !row.getIsGrouped() && column.getIsGrouped()) {
-		return null
-	}
-	const isGroupedCell =
-		!enableAggregationRow && row.getIsGrouped() && cell.getIsGrouped()
-
-	const rowSpan =
-		!enableAggregationRow && row.getIsGrouped()
-			? getVisibleLeafRows(row, table).length
-			: 1
-
 	const isSelectCell = column.id === 'mrt-row-select'
 	const isAnyRowSelected = table.getSelectedRowModel().flatRows.length > 0
 	const hideCheckBoxSpan = isSelectCell && !isAnyRowSelected
@@ -325,7 +315,7 @@ export const TableBodyCell: FC<Props> = ({
 				'& span': {
 					visibility: hideCheckBoxSpan ? 'hidden' : 'visible',
 				},
-				...getGroupBorders({ table, cell }),
+				...groupBorders,
 				...getCommonCellStyles({
 					column,
 					table,
@@ -342,44 +332,35 @@ export const TableBodyCell: FC<Props> = ({
 				summaryRowCellValue(column as Table_ColumnDef)
 			) : (
 				<>
-					{enableAggregationRow && cell.getIsGrouped() && (
-						<ExpandButton row={row} table={table} />
-					)}
-					<>
-						{cell.getIsPlaceholder() &&
-						enableAggregationRow ? null : isLoading || showSkeletons ? (
-							<Skeleton
-								animation="wave"
-								height={20}
-								width={skeletonWidth}
-								{...skeletonProps}
-							/>
-						) : enableRowNumbers &&
-						  rowNumberMode === 'static' &&
-						  column.id === 'mrt-row-numbers' ? (
-							rowIndex + 1
-						) : column.id === 'mrt-row-drag' ? (
-							<TableBodyRowGrabHandle
-								cell={cell}
-								rowRef={rowRef}
-								table={table}
-							/>
-						) : columnDefType === 'display' &&
-						  (column.id === 'mrt-row-select' ||
-								column.id === 'mrt-row-expand' ||
-								!row.getIsGrouped()) ? (
-							columnDef.Cell?.({ cell, column, row, table })
-						) : isEditing ? (
-							<EditCellTextField cell={cell} table={table} />
-						) : (enableClickToCopy || columnDef.enableClickToCopy) &&
-						  columnDef.enableClickToCopy !== false ? (
-							<CopyButton cell={cell} table={table}>
-								<TableBodyCellValue cell={cell} table={table} />
-							</CopyButton>
-						) : (
+					{isGroupedCell ? (
+						<TableBodyCellValue cell={cell} table={table} />
+					) : cell.getIsPlaceholder() ? null : isLoading || showSkeletons ? (
+						<Skeleton
+							animation="wave"
+							height={20}
+							width={skeletonWidth}
+							{...skeletonProps}
+						/>
+					) : enableRowNumbers &&
+					  rowNumberMode === 'static' &&
+					  column.id === 'mrt-row-numbers' ? (
+						rowIndex + 1
+					) : column.id === 'mrt-row-drag' ? (
+						<TableBodyRowGrabHandle cell={cell} rowRef={rowRef} table={table} />
+					) : columnDefType === 'display' &&
+					  (column.id === 'mrt-row-select' ||
+							column.id === 'mrt-row-expand') ? (
+						columnDef.Cell?.({ cell, column, row, table })
+					) : isEditing ? (
+						<EditCellTextField cell={cell} table={table} />
+					) : (enableClickToCopy || columnDef.enableClickToCopy) &&
+					  columnDef.enableClickToCopy !== false ? (
+						<CopyButton cell={cell} table={table}>
 							<TableBodyCellValue cell={cell} table={table} />
-						)}
-					</>
+						</CopyButton>
+					) : (
+						<TableBodyCellValue cell={cell} table={table} />
+					)}
 				</>
 			)}
 		</MuiTableCell>

@@ -1,6 +1,7 @@
 import { FC } from 'react'
 
-import { TableInstance } from '../TableComponent'
+import { getColumnWidth } from '../column.utils'
+import { Table_HeaderGroup, TableInstance } from '../TableComponent'
 
 type TableHeadInvisibleProps = {
 	table: TableInstance
@@ -10,11 +11,14 @@ export const TableHeadInvisible: FC<TableHeadInvisibleProps> = ({ table }) => {
 
 	return (
 		<thead>
-			{getHeaderGroups().map((headerGroup) => (
+			{(getHeaderGroups() as Table_HeaderGroup[]).map((headerGroup) => (
 				<tr key={headerGroup.id}>
-					{headerGroup.headers.map((column) => (
+					{headerGroup.headers.map((header) => (
 						// eslint-disable-next-line jsx-a11y/control-has-associated-label
-						<th key={column.id} style={{ width: column.getSize() }} />
+						<th
+							key={header.id}
+							style={getColumnWidth({ column: header.column, header })}
+						/>
 					))}
 				</tr>
 			))}

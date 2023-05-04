@@ -45,19 +45,19 @@ export const getExpandingTeamMembers = (length = 200, prefix = ''): TeamMember[]
 }
 
 
-export const getUnitTreeItems = (maxDepth = 5, depth = 0, prefix = ''): UnitTreeItem[] => {
+export const getUnitTreeItems = (maxDepth = 5, length = 10, depth = 0, prefix = ''): UnitTreeItem[] => {
 	if (depth >= maxDepth) return []
 	const unitTree: UnitTreeItem[] = []
-	const length = Math.pow(2, depth)
-	for (let i = 0; i < length; i += 1) {
+	const cLength = depth > 1 ? length : Math.pow(2, depth)
+	for (let i = 0; i < cLength; i += 1) {
 		unitTree.push({
 			id: faker.datatype.uuid(),
 			name: `${prefix}${i + 1}. ${faker.company.name()}`,
 			type: faker.company.companySuffix(),
 			keyMembers: getUsers(Math.round(Math.random() * 3 + 2), `${prefix}${i + 1}.`),
 			subRows: [
-				...(depth > 1 ? getTeamMembers(Math.round(Math.random() * length), `${prefix}${i + 1}.`) : []),
-				...getUnitTreeItems(maxDepth, depth + 1, `${prefix}${i + 1}.`),
+				...(depth > 1 ? getTeamMembers(Math.round(Math.random() * cLength), `${prefix}${i + 1}.`) : []),
+				...getUnitTreeItems(maxDepth, length, depth + 1, `${prefix}${i + 1}.`),
 			]
 		})
 	}

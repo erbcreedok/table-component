@@ -8,9 +8,6 @@ interface Props {
 }
 
 export const TableBodyCellValue: FC<Props> = ({ cell, table }) => {
-	const {
-		options: { enableAggregationRow },
-	} = table
 	const { column, row } = cell
 	const { columnDef } = column
 
@@ -20,14 +17,13 @@ export const TableBodyCellValue: FC<Props> = ({ cell, table }) => {
 				? columnDef.AggregatedCell({
 						cell,
 						column,
+
 						row,
 						table,
 				  })
 				: row.getIsGrouped() && !cell.getIsGrouped()
 				? null
-				: (!enableAggregationRow &&
-						column.getIsGrouped() &&
-						columnDef.GroupedCell) ||
+				: (column.getIsGrouped() && columnDef.GroupedCell) ||
 				  (cell.getIsGrouped() && columnDef.GroupedCell)
 				? columnDef.GroupedCell({
 						cell,

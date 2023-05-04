@@ -1,6 +1,6 @@
 import { Table_Row, TableInstance } from '../TableComponent'
 
-export const getVisibleLeafRows = (
+export const getGroupedRowCount = (
 	row: Table_Row<{}>,
 	table: TableInstance
 ) => {

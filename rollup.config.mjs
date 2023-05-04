@@ -17,6 +17,7 @@ export default [
       '@tanstack/match-sorter-utils',
       '@tanstack/react-table',
       '@tanstack/react-virtual',
+      '@tanstack/table-core',
       'react',
     ],
     input: './src/index.tsx',

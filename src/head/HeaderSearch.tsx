@@ -65,6 +65,7 @@ export const HeaderSearch = <T extends Record<string, any>>({
 	const [input, setInput] = useState('')
 	const [filtered, setFiltered] = useState<Record<string, any>>([])
 	const searchValue = useDelay(input)
+
 	const toggleSearch = () => {
 		if (isSearch) {
 			setIsSearch(false)

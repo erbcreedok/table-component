@@ -9,6 +9,7 @@ import type {
 	Table_Row,
 	TableInstance,
 } from '..'
+import { getHeaderGroupBorders } from '../utils/getGroupBorders'
 
 import { TableHeadCell } from './TableHeadCell'
 
@@ -59,6 +60,7 @@ export const TableHeadRow: FC<Props> = ({
 				const header = virtualColumns
 					? headerGroup.headers[headerOrVirtualHeader.index]
 					: (headerOrVirtualHeader as Table_Header)
+				const groupBorders = getHeaderGroupBorders({ header, table })
 
 				return (
 					<TableHeadCell
@@ -66,6 +68,7 @@ export const TableHeadRow: FC<Props> = ({
 						header={header}
 						key={header.id}
 						table={table}
+						groupBorders={groupBorders}
 					/>
 				)
 			})}

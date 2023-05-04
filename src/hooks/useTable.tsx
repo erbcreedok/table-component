@@ -3,7 +3,6 @@ import {
 	getExpandedRowModel,
 	getFacetedRowModel,
 	getFilteredRowModel,
-	getGroupedRowModel,
 	getPaginationRowModel,
 	getSortedRowModel,
 	getFacetedUniqueValues,
@@ -42,6 +41,7 @@ import {
 	TableComponentProps,
 	TableInstance,
 } from '../TableComponent'
+import { getGroupedRowModel } from '../utils/getGroupedRowModel'
 
 export const useTable = <TData extends Record<string, any> = {}>(
 	config: TableComponentProps<TData> & { localization: Table_Localization }
@@ -389,9 +389,7 @@ export const useTable = <TData extends Record<string, any> = {}>(
 			onColumnOrderChange: setColumnOrder,
 			onRowSelectionChange: setRowSelection,
 			onColumnVisibilityChange: setColumnVisibility,
-			onGroupingChange: config.enableAggregationRow
-				? setGrouping
-				: setMergedGrouping,
+			onGroupingChange: setMergedGrouping,
 			onSortingChange: setSorting,
 			...config,
 			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
