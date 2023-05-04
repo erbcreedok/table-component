@@ -1,6 +1,11 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import Tooltip from '@mui/material/Tooltip'
-import { createTheme, ThemeProvider, Typography } from '@mui/material'
+import {
+	capitalize,
+	createTheme,
+	ThemeProvider,
+	Typography,
+} from '@mui/material'
 import {
 	ColumnFiltersState,
 	ColumnOrderState,
@@ -126,12 +131,21 @@ export const PresetButton = <TData extends Record<string, any> = {}>({
 		}
 	}, [checkedPreset, tableState, presets])
 
+	const tooltipTitle = useMemo(() => {
+		if (
+			checkedPreset?.name
+				?.toLowerCase()
+				?.includes(localization.showPreset.toLowerCase())
+		) {
+			return checkedPreset?.name
+		}
+
+		return `${checkedPreset?.name} ${localization.showPreset}`
+	}, [checkedPreset?.name, localization.showPreset])
+
 	return (
 		<ThemeProvider theme={theme}>
-			<Tooltip
-				placement="top"
-				title={`${checkedPreset?.name} ${localization.showPreset}`}
-			>
+			<Tooltip placement="top" title={capitalize(tooltipTitle)}>
 				<ToolbarButton
 					aria-label={localization.showPreset}
 					endIcon={open ? <ExpandLessIcon /> : <ExpandMoreIcon />}
