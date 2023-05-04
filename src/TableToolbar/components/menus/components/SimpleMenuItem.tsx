@@ -63,7 +63,11 @@ export const SimpleMenuItem = <TData extends Record<string, any> = {}>({
 	}
 
 	const handleDragEnter = (_e: DragEvent) => {
-		if (!isDragging && columnDef.enableColumnOrdering) {
+		if (
+			!isDragging &&
+			(columnDef.enableColumnOrdering ||
+				(isSorting && !columnDef.enableColumnOrdering))
+		) {
 			setHoveredColumn(column)
 		}
 	}
