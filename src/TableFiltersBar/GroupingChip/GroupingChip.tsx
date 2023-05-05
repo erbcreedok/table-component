@@ -1,5 +1,5 @@
 import { Box } from '@mui/material'
-import React, { FC, useState } from 'react'
+import React, { FC, useEffect, useState } from 'react'
 
 import { GroupIcon } from '../../TableToolbar/components/icons/GroupIcon'
 import { CommonChipWithPopover } from '../CommonChipWithPopover/CommonChipWithPopover'
@@ -68,6 +68,12 @@ export const GroupingChip: FC<GroupingChipProps> = (props) => {
 			</>
 		</Box>
 	)
+
+	useEffect(() => {
+		if (!isGroupingExists) {
+			setSearchValue('')
+		}
+	}, [isGroupingExists])
 
 	if (!isGroupingExists) {
 		return <></>

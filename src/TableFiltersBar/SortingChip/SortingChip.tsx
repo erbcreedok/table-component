@@ -113,6 +113,12 @@ export const SortingChip = <TData extends Record<string, any> = {}>(
 		return ''
 	}
 
+	useEffect(() => {
+		if (!isSortingExists) {
+			setSearchValue('')
+		}
+	}, [isSortingExists])
+
 	if (!isSortingExists) {
 		return <></>
 	}
