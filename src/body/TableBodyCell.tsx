@@ -4,6 +4,7 @@ import React, {
 	HTMLProps,
 	memo,
 	MouseEvent,
+	ReactElement,
 	RefObject,
 	useEffect,
 	useMemo,
@@ -33,7 +34,7 @@ interface Props {
 	rowSpan?: HTMLProps<HTMLTableCellElement>['rowSpan']
 	table: TableInstance
 	virtualCell?: VirtualItem
-	summaryRowCell?: boolean
+	isSummaryRowCell?: boolean
 	isGroupedCell?: boolean
 	groupBorders?: GroupBorders
 }
@@ -49,7 +50,7 @@ export const TableBodyCell: FC<Props> = ({
 	rowSpan,
 	table,
 	virtualCell,
-	summaryRowCell,
+	isSummaryRowCell,
 	groupBorders,
 }) => {
 	const theme = useTheme()
@@ -69,7 +70,7 @@ export const TableBodyCell: FC<Props> = ({
 			enableDetailedPanel,
 			notClickableCells,
 			detailedRowBackgroundColor,
-			summaryRowCellValue,
+			summaryRowCell,
 		},
 		refs: { editInputRefs },
 		setEditingCell,
@@ -266,6 +267,57 @@ export const TableBodyCell: FC<Props> = ({
 			return clickedCell?.id === cell?.id
 		})
 
+	const getTableCellStyles = (theme) => ({
+		alignItems: layoutMode === 'grid' ? 'center' : undefined,
+		cursor: isEditable && editingMode === 'cell' ? 'pointer' : 'inherit',
+		height: columnDefType === 'display' ? '1px' : '48px',
+		boxSizing: 'border-box',
+		overflow: 'hidden',
+		verticalAlign: 'middle',
+		position: 'relative',
+		p: columnDefType === 'display' || isGroupedCell ? '0.5rem 0.75rem' : '0rem',
+		px: columnDefType === 'display' ? '0.5rem 0.75rem' : '0.75rem',
+		pl: column.id === 'mrt-row-expand' ? `${row.depth + 0.75}rem` : undefined,
+		textOverflow: columnDefType !== 'display' ? 'ellipsis' : undefined,
+		whiteSpace: 'normal',
+		zIndex: draggingColumn?.id === column.id ? 2 : column.getIsPinned() ? 1 : 0,
+		'&:hover': {
+			backgroundColor:
+				enableHover &&
+				enableEditing &&
+				columnDef.enableEditing !== false &&
+				['table', 'cell'].includes(editingMode ?? '')
+					? theme.palette.mode === 'dark'
+						? `${lighten(theme.palette.background.default, 0.2)} !important`
+						: `${darken(theme.palette.background.default, 0.1)} !important`
+					: undefined,
+			'& span': {
+				visibility: 'visible',
+			},
+		},
+		'& span': {
+			visibility: hideCheckBoxSpan ? 'hidden' : 'visible',
+		},
+		...groupBorders,
+		...getCommonCellStyles({
+			column,
+			table,
+			theme,
+			tableCellProps,
+		}),
+		...draggingBorders,
+		...(isCurrentCellClicked && detailedRowBackgroundColor
+			? { borderBottom: 'none', background: detailedRowBackgroundColor }
+			: {}),
+	})
+
+	if (isSummaryRowCell && summaryRowCell) {
+		return summaryRowCell({
+			column: column as Table_ColumnDef,
+			defaultStyles: getTableCellStyles(theme),
+		}) as ReactElement
+	}
+
 	return (
 		<MuiTableCell
 			rowSpan={rowSpan}
@@ -279,90 +331,38 @@ export const TableBodyCell: FC<Props> = ({
 			onDragEnter={handleDragEnter}
 			onDoubleClick={handleDoubleClick}
 			onClick={handleSingleClick}
-			sx={(theme) => ({
-				alignItems: layoutMode === 'grid' ? 'center' : undefined,
-				cursor: isEditable && editingMode === 'cell' ? 'pointer' : 'inherit',
-				height: columnDefType === 'display' ? '1px' : '48px',
-				boxSizing: 'border-box',
-				overflow: 'hidden',
-				verticalAlign: 'middle',
-				position: 'relative',
-				p:
-					columnDefType === 'display' || isGroupedCell
-						? '0.5rem 0.75rem'
-						: '0rem',
-				px: columnDefType === 'display' ? '0.5rem 0.75rem' : '0.75rem',
-				pl:
-					column.id === 'mrt-row-expand' ? `${row.depth + 0.75}rem` : undefined,
-				textOverflow: columnDefType !== 'display' ? 'ellipsis' : undefined,
-				whiteSpace: 'normal',
-				zIndex:
-					draggingColumn?.id === column.id ? 2 : column.getIsPinned() ? 1 : 0,
-				'&:hover': {
-					backgroundColor:
-						enableHover &&
-						enableEditing &&
-						columnDef.enableEditing !== false &&
-						['table', 'cell'].includes(editingMode ?? '')
-							? theme.palette.mode === 'dark'
-								? `${lighten(theme.palette.background.default, 0.2)} !important`
-								: `${darken(theme.palette.background.default, 0.1)} !important`
-							: undefined,
-					'& span': {
-						visibility: 'visible',
-					},
-				},
-				'& span': {
-					visibility: hideCheckBoxSpan ? 'hidden' : 'visible',
-				},
-				...groupBorders,
-				...getCommonCellStyles({
-					column,
-					table,
-					theme,
-					tableCellProps,
-				}),
-				...draggingBorders,
-				...(isCurrentCellClicked && detailedRowBackgroundColor
-					? { borderBottom: 'none', background: detailedRowBackgroundColor }
-					: {}),
-			})}
+			sx={(theme) => getTableCellStyles(theme)}
 		>
-			{summaryRowCell && summaryRowCellValue ? (
-				summaryRowCellValue(column as Table_ColumnDef)
-			) : (
-				<>
-					{isGroupedCell ? (
+			<>
+				{isGroupedCell ? (
+					<TableBodyCellValue cell={cell} table={table} />
+				) : cell.getIsPlaceholder() ? null : isLoading || showSkeletons ? (
+					<Skeleton
+						animation="wave"
+						height={20}
+						width={skeletonWidth}
+						{...skeletonProps}
+					/>
+				) : enableRowNumbers &&
+				  rowNumberMode === 'static' &&
+				  column.id === 'mrt-row-numbers' ? (
+					rowIndex + 1
+				) : column.id === 'mrt-row-drag' ? (
+					<TableBodyRowGrabHandle cell={cell} rowRef={rowRef} table={table} />
+				) : columnDefType === 'display' &&
+				  (column.id === 'mrt-row-select' || column.id === 'mrt-row-expand') ? (
+					columnDef.Cell?.({ cell, column, row, table })
+				) : isEditing ? (
+					<EditCellTextField cell={cell} table={table} />
+				) : (enableClickToCopy || columnDef.enableClickToCopy) &&
+				  columnDef.enableClickToCopy !== false ? (
+					<CopyButton cell={cell} table={table}>
 						<TableBodyCellValue cell={cell} table={table} />
-					) : cell.getIsPlaceholder() ? null : isLoading || showSkeletons ? (
-						<Skeleton
-							animation="wave"
-							height={20}
-							width={skeletonWidth}
-							{...skeletonProps}
-						/>
-					) : enableRowNumbers &&
-					  rowNumberMode === 'static' &&
-					  column.id === 'mrt-row-numbers' ? (
-						rowIndex + 1
-					) : column.id === 'mrt-row-drag' ? (
-						<TableBodyRowGrabHandle cell={cell} rowRef={rowRef} table={table} />
-					) : columnDefType === 'display' &&
-					  (column.id === 'mrt-row-select' ||
-							column.id === 'mrt-row-expand') ? (
-						columnDef.Cell?.({ cell, column, row, table })
-					) : isEditing ? (
-						<EditCellTextField cell={cell} table={table} />
-					) : (enableClickToCopy || columnDef.enableClickToCopy) &&
-					  columnDef.enableClickToCopy !== false ? (
-						<CopyButton cell={cell} table={table}>
-							<TableBodyCellValue cell={cell} table={table} />
-						</CopyButton>
-					) : (
-						<TableBodyCellValue cell={cell} table={table} />
-					)}
-				</>
-			)}
+					</CopyButton>
+				) : (
+					<TableBodyCellValue cell={cell} table={table} />
+				)}
+			</>
 		</MuiTableCell>
 	)
 }

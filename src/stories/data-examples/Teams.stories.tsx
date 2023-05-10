@@ -1,5 +1,7 @@
 import { Meta, Story } from '@storybook/react'
 import ModeIcon from '@mui/icons-material/Mode';
+import LinearProgress from '@mui/material/LinearProgress';
+import MuiTableCell from '@mui/material/TableCell'
 import { ColumnOrderState, VisibilityState, SortingState } from '@tanstack/react-table'
 import React, { useState } from 'react'
 import { getColumnId } from '../../column.utils'
@@ -69,6 +71,69 @@ const getPropsHandledColumns = (columns: Table_ColumnDef<TeamMember>[], args: Te
 	)
 }
 
+const SummaryRowExampleCellValue = (props) => {
+    const { column, defaultStyles } = props;
+
+    const rows = column.getFacetedRowModel().rows;
+
+    const getColumnValues = (columnId) => {
+        return rows.reduce((result, row) => {
+            if (!result.hasOwnProperty(row.original[columnId])) {
+                return {
+                    ...result,
+                    [row.original[columnId]]: 1
+                }
+            }
+            return {
+                ...result,
+                [row.original[columnId]]: result[row.original[columnId]] + 1
+            }
+        }, {})
+    }
+
+	const getProgressBarValue = (columnId) => {
+		const colValues = getColumnValues(columnId)
+		let partialCount = 0
+
+		if (columnId === 'impact') {
+			partialCount += colValues['Critical']
+			partialCount += colValues['High']
+		}
+
+		if (columnId === 'riskOfLeaving') {
+			partialCount += colValues['Leaver']
+			partialCount += colValues['High']
+		}
+
+		return Math.round(100 - ((100 * partialCount) / rows.length))
+	}
+    
+    if (column.id === 'mrt-row-select') {
+        return <MuiTableCell sx={{ ...defaultStyles }}></MuiTableCell>
+    }
+    
+    if (column.id === 'teamMember') {
+        return <MuiTableCell sx={{ ...defaultStyles }}>Statistics of your team:</MuiTableCell>
+    }
+           
+    return (
+		<MuiTableCell sx={{ ...defaultStyles }}>
+			<LinearProgress
+				sx={{
+					width: '100%',
+					height: '12px',
+					backgroundColor: '#FED7D7',
+					'& > span': {
+						backgroundColor: '#93E98C'
+					}
+				}}
+				variant="determinate"
+				value={getProgressBarValue(column.id)}
+			/>
+		</MuiTableCell>
+    )
+}
+
 const TeamsTable: Story<TeamsTableConfigs> = (args) => {
 	const { columns, defaultSorting, defaultColumnOrder, defaultColumnVisibility, initialState = {}, ...rest } = args
 	return (
@@ -77,6 +142,7 @@ const TeamsTable: Story<TeamsTableConfigs> = (args) => {
 			groupBorder={{ left: '12px solid white', top: '20px solid white' }}
 			initialState={{ sorting: defaultSorting, columnOrder: defaultColumnOrder, columnVisibility: defaultColumnVisibility, ...initialState }}
 			renderRowActionMenuItems={getDefaultRowActionMenuItems}
+			summaryRowCell={(props) => <SummaryRowExampleCellValue {...props} />}
 			{...rest}
 		/>
 	)
@@ -203,6 +269,10 @@ const meta: Meta = {
 			defaultValue: true,
 		},
 		enableMultiSort: {
+			control: 'boolean',
+			defaultValue: true,
+		},
+		enableSummaryRow: {
 			control: 'boolean',
 			defaultValue: true,
 		},

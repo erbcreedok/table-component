@@ -24,7 +24,7 @@ export interface TableBodyRowProps {
 	virtualPaddingLeft?: number
 	virtualPaddingRight?: number
 	virtualRow?: VirtualItem
-	summaryRow?: boolean
+	isSummaryRow?: boolean
 }
 
 export const TableBodyRow: FC<TableBodyRowProps> = ({
@@ -38,7 +38,7 @@ export const TableBodyRow: FC<TableBodyRowProps> = ({
 	virtualPaddingLeft,
 	virtualPaddingRight,
 	virtualRow,
-	summaryRow = false,
+	isSummaryRow = false,
 }) => {
 	const theme = useTheme()
 	const {
@@ -109,7 +109,7 @@ export const TableBodyRow: FC<TableBodyRowProps> = ({
 					rowIndex,
 					rowRef,
 					table,
-					summaryRowCell: summaryRow,
+					isSummaryRowCell: isSummaryRow,
 					rowSpan,
 					isGroupedCell: true,
 					groupBorders: getCellGroupBorders({
@@ -197,7 +197,7 @@ export const TableBodyRow: FC<TableBodyRowProps> = ({
 							virtualCell: columnVirtualizer
 								? (cellOrVirtualCell as VirtualItem)
 								: undefined,
-							summaryRowCell: summaryRow,
+							isSummaryRowCell: isSummaryRow,
 							groupBorders: getCellGroupBorders({
 								table,
 								isFirstOfGroup: groupedCells.length > 0,

@@ -47,7 +47,7 @@ export const SelectCheckbox: FC<Props> = ({
 				? table.getIsAllPageRowsSelected()
 				: table.getIsAllRowsSelected()
 			: row?.getIsSelected(),
-		disabled: isLoading,
+		disabled: (row && !row.getCanSelect()) || isLoading,
 		inputProps: {
 			'aria-label': selectAll
 				? localization.toggleSelectAll

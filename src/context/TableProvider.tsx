@@ -67,7 +67,7 @@ export const TableProvider = <TData extends Record<string, any> = {}>({
 	positionToolbarAlertBanner = 'top',
 	positionToolbarDropZone = 'top',
 	rowNumberMode = 'original',
-	selectAllMode = 'page',
+	selectAllMode = 'all',
 	sortingFns,
 	columns,
 	...rest

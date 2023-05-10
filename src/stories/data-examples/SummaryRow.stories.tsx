@@ -1,6 +1,7 @@
 import { Meta, Story } from '@storybook/react'
 import ModeIcon from '@mui/icons-material/Mode';
 import Tooltip from '@mui/material/Tooltip';
+import MuiTableCell from '@mui/material/TableCell'
 import { ColumnOrderState, VisibilityState, SortingState } from '@tanstack/react-table'
 import React, { useState } from 'react'
 import { getColumnId, Table_DisplayColumnIdsArray } from '../../column.utils'
@@ -91,32 +92,38 @@ const SummaryRowExampleCellValue = (props) => {
     }
     
     if (Table_DisplayColumnIdsArray.includes(column.id)) {
-        return null
+        return <MuiTableCell sx={{ width: '20px' }}/>
     }
     
     if (column.id === 'teamMember') {
-        return <span>Team member aaaa</span>
+        return (
+			<MuiTableCell>
+				Team member
+			</MuiTableCell>
+		)
     }
            
     return (
-        <Tooltip
-            arrow
-            title={
-                <>
-                    <ul>
-                        {
-                            Object.entries(getColumnValues(column.id)).map((el) => <li>
-                                {el[0]}: {el[1]}
-                            </li>)
-                        }
-                    </ul>
-                </>
-            }
-        >
-            <span>
-                Column info
-            </span>
-        </Tooltip>
+		<MuiTableCell>
+			<Tooltip
+				arrow
+				title={
+					<>
+						<ul>
+							{
+								Object.entries(getColumnValues(column.id)).map((el) => <li>
+									{el[0]}: {el[1]}
+								</li>)
+							}
+						</ul>
+					</>
+				}
+			>
+				<span>
+					Column info
+				</span>
+			</Tooltip>
+		</MuiTableCell>
     )
 }
 
@@ -138,7 +145,7 @@ export const SummaryRowDefault: Story<SummaryRowTableExample> = (args) => (
 	<SummaryRowTable
 		columns={columns}
 		data={data}
-        summaryRowCellValue={(column) => <SummaryRowExampleCellValue column={column} />}
+        summaryRowCell={(props) => <SummaryRowExampleCellValue {...props} />}
 		{...args}
 	/>
 );
@@ -186,6 +193,10 @@ const meta: Meta = {
 			defaultValue: true,
 		},
 		enableMultiSort: {
+			control: 'boolean',
+			defaultValue: true,
+		},
+		enableSummaryRow: {
 			control: 'boolean',
 			defaultValue: true,
 		},

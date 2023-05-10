@@ -719,6 +719,7 @@ export type TableComponentProps<TData extends Record<string, any> = {}> = Omit<
 	enableSelectAll?: boolean
 	enableStickyFooter?: boolean
 	enableStickyHeader?: boolean
+	enableSummaryRow?: boolean
 	enableTableFooter?: boolean
 	enableTableHead?: boolean
 	enableToolbarInternalActions?: boolean
@@ -1110,7 +1111,9 @@ export type TableComponentProps<TData extends Record<string, any> = {}> = Omit<
 	rowNumberMode?: 'original' | 'static'
 	selectAllMode?: 'all' | 'page'
 	state?: Partial<Table_TableState<TData>>
-	summaryRowCellValue?: (args: Table_ColumnDef<TData>) => React.ReactNode
+	summaryRowCell?: (
+		...args: Array<Table_ColumnDef<TData> | any>
+	) => React.ReactNode
 	columnVirtualizerInstanceRef?: MutableRefObject<Virtualizer<
 		HTMLDivElement,
 		HTMLTableCellElement

@@ -34,7 +34,8 @@ export const Table: FC<Props> = ({ table }) => {
 			layoutMode,
 			memoMode,
 			muiTableProps,
-			summaryRowCellValue,
+			enableSummaryRow,
+			summaryRowCell,
 		},
 		refs: { tableContainerRef },
 	} = table
@@ -156,9 +157,11 @@ export const Table: FC<Props> = ({ table }) => {
 					: (tableProps?.sx as any)),
 			})}
 		>
-			{/* eslint-disable-next-line @typescript-eslint/ban-ts-comment */}
-			{/* @ts-ignore */}
-			{summaryRowCellValue && <TableBodyRow summaryRow {...summaryRowProps} />}
+			{enableSummaryRow && summaryRowCell && (
+				/* eslint-disable-next-line @typescript-eslint/ban-ts-comment */
+				/* @ts-ignore */
+				<TableBodyRow isSummaryRow {...summaryRowProps} />
+			)}
 			{enableTableHead && !hideTableHead && <TableHead {...props} />}
 			{hideTableHead && <TableHeadInvisible table={table} />}
 			{memoMode === 'table-body' ? (
