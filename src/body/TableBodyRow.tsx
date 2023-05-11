@@ -224,7 +224,7 @@ export const TableBodyRow: FC<TableBodyRowProps> = ({
 					<td style={{ display: 'flex', width: virtualPaddingRight }} />
 				) : null}
 			</MuiTableRow>
-			{renderDetailPanel && !row.getIsGrouped() && (
+			{renderDetailPanel && !row?.getIsGrouped?.() && (
 				<TableDetailPanel
 					parentRowRef={rowRef}
 					row={row}

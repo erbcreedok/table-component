@@ -72,10 +72,10 @@ export const TableDetailPanel: FC<Props> = ({
 					backgroundColor: virtualRow
 						? lighten(theme.palette.background.default, 0.06)
 						: undefined,
-					borderBottom: !row.getIsExpanded() ? 'none' : undefined,
+					borderBottom: !row?.getIsExpanded?.() ? 'none' : undefined,
 					display: layoutMode === 'grid' ? 'flex' : 'table-cell',
-					pb: row.getIsExpanded() ? '1rem' : 0,
-					pt: row.getIsExpanded() ? '1rem' : 0,
+					pb: row?.getIsExpanded?.() ? '1rem' : 0,
+					pt: row?.getIsExpanded?.() ? '1rem' : 0,
 					transition: 'all 150ms ease-in-out',
 					width: `${table.getTotalSize()}px`,
 					...(tableCellProps?.sx instanceof Function
@@ -87,7 +87,7 @@ export const TableDetailPanel: FC<Props> = ({
 				})}
 			>
 				{renderDetailPanel && (
-					<Collapse in={row.getIsExpanded()} mountOnEnter unmountOnExit>
+					<Collapse in={row?.getIsExpanded?.()} mountOnEnter unmountOnExit>
 						{!isLoading && renderDetailPanel({ row, table })}
 					</Collapse>
 				)}

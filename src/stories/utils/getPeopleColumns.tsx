@@ -1,12 +1,12 @@
 import React from 'react'
 
 import { Flex } from '../../components/Flex'
-import { Avatar, Box, Typography } from "@mui/material";
+import { Avatar, Box, Typography } from '@mui/material'
 import { faker } from '@faker-js/faker'
 import { getRandomFromArray } from './getRandomFromArray'
 import { Close } from '@mui/icons-material'
-import { TextEllipsis } from "../../components/TextEllipsis";
-import { RowActionMenuButton } from "../../buttons/RowActionMenuButton";
+import { TextEllipsis } from '../../components/TextEllipsis'
+import { RowActionMenuButton } from '../../buttons/RowActionMenuButton'
 
 const ClickableCell = ({ row, table, cell, accessorKey }) => {
 	const title = row.original[accessorKey]
@@ -15,18 +15,30 @@ const ClickableCell = ({ row, table, cell, accessorKey }) => {
 		(clickedCell) => cell?.id === clickedCell?.id
 	)
 
-	let cellContent = <></>;
+	let cellContent = <></>
 
-	if (accessorKey === "lastTalk") {
-		cellContent = <Typography variant={'body1'}>{new Date(title).toLocaleString()}</Typography>;
+	if (accessorKey === 'lastTalk') {
+		const convertDate = (date) =>{
+			const options: any = { year: 'numeric', month: 'short', day: 'numeric' }
+			return new Intl.DateTimeFormat('en-US', options).format(date)
+		}
+		cellContent = (
+			<Typography variant={'body2'}>
+				{convertDate(new Date(title))}
+			</Typography>
+		)
 	}
 
-	if (accessorKey === "member") {
-		cellContent = <Typography variant={'body1'}>{title.fullName}</Typography>;
+	if (accessorKey === 'member') {
+		cellContent = <Typography variant={'body2'}>{title.fullName}</Typography>
 	}
 
-	if (["performance", "riskOfLeaving", "mood", "totalWorkload"].includes(accessorKey)) {
-		cellContent = <Typography variant={'body1'}>{title}</Typography>;
+	if (
+		['performance', 'riskOfLeaving', 'mood', 'totalWorkload'].includes(
+			accessorKey
+		)
+	) {
+		cellContent = <Typography variant={'body2'}>{title}</Typography>
 	}
 
 	return (
@@ -68,7 +80,7 @@ export const getPeopleColumns = () =>
 			enableHiding: false,
 			Cell: ({ row, table }) => {
 				const user = row.original.member
-				
+
 				return (
 					<Flex
 						center="y"
@@ -77,7 +89,7 @@ export const getPeopleColumns = () =>
 						title={user.fullName}
 					>
 						<Avatar
-							sx={{ width: 24, height: 24 }}
+							sx={{ width: 32, height: 32 }}
 							src={user.avatarUrl}
 							alt={user.fullName}
 						/>
@@ -87,8 +99,8 @@ export const getPeopleColumns = () =>
 							</TextEllipsis>
 							<TextEllipsis
 								style={{
-								color: '#6C6F80',
-									fontSize: '0.75rem',
+									color: '#6C6F80',
+									fontSize: '12px',
 									fontWeight: '400',
 								}}
 							>
@@ -136,12 +148,7 @@ export const getPeopleColumns = () =>
 			enableColumnOrdering: true,
 			enableSorting: false,
 			Cell: ({ row, table, cell }) => (
-				<ClickableCell
-					row={row}
-					table={table}
-					cell={cell}
-					accessorKey="mood"
-				/>
+				<ClickableCell row={row} table={table} cell={cell} accessorKey="mood" />
 			),
 		},
 		{
@@ -164,13 +171,21 @@ export const getPeopleColumns = () =>
 			accessorKey: 'totalWorkload',
 			filterVariant: 'multi-select',
 			enableColumnOrdering: true,
+			Cell: ({ row, table, cell }) => (
+				<ClickableCell
+					row={row}
+					table={table}
+					cell={cell}
+					accessorKey="totalWorkload"
+				/>
+			),
 		},
 	] as any
 
-const performances = ['Often exceeds', 'Sometimes exceeds', 'Meets', undefined]
-const risksOfLeaving = ['Leaver', 'High', 'Medium', 'Low', undefined]
+const performances = ['Often exceeds', 'Sometimes exceeds', 'Meets']
+const risksOfLeaving = ['Leaver', 'High', 'Medium', 'Low']
 const mood = ['Positive', 'Netral', 'Demotivated']
-const totalWorkload = ['100%', '50%', '25%']
+const totalWorkload = ['100%', '50%', '25%', 'On bench']
 
 export const getUsers = (length = 200, prefix = '') =>
 	[...Array(length)].map((_, index) => ({

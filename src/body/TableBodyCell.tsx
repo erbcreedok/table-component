@@ -68,6 +68,7 @@ export const TableBodyCell: FC<Props> = ({
 			muiTableBodyCellSkeletonProps,
 			rowNumberMode,
 			enableDetailedPanel,
+			cellStyleRules,
 			notClickableCells,
 			detailedRowBackgroundColor,
 			summaryRowCell,
@@ -306,9 +307,13 @@ export const TableBodyCell: FC<Props> = ({
 			tableCellProps,
 		}),
 		...draggingBorders,
-		...(isCurrentCellClicked && detailedRowBackgroundColor
-			? { borderBottom: 'none', background: detailedRowBackgroundColor }
-			: {}),
+		...(cellStyleRules?.[cell.column.id]?.executeStyleCondition?.({
+			cell,
+			row,
+			column,
+			table,
+			isCurrentCellClicked,
+		}) || {}),
 	})
 
 	if (isSummaryRowCell && summaryRowCell) {

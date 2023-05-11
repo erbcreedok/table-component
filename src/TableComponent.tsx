@@ -705,6 +705,19 @@ export type TableComponentProps<TData extends Record<string, any> = {}> = Omit<
 	enableEditing?: boolean
 	enableExpandAll?: boolean
 	enableDetailedPanel?: boolean
+	cellStyleRules?: Record<
+		string,
+		{
+			executeStyleCondition: (params: {
+				cell: Table_Cell
+				row: Table_Row
+				column: Table_Column
+				table: TData
+				isCurrentCellClicked?: boolean
+			}) => object | undefined
+		}
+	>
+	hideDefaultExpandIcon?: boolean
 	notClickableCells?: string[]
 	enableFullScreenToggle?: boolean
 	enableGlobalFilterModes?: boolean

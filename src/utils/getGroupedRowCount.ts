@@ -12,7 +12,7 @@ export const getGroupedRowCount = (
 			return [row]
 		}
 
-		if (!row.getIsExpanded()) {
+		if (!row?.getIsExpanded?.()) {
 			return [row]
 		}
 

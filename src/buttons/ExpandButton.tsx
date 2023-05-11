@@ -26,7 +26,7 @@ export const ExpandButton: FC<Props> = ({ row, table }) => {
 			: muiExpandButtonProps
 
 	const canExpand = row.getCanExpand()
-	const isExpanded = row.getIsExpanded()
+	const isExpanded = row?.getIsExpanded?.()
 
 	const handleToggleExpand = (event: MouseEvent<HTMLButtonElement>) => {
 		if (enableDetailedPanel) {
