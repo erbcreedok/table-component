@@ -39,6 +39,7 @@ import { FiltersIcon } from './TableToolbar/components/icons/FiltersIcon'
 import { SettingsIcon } from './TableToolbar/components/icons/SettingsIcon'
 import { PencilIcon } from './TableToolbar/components/icons/PencilIcon'
 import { TrashIcon } from './TableToolbar/components/icons/TrashIcon'
+import { ClearIcon } from './TableToolbar/components/icons/ClearIcon'
 
 export interface Table_Icons {
 	AnalyticsIcon: any
@@ -75,6 +76,7 @@ export interface Table_Icons {
 	SortIcon: any
 	SortAscIcon: any
 	SortDescIcon: any
+	ClearIcon: any
 	TrashIcon: any
 	ViewColumnIcon: any
 	VisibilityOffIcon: any
@@ -115,6 +117,7 @@ export const Default_Icons: Table_Icons = {
 	SortIcon,
 	SortAscIcon,
 	SortDescIcon,
+	ClearIcon,
 	TrashIcon,
 	ViewColumnIcon,
 	VisibilityOffIcon,

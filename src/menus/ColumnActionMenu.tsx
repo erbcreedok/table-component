@@ -48,13 +48,13 @@ export const ColumnActionMenu: FC<Props> = ({
 			enableMultiSort,
 			icons: {
 				ArrowRightIcon,
-				ClearAllIcon,
 				ViewColumnIcon,
 				FilterListOffIcon,
 				GroupIcon,
 				PushPinIcon,
 				SortAscIcon,
 				SortDescIcon,
+				ClearIcon,
 				RestartAltIcon,
 				HideIcon,
 			},
@@ -153,39 +153,43 @@ export const ColumnActionMenu: FC<Props> = ({
 							>
 								<Box sx={commonListItemStyles}>
 									<ListItemIcon>
-										<ClearAllIcon />
+										<ClearIcon />
 									</ListItemIcon>
 									{localization.clearSort}
 								</Box>
 							</MenuItem>
 						),
-						<MenuItem
-							disabled={column.getIsSorted() === 'asc'}
-							key={1}
-							onClick={handleSortAsc}
-							sx={commonMenuItemStyles}
-						>
-							<Box sx={commonListItemStyles}>
-								<ListItemIcon>
-									<SortAscIcon />
-								</ListItemIcon>
-								{localization.sortAsc}
-							</Box>
-						</MenuItem>,
-						<MenuItem
-							divider={enableColumnFilters || enableGrouping || enableHiding}
-							key={2}
-							disabled={column.getIsSorted() === 'desc'}
-							onClick={handleSortDesc}
-							sx={commonMenuItemStyles}
-						>
-							<Box sx={commonListItemStyles}>
-								<ListItemIcon>
-									<SortDescIcon />
-								</ListItemIcon>
-								{localization.sortDesc}
-							</Box>
-						</MenuItem>,
+						(!column.getIsSorted() || column.getIsSorted() !== 'asc') && (
+							<MenuItem
+								disabled={column.getIsSorted() === 'asc'}
+								key={1}
+								onClick={handleSortAsc}
+								sx={commonMenuItemStyles}
+							>
+								<Box sx={commonListItemStyles}>
+									<ListItemIcon>
+										<SortAscIcon />
+									</ListItemIcon>
+									{localization.sortAsc}
+								</Box>
+							</MenuItem>
+						),
+						(!column.getIsSorted() || column.getIsSorted() !== 'desc') && (
+							<MenuItem
+								divider={enableColumnFilters || enableGrouping || enableHiding}
+								key={2}
+								disabled={column.getIsSorted() === 'desc'}
+								onClick={handleSortDesc}
+								sx={commonMenuItemStyles}
+							>
+								<Box sx={commonListItemStyles}>
+									<ListItemIcon>
+										<SortDescIcon />
+									</ListItemIcon>
+									{localization.sortDesc}
+								</Box>
+							</MenuItem>
+						),
 					].filter(Boolean))}
 			{enableColumnFilters &&
 				column.getCanFilter() &&
