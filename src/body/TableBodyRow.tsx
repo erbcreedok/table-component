@@ -182,7 +182,7 @@ export const TableBodyRow: FC<TableBodyRowProps> = ({
 						const cell = columnVirtualizer
 							? row.getVisibleCells()[(cellOrVirtualCell as VirtualItem).index]
 							: (cellOrVirtualCell as Table_Cell)
-						if (cell.getIsPlaceholder()) {
+						if (cell.getIsPlaceholder() && !isSummaryRow) {
 							return null
 						}
 						const props = {
