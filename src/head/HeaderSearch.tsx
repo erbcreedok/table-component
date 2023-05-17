@@ -8,6 +8,7 @@ import {
 	Typography,
 } from '@mui/material'
 
+import { Flex } from '../components/Flex'
 import { Table_Column, Table_Header, TableInstance } from '../TableComponent'
 import { HeaderSearchIcon } from '../TableToolbar/components/icons/HeaderSearchIcon'
 import { CloseIcon } from '../TableToolbar/components/icons/CloseIcon'
@@ -66,7 +67,8 @@ export const HeaderSearch = <T extends Record<string, any>>({
 	const [filtered, setFiltered] = useState<Record<string, any>>([])
 	const searchValue = useDelay(input)
 
-	const toggleSearch = () => {
+	const toggleSearch = (e) => {
+		e.stopPropagation()
 		if (isSearch) {
 			setIsSearch(false)
 			setInput('')
@@ -101,9 +103,9 @@ export const HeaderSearch = <T extends Record<string, any>>({
 	}, [searchValue])
 
 	return (
-		<EllipsisOverflow
+		<Flex
 			style={{
-				minWidth: column.getSize(),
+				flexGrow: 1,
 				display: 'flex',
 				alignItems: 'center',
 				justifyContent: 'space-between',
@@ -182,7 +184,7 @@ export const HeaderSearch = <T extends Record<string, any>>({
 					</Popper>
 				</>
 			) : (
-				column.columnDef.header
+				<EllipsisOverflow>{column.columnDef.header}</EllipsisOverflow>
 			)}
 
 			{!isSearch && (
@@ -195,6 +197,6 @@ export const HeaderSearch = <T extends Record<string, any>>({
 					<HeaderSearchIcon htmlColor={IconsColor.default} />
 				</IconButton>
 			)}
-		</EllipsisOverflow>
+		</Flex>
 	)
 }

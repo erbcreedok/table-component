@@ -240,10 +240,7 @@ export const TableHeadCell: FC<Props> = ({
 									sx={{
 										overflow: columnDefType === 'data' ? 'hidden' : undefined,
 										textOverflow: 'ellipsis',
-										whiteSpace:
-											(columnDef.header?.length ?? 0) < 20
-												? 'nowrap'
-												: 'normal',
+										whiteSpace: 'nowrap',
 										flexGrow: 1,
 									}}
 									title={
@@ -252,6 +249,7 @@ export const TableHeadCell: FC<Props> = ({
 								>
 									{headerElement}
 								</Box>
+								{columnDef.headerEndAdornment}
 								{column.getIsSorted() && (
 									<TableHeadCellSortLabel
 										header={header}

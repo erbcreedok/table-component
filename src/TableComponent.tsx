@@ -368,6 +368,7 @@ export type Table_ColumnDef<TData extends Record<string, any> = {}> = Omit<
 				table: TableInstance<TData>
 				parentRow?: Table_Row<TData>
 		  }) => ReactNode)
+	headerEndAdornment?: ReactNode
 	/**
 	 * Either an `accessorKey` or a combination of an `accessorFn` and `id` are required for a data column definition.
 	 * Specify a function here to point to the correct property in the data object.

@@ -4,6 +4,7 @@ import Divider from '@mui/material/Divider'
 import Typography from '@mui/material/Typography'
 import IconButton from '@mui/material/IconButton'
 
+import { getColumnId } from '../../../../column.utils'
 import type { Table_Column, TableInstance } from '../../../../index'
 import { ToolbarMultiselect } from '../../../../components/ToolbarMultiselect'
 import { DeleteIcon } from '../../icons/DeleteIcon'
@@ -43,8 +44,7 @@ export const FiltersMenuAppliedFilter = <
 				let label = el
 				if (column.columnDef.displayDataKey) {
 					const row = flatRows.find(
-						(row) =>
-							getNestedProp(row.original, column.columnDef.accessorKey) === el
+						(row) => row.getValue(getColumnId(column.columnDef)) === el
 					)
 					label = getNestedProp(row?.original, column.columnDef.displayDataKey)
 				}

@@ -122,7 +122,6 @@ export const getTeamMembersColumns = () =>
 			accessorFn: teamMemberAccessorFn('impact'),
 			filterVariant: 'multi-select',
 			GroupedCell: ColoredGroupedCell,
-			Header: HeaderBase,
 			muiTableBodyCellProps: coloredCellProps,
 			enableColumnOrdering: true,
 			enableSorting: false,
@@ -133,7 +132,7 @@ export const getTeamMembersColumns = () =>
 			accessorFn: teamMemberAccessorFn('performance'),
 			filterVariant: 'multi-select',
 			GroupedCell: ColoredGroupedCell,
-			Header: ({ column }) => <Flex center="y" sx={{ justifyContent: 'space-between'}}>{column.columnDef.header}<AnalyticsIcon /></Flex>,
+			headerEndAdornment: <AnalyticsIcon />,
 			muiTableBodyCellProps: coloredCellProps,
 			enableColumnOrdering: true,
 			sortingFn(rowA, rowB) {
