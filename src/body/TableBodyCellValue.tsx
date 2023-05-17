@@ -21,7 +21,7 @@ export const TableBodyCellValue: FC<Props> = ({ cell, table }) => {
 						row,
 						table,
 				  })
-				: row.getIsGrouped() && !cell.getIsGrouped()
+				: row?.getIsGrouped?.() && !cell?.getIsGrouped?.()
 				? null
 				: (column.getIsGrouped() && columnDef.GroupedCell) ||
 				  (cell.getIsGrouped() && columnDef.GroupedCell)

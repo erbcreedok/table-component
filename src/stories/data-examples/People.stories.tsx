@@ -1,14 +1,15 @@
 import React from 'react'
 import { Meta, Story } from '@storybook/react'
 import TableComponent, { TableComponentProps, Table_ColumnDef } from '../../'
-import { faker } from '@faker-js/faker'
-import { Tooltip, Typography } from '@mui/material'
+import { Box, Tooltip, Button, Checkbox, Typography } from '@mui/material'
 import {
 	getPeopleColumns,
 	getSeparatedPeopleMembers,
 } from '../utils/getPeopleColumns'
 import { GroupedCellBase } from '../../body/GroupedCellBase'
 import { Table_DisplayColumnIdsArray } from '../../column.utils'
+import MuiTableCell from '@mui/material/TableCell'
+import LinearProgress from '@mui/material/LinearProgress'
 
 interface DetailedPannelProps {
 	userId: string
@@ -39,7 +40,7 @@ const DetailedPanel = (props: DetailedPannelProps) => {
 }
 
 const SummaryRowExampleCellValue = (props) => {
-	const { column } = props
+	const { column, defaultStyles } = props
 
 	const rows = column.getFacetedRowModel().rows
 
@@ -66,24 +67,79 @@ const SummaryRowExampleCellValue = (props) => {
 		return <span>Statistics of your team:</span>
 	}
 
+	const getProgressBarValue = (columnId) => {
+		const colValues = getColumnValues(columnId)
+		let partialCount = 0
+
+		if (columnId === 'performance') {
+			partialCount += colValues['Often exceeds']
+			partialCount += colValues['Sometimes exceeds']
+		}
+
+		if (columnId === 'riskOfLeaving') {
+			partialCount += colValues['Leaver']
+			partialCount += colValues['High']
+		}
+
+		return Math.round(100 - (100 * partialCount) / rows.length)
+	}
+
+	if (column.id === 'mrt-row-select') {
+		return <MuiTableCell sx={{ ...defaultStyles }}></MuiTableCell>
+	}
+
+	if (column.id === 'member') {
+		return (
+			<MuiTableCell sx={{ ...defaultStyles }}>
+				Statistics of your team:
+			</MuiTableCell>
+		)
+	}
+
 	return (
-		<Tooltip
-			arrow
-			title={
-				<>
-					<ul>
-						{Object.entries(getColumnValues(column.id)).map((el) => (
-							<li>
-								{el[0]}: {el[1]}
-							</li>
-						))}
-					</ul>
-				</>
-			}
-		>
-			<span>Column info</span>
-		</Tooltip>
+		<MuiTableCell sx={{ ...defaultStyles }}>
+			<LinearProgress
+				sx={{
+					width: '100%',
+					height: '12px',
+					backgroundColor: '#FED7D7',
+					'& > span': {
+						backgroundColor: '#93E98C',
+					},
+				}}
+				variant="determinate"
+				value={getProgressBarValue(column.id)}
+			/>
+		</MuiTableCell>
 	)
+}
+	
+interface SubFilterItemProps {
+	value: string
+	isChecked: boolean
+	onClick: () => void
+}
+const SubFilterItem = (props: SubFilterItemProps) => {
+	const { value, isChecked, onClick } = props
+
+	return (
+		<Box
+			sx={{
+				display: 'flex',
+				alignItems: 'center',
+				marginTop: '15px',
+			}}
+		>
+			<Checkbox
+				onClick={onClick}
+				checked={isChecked}
+				sx={{ padding: 0, marginRight: '2px' }}
+			/>
+			<Typography variant="body2" color="#303240">
+				{value}
+			</Typography>
+		</Box>
+)
 }
 
 const columns = getPeopleColumns()
@@ -93,10 +149,86 @@ export const PeopleTable: Story<TableComponentProps> = () => {
 	return (
 		<TableComponent
 			data={data}
-			enableDetailedPanel
+			// enableDetailedPanel
+			enableColumnFilters
+			enablePinning
+			enableColumnFiltersSelection
+			// enableStickyHeader
+			subFilterSelection={(props) => {
+				const {
+					selectedFilters,
+					filterValues,
+
+					onCheckFilter,
+					onCheckAllFilters,
+					onApplyFilters,
+				} = props
+
+				return (
+					<div style={{ minWidth: 245, padding: '0 15px' }}>
+						<Typography
+							variant="body2"
+							color="#303240"
+							style={{ fontWeight: 600 }}
+						>
+							Filters
+						</Typography>
+
+						<Box>
+							<Box
+								sx={{
+									borderBottom: '1px solid #E1E3EB',
+									paddingBottom: '15px',
+								}}
+							>
+								<SubFilterItem
+									value="Select All"
+									onClick={onCheckAllFilters}
+									isChecked={selectedFilters.length === filterValues.length}
+								/>
+							</Box>
+
+							{filterValues.map((value) => {
+								return (
+									<SubFilterItem
+										key={value}
+										isChecked={selectedFilters.includes(value)}
+										onClick={() => onCheckFilter(value)}
+										value={value}
+									/>
+								)
+							})}
+						</Box>
+
+						<Box
+							sx={{
+								borderTop: '1px solid #E1E3EB',
+								display: 'flex',
+								justifyContent: 'flex-end',
+								paddingTop: '10px',
+								marginTop: '15px',
+							}}
+						>
+							<Button
+								type="button"
+								variant="contained"
+								color="primary"
+								onClick={onApplyFilters}
+								sx={{ backgroundColor: '#009ECC', color: '#FFFFFF' }}
+							>
+								Apply
+							</Button>
+						</Box>
+					</div>
+				)
+			}}
+			enableColumnFilterModes
+			summaryRowCell={(props) => <SummaryRowExampleCellValue {...props} />}
+			enableSummaryRow
 			notClickableCells={['member']}
 			detailedRowBackgroundColor={'#fafafc'}
 			enableRowSelection
+			// enableRowVirtualization
 			cellStyleRules={{
 				performance: {
 					executeStyleCondition: ({ cell, isCurrentCellClicked }) => {
@@ -215,7 +347,7 @@ export const PeopleTable: Story<TableComponentProps> = () => {
 				<SummaryRowExampleCellValue column={column} />
 			)}
 			// @ts-ignore
-			initialState={{ expanded: false }}
+			initialState={{ expanded: false, showColumnFilters: true }}
 			renderDetailPanel={({ row, ...rest }) => (
 				<DetailedPanel
 					userId={row?.original?.member?.id}

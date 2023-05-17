@@ -78,6 +78,7 @@ export const getPeopleColumns = () =>
 			filterVariant: 'multi-select',
 			enableColumnOrdering: false,
 			enableHiding: false,
+			enableFiltering: true,
 			Cell: ({ row, table }) => {
 				const user = row.original.member
 
@@ -115,6 +116,7 @@ export const getPeopleColumns = () =>
 		{
 			header: 'Performance',
 			accessorKey: 'performance',
+			enableFiltering: true,
 			filterVariant: 'multi-select',
 			enableColumnOrdering: true,
 			Cell: ({ row, table, cell }) => (
@@ -129,6 +131,7 @@ export const getPeopleColumns = () =>
 		{
 			header: 'Risk of leaving',
 			accessorKey: 'riskOfLeaving',
+			enableFiltering: true,
 			filterVariant: 'multi-select',
 			enableColumnOrdering: true,
 			sortDescFirst: false,
@@ -145,6 +148,7 @@ export const getPeopleColumns = () =>
 			header: 'Mood',
 			accessorKey: 'mood',
 			filterVariant: 'multi-select',
+			enableFiltering: true,
 			enableColumnOrdering: true,
 			enableSorting: false,
 			Cell: ({ row, table, cell }) => (
@@ -154,6 +158,7 @@ export const getPeopleColumns = () =>
 		{
 			header: 'Last talk',
 			accessorKey: 'lastTalk',
+			enableFiltering: true,
 			filterVariant: 'multi-select',
 			enableColumnOrdering: true,
 			enableGrouping: false,
@@ -168,6 +173,7 @@ export const getPeopleColumns = () =>
 		},
 		{
 			header: 'Total workload',
+			enableFiltering: true,
 			accessorKey: 'totalWorkload',
 			filterVariant: 'multi-select',
 			enableColumnOrdering: true,
@@ -209,5 +215,5 @@ export const getPeopleMember = (user?: any) => ({
 	),
 	totalWorkload: getRandomFromArray(totalWorkload),
 })
-export const getSeparatedPeopleMembers = (length = 20): any =>
+export const getSeparatedPeopleMembers = (length = 200): any =>
 	[...Array(length)].map(() => getPeopleMember(getRandomFromArray(savedUsers)))

@@ -157,7 +157,7 @@ export const TableBodyCell: FC<Props> = ({
 		(editingMode === 'table' ||
 			editingRow?.id === row.id ||
 			editingCell?.id === cell.id) &&
-		!row.getIsGrouped()
+		!row?.getIsGrouped?.()
 
 	const handleDoubleClick = (event: MouseEvent<HTMLTableCellElement>) => {
 		tableCellProps?.onDoubleClick?.(event)
@@ -215,7 +215,7 @@ export const TableBodyCell: FC<Props> = ({
 
 		const cellId = cell?.id
 		const rowId = cell?.row?.id
-		const isPanelExpanded = cell?.row?.getIsExpanded()
+		const isPanelExpanded = cell?.row?.getIsExpanded?.()
 
 		const isCellClicked = clickedCells.some(
 			(clickedCell) => clickedCell?.id === cellId

@@ -37,13 +37,17 @@ export const useFilterControls = (table: any, filterId?: string) => {
 	const getColumnFilterOptions: (
 		column: Table_Column<any>
 	) => { label: string; value: string }[] = (column) => {
-		return Array.from(column.getFacetedUniqueValues().keys())
-			.sort()
-			.filter((el) => el)
-			.map((el) => ({
-				label: el,
-				value: el,
-			}))
+		try {
+			return Array.from(column.getFacetedUniqueValues().keys())
+				.sort()
+				.filter((el) => el)
+				.map((el) => ({
+					label: el,
+					value: el,
+				}))
+		} catch {
+			return []
+		}
 	}
 
 	const getCurrentFilterValues = (filterId?: string) => {
@@ -80,5 +84,7 @@ export const useFilterControls = (table: any, filterId?: string) => {
 			filterId &&
 			columnsIdToHeaderMap[filterId] &&
 			getColumnFilterOptions(columnsIdToHeaderMap[filterId].column),
+
+		getColumnFilterOptions,
 	}
 }

@@ -3,9 +3,11 @@ import IconButton from '@mui/material/IconButton'
 import ListItemIcon from '@mui/material/ListItemIcon'
 import Menu from '@mui/material/Menu'
 import MenuItem from '@mui/material/MenuItem'
-import React, { FC, useState } from 'react'
+import React, { FC, useEffect, useState } from 'react'
+import { Button, Checkbox, Typography } from '@mui/material'
 
 import type { Table_Header, TableInstance } from '..'
+import { useFilterControls } from '../TableFiltersBar/filter-bar-hooks/useFilterControls'
 
 import { ShowHideColumnsMenu } from './ShowHideColumnsMenu'
 
@@ -21,53 +23,19 @@ export const commonListItemStyles = {
 	alignItems: 'center',
 }
 
-interface Props {
-	anchorEl: HTMLElement | null
-	header: Table_Header
-	setVisible: (visible: boolean) => void
-	table: TableInstance
-}
-
-export const ColumnActionMenu: FC<Props> = ({
-	anchorEl,
-	header,
-	setVisible,
-	table,
-}) => {
+const QuickSorts = ({ columnDef, column, table, setVisible }) => {
 	const {
-		getState,
-		toggleAllColumnsVisible,
-		setColumnOrder,
 		options: {
 			enableColumnFilters,
-			enableColumnResizing,
 			enableGrouping,
 			enableHiding,
-			enablePinning,
 			enableSorting,
 			enableMultiSort,
-			icons: {
-				ArrowRightIcon,
-				ViewColumnIcon,
-				FilterListOffIcon,
-				GroupIcon,
-				PushPinIcon,
-				SortAscIcon,
-				SortDescIcon,
-				ClearIcon,
-				RestartAltIcon,
-				HideIcon,
-			},
+			icons: { ClearIcon, SortAscIcon, SortDescIcon },
 			localization,
 			renderColumnActionsMenuItems,
 		},
 	} = table
-	const { column } = header
-	const { columnDef } = column
-	const { columnSizing, columnVisibility } = getState()
-
-	const [showHideColumnsMenuAnchorEl, setShowHideColumnsMenuAnchorEl] =
-		useState<null | HTMLElement>(null)
 
 	const handleClearSort = () => {
 		column.clearSorting()
@@ -84,54 +52,8 @@ export const ColumnActionMenu: FC<Props> = ({
 		setVisible(false)
 	}
 
-	const handleResetColumnSize = () => {
-		column.resetSize()
-		setVisible(false)
-	}
-
-	const handleHideColumn = () => {
-		column.toggleVisibility(false)
-		if (column.getIsGrouped()) {
-			column.toggleGrouping()
-		}
-		column.clearSorting()
-		setVisible(false)
-	}
-
-	const handlePinColumn = (pinDirection: 'left' | 'right' | false) => {
-		column.pin(pinDirection)
-		setVisible(false)
-	}
-
-	const handleGroupByColumn = () => {
-		column.toggleGrouping()
-		setColumnOrder((old: any) => ['mrt-row-expand', ...old])
-		setVisible(false)
-	}
-
-	const handleClearFilter = () => {
-		column.setFilterValue('')
-		setVisible(false)
-	}
-
-	const handleShowAllColumns = () => {
-		toggleAllColumnsVisible(true)
-		setVisible(false)
-	}
-
-	const handleOpenShowHideColumnsMenu = (
-		event: React.MouseEvent<HTMLElement>
-	) => {
-		event.stopPropagation()
-		setShowHideColumnsMenuAnchorEl(event.currentTarget)
-	}
-
 	return (
-		<Menu
-			anchorEl={anchorEl}
-			open={!!anchorEl}
-			onClose={() => setVisible(false)}
-		>
+		<>
 			{columnDef.renderColumnActionsMenuItems?.({
 				closeMenu: () => setVisible(false),
 				column,
@@ -191,6 +113,26 @@ export const ColumnActionMenu: FC<Props> = ({
 							</MenuItem>
 						),
 					].filter(Boolean))}
+		</>
+	)
+}
+
+const QuickFilters = ({ column, table, setVisible }) => {
+	const {
+		options: {
+			enableColumnFilters,
+			icons: { FilterListOffIcon },
+			localization,
+		},
+	} = table
+
+	const handleClearFilter = () => {
+		column.setFilterValue('')
+		setVisible(false)
+	}
+
+	return (
+		<>
 			{enableColumnFilters &&
 				column.getCanFilter() &&
 				[
@@ -209,6 +151,29 @@ export const ColumnActionMenu: FC<Props> = ({
 						</MenuItem>
 					),
 				].filter(Boolean)}
+		</>
+	)
+}
+
+const QuickGroupings = ({ column, table, setVisible }) => {
+	const {
+		setColumnOrder,
+		options: {
+			enableGrouping,
+			enableHiding,
+			icons: { GroupIcon },
+			localization,
+		},
+	} = table
+
+	const handleGroupByColumn = () => {
+		column.toggleGrouping()
+		setColumnOrder((old: any) => ['mrt-row-expand', ...old])
+		setVisible(false)
+	}
+
+	return (
+		<>
 			{enableGrouping &&
 				column.getCanGroup() && [
 					<MenuItem
@@ -225,6 +190,27 @@ export const ColumnActionMenu: FC<Props> = ({
 						</Box>
 					</MenuItem>,
 				]}
+		</>
+	)
+}
+
+const QuickPinning = ({ column, table, setVisible }) => {
+	const {
+		options: {
+			enableHiding,
+			enablePinning,
+			icons: { PushPinIcon },
+			localization,
+		},
+	} = table
+
+	const handlePinColumn = (pinDirection: 'left' | 'right' | false) => {
+		column.pin(pinDirection)
+		setVisible(false)
+	}
+
+	return (
+		<>
 			{enablePinning &&
 				column.getCanPin() && [
 					<MenuItem
@@ -268,6 +254,29 @@ export const ColumnActionMenu: FC<Props> = ({
 						</Box>
 					</MenuItem>,
 				]}
+		</>
+	)
+}
+
+const QuickColumnResizing = ({ column, table, setVisible }) => {
+	const {
+		getState,
+		options: {
+			enableColumnResizing,
+			icons: { RestartAltIcon },
+			localization,
+		},
+	} = table
+
+	const { columnSizing } = getState()
+
+	const handleResetColumnSize = () => {
+		column.resetSize()
+		setVisible(false)
+	}
+
+	return (
+		<>
 			{enableColumnResizing &&
 				column.getCanResize() && [
 					<MenuItem
@@ -284,6 +293,49 @@ export const ColumnActionMenu: FC<Props> = ({
 						</Box>
 					</MenuItem>,
 				]}
+		</>
+	)
+}
+
+const QuickHiding = ({ column, table, setVisible, columnDef }) => {
+	const {
+		getState,
+		toggleAllColumnsVisible,
+		options: {
+			enableHiding,
+			icons: { ArrowRightIcon, ViewColumnIcon, HideIcon },
+			localization,
+		},
+	} = table
+
+	const [showHideColumnsMenuAnchorEl, setShowHideColumnsMenuAnchorEl] =
+		useState<null | HTMLElement>(null)
+
+	const { columnVisibility } = getState()
+
+	const handleHideColumn = () => {
+		column.toggleVisibility(false)
+		if (column.getIsGrouped()) {
+			column.toggleGrouping()
+		}
+		column.clearSorting()
+		setVisible(false)
+	}
+
+	const handleShowAllColumns = () => {
+		toggleAllColumnsVisible(true)
+		setVisible(false)
+	}
+
+	const handleOpenShowHideColumnsMenu = (
+		event: React.MouseEvent<HTMLElement>
+	) => {
+		event.stopPropagation()
+		setShowHideColumnsMenuAnchorEl(event.currentTarget)
+	}
+
+	return (
+		<>
 			{enableHiding && [
 				<MenuItem
 					disabled={!column.getCanHide()}
@@ -333,6 +385,192 @@ export const ColumnActionMenu: FC<Props> = ({
 					table={table}
 				/>,
 			]}
+		</>
+	)
+}
+
+const QuickSubFilters = ({
+	table,
+	column,
+	toggleSubMenu,
+	SubFilterSelection,
+}: any) => {
+	const { columnFilters, currentFilterColumn } = useFilterControls(
+		table,
+		column.id
+	)
+
+	const [selectedFilters, setSelectedFilters] = useState<any>([])
+	const [filterValues, setFilterValues] = useState<any>([])
+
+	// TODO: fix .length issue in getFacetedUniqueValues
+	useEffect(() => {
+		const { value: appliedValues } =
+			columnFilters.find(({ id }) => id === column.id) || {}
+
+		try {
+			setFilterValues(
+				Array.from(table.getColumn(column.id).getFacetedUniqueValues().keys())
+			)
+		} catch (error) {
+			//
+		}
+
+		if (appliedValues?.length) {
+			setSelectedFilters(appliedValues)
+		}
+	}, [columnFilters])
+
+	const handleApplyFilters = () => {
+		currentFilterColumn.setFilterValue([...selectedFilters])
+
+		toggleSubMenu()
+	}
+
+	const handleCheckFilter = (value: string) => {
+		if (selectedFilters.includes(value)) {
+			const updatedFilters = selectedFilters.filter(
+				(filter) => filter !== value
+			)
+
+			setSelectedFilters(updatedFilters)
+
+			return
+		}
+
+		setSelectedFilters([...selectedFilters, value])
+	}
+
+	const handleCheckAllFilters = () => {
+		if (selectedFilters.length === filterValues.length) {
+			setSelectedFilters([])
+
+			return
+		}
+
+		setSelectedFilters([...filterValues])
+	}
+
+	return (
+		<SubFilterSelection
+			table={table}
+			column={column}
+			selectedFilters={selectedFilters}
+			filterValues={filterValues}
+			onCheckFilter={handleCheckFilter}
+			onCheckAllFilters={handleCheckAllFilters}
+			onApplyFilters={handleApplyFilters}
+		/>
+	)
+}
+
+const OpenSubFilterButton = ({
+	toggleSubMenu,
+	enableColumnFiltersSelection,
+	FiltersIcon,
+}) => {
+	if (!enableColumnFiltersSelection) {
+		return <></>
+	}
+
+	return (
+		<MenuItem key={0} onClick={toggleSubMenu} sx={commonMenuItemStyles}>
+			<Box sx={commonListItemStyles}>
+				<ListItemIcon>
+					<FiltersIcon />
+				</ListItemIcon>
+				Filters
+			</Box>
+		</MenuItem>
+	)
+}
+
+interface Props {
+	anchorEl: HTMLElement | null
+	header: Table_Header
+	setVisible: (visible: boolean) => void
+	table: TableInstance
+}
+
+export const ColumnActionMenu: FC<Props> = ({
+	anchorEl,
+	header,
+	setVisible,
+	table,
+}) => {
+	const {
+		options: {
+			enableColumnFiltersSelection,
+			subFilterSelection: SubFilterSelection,
+			icons: { FiltersIcon },
+		},
+	} = table
+
+	const { column } = header
+	const { columnDef } = column
+
+	const [isSubMenuOpen, setIsSubMenuOpen] = useState(false)
+
+	const toggleSubMenu = () => {
+		setIsSubMenuOpen(!isSubMenuOpen)
+	}
+
+	if (isSubMenuOpen) {
+		return (
+			<Menu
+				anchorEl={anchorEl}
+				open={!!anchorEl}
+				onClose={() => setVisible(false)}
+			>
+				<QuickSubFilters
+					table={table}
+					column={column}
+					toggleSubMenu={toggleSubMenu}
+					SubFilterSelection={SubFilterSelection}
+				/>
+			</Menu>
+		)
+	}
+
+	return (
+		<Menu
+			anchorEl={anchorEl}
+			open={!!anchorEl}
+			onClose={() => setVisible(false)}
+		>
+			<>
+				<QuickSorts
+					table={table}
+					columnDef={columnDef}
+					column={column}
+					setVisible={setVisible}
+				/>
+
+				<OpenSubFilterButton
+					toggleSubMenu={toggleSubMenu}
+					enableColumnFiltersSelection={enableColumnFiltersSelection}
+					FiltersIcon={FiltersIcon}
+				/>
+
+				<QuickFilters table={table} column={column} setVisible={setVisible} />
+
+				<QuickGroupings table={table} column={column} setVisible={setVisible} />
+
+				<QuickPinning table={table} column={column} setVisible={setVisible} />
+
+				<QuickColumnResizing
+					table={table}
+					column={column}
+					setVisible={setVisible}
+				/>
+
+				<QuickHiding
+					table={table}
+					column={column}
+					columnDef={columnDef}
+					setVisible={setVisible}
+				/>
+			</>
 		</Menu>
 	)
 }

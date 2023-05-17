@@ -1128,6 +1128,8 @@ export type TableComponentProps<TData extends Record<string, any> = {}> = Omit<
 	summaryRowCell?: (
 		...args: Array<Table_ColumnDef<TData> | any>
 	) => React.ReactNode
+	enableColumnFiltersSelection?: boolean
+	subFilterSelection?: ReactNode
 	columnVirtualizerInstanceRef?: MutableRefObject<Virtualizer<
 		HTMLDivElement,
 		HTMLTableCellElement

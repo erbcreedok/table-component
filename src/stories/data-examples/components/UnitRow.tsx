@@ -26,7 +26,7 @@ export const UnitRow = <TData extends Record<string, any> = {}>(props: Props<TDa
 	const index = getPaginationRowModel().rows.findIndex((r) => r.id === row.id)
 	const nextRow = getPaginationRowModel().rows[index + 1]
 	const isNextRowIsUnit = isUnitTreeItem(nextRow?.original)
-	const showTableHeader = unit && nextRow && !isNextRowIsUnit && row.getIsExpanded() || (!unit && index == 0)
+	const showTableHeader = unit && nextRow && !isNextRowIsUnit && row?.getIsExpanded?.() || (!unit && index == 0)
 
 	const unitRow = unit ? (
 		<tr>
