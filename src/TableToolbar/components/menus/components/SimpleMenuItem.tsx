@@ -29,6 +29,7 @@ interface Props<TData extends Record<string, any> = {}> {
 		draggedColumn: Table_Column<TData>,
 		targetColumn: Table_Column<TData>
 	): void
+	onItemClick?(): void
 }
 
 export const SimpleMenuItem = <TData extends Record<string, any> = {}>({
@@ -36,6 +37,7 @@ export const SimpleMenuItem = <TData extends Record<string, any> = {}>({
 	isCompact = false,
 	enableDrag = false,
 	withClickOnItem = false,
+	onItemClick,
 	column,
 	hoveredColumn,
 	setHoveredColumn,
@@ -47,6 +49,9 @@ export const SimpleMenuItem = <TData extends Record<string, any> = {}>({
 
 	const handleItemClick = () => {
 		// TODO: to think later about general handler on item click
+		if (onItemClick) {
+			onItemClick()
+		}
 	}
 
 	const handleDragStart = (e: DragEvent<HTMLButtonElement>) => {
@@ -74,7 +79,7 @@ export const SimpleMenuItem = <TData extends Record<string, any> = {}>({
 
 	return (
 		<MenuItem
-			disableRipple
+			disableRipple={!onItemClick}
 			onDragEnter={handleDragEnter}
 			ref={menuItemRef as any}
 			sx={() => ({

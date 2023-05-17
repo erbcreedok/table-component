@@ -131,8 +131,8 @@ export const GroupingMenu = <TData extends Record<string, any> = {}>({
 									hoveredColumn={hoveredColumn}
 									onColumnOrderChange={onColumnOrderChanged}
 									setHoveredColumn={setHoveredColumn}
+									onItemClick={column.getToggleGroupingHandler()}
 									isSorting
-									withClickOnItem
 								/>
 							))
 						) : (
@@ -190,7 +190,7 @@ export const GroupingMenu = <TData extends Record<string, any> = {}>({
 									hoveredColumn={hoveredColumn}
 									onColumnOrderChange={onColumnOrderChanged}
 									setHoveredColumn={setHoveredColumn}
-									withClickOnItem
+									onItemClick={column.getToggleGroupingHandler()}
 								/>
 							))}
 					</>
