@@ -1,6 +1,7 @@
 import React, { useMemo, useState } from 'react'
 import Box from '@mui/material/Box'
 import Drawer from '@mui/material/Drawer'
+import { Typography } from '@mui/material'
 
 import type { TableInstance } from '../../../../index'
 import { SidebarHeaderComponent } from '../components/SidebarHeader'
@@ -32,6 +33,7 @@ export const GroupingMenu = <TData extends Record<string, any> = {}>({
 		setGrouping,
 	} = table
 	const { columnOrder, columnPinning, columnVisibility, grouping } = getState()
+	const [isSearchActive, setIsSearchActive] = useState<boolean>(false)
 	const [searchList, setSearchList] = useState<Array<Table_Column<TData>>>([])
 	const [hoveredColumn, setHoveredColumn] =
 		useState<Table_Column<TData> | null>(null)
@@ -79,8 +81,13 @@ export const GroupingMenu = <TData extends Record<string, any> = {}>({
 
 	const handleCloseCLick = () => setAnchorEl(null)
 	const handleOnSearchChange = (value: string) => {
+		if (value) {
+			setIsSearchActive(true)
+		} else {
+			setIsSearchActive(false)
+		}
 		setSearchList(
-			value.length >= 3
+			value.length
 				? getAllColumns().filter((col) =>
 						col.columnDef.header.toLowerCase().includes(value)
 				  )
@@ -112,23 +119,28 @@ export const GroupingMenu = <TData extends Record<string, any> = {}>({
 		>
 			<Box sx={{ minWidth: 500 }}>
 				<SidebarHeaderComponent title="Grouping" onClick={handleCloseCLick} />
-				<SidebarSearchComponent
-					onChange={handleOnSearchChange}
-					reset={!searchList.length}
-				/>
+				<SidebarSearchComponent onChange={handleOnSearchChange} />
 
 				<Box sx={{ marginTop: '12px' }}>
-					{searchList.length > 0 &&
-						searchList.map((column) => (
-							<SimpleMenuItem
-								column={column}
-								key={column.id}
-								hoveredColumn={hoveredColumn}
-								onColumnOrderChange={onColumnOrderChanged}
-								setHoveredColumn={setHoveredColumn}
-								isSorting
-								withClickOnItem
-							/>
+					{isSearchActive &&
+						(searchList.length ? (
+							searchList.map((column) => (
+								<SimpleMenuItem
+									column={column}
+									key={column.id}
+									hoveredColumn={hoveredColumn}
+									onColumnOrderChange={onColumnOrderChanged}
+									setHoveredColumn={setHoveredColumn}
+									isSorting
+									withClickOnItem
+								/>
+							))
+						) : (
+							<Typography
+								sx={{ display: 'flex', justifyContent: 'center', mt: '20px' }}
+							>
+								No options
+							</Typography>
 						))}
 
 					{Boolean(groupedList.length && !searchList.length) && (
@@ -168,7 +180,9 @@ export const GroupingMenu = <TData extends Record<string, any> = {}>({
 									Columns
 								</ListTitle>
 							)}
-						{Boolean(nonGroupedList.length && !searchList.length) &&
+						{Boolean(
+							nonGroupedList.length && !searchList.length && !isSearchActive
+						) &&
 							nonGroupedList.map((column) => (
 								<SimpleMenuItem
 									column={column}

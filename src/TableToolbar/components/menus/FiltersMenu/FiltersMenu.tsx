@@ -3,6 +3,7 @@ import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
 import Drawer from '@mui/material/Drawer'
 import Divider from '@mui/material/Divider'
+import { Typography } from '@mui/material'
 
 import type { Table_Column, TableInstance } from '../../../../index'
 import { Table_DisplayColumnIdsArray } from '../../../../column.utils'
@@ -35,6 +36,7 @@ export const FiltersMenu = <TData extends Record<string, any> = {}>({
 		resetColumnFilters,
 		options: { localization },
 	} = table
+	const [isSearchActive, setIsSearchActive] = useState<boolean>(false)
 	const [searchList, setSearchList] = useState<Array<Table_Column<TData>>>([])
 	const [isFilterAddition, setIsFilterAddition] = useState<boolean | null>(true)
 	const [appliedFilters, setAppliedFilters] = useState<FilterType<TData>[]>([])
@@ -68,6 +70,11 @@ export const FiltersMenu = <TData extends Record<string, any> = {}>({
 	const handleCloseCLick = () => setAnchorEl(null)
 
 	const handleOnSearchChange = (value: string) => {
+		if (value) {
+			setIsSearchActive(true)
+		} else {
+			setIsSearchActive(false)
+		}
 		setSearchList(
 			value.length
 				? allColumns.filter((col) =>
@@ -119,6 +126,44 @@ export const FiltersMenu = <TData extends Record<string, any> = {}>({
 		if (appliedFilters.length === 1) {
 			setIsFilterAddition(true)
 		}
+	}
+
+	const renderListItems = (list) => {
+		return (
+			<>
+				{list
+					.filter((column) =>
+						appliedFilters.every((filter) => filter.id !== column.id)
+					)
+					.map((column, index) => (
+						<FiltersMenuListItem
+							allColumns={allColumns}
+							column={column}
+							table={table}
+							key={`${index}-${column.id}`}
+							onAddFilter={handleSetColumnFilter}
+						/>
+					))}
+			</>
+		)
+	}
+
+	const renderMenuList = () => {
+		if (isSearchActive) {
+			if (searchList.length) {
+				return renderListItems(searchList)
+			}
+
+			return (
+				<Typography
+					sx={{ display: 'flex', justifyContent: 'center', mt: '20px' }}
+				>
+					No options
+				</Typography>
+			)
+		}
+
+		return renderListItems(allColumns)
 	}
 
 	return (
@@ -187,19 +232,7 @@ export const FiltersMenu = <TData extends Record<string, any> = {}>({
 							dividerProps={{ sx: { mb: '12px' } }}
 							onChange={handleOnSearchChange}
 						/>
-						{(searchList.length ? searchList : allColumns)
-							.filter((column) =>
-								appliedFilters.every((filter) => filter.id !== column.id)
-							)
-							.map((column, index) => (
-								<FiltersMenuListItem
-									allColumns={allColumns}
-									column={column}
-									table={table}
-									key={`${index}-${column.id}`}
-									onAddFilter={handleSetColumnFilter}
-								/>
-							))}
+						{renderMenuList()}
 					</>
 				) : null}
 			</Box>

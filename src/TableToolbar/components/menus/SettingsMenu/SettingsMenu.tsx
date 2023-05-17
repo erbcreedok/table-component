@@ -33,6 +33,7 @@ export const SettingsMenu = <TData extends Record<string, any> = {}>({
 		setGrouping,
 	} = table
 	const { columnOrder, columnPinning, columnVisibility, grouping } = getState()
+	const [isSearchActive, setIsSearchActive] = useState<boolean>(false)
 	const [searchList, setSearchList] = useState<Array<Table_Column<TData>>>([])
 
 	const allColumns = useMemo(() => {
@@ -149,8 +150,13 @@ export const SettingsMenu = <TData extends Record<string, any> = {}>({
 	}
 
 	const handleOnSearchChange = (value: string) => {
+		if (value) {
+			setIsSearchActive(true)
+		} else {
+			setIsSearchActive(false)
+		}
 		setSearchList(
-			value.length >= 3
+			value.length
 				? allColumns.filter((col) =>
 						col.columnDef.header.toLowerCase().includes(value)
 				  )
@@ -195,21 +201,29 @@ export const SettingsMenu = <TData extends Record<string, any> = {}>({
 				/>
 				<SidebarSearchComponent onChange={handleOnSearchChange} />
 
-				{searchList.length > 0 ? (
-					searchList.map((column, index) => (
-						<SettingsMenuItem
-							allColumns={allColumns}
-							column={column}
-							hoveredColumn={hoveredColumn}
-							isSubMenu={false}
-							key={`${index}-${column.id}`}
-							setHoveredColumn={setHoveredColumn}
-							table={table}
-							onColumnVisibilityChange={onColumnVisibilityChange}
-							enableDrag={false}
-							onColumnOrderChange={onColumnOrderChange}
-						/>
-					))
+				{isSearchActive ? (
+					searchList.length ? (
+						searchList.map((column, index) => (
+							<SettingsMenuItem
+								allColumns={allColumns}
+								column={column}
+								hoveredColumn={hoveredColumn}
+								isSubMenu={false}
+								key={`${index}-${column.id}`}
+								setHoveredColumn={setHoveredColumn}
+								table={table}
+								onColumnVisibilityChange={onColumnVisibilityChange}
+								enableDrag={false}
+								onColumnOrderChange={onColumnOrderChange}
+							/>
+						))
+					) : (
+						<Typography
+							sx={{ display: 'flex', justifyContent: 'center', mt: '20px' }}
+						>
+							No options
+						</Typography>
+					)
 				) : (
 					<>
 						<Box

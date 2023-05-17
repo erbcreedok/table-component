@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react'
 import Box from '@mui/material/Box'
 import Drawer from '@mui/material/Drawer'
+import { Typography } from '@mui/material'
 
 import type { TableInstance, Table_Column } from '../../../../index'
 import { SidebarHeaderComponent } from '../components/SidebarHeader'
@@ -22,6 +23,7 @@ export const SortingMenu = <TData extends Record<string, any> = {}>({
 	setAnchorEl,
 	table,
 }: Props<TData>) => {
+	const [isSearchActive, setIsSearchActive] = useState<boolean>(false)
 	const { getAllColumns, getState, resetSorting } = table
 	const { columnPinning, columnOrder, columnVisibility, grouping, sorting } =
 		getState()
@@ -57,8 +59,13 @@ export const SortingMenu = <TData extends Record<string, any> = {}>({
 	)
 
 	const handleOnSearchChange = (value: string) => {
+		if (value) {
+			setIsSearchActive(true)
+		} else {
+			setIsSearchActive(false)
+		}
 		setSearchList(
-			value.length >= 3
+			value.length
 				? allColumns.filter((col) =>
 						col.columnDef.header.toLowerCase().includes(value)
 				  )
@@ -88,12 +95,6 @@ export const SortingMenu = <TData extends Record<string, any> = {}>({
 		resetSorting(true)
 	}
 
-	useEffect(() => {
-		if (searchList.length) {
-			setSearchList([])
-		}
-	}, [sorting])
-
 	return (
 		<Drawer
 			anchor="right"
@@ -103,23 +104,28 @@ export const SortingMenu = <TData extends Record<string, any> = {}>({
 		>
 			<Box sx={{ minWidth: 600 }}>
 				<SidebarHeaderComponent title="Sorting" onClick={handleCloseCLick} />
-				<SidebarSearchComponent
-					reset={!searchList.length}
-					onChange={handleOnSearchChange}
-				/>
+				<SidebarSearchComponent onChange={handleOnSearchChange} />
 
 				<Box sx={{ marginTop: '12px' }}>
-					{searchList.length > 0 &&
-						searchList.map((column) => (
-							<SimpleMenuItem
-								column={column}
-								key={column.id}
-								hoveredColumn={hoveredColumn}
-								onColumnOrderChange={onColumnOrderChanged}
-								setHoveredColumn={setHoveredColumn}
-								isSorting
-								withClickOnItem
-							/>
+					{isSearchActive &&
+						(searchList.length ? (
+							searchList.map((column) => (
+								<SimpleMenuItem
+									column={column}
+									key={column.id}
+									hoveredColumn={hoveredColumn}
+									onColumnOrderChange={onColumnOrderChanged}
+									setHoveredColumn={setHoveredColumn}
+									isSorting
+									withClickOnItem
+								/>
+							))
+						) : (
+							<Typography
+								sx={{ display: 'flex', justifyContent: 'center', mt: '20px' }}
+							>
+								No options
+							</Typography>
 						))}
 
 					{Boolean(sortedList?.length && !searchList.length) && (
@@ -160,7 +166,9 @@ export const SortingMenu = <TData extends Record<string, any> = {}>({
 									Columns
 								</ListTitle>
 							)}
-						{Boolean(nonSortedList.length && !searchList.length) &&
+						{Boolean(
+							nonSortedList.length && !searchList.length && !isSearchActive
+						) &&
 							nonSortedList.map((column) => (
 								<SimpleMenuItem
 									column={column}
