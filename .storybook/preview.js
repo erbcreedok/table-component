@@ -1,6 +1,8 @@
 import { ThemeProvider, Typography } from '@mui/material';
 import { useDarkMode } from 'storybook-dark-mode';
 import { createTheme } from '../src';
+import { version } from '../package.json';
+
 export const parameters = {
   actions: { argTypesRegex: '^on.*' },
   backgrounds: {
@@ -42,6 +44,8 @@ const withThemeProvider = (Story, context) => {
           color: useDarkMode() ? '#fff' : '#666',
         }}
       >
+        [table-component v{version}]
+        <br />
         View source code below in the story tab on Canvas or the Show Code
         Button in Docs. Toggle dark and light mode in the toolbar buttons above.
       </Typography>
