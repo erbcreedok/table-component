@@ -70,7 +70,6 @@ export const TableBodyCell: FC<Props> = ({
 			enableDetailedPanel,
 			cellStyleRules,
 			notClickableCells,
-			detailedRowBackgroundColor,
 			summaryRowCell,
 		},
 		refs: { editInputRefs },
@@ -318,6 +317,7 @@ export const TableBodyCell: FC<Props> = ({
 
 	if (isSummaryRowCell && summaryRowCell) {
 		return summaryRowCell({
+			table,
 			column: column as Table_ColumnDef,
 			defaultStyles: getTableCellStyles(theme),
 		}) as ReactElement

@@ -177,10 +177,12 @@ export const TableBodyRow: FC<TableBodyRowProps> = ({
 				{virtualPaddingLeft ? (
 					<td style={{ display: 'flex', width: virtualPaddingLeft }} />
 				) : null}
-				{(virtualColumns ?? row.getVisibleCells()).map(
+				{(virtualColumns ?? row?.getVisibleCells?.()).map(
 					(cellOrVirtualCell, colIndex) => {
 						const cell = columnVirtualizer
-							? row.getVisibleCells()[(cellOrVirtualCell as VirtualItem).index]
+							? row?.getVisibleCells?.()?.[
+									(cellOrVirtualCell as VirtualItem).index
+							  ]
 							: (cellOrVirtualCell as Table_Cell)
 						if (cell.getIsPlaceholder() && !isSummaryRow) {
 							return null

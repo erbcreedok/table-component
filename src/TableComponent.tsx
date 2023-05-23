@@ -1125,9 +1125,11 @@ export type TableComponentProps<TData extends Record<string, any> = {}> = Omit<
 	rowNumberMode?: 'original' | 'static'
 	selectAllMode?: 'all' | 'page'
 	state?: Partial<Table_TableState<TData>>
-	summaryRowCell?: (
-		...args: Array<Table_ColumnDef<TData> | any>
-	) => React.ReactNode
+	summaryRowCell?: (args: {
+		table: TableInstance<TData>
+		column: Table_ColumnDef<TData>
+		defaultStyle: Record<string, any>
+	}) => React.ReactNode
 	enableColumnFiltersSelection?: boolean
 	subFilterSelection?: ReactNode
 	columnVirtualizerInstanceRef?: MutableRefObject<Virtualizer<

@@ -10,6 +10,7 @@ import { GroupedCellBase } from '../../body/GroupedCellBase'
 import { Table_DisplayColumnIdsArray } from '../../column.utils'
 import MuiTableCell from '@mui/material/TableCell'
 import LinearProgress from '@mui/material/LinearProgress'
+import { useFilterControls } from '../../TableFiltersBar/filter-bar-hooks/useFilterControls'
 
 interface DetailedPannelProps {
 	userId: string
@@ -241,13 +242,11 @@ export const PeopleTable: Story<TableComponentProps> = () => {
 									: { borderRight: '1px solid #FED7D7' }),
 							}
 						}
-
-					
 					},
 				},
 				riskOfLeaving: {
 					executeStyleCondition: ({ cell, isCurrentCellClicked }) => {
-						const cellValue = cell.getValue();
+						const cellValue = cell.getValue()
 
 						if (cellValue === 'High') {
 							return {
@@ -271,8 +270,8 @@ export const PeopleTable: Story<TableComponentProps> = () => {
 					},
 				},
 				mood: {
-					executeStyleCondition: ({cell, isCurrentCellClicked}) => {
-						const cellValue = cell.getValue();
+					executeStyleCondition: ({ cell, isCurrentCellClicked }) => {
+						const cellValue = cell.getValue()
 
 						if (cellValue === 'Netral') {
 							return {
@@ -296,8 +295,8 @@ export const PeopleTable: Story<TableComponentProps> = () => {
 					},
 				},
 				lastTalk: {
-					executeStyleCondition: ({cell, isCurrentCellClicked}) => {
-						const cellValue = cell.getValue();
+					executeStyleCondition: ({ cell, isCurrentCellClicked }) => {
+						const cellValue = cell.getValue()
 
 						const isDateInPastForMonth = (date) => {
 							const monthAgo = new Date()
@@ -317,8 +316,8 @@ export const PeopleTable: Story<TableComponentProps> = () => {
 					},
 				},
 				totalWorkload: {
-					executeStyleCondition: ({cell, isCurrentCellClicked}) => {
-						const cellValue = cell.getValue();
+					executeStyleCondition: ({ cell, isCurrentCellClicked }) => {
+						const cellValue = cell.getValue()
 
 						if (cellValue === '100%') {
 							return {
@@ -343,9 +342,6 @@ export const PeopleTable: Story<TableComponentProps> = () => {
 				},
 			}}
 			columns={columns}
-			summaryRowCellValue={(column) => (
-				<SummaryRowExampleCellValue column={column} />
-			)}
 			// @ts-ignore
 			initialState={{ expanded: false, showColumnFilters: true }}
 			renderDetailPanel={({ row, ...rest }) => (
