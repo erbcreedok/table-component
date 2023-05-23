@@ -1128,7 +1128,7 @@ export type TableComponentProps<TData extends Record<string, any> = {}> = Omit<
 	summaryRowCell?: (args: {
 		table: TableInstance<TData>
 		column: Table_ColumnDef<TData>
-		defaultStyle: Record<string, any>
+		defaultStyles: Record<string, any>
 	}) => React.ReactNode
 	enableColumnFiltersSelection?: boolean
 	subFilterSelection?: ReactNode
