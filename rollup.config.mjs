@@ -19,6 +19,7 @@ export default [
       '@tanstack/react-virtual',
       '@tanstack/table-core',
       'react',
+      'react-resize-detector',
     ],
     input: './src/index.tsx',
     output: [

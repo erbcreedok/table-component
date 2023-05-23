@@ -1,5 +1,6 @@
-import React from 'react'
+import React, { useCallback, useRef, useState } from 'react'
 import Box from '@mui/material/Box'
+import { useResizeDetector } from 'react-resize-detector'
 
 import type { TableInstance } from '../index'
 
@@ -16,7 +17,7 @@ interface Props<TData extends Record<string, any> = {}> {
 	enableFiltering?: boolean
 	enableSettings?: boolean
 	enablePreset?: boolean
-	enableCaption?: boolean
+	enableCaption?: boolean | 'auto'
 }
 
 export const TableToolbar = <TData extends Record<string, any> = {}>({
@@ -26,18 +27,37 @@ export const TableToolbar = <TData extends Record<string, any> = {}>({
 	enableFiltering = true,
 	enableGrouping = true,
 	enablePreset = true,
-	enableCaption = true,
+	enableCaption = 'auto',
 }: Props<TData>) => {
 	const {
 		options: { renderToolbarInternalActions },
 	} = table
+	const [isShort, setIsShort] = useState(!enableCaption)
+	const ref = useRef<HTMLDivElement>(null)
+	const onResize = useCallback((width) => {
+		setIsShort(
+			Math.round(width) < Math.round(ref.current?.scrollWidth ?? Infinity)
+		)
+	}, [])
+	useResizeDetector({
+		onResize,
+		targetRef: ref,
+		refreshMode: 'debounce',
+		handleHeight: false,
+		handleWidth: enableCaption === 'auto',
+	})
+
+	const computedEnableCaption =
+		enableCaption === 'auto' ? !isShort : enableCaption
 
 	return (
 		<Box
+			ref={ref}
 			sx={{
 				alignItems: 'center',
 				display: 'flex',
 				zIndex: 3,
+				maxWidth: '100%',
 			}}
 		>
 			{renderToolbarInternalActions?.({
@@ -45,16 +65,28 @@ export const TableToolbar = <TData extends Record<string, any> = {}>({
 			}) ?? (
 				<>
 					{enableGrouping && (
-						<GroupingButton enableCaption={enableCaption} table={table} />
+						<GroupingButton
+							enableCaption={computedEnableCaption}
+							table={table}
+						/>
 					)}
 					{enableSorting && (
-						<SortingButton enableCaption={enableCaption} table={table} />
+						<SortingButton
+							enableCaption={computedEnableCaption}
+							table={table}
+						/>
 					)}
 					{enableFiltering && (
-						<FiltersButton enableCaption={enableCaption} table={table} />
+						<FiltersButton
+							enableCaption={computedEnableCaption}
+							table={table}
+						/>
 					)}
 					{enableSettings && (
-						<SettingsButton enableCaption={enableCaption} table={table} />
+						<SettingsButton
+							enableCaption={computedEnableCaption}
+							table={table}
+						/>
 					)}
 					{enablePreset && <PresetButton table={table} />}
 				</>
