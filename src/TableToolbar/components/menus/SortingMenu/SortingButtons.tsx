@@ -3,8 +3,8 @@ import Box from '@mui/material/Box'
 import { IconButton, SxProps } from '@mui/material'
 
 import { Table_Column } from '../../../../TableComponent'
-import { AscIcon } from '../../icons/AscIcon'
-import { DescIcon } from '../../icons/DescIcon'
+import { AscIcon } from '../../../../icons/AscIcon'
+import { DescIcon } from '../../../../icons/DescIcon'
 import { Colors, Text } from '../../../../components/styles'
 
 interface Props<TData extends Record<string, any> = {}> {

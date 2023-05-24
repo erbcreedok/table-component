@@ -216,5 +216,5 @@ export const getPeopleMember = (user?: any) => ({
 	),
 	totalWorkload: getRandomFromArray(totalWorkload),
 })
-export const getSeparatedPeopleMembers = (length = 200): any =>
+export const getSeparatedPeopleMembers = (length = 200): ReturnType<typeof getPeopleMember>[] =>
 	[...Array(length)].map(() => getPeopleMember(getRandomFromArray(savedUsers)))

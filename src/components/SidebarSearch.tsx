@@ -2,8 +2,8 @@ import styled from '@emotion/styled'
 import { Divider, TextField, InputAdornment, IconButton } from '@mui/material'
 import React, { ComponentProps, useEffect, useState } from 'react'
 
-import { SearchIcon } from '../TableToolbar/components/icons/SearchIcon'
-import { CloseIcon } from '../TableToolbar/components/icons/CloseIcon'
+import { CloseIcon } from '../icons/CloseIcon'
+import { SearchIcon } from '../icons/SearchIcon'
 
 import { DEFAULT_FONT_FAMILY, Text } from './styles'
 

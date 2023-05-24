@@ -2,7 +2,7 @@ import styled from '@emotion/styled'
 import { Box, Divider, IconButton } from '@mui/material'
 import React, { ReactElement } from 'react'
 
-import { CloseIcon } from '../TableToolbar/components/icons/CloseIcon'
+import { CloseIcon } from '../icons/CloseIcon'
 
 import { DEFAULT_FONT_FAMILY, Text } from './styles'
 

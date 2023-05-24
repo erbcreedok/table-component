@@ -2,8 +2,8 @@ import React, { FC, useEffect, SyntheticEvent } from 'react'
 import { Divider, IconButton, InputAdornment, TextField } from '@mui/material'
 import styled from '@emotion/styled'
 
-import { CloseIcon } from '../../TableToolbar/components/icons/CloseIcon'
-import { SearchIcon } from '../../TableToolbar/components/icons/SearchIcon'
+import { CloseIcon } from '../../icons/CloseIcon'
+import { SearchIcon } from '../../icons/SearchIcon'
 import { DEFAULT_FONT_FAMILY, Text } from '../../components/styles'
 
 type DropdownContentSearchProps = {

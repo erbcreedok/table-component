@@ -10,8 +10,8 @@ import {
 
 import { Flex } from '../components/Flex'
 import { Table_Column, Table_Header, TableInstance } from '../TableComponent'
-import { HeaderSearchIcon } from '../TableToolbar/components/icons/HeaderSearchIcon'
-import { CloseIcon } from '../TableToolbar/components/icons/CloseIcon'
+import { HeaderSearchIcon } from '../icons/HeaderSearchIcon'
+import { CloseIcon } from '../icons/CloseIcon'
 import {
 	Colors,
 	DEFAULT_FONT_FAMILY,

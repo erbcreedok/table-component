@@ -4,7 +4,7 @@ import { Box, MenuItem, Typography } from '@mui/material'
 import { GrabHandleButton } from '../../../buttons/GrabHandleButton'
 import { SortingItemBoxStyled } from '../SortingChip.styled'
 import { SortingButtons } from '../../../TableToolbar/components/menus/SortingMenu/SortingButtons'
-import { DeleteIcon } from '../../../TableToolbar/components/icons/DeleteIcon'
+import { DeleteIcon } from '../../../icons/DeleteIcon'
 
 interface ListItemSortProps {
 	column: any

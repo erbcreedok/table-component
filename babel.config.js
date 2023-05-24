@@ -21,6 +21,7 @@ module.exports = function(api) {
                 },
             ],
             ['@babel/proposal-class-properties', { loose: true }],
+            ['@emotion/babel-plugin'],
         ],
     };
 };

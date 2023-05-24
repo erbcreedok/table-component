@@ -3,10 +3,10 @@ import { Box } from '@mui/material'
 
 import { TableInstance } from 'src'
 
-import { SortIcon } from '../../TableToolbar/components/icons/SortIcon'
+import { SortIcon } from '../../icons/SortIcon'
 import { CommonChipWithPopover } from '../CommonChipWithPopover/CommonChipWithPopover'
-import { AscIcon } from '../../TableToolbar/components/icons/AscIcon'
-import { DescIcon } from '../../TableToolbar/components/icons/DescIcon'
+import { AscIcon } from '../../icons/AscIcon'
+import { DescIcon } from '../../icons/DescIcon'
 import { DropdownContentHeader } from '../DropdownContent/DropdownContentHeader'
 import { DropdownContentSearch } from '../DropdownContent/DropdownContentSearch'
 import { useSortingControls } from '../filter-bar-hooks/useSortingControls'
@@ -127,18 +127,17 @@ export const SortingChip = <TData extends Record<string, any> = {}>(
 
 	return (
 		<CommonChipWithPopover
+			table={table}
 			setIsOpen={setIsOpen}
 			text={getSortingChipText()}
 			icon={
-				<>
-					{sortedList?.length > 1 ? (
-						<SortIcon />
-					) : firstSorting?.desc ? (
-						<DescIcon fill={iconColor} />
-					) : (
-						<AscIcon fill={iconColor} />
-					)}
-				</>
+				sortedList?.length > 1 ? (
+					<SortIcon />
+				) : firstSorting?.desc ? (
+					<DescIcon fill={iconColor} />
+				) : (
+					<AscIcon fill={iconColor} />
+				)
 			}
 			dropdownContent={DropdownContent}
 		/>

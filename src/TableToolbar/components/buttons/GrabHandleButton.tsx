@@ -2,7 +2,7 @@ import React, { DragEventHandler } from 'react'
 import IconButton from '@mui/material/IconButton'
 import type { IconButtonProps } from '@mui/material/IconButton'
 
-import { DragIcon } from '../icons/DragIcon'
+import { DragIcon } from '../../../icons/DragIcon'
 
 interface Props {
 	iconButtonProps?: IconButtonProps

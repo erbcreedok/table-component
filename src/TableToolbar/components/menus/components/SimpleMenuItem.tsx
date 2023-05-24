@@ -13,7 +13,7 @@ import IconButton from '@mui/material/IconButton'
 import type { Table_Column } from '../../../../'
 import { ButtonLink } from '../../../../components/ButtonLink'
 import { Colors, Text } from '../../../../components/styles'
-import { DeleteIcon } from '../../icons/DeleteIcon'
+import { DeleteIcon } from '../../../../icons/DeleteIcon'
 import { SortingButtons } from '../SortingMenu/SortingButtons'
 import { GrabHandleButton } from '../../buttons/GrabHandleButton'
 
@@ -24,7 +24,6 @@ interface Props<TData extends Record<string, any> = {}> {
 	enableDrag?: boolean
 	hoveredColumn: Table_Column<TData> | null
 	setHoveredColumn: Dispatch<SetStateAction<Table_Column<TData> | null>>
-	withClickOnItem?: boolean
 	onColumnOrderChange(
 		draggedColumn: Table_Column<TData>,
 		targetColumn: Table_Column<TData>
@@ -36,7 +35,6 @@ export const SimpleMenuItem = <TData extends Record<string, any> = {}>({
 	isSorting = false,
 	isCompact = false,
 	enableDrag = false,
-	withClickOnItem = false,
 	onItemClick,
 	column,
 	hoveredColumn,

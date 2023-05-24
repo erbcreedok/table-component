@@ -1,7 +1,9 @@
+import styled from '@emotion/styled'
 import React, { useEffect, useRef, useState } from 'react'
 import Box from '@mui/material/Box'
-import { Typography } from '@mui/material'
+import { ButtonBase } from '@mui/material'
 
+import { Colors } from '../components/styles'
 import type { TableInstance } from '../index'
 
 import { GroupingChip } from './GroupingChip/GroupingChip'
@@ -14,8 +16,34 @@ import { CommonChipWithPopover } from './CommonChipWithPopover/CommonChipWithPop
 interface Props<TData extends Record<string, any> = {}> {
 	table: TableInstance<TData>
 }
+const ClearAllButton = styled(ButtonBase)`
+	color: ${Colors.LightBlue};
+	font-size: 12px;
+	visibility: hidden;
+	margin-left: 9px;
+`
+const Wrapper = styled(Box)<{ hidden?: boolean }>`
+	align-items: center;
+	display: flex;
+	z-index: 3;
+	padding: 12px;
+	gap: 6px;
+	${({ hidden }) => hidden && `display: none;`}
+	${ClearAllButton} {
+		visibility: hidden;
+	}
+	&:hover ${ClearAllButton} {
+		visibility: visible;
+	}
+`
+const Line = styled(Box)`
+	width: 1px;
+	height: 24px;
+	margin: 0 3px;
+	background-color: ${Colors.gray};
+`
 
-export const TableFiltersBar = <TData extends Record<string, any> = {}>({
+export const TableStatusBar = <TData extends Record<string, any> = {}>({
 	table,
 }: Props<TData>) => {
 	const { getState, resetSorting, resetColumnFilters } = table
@@ -41,7 +69,8 @@ export const TableFiltersBar = <TData extends Record<string, any> = {}>({
 	const isGroupingExists = Boolean(grouping?.length)
 	const isSortingExists = Boolean(sorting?.length)
 	const isFiltersExists = Boolean(columnFilters?.length)
-	const isShowClearAll = isGroupingExists || isSortingExists || isFiltersExists
+	const isAnyChipVisible =
+		isGroupingExists || isSortingExists || isFiltersExists
 
 	useEffect(() => {
 		if (!barRef?.current || !columnFilters.length) {
@@ -68,15 +97,15 @@ export const TableFiltersBar = <TData extends Record<string, any> = {}>({
 		const totalElementsWidth =
 			240 * elements.length + groupingWidth + sortingWidth + RESERVED_WIDTH
 
-		const conatinerWidth = barRef?.current?.getBoundingClientRect().width
+		const containerWidth = barRef?.current?.getBoundingClientRect().width
 
-		if (totalElementsWidth > conatinerWidth) {
+		if (totalElementsWidth > containerWidth) {
 			let total = 0
 			const hidden: Element[] = []
 			const visible: Element[] = []
 
 			elements.forEach((element) => {
-				if (total > conatinerWidth - 860) {
+				if (total > containerWidth - 860) {
 					hidden.push(element)
 
 					total += 240
@@ -98,25 +127,20 @@ export const TableFiltersBar = <TData extends Record<string, any> = {}>({
 	}, [columnFilters, table])
 
 	return (
-		<Box
-			ref={barRef}
-			sx={{
-				alignItems: 'center',
-				display: 'flex',
-				zIndex: 3,
-				padding: '12px',
-			}}
-		>
+		<Wrapper ref={barRef} hidden={!isAnyChipVisible}>
 			<GroupingChip table={table} />
 
 			<SortingChip table={table} />
 
-			{visibleElements.map((element) => {
-				return element
-			})}
+			{isGroupingExists && isSortingExists && visibleElements.length > 0 && (
+				<Line />
+			)}
+
+			{visibleElements}
 
 			{Boolean(hiddenElements.length) && (
 				<CommonChipWithPopover
+					table={table}
 					text={`+${hiddenElements.length} more`}
 					dropdownContent={
 						<div style={{ padding: 12 }}>
@@ -130,14 +154,7 @@ export const TableFiltersBar = <TData extends Record<string, any> = {}>({
 				/>
 			)}
 
-			{isShowClearAll && (
-				<Typography
-					onClick={handleClearAll}
-					style={{ color: '#009ECC', cursor: 'pointer' }}
-				>
-					Clear all
-				</Typography>
-			)}
-		</Box>
+			<ClearAllButton onClick={handleClearAll}>Clear all</ClearAllButton>
+		</Wrapper>
 	)
 }

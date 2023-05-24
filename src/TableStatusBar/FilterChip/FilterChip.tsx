@@ -1,5 +1,5 @@
-import { FC, useEffect, useState } from 'react'
-import { Box, Typography } from '@mui/material'
+import { FC, useState } from 'react'
+import { Box } from '@mui/material'
 
 import { CommonChipWithPopover } from '../CommonChipWithPopover/CommonChipWithPopover'
 import { useFilterControls } from '../filter-bar-hooks/useFilterControls'
@@ -75,7 +75,6 @@ export const FilterChip: FC<FilterChipProps> = ({
 	return (
 		<div>
 			<CommonChipWithPopover
-				textAlignSelf="end"
 				text={
 					currentFilterValues?.reduce?.(
 						(acc, label, index) => (index === 0 ? label : `${acc}, ${label}`),
@@ -84,6 +83,7 @@ export const FilterChip: FC<FilterChipProps> = ({
 				}
 				title={`${currentFilterHeader}: `}
 				dropdownContent={DropdownContent}
+				table={table}
 			/>
 		</div>
 	)

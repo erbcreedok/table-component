@@ -13,7 +13,7 @@ import {
 	Table_Row,
 	TableInstance,
 } from '../../TableComponent'
-import { AnalyticsIcon } from '../../TableToolbar/components/icons/AnalyticsIcon'
+import { AnalyticsIcon } from '../../icons/AnalyticsIcon'
 import { getNestedProp } from '../../utils/getNestedProp'
 import { TeamMember } from '../types/TeamMember'
 import { Colors } from './constants'

@@ -1,7 +1,7 @@
 import { FC } from 'react'
 import { Typography } from '@mui/material'
 
-import { useGroupingControls } from '../../../TableFiltersBar/filter-bar-hooks/useGroupingControls'
+import { useGroupingControls } from '../../filter-bar-hooks/useGroupingControls'
 import { ItemBoxSearchedGroupingStyled } from '../GroupingChip.styled'
 import { ButtonLink } from '../../../components/ButtonLink'
 

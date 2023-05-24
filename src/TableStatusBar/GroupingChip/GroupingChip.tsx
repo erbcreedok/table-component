@@ -1,7 +1,6 @@
 import { Box } from '@mui/material'
-import React, { FC, useEffect, useState } from 'react'
+import React, { FC, useEffect, useMemo, useState } from 'react'
 
-import { GroupIcon } from '../../TableToolbar/components/icons/GroupIcon'
 import { CommonChipWithPopover } from '../CommonChipWithPopover/CommonChipWithPopover'
 import { DropdownContentHeader } from '../DropdownContent/DropdownContentHeader'
 import { DropdownContentSearch } from '../DropdownContent/DropdownContentSearch'
@@ -17,7 +16,12 @@ type GroupingChipProps = {
 export const GroupingChip: FC<GroupingChipProps> = (props) => {
 	const { table } = props
 
-	const { getState } = table
+	const {
+		getState,
+		options: {
+			icons: { GroupingIcon },
+		},
+	} = table
 
 	const { grouping } = getState()
 	const isGroupingExists = Boolean(grouping?.length)
@@ -75,18 +79,27 @@ export const GroupingChip: FC<GroupingChipProps> = (props) => {
 		}
 	}, [isGroupingExists])
 
+	const groupingChipText = useMemo(() => {
+		if (groupedList?.length === 1) {
+			return groupedList[0]?.columnDef?.header ?? ''
+		}
+
+		if (groupedList?.length > 1) {
+			return `${groupedList.length} groups`
+		}
+
+		return ''
+	}, [groupedList])
+
 	if (!isGroupingExists) {
 		return <></>
 	}
 
 	return (
 		<CommonChipWithPopover
-			icon={<GroupIcon />}
-			text={groupedList.reduce(
-				(acc, { columnDef: { header } }, index) =>
-					index === 0 ? header : `${acc}, ${header}`,
-				''
-			)}
+			table={table}
+			icon={<GroupingIcon />}
+			text={groupingChipText}
 			dropdownContent={DropdownContent}
 		/>
 	)

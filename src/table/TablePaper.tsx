@@ -1,11 +1,10 @@
 import React, { FC } from 'react'
 import Paper from '@mui/material/Paper'
 
-// import { TopToolbar } from '../toolbar/TopToolbar';
 import { BottomToolbar } from '../toolbar/BottomToolbar'
 import type { TableInstance } from '..'
-import { TableToolbar } from '../TableToolbar/TableToolbar'
-import { TableFiltersBar } from '../TableFiltersBar/TableFiltersBar'
+import { TableToolbar } from '../TableToolbar'
+import { TableStatusBar } from '../TableStatusBar/TableStatusBar'
 
 import { TableContainer } from './TableContainer'
 
@@ -71,7 +70,7 @@ export const TablePaper: FC<Props> = ({ table }) => {
 							<>
 								<TableToolbar table={table} />
 
-								<TableFiltersBar table={table} />
+								<TableStatusBar table={table} />
 							</>
 					  ))}
 			<TableContainer table={table} />

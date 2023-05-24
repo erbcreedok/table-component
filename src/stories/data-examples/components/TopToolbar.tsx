@@ -9,8 +9,8 @@ import Chip from '@mui/material/Chip';
 import { IconsColor } from '../../../components/styles';
 import { SortedDescIcon } from './SortedDescIcon';
 import { SortedAscIcon } from './SortedAscIcon';
-import { TableToolbar } from '../../../TableToolbar/TableToolbar';
-import { GroupIcon } from '../../../TableToolbar/components/icons/GroupIcon'
+import { TableToolbar } from '../../../TableToolbar';
+import { GroupIcon } from '../../../icons/GroupIcon'
 
 
 export const commonToolbarStyles = ({ theme }: { theme: Theme }) => ({

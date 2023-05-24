@@ -9,6 +9,7 @@ import {
 import { Table_DisplayColumnIdsArray } from '../../column.utils'
 import MuiTableCell from '@mui/material/TableCell'
 import LinearProgress from '@mui/material/LinearProgress'
+import { getTablePresetProps } from '../utils/getTablePresetProps'
 
 interface DetailedPannelProps {
 	userId: string
@@ -112,7 +113,7 @@ const SummaryRowExampleCellValue = (props) => {
 		</MuiTableCell>
 	)
 }
-	
+
 interface SubFilterItemProps {
 	value: string
 	isChecked: boolean
@@ -364,6 +365,7 @@ export const PeopleTable: Story<TableComponentProps> = () => {
 					/>
 				)}
 				hideDefaultExpandIcon
+				{...getTablePresetProps('PeoplePresets')}
 			/>
 		</>
 	)

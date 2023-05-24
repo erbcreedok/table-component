@@ -114,7 +114,6 @@ export const SortingMenu = <TData extends Record<string, any> = {}>({
 								onColumnOrderChange={onColumnOrderChanged}
 								setHoveredColumn={setHoveredColumn}
 								isSorting
-								withClickOnItem
 							/>
 						))
 					) : (
@@ -174,7 +173,6 @@ export const SortingMenu = <TData extends Record<string, any> = {}>({
 								onColumnOrderChange={onColumnOrderChanged}
 								setHoveredColumn={setHoveredColumn}
 								isSorting
-								withClickOnItem
 							/>
 						))}
 				</>

@@ -25,22 +25,22 @@ import RestartAltIcon from '@mui/icons-material/RestartAlt'
 import SaveIcon from '@mui/icons-material/Save'
 import SearchIcon from '@mui/icons-material/Search'
 import SearchOffIcon from '@mui/icons-material/SearchOff'
-// import SortIcon from '@mui/icons-material/Sort';
 import ViewColumnIcon from '@mui/icons-material/ViewColumn'
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff'
 
-import { AnalyticsIcon } from './TableToolbar/components/icons/AnalyticsIcon'
-import { GroupIcon } from './TableToolbar/components/icons/GroupIcon'
-import { HideIcon } from './TableToolbar/components/icons/HideIcon'
-import { SortAscIcon } from './TableToolbar/components/icons/SortAscIcon'
-import { SortDescIcon } from './TableToolbar/components/icons/SortDescIcon'
-import { SortIcon } from './TableToolbar/components/icons/SortIcon'
-import { FiltersIcon } from './TableToolbar/components/icons/FiltersIcon'
-import { SettingsIcon } from './TableToolbar/components/icons/SettingsIcon'
-import { PencilIcon } from './TableToolbar/components/icons/PencilIcon'
-import { TrashIcon } from './TableToolbar/components/icons/TrashIcon'
-import { ClearIcon } from './TableToolbar/components/icons/ClearIcon'
-import { ExpandIcon } from './TableToolbar/components/icons/ExpandIcon'
+import { AnalyticsIcon } from './icons/AnalyticsIcon'
+import { GroupIcon } from './icons/GroupIcon'
+import { GroupingIcon } from './icons/GroupingIcon'
+import { HideIcon } from './icons/HideIcon'
+import { SortAscIcon } from './icons/SortAscIcon'
+import { SortDescIcon } from './icons/SortDescIcon'
+import { SortIcon } from './icons/SortIcon'
+import { FiltersIcon } from './icons/FiltersIcon'
+import { SettingsIcon } from './icons/SettingsIcon'
+import { PencilIcon } from './icons/PencilIcon'
+import { TrashIcon } from './icons/TrashIcon'
+import { ClearIcon } from './icons/ClearIcon'
+import { ExpandIcon } from './icons/ExpandIcon'
 
 export interface Table_Icons {
 	AnalyticsIcon: any
@@ -65,6 +65,7 @@ export interface Table_Icons {
 	FullscreenExitIcon: any
 	FullscreenIcon: any
 	GroupIcon: any
+	GroupingIcon: any
 	HideIcon: any
 	MoreHorizIcon: any
 	MoreVertIcon: any
@@ -124,6 +125,7 @@ export const Default_Icons: Table_Icons = {
 	ViewColumnIcon,
 	VisibilityOffIcon,
 	GroupIcon,
+	GroupingIcon,
 	FiltersIcon,
 	SettingsIcon,
 	HideIcon,

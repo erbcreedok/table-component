@@ -1,4 +1,3 @@
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 import React, {
 	DragEvent,
 	FC,
@@ -48,6 +47,7 @@ export const TableHeadCell: FC<Props> = ({
 			layoutMode,
 			muiTableHeadCellProps,
 			uppercaseHeader,
+			icons: { ExpandMoreIcon },
 		},
 		refs: { tableHeadCellRefs },
 		setHoveredColumn,

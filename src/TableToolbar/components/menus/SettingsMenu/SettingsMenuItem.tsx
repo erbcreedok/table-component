@@ -20,8 +20,8 @@ import {
 	DEFAULT_FONT_FAMILY,
 	Text,
 } from '../../../../components/styles'
-import { LockIcon } from '../../icons/LockIcon'
-import { GroupIcon } from '../../icons/GroupIcon'
+import { LockIcon } from '../../../../icons/LockIcon'
+import { GroupIcon } from '../../../../icons/GroupIcon'
 
 interface Props<TData extends Record<string, any> = {}> {
 	allColumns: Array<Table_Column<TData>>

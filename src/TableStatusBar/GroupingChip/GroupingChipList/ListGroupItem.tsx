@@ -3,7 +3,7 @@ import { MenuItem, Typography } from '@mui/material'
 
 import { GrabHandleButton } from '../../../buttons/GrabHandleButton'
 import { ItemBoxGroupingStyled } from '../GroupingChip.styled'
-import { DeleteIcon } from '../../../TableToolbar/components/icons/DeleteIcon'
+import { DeleteIcon } from '../../../icons/DeleteIcon'
 
 export const ListGroupItem: FC<any> = ({
 	title,

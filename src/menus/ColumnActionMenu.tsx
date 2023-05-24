@@ -4,10 +4,9 @@ import ListItemIcon from '@mui/material/ListItemIcon'
 import Menu from '@mui/material/Menu'
 import MenuItem from '@mui/material/MenuItem'
 import React, { FC, useEffect, useState } from 'react'
-import { Button, Checkbox, Typography } from '@mui/material'
 
 import type { Table_Header, TableInstance } from '..'
-import { useFilterControls } from '../TableFiltersBar/filter-bar-hooks/useFilterControls'
+import { useFilterControls } from '../TableStatusBar/filter-bar-hooks/useFilterControls'
 
 import { ShowHideColumnsMenu } from './ShowHideColumnsMenu'
 

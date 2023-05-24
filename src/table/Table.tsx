@@ -157,13 +157,13 @@ export const Table: FC<Props> = ({ table }) => {
 					: (tableProps?.sx as any)),
 			})}
 		>
+			{enableTableHead && <TableHeadInvisible table={table} />}
 			{enableSummaryRow && summaryRowCell && (
 				/* eslint-disable-next-line @typescript-eslint/ban-ts-comment */
 				/* @ts-ignore */
 				<TableBodyRow isSummaryRow {...summaryRowProps} />
 			)}
 			{enableTableHead && !hideTableHead && <TableHead {...props} />}
-			{hideTableHead && <TableHeadInvisible table={table} />}
 			{memoMode === 'table-body' ? (
 				// eslint-disable-next-line react/jsx-pascal-case
 				<Memo_TableBody columnVirtualizer={columnVirtualizer} {...props} />

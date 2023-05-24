@@ -4,7 +4,7 @@ import type { IconButtonProps } from '@mui/material/IconButton'
 import Tooltip from '@mui/material/Tooltip'
 
 import type { TableInstance } from '..'
-import { DragIcon } from '../TableToolbar/components/icons/DragIcon'
+import { DragIcon } from '../icons/DragIcon'
 
 interface Props<TData extends Record<string, any> = {}> {
 	iconButtonProps?: IconButtonProps
