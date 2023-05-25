@@ -1,6 +1,7 @@
 import React, {
 	Dispatch,
 	DragEvent,
+	MouseEvent,
 	SetStateAction,
 	useRef,
 	useState,
@@ -45,11 +46,12 @@ export const SimpleMenuItem = <TData extends Record<string, any> = {}>({
 	const menuItemRef = useRef<HTMLElement>(null)
 	const [isDragging, setIsDragging] = useState(false)
 
-	const handleItemClick = () => {
-		// TODO: to think later about general handler on item click
+	const handleItemClick = (e: MouseEvent<HTMLElement | HTMLButtonElement>) => {
 		if (onItemClick) {
 			onItemClick()
 		}
+
+		e.stopPropagation()
 	}
 
 	const handleDragStart = (e: DragEvent<HTMLButtonElement>) => {
@@ -169,10 +171,7 @@ export const SimpleMenuItem = <TData extends Record<string, any> = {}>({
 						</>
 					) : (
 						!isCompact && (
-							<ButtonLink
-								onClick={column.getToggleGroupingHandler()}
-								style={{ fontWeight: 600 }}
-							>
+							<ButtonLink onClick={handleItemClick} style={{ fontWeight: 600 }}>
 								Add Item +
 							</ButtonLink>
 						)

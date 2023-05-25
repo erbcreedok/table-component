@@ -86,7 +86,7 @@ export const GroupingMenu = <TData extends Record<string, any> = {}>({
 		}
 		setSearchList(
 			value.length
-				? getAllColumns().filter((col) =>
+				? allColumns.filter((col) =>
 						col.columnDef.header.toLowerCase().includes(value)
 				  )
 				: []
@@ -121,17 +121,18 @@ export const GroupingMenu = <TData extends Record<string, any> = {}>({
 			<Box sx={{ marginTop: '12px' }}>
 				{isSearchActive &&
 					(searchList.length ? (
-						searchList.map((column) => (
-							<SimpleMenuItem
-								column={column}
-								key={column.id}
-								hoveredColumn={hoveredColumn}
-								onColumnOrderChange={onColumnOrderChanged}
-								setHoveredColumn={setHoveredColumn}
-								onItemClick={column.getToggleGroupingHandler()}
-								isSorting
-							/>
-						))
+						searchList
+							.filter((column) => !column.getIsGrouped())
+							.map((column) => (
+								<SimpleMenuItem
+									column={column}
+									key={column.id}
+									hoveredColumn={hoveredColumn}
+									onColumnOrderChange={onColumnOrderChanged}
+									setHoveredColumn={setHoveredColumn}
+									onItemClick={column.getToggleGroupingHandler()}
+								/>
+							))
 					) : (
 						<Typography
 							sx={{ display: 'flex', justifyContent: 'center', mt: '20px' }}
@@ -140,7 +141,9 @@ export const GroupingMenu = <TData extends Record<string, any> = {}>({
 						</Typography>
 					))}
 
-				{Boolean(groupedList.length && !searchList.length) && (
+				{Boolean(
+					groupedList.length && !searchList.length && !isSearchActive
+				) && (
 					<>
 						<Box
 							sx={{
@@ -172,6 +175,7 @@ export const GroupingMenu = <TData extends Record<string, any> = {}>({
 				<>
 					{!!groupedList.length &&
 						!searchList.length &&
+						!isSearchActive &&
 						!!nonGroupedList.length && (
 							<ListTitle sx={{ padding: '0 24px', margin: '20px 0' }}>
 								Columns
