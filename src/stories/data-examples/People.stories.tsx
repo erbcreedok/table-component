@@ -1,16 +1,14 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Meta, Story } from '@storybook/react'
-import TableComponent, { TableComponentProps, Table_ColumnDef } from '../../'
-import { Box, Tooltip, Button, Checkbox, Typography } from '@mui/material'
+import TableComponent, { TableComponentProps, Sidebar } from '../../'
+import { Box, Button, Checkbox, Typography } from '@mui/material'
 import {
 	getPeopleColumns,
 	getSeparatedPeopleMembers,
 } from '../utils/getPeopleColumns'
-import { GroupedCellBase } from '../../body/GroupedCellBase'
 import { Table_DisplayColumnIdsArray } from '../../column.utils'
 import MuiTableCell from '@mui/material/TableCell'
 import LinearProgress from '@mui/material/LinearProgress'
-import { useFilterControls } from '../../TableFiltersBar/filter-bar-hooks/useFilterControls'
 
 interface DetailedPannelProps {
 	userId: string
@@ -147,211 +145,227 @@ const columns = getPeopleColumns()
 const data = getSeparatedPeopleMembers()
 
 export const PeopleTable: Story<TableComponentProps> = () => {
+	const [isSidebarOpen, setIsSidebarOpen] = useState(false)
+	const columnsWithCellActions = columns.map((column) => {
+		if (column.accessorKey === 'riskOfLeaving') {
+			return ({
+				...column,
+				cellAction: ({ row, table }) => setIsSidebarOpen(true)
+			})
+		}
+		return column
+	})
+
 	return (
-		<TableComponent
-			data={data}
-			// enableDetailedPanel
-			enableColumnFilters
-			enablePinning
-			enableColumnFiltersSelection
-			// enableStickyHeader
-			subFilterSelection={(props) => {
-				const {
-					selectedFilters,
-					filterValues,
+		<>
+			<Sidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} withHeader headerTitle="Sidebar title"></Sidebar>
+			<TableComponent
+				data={data}
+				// enableExpanding
+				// manualExpanding
+				// enableDetailedPanel
+				enableColumnFilters
+				enablePinning
+				enableColumnFiltersSelection
+				// enableStickyHeader
+				subFilterSelection={(props) => {
+					const {
+						selectedFilters,
+						filterValues,
 
-					onCheckFilter,
-					onCheckAllFilters,
-					onApplyFilters,
-				} = props
+						onCheckFilter,
+						onCheckAllFilters,
+						onApplyFilters,
+					} = props
 
-				return (
-					<div style={{ minWidth: 245, padding: '0 15px' }}>
-						<Typography
-							variant="body2"
-							color="#303240"
-							style={{ fontWeight: 600 }}
-						>
-							Filters
-						</Typography>
-
-						<Box>
-							<Box
-								sx={{
-									borderBottom: '1px solid #E1E3EB',
-									paddingBottom: '15px',
-								}}
+					return (
+						<div style={{ minWidth: 245, padding: '0 15px' }}>
+							<Typography
+								variant="body2"
+								color="#303240"
+								style={{ fontWeight: 600 }}
 							>
-								<SubFilterItem
-									value="Select All"
-									onClick={onCheckAllFilters}
-									isChecked={selectedFilters.length === filterValues.length}
-								/>
+								Filters
+							</Typography>
+
+							<Box>
+								<Box
+									sx={{
+										borderBottom: '1px solid #E1E3EB',
+										paddingBottom: '15px',
+									}}
+								>
+									<SubFilterItem
+										value="Select All"
+										onClick={onCheckAllFilters}
+										isChecked={selectedFilters.length === filterValues.length}
+									/>
+								</Box>
+
+								{filterValues.map((value) => {
+									return (
+										<SubFilterItem
+											key={value}
+											isChecked={selectedFilters.includes(value)}
+											onClick={() => onCheckFilter(value)}
+											value={value}
+										/>
+									)
+								})}
 							</Box>
 
-							{filterValues.map((value) => {
-								return (
-									<SubFilterItem
-										key={value}
-										isChecked={selectedFilters.includes(value)}
-										onClick={() => onCheckFilter(value)}
-										value={value}
-									/>
-								)
-							})}
-						</Box>
-
-						<Box
-							sx={{
-								borderTop: '1px solid #E1E3EB',
-								display: 'flex',
-								justifyContent: 'flex-end',
-								paddingTop: '10px',
-								marginTop: '15px',
-							}}
-						>
-							<Button
-								type="button"
-								variant="contained"
-								color="primary"
-								onClick={onApplyFilters}
-								sx={{ backgroundColor: '#009ECC', color: '#FFFFFF' }}
+							<Box
+								sx={{
+									borderTop: '1px solid #E1E3EB',
+									display: 'flex',
+									justifyContent: 'flex-end',
+									paddingTop: '10px',
+									marginTop: '15px',
+								}}
 							>
-								Apply
-							</Button>
-						</Box>
-					</div>
-				)
-			}}
-			enableColumnFilterModes
-			summaryRowCell={(props) => <SummaryRowExampleCellValue {...props} />}
-			enableSummaryRow
-			notClickableCells={['member']}
-			detailedRowBackgroundColor={'#fafafc'}
-			enableRowSelection
-			// enableRowVirtualization
-			cellStyleRules={{
-				performance: {
-					executeStyleCondition: ({ cell, isCurrentCellClicked }) => {
-						if (cell.getValue() === 'Meets') {
-							return {
-								backgroundColor: isCurrentCellClicked ? '#fafafc' : '#FEF8F8',
-								color: '#B32424',
-								...(isCurrentCellClicked
-									? { borderBottom: 'none' }
-									: { borderRight: '1px solid #FED7D7' }),
+								<Button
+									type="button"
+									variant="contained"
+									color="primary"
+									onClick={onApplyFilters}
+									sx={{ backgroundColor: '#009ECC', color: '#FFFFFF' }}
+								>
+									Apply
+								</Button>
+							</Box>
+						</div>
+					)
+				}}
+				enableColumnFilterModes
+				summaryRowCell={(props) => <SummaryRowExampleCellValue {...props} />}
+				// enableSummaryRow
+				notClickableCells={['member']}
+				detailedRowBackgroundColor={'#fafafc'}
+				enableRowSelection
+				// enableRowVirtualization
+				cellStyleRules={{
+					performance: {
+						executeStyleCondition: ({ cell, isCurrentCellClicked }) => {
+							if (cell.getValue() === 'Meets') {
+								return {
+									backgroundColor: isCurrentCellClicked ? '#fafafc' : '#FEF8F8',
+									color: '#B32424',
+									...(isCurrentCellClicked
+										? { borderBottom: 'none' }
+										: { borderRight: '1px solid #FED7D7' }),
+								}
 							}
-						}
+						},
 					},
-				},
-				riskOfLeaving: {
-					executeStyleCondition: ({ cell, isCurrentCellClicked }) => {
-						const cellValue = cell.getValue()
+					riskOfLeaving: {
+						executeStyleCondition: ({ cell, isCurrentCellClicked }) => {
+							const cellValue = cell.getValue()
 
-						if (cellValue === 'High') {
-							return {
-								backgroundColor: '#FEF8F8',
-								color: '#B32424',
-								...(isCurrentCellClicked
-									? {}
-									: { borderRight: '1px solid #FED7D7' }),
+							if (cellValue === 'High') {
+								return {
+									backgroundColor: '#FEF8F8',
+									color: '#B32424',
+									...(isCurrentCellClicked
+										? {}
+										: { borderRight: '1px solid #FED7D7' }),
+								}
 							}
-						}
 
-						if (cellValue === 'Leaver') {
-							return {
-								backgroundColor: '#FED7D7',
-								color: '#B32424',
-								...(isCurrentCellClicked
-									? {}
-									: { borderRight: '1px solid #FFAEAE' }),
+							if (cellValue === 'Leaver') {
+								return {
+									backgroundColor: '#FED7D7',
+									color: '#B32424',
+									...(isCurrentCellClicked
+										? {}
+										: { borderRight: '1px solid #FFAEAE' }),
+								}
 							}
-						}
+						},
 					},
-				},
-				mood: {
-					executeStyleCondition: ({ cell, isCurrentCellClicked }) => {
-						const cellValue = cell.getValue()
+					mood: {
+						executeStyleCondition: ({ cell, isCurrentCellClicked }) => {
+							const cellValue = cell.getValue()
 
-						if (cellValue === 'Netral') {
-							return {
-								backgroundColor: '#FEF8F8',
-								color: '#B32424',
-								...(isCurrentCellClicked
-									? {}
-									: { borderRight: '1px solid #FED7D7' }),
+							if (cellValue === 'Netral') {
+								return {
+									backgroundColor: '#FEF8F8',
+									color: '#B32424',
+									...(isCurrentCellClicked
+										? {}
+										: { borderRight: '1px solid #FED7D7' }),
+								}
 							}
-						}
 
-						if (cellValue === 'Demotivated') {
-							return {
-								backgroundColor: '#FEF8F8',
-								color: '#B32424',
-								...(isCurrentCellClicked
-									? {}
-									: { borderRight: '1px solid #FED7D7' }),
+							if (cellValue === 'Demotivated') {
+								return {
+									backgroundColor: '#FEF8F8',
+									color: '#B32424',
+									...(isCurrentCellClicked
+										? {}
+										: { borderRight: '1px solid #FED7D7' }),
+								}
 							}
-						}
+						},
 					},
-				},
-				lastTalk: {
-					executeStyleCondition: ({ cell, isCurrentCellClicked }) => {
-						const cellValue = cell.getValue()
+					lastTalk: {
+						executeStyleCondition: ({ cell, isCurrentCellClicked }) => {
+							const cellValue = cell.getValue()
 
-						const isDateInPastForMonth = (date) => {
-							const monthAgo = new Date()
-							monthAgo.setMonth(monthAgo.getMonth() - 1)
-							return date < monthAgo
-						}
-
-						if (isDateInPastForMonth(cellValue)) {
-							return {
-								backgroundColor: '#FEF8F8',
-								color: '#B32424',
-								...(isCurrentCellClicked
-									? {}
-									: { borderRight: '1px solid #FED7D7' }),
+							const isDateInPastForMonth = (date) => {
+								const monthAgo = new Date()
+								monthAgo.setMonth(monthAgo.getMonth() - 1)
+								return date < monthAgo
 							}
-						}
+
+							if (isDateInPastForMonth(cellValue)) {
+								return {
+									backgroundColor: '#FEF8F8',
+									color: '#B32424',
+									...(isCurrentCellClicked
+										? {}
+										: { borderRight: '1px solid #FED7D7' }),
+								}
+							}
+						},
 					},
-				},
-				totalWorkload: {
-					executeStyleCondition: ({ cell, isCurrentCellClicked }) => {
-						const cellValue = cell.getValue()
+					totalWorkload: {
+						executeStyleCondition: ({ cell, isCurrentCellClicked }) => {
+							const cellValue = cell.getValue()
 
-						if (cellValue === '100%') {
-							return {
-								backgroundColor: '#FEF8F8',
-								color: '#B32424',
-								...(isCurrentCellClicked
-									? {}
-									: { borderRight: '1px solid #FED7D7' }),
+							if (cellValue === '100%') {
+								return {
+									backgroundColor: '#FEF8F8',
+									color: '#B32424',
+									...(isCurrentCellClicked
+										? {}
+										: { borderRight: '1px solid #FED7D7' }),
+								}
 							}
-						}
 
-						if (cellValue === 'On bench') {
-							return {
-								backgroundColor: '#FED7D7',
-								color: '#B32424',
-								...(isCurrentCellClicked
-									? {}
-									: { borderRight: '1px solid #FFAEAE' }),
+							if (cellValue === 'On bench') {
+								return {
+									backgroundColor: '#FED7D7',
+									color: '#B32424',
+									...(isCurrentCellClicked
+										? {}
+										: { borderRight: '1px solid #FFAEAE' }),
+								}
 							}
-						}
+						},
 					},
-				},
-			}}
-			columns={columns}
-			// @ts-ignore
-			initialState={{ expanded: false, showColumnFilters: true }}
-			renderDetailPanel={({ row, ...rest }) => (
-				<DetailedPanel
-					userId={row?.original?.member?.id}
-					clickedCells={rest.table.getState().clickedCells}
-				/>
-			)}
-			hideDefaultExpandIcon
-		/>
+				}}
+				columns={columnsWithCellActions}
+				// @ts-ignore
+				initialState={{ expanded: false, showColumnFilters: true }}
+				renderDetailPanel={({ row, ...rest }) => (
+					<DetailedPanel
+						userId={row?.original?.member?.id}
+						clickedCells={rest.table.getState().clickedCells}
+					/>
+				)}
+				hideDefaultExpandIcon
+			/>
+		</>
 	)
 }
 

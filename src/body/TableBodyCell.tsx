@@ -1,4 +1,5 @@
 import React, {
+	Fragment,
 	DragEvent,
 	FC,
 	HTMLProps,
@@ -10,8 +11,10 @@ import React, {
 	useMemo,
 	useState,
 } from 'react'
+import Box from '@mui/material/Box'
 import Skeleton from '@mui/material/Skeleton'
 import MuiTableCell from '@mui/material/TableCell'
+import IconButton from '@mui/material/IconButton'
 import { darken, lighten, useTheme } from '@mui/material/styles'
 import type { VirtualItem } from '@tanstack/react-virtual'
 
@@ -71,6 +74,7 @@ export const TableBodyCell: FC<Props> = ({
 			cellStyleRules,
 			notClickableCells,
 			summaryRowCell,
+			icons: { ExpandIcon, ExpandMoreIcon },
 		},
 		refs: { editInputRefs },
 		setEditingCell,
@@ -257,9 +261,28 @@ export const TableBodyCell: FC<Props> = ({
 		}
 	}
 
+	const handleExpand = (event: MouseEvent<HTMLButtonElement>) => {
+		if (columnDef.cellAction === 'expand') {
+			const rowId = row.id
+			const clickedCells = table.getState().clickedCells
+
+			if (clickedCells?.length) {
+				const filteredClickedCells = clickedCells.filter(
+					(cell) => cell.row.id !== rowId
+				)
+
+				table.setClickedCells(filteredClickedCells)
+			}
+		}
+
+		event.stopPropagation()
+		row.toggleExpanded()
+	}
+
 	const isSelectCell = column.id === 'mrt-row-select'
 	const isAnyRowSelected = table.getSelectedRowModel().flatRows.length > 0
 	const hideCheckBoxSpan = isSelectCell && !isAnyRowSelected
+	const isRowExpanded = row?.getIsExpanded?.()
 
 	const isCurrentCellClicked =
 		enableDetailedPanel &&
@@ -294,6 +317,9 @@ export const TableBodyCell: FC<Props> = ({
 			'& span': {
 				visibility: 'visible',
 			},
+			'& > div > button': {
+				visibility: 'visible',
+			},
 		},
 		'& span': {
 			visibility: hideCheckBoxSpan ? 'hidden' : 'visible',
@@ -323,6 +349,8 @@ export const TableBodyCell: FC<Props> = ({
 		}) as ReactElement
 	}
 
+	const CellComponent = columnDef.cellAction ? Box : Fragment
+
 	return (
 		<MuiTableCell
 			rowSpan={rowSpan}
@@ -338,7 +366,9 @@ export const TableBodyCell: FC<Props> = ({
 			onClick={handleSingleClick}
 			sx={(theme) => getTableCellStyles(theme)}
 		>
-			<>
+			<CellComponent
+				sx={{ display: 'flex', alignItems: 'center', marginRight: '5px' }}
+			>
 				{isGroupedCell ? (
 					<TableBodyCellValue cell={cell} table={table} />
 				) : cell.getIsPlaceholder() ? null : isLoading || showSkeletons ? (
@@ -367,7 +397,44 @@ export const TableBodyCell: FC<Props> = ({
 				) : (
 					<TableBodyCellValue cell={cell} table={table} />
 				)}
-			</>
+				{columnDef?.cellAction === 'expand' ? (
+					<IconButton
+						sx={{
+							width: '24px',
+							height: '24px',
+							border: '1px solid #E1E3EB',
+							borderRadius: '4px',
+							backgroundColor: '#F5F6FA',
+							visibility: isRowExpanded ? 'visible' : 'hidden',
+						}}
+						onClick={handleExpand}
+					>
+						<ExpandMoreIcon
+							sx={{
+								transform: `rotate(${isRowExpanded ? -180 : 0}deg)`,
+								transition: 'transform 150ms',
+							}}
+						/>
+					</IconButton>
+				) : columnDef?.cellAction &&
+				  typeof columnDef.cellAction === 'function' ? (
+					<IconButton
+						sx={{
+							width: '24px',
+							height: '24px',
+							border: '1px solid #E1E3EB',
+							borderRadius: '4px',
+							backgroundColor: '#F5F6FA',
+							visibility: 'hidden',
+						}}
+						// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+						// @ts-ignore
+						onClick={() => columnDef.cellAction({ row, table })}
+					>
+						<ExpandIcon />
+					</IconButton>
+				) : null}
+			</CellComponent>
 		</MuiTableCell>
 	)
 }

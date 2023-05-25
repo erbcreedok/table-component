@@ -1,16 +1,14 @@
 import React, { useMemo, useState } from 'react'
 import Box from '@mui/material/Box'
-import Drawer from '@mui/material/Drawer'
 import { Typography } from '@mui/material'
 
 import type { TableInstance } from '../../../../index'
-import { SidebarHeaderComponent } from '../components/SidebarHeader'
-import { SidebarSearchComponent } from '../components/SidebarSearch'
 import { Table_Column } from '../../../../index'
 import { SimpleMenuItem } from '../components/SimpleMenuItem'
 import { ButtonLink } from '../../../../components/ButtonLink'
 import { reorderColumn } from '../../../../column.utils'
 import { ListTitle } from '../../../../components/ListTitle'
+import { Sidebar } from '../../../../components/Sidebar'
 
 interface Props<TData extends Record<string, any> = {}> {
 	anchorEl: HTMLElement | null
@@ -79,7 +77,7 @@ export const GroupingMenu = <TData extends Record<string, any> = {}>({
 		[allColumns, grouping, columnVisibility]
 	)
 
-	const handleCloseCLick = () => setAnchorEl(null)
+	const handleCloseClick = () => setAnchorEl(null)
 	const handleOnSearchChange = (value: string) => {
 		if (value) {
 			setIsSearchActive(true)
@@ -111,91 +109,89 @@ export const GroupingMenu = <TData extends Record<string, any> = {}>({
 	}
 
 	return (
-		<Drawer
-			anchor="right"
-			open={!!anchorEl}
-			onClose={handleCloseCLick}
-			transitionDuration={400}
+		<Sidebar
+			isOpen={!!anchorEl}
+			onClose={handleCloseClick}
+			styles={{ minWidth: 500 }}
+			withHeader
+			withSearch
+			headerTitle="Grouping"
+			onSearchChange={handleOnSearchChange}
 		>
-			<Box sx={{ minWidth: 500 }}>
-				<SidebarHeaderComponent title="Grouping" onClick={handleCloseCLick} />
-				<SidebarSearchComponent onChange={handleOnSearchChange} />
+			<Box sx={{ marginTop: '12px' }}>
+				{isSearchActive &&
+					(searchList.length ? (
+						searchList.map((column) => (
+							<SimpleMenuItem
+								column={column}
+								key={column.id}
+								hoveredColumn={hoveredColumn}
+								onColumnOrderChange={onColumnOrderChanged}
+								setHoveredColumn={setHoveredColumn}
+								onItemClick={column.getToggleGroupingHandler()}
+								isSorting
+							/>
+						))
+					) : (
+						<Typography
+							sx={{ display: 'flex', justifyContent: 'center', mt: '20px' }}
+						>
+							No options
+						</Typography>
+					))}
 
-				<Box sx={{ marginTop: '12px' }}>
-					{isSearchActive &&
-						(searchList.length ? (
-							searchList.map((column) => (
-								<SimpleMenuItem
-									column={column}
-									key={column.id}
-									hoveredColumn={hoveredColumn}
-									onColumnOrderChange={onColumnOrderChanged}
-									setHoveredColumn={setHoveredColumn}
-									onItemClick={column.getToggleGroupingHandler()}
-									isSorting
-								/>
-							))
-						) : (
-							<Typography
-								sx={{ display: 'flex', justifyContent: 'center', mt: '20px' }}
-							>
-								No options
-							</Typography>
-						))}
-
-					{Boolean(groupedList.length && !searchList.length) && (
-						<>
-							<Box
-								sx={{
-									padding: '0 24px',
-									margin: '12px 0 20px 0',
-									display: 'flex',
-									justifyContent: 'space-between',
-									alignItems: 'center',
-								}}
-							>
-								<ListTitle>Grouped</ListTitle>
-								<ButtonLink onClick={removeAllGroup}>Remove all</ButtonLink>
-							</Box>
-
-							{groupedList.map((column) => (
-								<SimpleMenuItem
-									column={column as Table_Column<TData>}
-									key={(column as Table_Column<TData>).id}
-									enableDrag={groupedList.length > 1}
-									hoveredColumn={hoveredColumn}
-									onColumnOrderChange={onColumnOrderChanged}
-									setHoveredColumn={setHoveredColumn}
-									isCompact
-								/>
-							))}
-						</>
-					)}
-
+				{Boolean(groupedList.length && !searchList.length) && (
 					<>
-						{!!groupedList.length &&
-							!searchList.length &&
-							!!nonGroupedList.length && (
-								<ListTitle sx={{ padding: '0 24px', margin: '20px 0' }}>
-									Columns
-								</ListTitle>
-							)}
-						{Boolean(
-							nonGroupedList.length && !searchList.length && !isSearchActive
-						) &&
-							nonGroupedList.map((column) => (
-								<SimpleMenuItem
-									column={column}
-									key={column.id}
-									hoveredColumn={hoveredColumn}
-									onColumnOrderChange={onColumnOrderChanged}
-									setHoveredColumn={setHoveredColumn}
-									onItemClick={column.getToggleGroupingHandler()}
-								/>
-							))}
+						<Box
+							sx={{
+								padding: '0 24px',
+								margin: '12px 0 20px 0',
+								display: 'flex',
+								justifyContent: 'space-between',
+								alignItems: 'center',
+							}}
+						>
+							<ListTitle>Grouped</ListTitle>
+							<ButtonLink onClick={removeAllGroup}>Remove all</ButtonLink>
+						</Box>
+
+						{groupedList.map((column) => (
+							<SimpleMenuItem
+								column={column as Table_Column<TData>}
+								key={(column as Table_Column<TData>).id}
+								enableDrag={groupedList.length > 1}
+								hoveredColumn={hoveredColumn}
+								onColumnOrderChange={onColumnOrderChanged}
+								setHoveredColumn={setHoveredColumn}
+								isCompact
+							/>
+						))}
 					</>
-				</Box>
+				)}
+
+				<>
+					{!!groupedList.length &&
+						!searchList.length &&
+						!!nonGroupedList.length && (
+							<ListTitle sx={{ padding: '0 24px', margin: '20px 0' }}>
+								Columns
+							</ListTitle>
+						)}
+					{Boolean(
+						nonGroupedList.length && !searchList.length && !isSearchActive
+					) &&
+						nonGroupedList.map((column) => (
+							<SimpleMenuItem
+								column={column}
+								key={column.id}
+								hoveredColumn={hoveredColumn}
+								onColumnOrderChange={onColumnOrderChanged}
+								setHoveredColumn={setHoveredColumn}
+								onItemClick={column.getToggleGroupingHandler()}
+							/>
+						))}
+				</>
 			</Box>
-		</Drawer>
+		</Sidebar>
 	)
 }

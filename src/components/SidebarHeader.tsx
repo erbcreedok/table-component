@@ -2,8 +2,9 @@ import styled from '@emotion/styled'
 import { Box, Divider, IconButton } from '@mui/material'
 import React, { ReactElement } from 'react'
 
-import { DEFAULT_FONT_FAMILY, Text } from '../../../../components/styles'
-import { CloseIcon } from '../../icons/CloseIcon'
+import { CloseIcon } from '../TableToolbar/components/icons/CloseIcon'
+
+import { DEFAULT_FONT_FAMILY, Text } from './styles'
 
 const SidebarHeader = styled(Box)`
 	padding: 12px 24px;

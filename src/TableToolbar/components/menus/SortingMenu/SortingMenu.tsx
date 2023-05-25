@@ -1,15 +1,13 @@
-import React, { useEffect, useMemo, useState } from 'react'
+import React, { useMemo, useState } from 'react'
 import Box from '@mui/material/Box'
-import Drawer from '@mui/material/Drawer'
 import { Typography } from '@mui/material'
 
 import type { TableInstance, Table_Column } from '../../../../index'
-import { SidebarHeaderComponent } from '../components/SidebarHeader'
-import { SidebarSearchComponent } from '../components/SidebarSearch'
 import { SimpleMenuItem } from '../components/SimpleMenuItem'
 import { ButtonLink } from '../../../../components/ButtonLink'
 import { getColumnId, reorderColumn } from '../../../../column.utils'
 import { ListTitle } from '../../../../components/ListTitle'
+import { Sidebar } from '../../../../components/Sidebar'
 
 interface Props<TData extends Record<string, any> = {}> {
 	anchorEl: HTMLElement | null
@@ -30,7 +28,7 @@ export const SortingMenu = <TData extends Record<string, any> = {}>({
 	const [searchList, setSearchList] = useState<Array<Table_Column<TData>>>([])
 	const [hoveredColumn, setHoveredColumn] =
 		useState<Table_Column<TData> | null>(null)
-	const handleCloseCLick = () => setAnchorEl(null)
+	const handleCloseClick = () => setAnchorEl(null)
 
 	const allColumns = useMemo(() => {
 		const columns = getAllColumns()
@@ -96,93 +94,91 @@ export const SortingMenu = <TData extends Record<string, any> = {}>({
 	}
 
 	return (
-		<Drawer
-			anchor="right"
-			open={!!anchorEl}
-			onClose={handleCloseCLick}
-			transitionDuration={400}
+		<Sidebar
+			isOpen={!!anchorEl}
+			onClose={handleCloseClick}
+			styles={{ minWidth: 600 }}
+			withHeader
+			withSearch
+			headerTitle="Sorting"
+			onSearchChange={handleOnSearchChange}
 		>
-			<Box sx={{ minWidth: 600 }}>
-				<SidebarHeaderComponent title="Sorting" onClick={handleCloseCLick} />
-				<SidebarSearchComponent onChange={handleOnSearchChange} />
+			<Box sx={{ marginTop: '12px' }}>
+				{isSearchActive &&
+					(searchList.length ? (
+						searchList.map((column) => (
+							<SimpleMenuItem
+								column={column}
+								key={column.id}
+								hoveredColumn={hoveredColumn}
+								onColumnOrderChange={onColumnOrderChanged}
+								setHoveredColumn={setHoveredColumn}
+								isSorting
+								withClickOnItem
+							/>
+						))
+					) : (
+						<Typography
+							sx={{ display: 'flex', justifyContent: 'center', mt: '20px' }}
+						>
+							No options
+						</Typography>
+					))}
 
-				<Box sx={{ marginTop: '12px' }}>
-					{isSearchActive &&
-						(searchList.length ? (
-							searchList.map((column) => (
-								<SimpleMenuItem
-									column={column}
-									key={column.id}
-									hoveredColumn={hoveredColumn}
-									onColumnOrderChange={onColumnOrderChanged}
-									setHoveredColumn={setHoveredColumn}
-									isSorting
-									withClickOnItem
-								/>
-							))
-						) : (
-							<Typography
-								sx={{ display: 'flex', justifyContent: 'center', mt: '20px' }}
-							>
-								No options
-							</Typography>
-						))}
-
-					{Boolean(sortedList?.length && !searchList.length) && (
-						<>
-							<Box
-								sx={{
-									padding: '0 24px',
-									margin: '12px 0 20px 0',
-									display: 'flex',
-									justifyContent: 'space-between',
-									alignItems: 'center',
-								}}
-							>
-								<ListTitle>Sorted</ListTitle>
-								<ButtonLink onClick={removeAllSorted}>Remove all</ButtonLink>
-							</Box>
-
-							{sortedList?.map((column) => (
-								<SimpleMenuItem
-									column={column as Table_Column<TData>}
-									key={(column as Table_Column<TData>).id}
-									enableDrag={sortedList?.length > 1}
-									hoveredColumn={hoveredColumn}
-									onColumnOrderChange={onColumnOrderChanged}
-									setHoveredColumn={setHoveredColumn}
-									isSorting
-									isCompact
-								/>
-							))}
-						</>
-					)}
-
+				{Boolean(sortedList?.length && !searchList.length) && (
 					<>
-						{!!sortedList?.length &&
-							!searchList.length &&
-							!!nonSortedList.length && (
-								<ListTitle sx={{ padding: '0 24px', margin: '20px 0' }}>
-									Columns
-								</ListTitle>
-							)}
-						{Boolean(
-							nonSortedList.length && !searchList.length && !isSearchActive
-						) &&
-							nonSortedList.map((column) => (
-								<SimpleMenuItem
-									column={column}
-									key={column.id}
-									hoveredColumn={hoveredColumn}
-									onColumnOrderChange={onColumnOrderChanged}
-									setHoveredColumn={setHoveredColumn}
-									isSorting
-									withClickOnItem
-								/>
-							))}
+						<Box
+							sx={{
+								padding: '0 24px',
+								margin: '12px 0 20px 0',
+								display: 'flex',
+								justifyContent: 'space-between',
+								alignItems: 'center',
+							}}
+						>
+							<ListTitle>Sorted</ListTitle>
+							<ButtonLink onClick={removeAllSorted}>Remove all</ButtonLink>
+						</Box>
+
+						{sortedList?.map((column) => (
+							<SimpleMenuItem
+								column={column as Table_Column<TData>}
+								key={(column as Table_Column<TData>).id}
+								enableDrag={sortedList?.length > 1}
+								hoveredColumn={hoveredColumn}
+								onColumnOrderChange={onColumnOrderChanged}
+								setHoveredColumn={setHoveredColumn}
+								isSorting
+								isCompact
+							/>
+						))}
 					</>
-				</Box>
+				)}
+
+				<>
+					{!!sortedList?.length &&
+						!searchList.length &&
+						!!nonSortedList.length && (
+							<ListTitle sx={{ padding: '0 24px', margin: '20px 0' }}>
+								Columns
+							</ListTitle>
+						)}
+					{Boolean(
+						nonSortedList.length && !searchList.length && !isSearchActive
+					) &&
+						nonSortedList.map((column) => (
+							<SimpleMenuItem
+								column={column}
+								key={column.id}
+								hoveredColumn={hoveredColumn}
+								onColumnOrderChange={onColumnOrderChanged}
+								setHoveredColumn={setHoveredColumn}
+								isSorting
+								withClickOnItem
+							/>
+						))}
+				</>
 			</Box>
-		</Drawer>
+		</Sidebar>
 	)
 }

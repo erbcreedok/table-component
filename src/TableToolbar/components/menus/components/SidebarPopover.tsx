@@ -5,8 +5,7 @@ import MenuItem from '@mui/material/MenuItem'
 
 import { ButtonBordered } from '../../../../components/ButtonBordered'
 import { Table_Column } from '../../../../'
-
-import { SidebarSearchComponent } from './SidebarSearch'
+import { SidebarSearchComponent } from '../../../../components/SidebarSearch'
 
 interface Props<TData extends Record<string, any> = {}> {
 	buttonText: string

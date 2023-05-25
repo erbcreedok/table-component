@@ -550,6 +550,7 @@ export type Table_DefinedColumnDef<TData extends Record<string, any> = {}> =
 		id: string
 		displayDataKey: string
 		_filterFn: Table_FilterOption
+		cellAction?: string | (({ row, table }) => void)
 	}
 
 export type Table_Column<TData extends Record<string, any> = {}> = Omit<

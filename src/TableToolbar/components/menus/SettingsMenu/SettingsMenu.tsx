@@ -1,14 +1,12 @@
 import React, { useEffect, useMemo, useState } from 'react'
 import Box from '@mui/material/Box'
-import Drawer from '@mui/material/Drawer'
 import { Typography } from '@mui/material'
 
 import type { Table_Column, TableInstance } from '../../../../index'
 import { ContentTitle } from '../../../../components/ContentTitle'
 import { ButtonLink } from '../../../../components/ButtonLink'
 import { getColumnId, reorderColumn } from '../../../../column.utils'
-import { SidebarSearchComponent } from '../components/SidebarSearch'
-import { SidebarHeaderComponent } from '../components/SidebarHeader'
+import { Sidebar } from '../../../../components/Sidebar'
 
 import { SettingsMenuItem } from './SettingsMenuItem'
 
@@ -122,7 +120,7 @@ export const SettingsMenu = <TData extends Record<string, any> = {}>({
 		return acc
 	}, 0)
 
-	const handleCloseCLick = () => setAnchorEl(null)
+	const handleCloseClick = () => setAnchorEl(null)
 
 	const handleHideAllClick = () => {
 		allColumns
@@ -183,155 +181,150 @@ export const SettingsMenu = <TData extends Record<string, any> = {}>({
 	}
 
 	return (
-		<Drawer
-			anchor="right"
-			open={!!anchorEl}
-			onClose={handleCloseCLick}
-			transitionDuration={400}
+		<Sidebar
+			isOpen={!!anchorEl}
+			onClose={handleCloseClick}
+			styles={{ minWidth: 660 }}
+			withHeader
+			headerTitle="Table Column Settings"
+			subHeader={
+				<Typography>
+					Shown: {visibleColumnsCount} of {allColumns.length}
+				</Typography>
+			}
+			withSearch
+			onSearchChange={handleOnSearchChange}
 		>
-			<Box sx={{ minWidth: 660 }}>
-				<SidebarHeaderComponent
-					title="Table Column Settings"
-					subHeader={
-						<Typography>
-							Shown: {visibleColumnsCount} of {allColumns.length}
-						</Typography>
-					}
-					onClick={handleCloseCLick}
-				/>
-				<SidebarSearchComponent onChange={handleOnSearchChange} />
-
-				{isSearchActive ? (
-					searchList.length ? (
-						searchList.map((column, index) => (
-							<SettingsMenuItem
-								allColumns={allColumns}
-								column={column}
-								hoveredColumn={hoveredColumn}
-								isSubMenu={false}
-								key={`${index}-${column.id}`}
-								setHoveredColumn={setHoveredColumn}
-								table={table}
-								onColumnVisibilityChange={onColumnVisibilityChange}
-								enableDrag={false}
-								onColumnOrderChange={onColumnOrderChange}
-							/>
-						))
-					) : (
-						<Typography
-							sx={{ display: 'flex', justifyContent: 'center', mt: '20px' }}
-						>
-							No options
-						</Typography>
-					)
+			{isSearchActive ? (
+				searchList.length ? (
+					searchList.map((column, index) => (
+						<SettingsMenuItem
+							allColumns={allColumns}
+							column={column}
+							hoveredColumn={hoveredColumn}
+							isSubMenu={false}
+							key={`${index}-${column.id}`}
+							setHoveredColumn={setHoveredColumn}
+							table={table}
+							onColumnVisibilityChange={onColumnVisibilityChange}
+							enableDrag={false}
+							onColumnOrderChange={onColumnOrderChange}
+						/>
+					))
 				) : (
-					<>
+					<Typography
+						sx={{ display: 'flex', justifyContent: 'center', mt: '20px' }}
+					>
+						No options
+					</Typography>
+				)
+			) : (
+				<>
+					<Box
+						sx={{
+							display: 'flex',
+							padding: '12px 24px',
+							alignItems: 'center',
+							justifyContent: 'space-between',
+						}}
+					>
+						<ContentTitle>Shown Columns</ContentTitle>
 						<Box
 							sx={{
 								display: 'flex',
-								padding: '12px 24px',
-								alignItems: 'center',
+								width: 120,
 								justifyContent: 'space-between',
 							}}
 						>
-							<ContentTitle>Shown Columns</ContentTitle>
-							<Box
-								sx={{
-									display: 'flex',
-									width: 120,
-									justifyContent: 'space-between',
-								}}
-							>
-								<ButtonLink onClick={handleHideAllClick}>Hide All</ButtonLink>
-								<ButtonLink onClick={handleShowAllClick}>Show All</ButtonLink>
-							</Box>
+							<ButtonLink onClick={handleHideAllClick}>Hide All</ButtonLink>
+							<ButtonLink onClick={handleShowAllClick}>Show All</ButtonLink>
 						</Box>
-						<Box
-							sx={{
-								display: 'flex',
-								flexDirection: 'column',
-								maxHeight: 'calc(100vh - 180px)',
-								flexWrap: 'wrap',
-								overflowX: 'auto',
-								'&::-webkit-scrollbar': { height: 3, WebkitAppearance: 'none' },
-								'&::-webkit-scrollbar-thumb': {
-									borderRadius: 6,
-									border: 'none',
-									backgroundColor: '#CED0DB',
-								},
-							}}
-						>
-							{groupedList.map((column, index) => (
+					</Box>
+					<Box
+						sx={{
+							display: 'flex',
+							flexDirection: 'column',
+							maxHeight: 'calc(100vh - 180px)',
+							flexWrap: 'wrap',
+							overflowX: 'auto',
+							'&::-webkit-scrollbar': { height: 3, WebkitAppearance: 'none' },
+							'&::-webkit-scrollbar-thumb': {
+								borderRadius: 6,
+								border: 'none',
+								backgroundColor: '#CED0DB',
+							},
+						}}
+					>
+						{groupedList.map((column, index) => (
+							<SettingsMenuItem
+								allColumns={allColumns}
+								column={column as Table_Column<TData>}
+								hoveredColumn={hoveredColumn}
+								isSubMenu={false}
+								key={`${index}-${column?.id}`}
+								setHoveredColumn={setHoveredColumn}
+								table={table}
+								onColumnVisibilityChange={onColumnVisibilityChange}
+								enableDrag={groupedList.length > 1}
+								onColumnOrderChange={onColumnGroupingChange}
+							/>
+						))}
+
+						{allColumns
+							.filter(
+								(col) =>
+									columnIds.shown.includes(getColumnId(col.columnDef)) &&
+									!grouping.includes(getColumnId(col.columnDef))
+							)
+							.map((column, index) => (
 								<SettingsMenuItem
 									allColumns={allColumns}
-									column={column as Table_Column<TData>}
+									column={column}
 									hoveredColumn={hoveredColumn}
 									isSubMenu={false}
-									key={`${index}-${column?.id}`}
+									key={`${index}-${column.id}`}
 									setHoveredColumn={setHoveredColumn}
 									table={table}
 									onColumnVisibilityChange={onColumnVisibilityChange}
-									enableDrag={groupedList.length > 1}
-									onColumnOrderChange={onColumnGroupingChange}
+									enableDrag
+									onColumnOrderChange={onColumnOrderChange}
 								/>
 							))}
 
-							{allColumns
-								.filter(
-									(col) =>
-										columnIds.shown.includes(getColumnId(col.columnDef)) &&
-										!grouping.includes(getColumnId(col.columnDef))
-								)
-								.map((column, index) => (
-									<SettingsMenuItem
-										allColumns={allColumns}
-										column={column}
-										hoveredColumn={hoveredColumn}
-										isSubMenu={false}
-										key={`${index}-${column.id}`}
-										setHoveredColumn={setHoveredColumn}
-										table={table}
-										onColumnVisibilityChange={onColumnVisibilityChange}
-										enableDrag
-										onColumnOrderChange={onColumnOrderChange}
-									/>
-								))}
-
-							{!!columnIds.hidden.length && (
-								<>
-									<ContentTitle
-										sx={{
-											paddingLeft: '24px',
-											marginTop: '18px',
-											marginBottom: '18px',
-										}}
-									>
-										Hidden Columns
-									</ContentTitle>
-									{allColumns
-										.filter((col) =>
-											columnIds.hidden.includes(getColumnId(col.columnDef))
-										)
-										.map((column, index) => (
-											<SettingsMenuItem
-												allColumns={allColumns}
-												column={column}
-												hoveredColumn={hoveredColumn}
-												isSubMenu={false}
-												key={`${index}-${column.id}`}
-												setHoveredColumn={setHoveredColumn}
-												table={table}
-												onColumnVisibilityChange={onColumnVisibilityChange}
-												enableDrag={false}
-												onColumnOrderChange={onColumnOrderChange}
-											/>
-										))}
-								</>
-							)}
-						</Box>
-					</>
-				)}
-			</Box>
-		</Drawer>
+						{!!columnIds.hidden.length && (
+							<>
+								<ContentTitle
+									sx={{
+										paddingLeft: '24px',
+										marginTop: '18px',
+										marginBottom: '18px',
+									}}
+								>
+									Hidden Columns
+								</ContentTitle>
+								{allColumns
+									.filter((col) =>
+										columnIds.hidden.includes(getColumnId(col.columnDef))
+									)
+									.map((column, index) => (
+										<SettingsMenuItem
+											allColumns={allColumns}
+											column={column}
+											hoveredColumn={hoveredColumn}
+											isSubMenu={false}
+											key={`${index}-${column.id}`}
+											setHoveredColumn={setHoveredColumn}
+											table={table}
+											onColumnVisibilityChange={onColumnVisibilityChange}
+											enableDrag={false}
+											onColumnOrderChange={onColumnOrderChange}
+										/>
+									))}
+							</>
+						)}
+					</Box>
+				</>
+			)}
+		</Sidebar>
 	)
 }

@@ -1,14 +1,13 @@
 import React, { useEffect, useState, useMemo, useCallback } from 'react'
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
-import Drawer from '@mui/material/Drawer'
 import Divider from '@mui/material/Divider'
 import { Typography } from '@mui/material'
 
 import type { Table_Column, TableInstance } from '../../../../index'
 import { Table_DisplayColumnIdsArray } from '../../../../column.utils'
-import { SidebarHeaderComponent } from '../components/SidebarHeader'
-import { SidebarSearchComponent } from '../components/SidebarSearch'
+import { SidebarSearchComponent } from '../../../../components/SidebarSearch'
+import { Sidebar } from '../../../../components/Sidebar'
 
 import { FiltersMenuListItem } from './FiltersMenuListItem'
 import { FiltersMenuAppliedFilter } from './FiltersMenuAppliedFilter'
@@ -67,7 +66,7 @@ export const FiltersMenu = <TData extends Record<string, any> = {}>({
 		setAppliedFilters(activeFilters as FilterType<TData>[])
 	}, [getActiveFiltersData])
 
-	const handleCloseCLick = () => setAnchorEl(null)
+	const handleCloseClick = () => setAnchorEl(null)
 
 	const handleOnSearchChange = (value: string) => {
 		if (value) {
@@ -167,75 +166,72 @@ export const FiltersMenu = <TData extends Record<string, any> = {}>({
 	}
 
 	return (
-		<Drawer
-			anchor="right"
-			open={!!anchorEl}
-			onClose={handleCloseCLick}
-			transitionDuration={400}
+		<Sidebar
+			isOpen={!!anchorEl}
+			onClose={handleCloseClick}
+			styles={{ minWidth: 660 }}
+			withHeader
+			headerTitle="Filters"
 		>
-			<Box sx={{ minWidth: 660 }}>
-				<SidebarHeaderComponent title="Filters" onClick={handleCloseCLick} />
-
-				{!isFilterAddition && appliedFilters.length ? (
-					<>
-						{appliedFilters
-							.filter((el) => el)
-							.map((filter, index) => (
-								<FiltersMenuAppliedFilter
-									firstInList={index === 0}
-									table={table}
-									filter={filter}
-									changeFilter={changeFilter}
-									removeFilter={handleRemoveFilter}
-									key={`${index}-${index}`}
-								/>
-							))}
+			{!isFilterAddition && appliedFilters.length ? (
+				<>
+					{appliedFilters
+						.filter((el) => el)
+						.map((filter, index) => (
+							<FiltersMenuAppliedFilter
+								firstInList={index === 0}
+								table={table}
+								filter={filter}
+								changeFilter={changeFilter}
+								removeFilter={handleRemoveFilter}
+								key={`${index}-${index}`}
+							/>
+						))}
+					<Box
+						sx={{
+							alignItems: 'center',
+							justifyContent: 'space-between',
+							my: 0,
+							mx: '12px',
+							// px: '12px',
+							py: '6px',
+						}}
+					>
+						<Divider sx={{ my: '15px' }} />
 						<Box
 							sx={{
-								alignItems: 'center',
+								width: '100%',
+								display: 'flex',
 								justifyContent: 'space-between',
-								my: 0,
-								mx: '12px',
-								// px: '12px',
-								py: '6px',
 							}}
 						>
-							<Divider sx={{ my: '15px' }} />
-							<Box
-								sx={{
-									width: '100%',
-									display: 'flex',
-									justifyContent: 'space-between',
-								}}
+							<Button
+								variant="outlined"
+								onClick={() => setIsFilterAddition(true)}
+								sx={{ fontWeight: 600, fontSize: '14px' }}
 							>
-								<Button
-									variant="outlined"
-									onClick={() => setIsFilterAddition(true)}
-									sx={{ fontWeight: 600, fontSize: '14px' }}
-								>
-									{localization.addFilter} +
-								</Button>
-								<Button
-									onClick={() => handleRemoveAllFilter()}
-									sx={{ fontWeight: 600, fontSize: '14px' }}
-								>
-									{localization.removeAll}
-								</Button>
-							</Box>
+								{localization.addFilter} +
+							</Button>
+							<Button
+								onClick={() => handleRemoveAllFilter()}
+								sx={{ fontWeight: 600, fontSize: '14px' }}
+							>
+								{localization.removeAll}
+							</Button>
 						</Box>
-					</>
-				) : null}
+					</Box>
+				</>
+			) : null}
 
-				{isFilterAddition ? (
-					<>
-						<SidebarSearchComponent
-							dividerProps={{ sx: { mb: '12px' } }}
-							onChange={handleOnSearchChange}
-						/>
-						{renderMenuList()}
-					</>
-				) : null}
-			</Box>
-		</Drawer>
+			{isFilterAddition ? (
+				<>
+					<SidebarSearchComponent
+						dividerProps={{ sx: { mb: '12px' } }}
+						onChange={handleOnSearchChange}
+					/>
+					{renderMenuList()}
+				</>
+			) : null}
+		</Sidebar>
 	)
 }

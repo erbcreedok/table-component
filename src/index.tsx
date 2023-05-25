@@ -22,6 +22,7 @@ import { TableProvider } from './context/TableProvider'
 import { useTableContext } from './context/useTableContext'
 import { HeaderSearch } from './head/HeaderSearch'
 import { HeaderBase } from './head/HeaderBase'
+import { Sidebar } from './components/Sidebar'
 
 export default TableComponent
 export * from './TableComponent'
@@ -50,4 +51,5 @@ export {
 	useTableContext,
 	HeaderBase,
 	HeaderSearch,
+	Sidebar,
 }

@@ -40,6 +40,7 @@ import { SettingsIcon } from './TableToolbar/components/icons/SettingsIcon'
 import { PencilIcon } from './TableToolbar/components/icons/PencilIcon'
 import { TrashIcon } from './TableToolbar/components/icons/TrashIcon'
 import { ClearIcon } from './TableToolbar/components/icons/ClearIcon'
+import { ExpandIcon } from './TableToolbar/components/icons/ExpandIcon'
 
 export interface Table_Icons {
 	AnalyticsIcon: any
@@ -82,6 +83,7 @@ export interface Table_Icons {
 	VisibilityOffIcon: any
 	FiltersIcon: any
 	SettingsIcon: any
+	ExpandIcon: any
 }
 
 export const Default_Icons: Table_Icons = {
@@ -125,4 +127,5 @@ export const Default_Icons: Table_Icons = {
 	FiltersIcon,
 	SettingsIcon,
 	HideIcon,
+	ExpandIcon,
 }
