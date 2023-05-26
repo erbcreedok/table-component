@@ -3,7 +3,7 @@ import { SvgIcon, SvgIconProps } from '@mui/material'
 
 export const GroupingIcon = (props: SvgIconProps) => {
 	return (
-		<SvgIcon {...props} viewBox="0 0 15 15" sx={{ width: 15, height: 15 }}>
+		<SvgIcon {...props} viewBox="0 0 15 15" sx={{ width: 18, height: 18 }}>
 			<mask
 				id="mask0_373_97870"
 				style={{ maskType: 'alpha' }}

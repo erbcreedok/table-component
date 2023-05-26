@@ -1,8 +1,8 @@
 import React, { MouseEvent, useState } from 'react'
 import type { IconButtonProps } from '@mui/material/IconButton'
-import Tooltip from '@mui/material/Tooltip'
 import { Typography } from '@mui/material'
 
+import { Tooltip } from '../../../components/Tooltip'
 import type { TableInstance } from '../../../index'
 import { ToolbarIconButton } from '../../../components/ToolbarIconButton'
 import { GroupingMenu } from '../menus/GroupingMenu/GroupingMenu'
@@ -21,7 +21,7 @@ export const GroupingButton = <TData extends Record<string, any> = {}>({
 }: Props<TData>) => {
 	const {
 		options: {
-			icons: { GroupIcon },
+			icons: { GroupingIcon },
 			localization,
 		},
 	} = table
@@ -41,7 +41,7 @@ export const GroupingButton = <TData extends Record<string, any> = {}>({
 					disableRipple
 					{...rest}
 				>
-					<GroupIcon
+					<GroupingIcon
 						htmlColor={disabled ? IconsColor.disabled : IconsColor.default}
 					/>
 					{enableCaption && (

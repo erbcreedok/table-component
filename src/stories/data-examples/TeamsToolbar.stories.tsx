@@ -44,6 +44,9 @@ const ToolbarWrapper = styled.div`
 	display: flex;
 	padding: 10px;
 	margin-bottom: 20px;
+	${TableToolbar.Wrapper} {
+		justify-content: flex-end;
+	}
 `
 
 const TableExample = () => {
@@ -52,7 +55,6 @@ const TableExample = () => {
 	return (
 		<>
 			<ToolbarWrapper>
-				<div style={{ flexGrow: 1 }} />
 				<TableToolbar table={table} />
 			</ToolbarWrapper>
 			<Wrapper>

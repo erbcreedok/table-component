@@ -8,7 +8,6 @@ export const ToolbarIconButton = styled(IconButton)`
 	padding: 6px 9px;
 	border-radius: 3px;
 	height: 30px;
-	margin-right: 12px;
 	position: relative;
 	&:hover {
 		background-color: ${Colors.Lightgray};

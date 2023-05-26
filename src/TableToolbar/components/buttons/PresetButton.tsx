@@ -1,11 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import Tooltip from '@mui/material/Tooltip'
-import {
-	capitalize,
-	createTheme,
-	ThemeProvider,
-	Typography,
-} from '@mui/material'
+import { capitalize, ThemeProvider, Typography } from '@mui/material'
 import {
 	ColumnFiltersState,
 	ColumnOrderState,
@@ -14,6 +8,8 @@ import {
 	VisibilityState,
 } from '@tanstack/react-table'
 
+import { Tooltip } from '../../../components/Tooltip'
+import { createTheme } from '../../../index'
 import type { TableInstance } from '../../../index'
 import { ToolbarButton } from '../../../components/ToolbarButton'
 import { NotificationDot } from '../../../components/NotificationDot'

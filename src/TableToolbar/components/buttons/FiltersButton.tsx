@@ -1,8 +1,8 @@
 import React, { MouseEvent, useState } from 'react'
 import type { IconButtonProps } from '@mui/material/IconButton'
-import Tooltip from '@mui/material/Tooltip'
 import { Typography } from '@mui/material'
 
+import { Tooltip } from '../../../components/Tooltip'
 import type { TableInstance } from '../../../index'
 import { ToolbarIconButton } from '../../../components/ToolbarIconButton'
 import { IconsColor } from '../../../components/styles'
