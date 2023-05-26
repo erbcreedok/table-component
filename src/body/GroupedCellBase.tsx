@@ -18,7 +18,9 @@ const Box = styled(MuiBox, getShouldForwardProps('rotate', 'borderColor'))<{
 }>`
 	background-color: #fafafc;
 	box-sizing: border-box;
-	height: calc(100% + 2rem);
+	position: absolute;
+	top: 1rem;
+	bottom: 1rem;
 	width: calc(100% + 1.5rem);
 	margin: -1rem -0.75rem;
 	padding: 1rem 0.75rem;

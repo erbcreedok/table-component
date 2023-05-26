@@ -301,7 +301,7 @@ export const getCommonCellStyles = ({
 	position:
 		column.getIsPinned() && column.columnDef.columnDefType !== 'group'
 			? 'sticky'
-			: undefined,
+			: 'relative',
 	right:
 		column.getIsPinned() === 'right'
 			? `${getTotalRight(table, column)}px`
