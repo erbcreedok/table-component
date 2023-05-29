@@ -23,6 +23,9 @@ import { useTableContext } from './context/useTableContext'
 import { HeaderSearch } from './head/HeaderSearch'
 import { HeaderBase } from './head/HeaderBase'
 import { Sidebar } from './components/Sidebar'
+import { TableBodyRow } from './body/TableBodyRow'
+import { ExpandButton } from './buttons/ExpandButton'
+import { TableHeadRow } from './head/TableHeadRow'
 
 export default TableComponent
 export * from './TableComponent'
@@ -52,4 +55,7 @@ export {
 	HeaderBase,
 	HeaderSearch,
 	Sidebar,
+	TableBodyRow,
+	TableHeadRow,
+	ExpandButton,
 }
