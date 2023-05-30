@@ -21,6 +21,7 @@ const ClearAllButton = styled(ButtonBase)`
 	font-size: 12px;
 	visibility: hidden;
 	margin-left: 9px;
+	font-weight: 600;
 `
 const Wrapper = styled(Box)<{ hidden?: boolean }>`
 	align-items: center;
