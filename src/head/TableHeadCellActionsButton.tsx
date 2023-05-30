@@ -16,7 +16,10 @@ type Props = {
 	header: Table_Header
 	table: TableInstance
 	disabled?: boolean
-	children(props: { onClick: MouseEventHandler; visible: boolean }): ReactNode
+	children(props: {
+		onClick: MouseEventHandler
+		menuVisible: boolean
+	}): ReactNode
 	anchorElRef: MutableRefObject<HTMLElement | null>
 }
 
@@ -47,7 +50,7 @@ export const TableHeadCellActionsButton: FC<Props> = ({
 	const props = useMemo(
 		() => ({
 			onClick: handleClick,
-			visible,
+			menuVisible: visible,
 			'aria-label': localization.columnActions,
 		}),
 		[visible, handleClick, localization.columnActions]

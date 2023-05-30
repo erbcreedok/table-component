@@ -14,6 +14,7 @@ export const Colors = {
 	LightGreen: '#67A300',
 	White: '#fff',
 	Gray: '#1D1E26',
+	LightestGray: '#FAFAFC',
 }
 
 export const IconsColor = {

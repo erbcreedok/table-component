@@ -112,7 +112,7 @@ export const getTeamMembersColumns = () =>
 					header={header}
 					table={table}
 					searchPath="member.fullName"
-					placeHolder="Search for employee"
+					placeholder="Search for employee"
 				/>
 			),
 		},

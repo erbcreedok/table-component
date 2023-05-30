@@ -1,16 +1,11 @@
-import React, {
-	DragEvent,
-	FC,
-	ReactNode,
-	useEffect,
-	useMemo,
-	useRef,
-} from 'react'
+import React, { DragEvent, FC, useEffect, useMemo, useRef } from 'react'
 import Box from '@mui/material/Box'
 import TableCell from '@mui/material/TableCell'
 import { useTheme } from '@mui/material/styles'
 import type { Theme } from '@mui/material/styles'
 
+import { HeaderBase } from '..'
+import { useHoverEffects } from '../hooks/useHoverEffects'
 import { GroupBorders } from '../utils/getGroupBorders'
 import { getCommonCellStyles, Table_DefaultColumn } from '../column.utils'
 import type { Table_Header, Table_Row, TableInstance } from '..'
@@ -47,7 +42,6 @@ export const TableHeadCell: FC<Props> = ({
 			layoutMode,
 			muiTableHeadCellProps,
 			uppercaseHeader,
-			icons: { ExpandMoreIcon },
 		},
 		refs: { tableHeadCellRefs },
 		setHoveredColumn,
@@ -58,6 +52,7 @@ export const TableHeadCell: FC<Props> = ({
 	const { column } = header
 	const { columnDef } = column
 	const { columnDefType } = columnDef
+	const { hovered, hoverProps } = useHoverEffects()
 
 	const mTableHeadCellProps =
 		muiTableHeadCellProps instanceof Function
@@ -124,6 +119,8 @@ export const TableHeadCell: FC<Props> = ({
 		}
 	}
 
+	const headerText = <HeaderBase column={column} />
+
 	const headerElement =
 		columnDef?.Header instanceof Function
 			? columnDef?.Header?.({
@@ -132,7 +129,7 @@ export const TableHeadCell: FC<Props> = ({
 					table,
 					parentRow,
 			  })
-			: columnDef?.Header ?? (columnDef.header as ReactNode)
+			: columnDef?.Header ?? headerText
 
 	useEffect(() => {
 		if (localRef.current) {
@@ -147,11 +144,12 @@ export const TableHeadCell: FC<Props> = ({
 			table={table}
 			disabled={!showColumnActions}
 		>
-			{({ onClick, visible }) => (
+			{({ onClick, menuVisible }) => (
 				<TableCell
 					align={columnDefType === 'group' ? 'center' : 'left'}
 					colSpan={header.colSpan}
 					onDragEnter={handleDragEnter}
+					{...hoverProps}
 					onClick={onClick}
 					ref={localRef}
 					{...tableCellProps}
@@ -188,7 +186,14 @@ export const TableHeadCell: FC<Props> = ({
 							tableCellProps,
 							theme,
 						}),
-						backgroundColor: '#FAFAFC',
+						backgroundColor: menuVisible
+							? Colors.Lightgray
+							: Colors.LightestGray,
+						'&:hover': {
+							backgroundColor: showColumnActions
+								? Colors.Lightgray
+								: Colors.LightestGray,
+						},
 						...draggingBorders,
 						...(highlightHeadCellId === column.id && {
 							border: `1px solid ${Colors.LightBlue}`,
@@ -243,9 +248,6 @@ export const TableHeadCell: FC<Props> = ({
 										whiteSpace: 'nowrap',
 										flexGrow: 1,
 									}}
-									title={
-										columnDefType === 'data' ? columnDef.header : undefined
-									}
 								>
 									{headerElement}
 								</Box>
@@ -260,38 +262,20 @@ export const TableHeadCell: FC<Props> = ({
 								{column.getCanFilter() && (
 									<TableHeadCellFilterLabel header={header} table={table} />
 								)}
-								{showColumnActions && (
-									<ExpandMoreIcon
-										sx={{
-											display: visible ? 'block' : 'none',
-											'th:hover &': { display: 'block' },
-											'td:hover &': { display: 'block' },
-											color: '#6C6F80',
-											transform: visible ? 'rotate(180deg)' : undefined,
-											transition: '0.2s',
-										}}
-										height={12}
-									/>
-								)}
 							</Box>
-							{columnDefType !== 'group' && (
-								<Box
-									className="Mui-TableHeadCell-Content-Actions"
-									sx={{ whiteSpace: 'nowrap' }}
-								>
-									{showDragHandle && (
-										<TableHeadCellGrabHandle
-											column={column}
-											table={table}
-											tableHeadCellRef={localRef}
-										/>
-									)}
-								</Box>
-							)}
-							{column.getCanResize() && (
-								<TableHeadCellResizeHandle header={header} table={table} />
-							)}
 						</Box>
+					)}
+					{column.getCanResize() && (
+						<TableHeadCellResizeHandle header={header} table={table} />
+					)}
+					{showDragHandle && (
+						<TableHeadCellGrabHandle
+							anchorEl={localRef.current}
+							column={column}
+							table={table}
+							visible={hovered}
+							tableHeadCellRef={localRef}
+						/>
 					)}
 				</TableCell>
 			)}

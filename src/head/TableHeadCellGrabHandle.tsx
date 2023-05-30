@@ -1,19 +1,26 @@
-import React, { DragEvent, FC, RefObject } from 'react'
+import { Popper } from '@mui/material'
+import React, { ComponentProps, DragEvent, FC, RefObject } from 'react'
 
 import { GrabHandleButton } from '../buttons/GrabHandleButton'
 import { reorderColumn } from '../column.utils'
 import type { Table_Column, TableInstance } from '..'
+import { Colors } from '../components/styles'
+import { useHoverEffects } from '../hooks/useHoverEffects'
 
 interface Props {
+	anchorEl: ComponentProps<typeof Popper>['anchorEl']
 	column: Table_Column
 	table: TableInstance
 	tableHeadCellRef: RefObject<HTMLTableCellElement>
+	visible?: boolean
 }
 
 export const TableHeadCellGrabHandle: FC<Props> = ({
 	column,
 	table,
 	tableHeadCellRef,
+	anchorEl,
+	visible,
 }) => {
 	const {
 		getState,
@@ -24,6 +31,7 @@ export const TableHeadCellGrabHandle: FC<Props> = ({
 	} = table
 	const { columnDef } = column
 	const { hoveredColumn, draggingColumn, columnOrder } = getState()
+	const { hovered, hoverProps } = useHoverEffects()
 
 	const mIconButtonProps =
 		muiTableHeadCellDragHandleProps instanceof Function
@@ -35,9 +43,16 @@ export const TableHeadCellGrabHandle: FC<Props> = ({
 			? columnDef.muiTableHeadCellDragHandleProps({ column, table })
 			: columnDef.muiTableHeadCellDragHandleProps
 
-	const iconButtonProps = {
+	const iconButtonUpperProps = {
 		...mIconButtonProps,
 		...mcIconButtonProps,
+	}
+	const iconButtonProps = {
+		...iconButtonUpperProps,
+		sx: {
+			...iconButtonUpperProps?.sx,
+			transform: 'rotate(90deg)',
+		},
 	}
 
 	const handleDragStart = (event: DragEvent<HTMLButtonElement>) => {
@@ -68,11 +83,28 @@ export const TableHeadCellGrabHandle: FC<Props> = ({
 	}
 
 	return (
-		<GrabHandleButton
-			iconButtonProps={iconButtonProps}
-			onDragStart={handleDragStart}
-			onDragEnd={handleDragEnd}
-			table={table}
-		/>
+		<Popper
+			open={!!visible || hovered}
+			anchorEl={anchorEl}
+			placement="top"
+			componentsProps={{
+				root: {
+					...hoverProps,
+				},
+			}}
+			sx={{
+				borderRadius: '6px',
+				padding: '2px 12px 3px',
+				backgroundColor: Colors.Lightgray,
+				marginBottom: '-14px !important',
+			}}
+		>
+			<GrabHandleButton
+				iconButtonProps={iconButtonProps}
+				onDragStart={handleDragStart}
+				onDragEnd={handleDragEnd}
+				table={table}
+			/>
+		</Popper>
 	)
 }

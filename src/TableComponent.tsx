@@ -542,6 +542,7 @@ export type Table_ColumnDef<TData extends Record<string, any> = {}> = Omit<
 		table: TableInstance<TData>
 	}) => ReactNode[]
 	sortingFn?: Table_SortingFn<TData>
+	subtitle?: string
 }
 
 export type Table_DefinedColumnDef<TData extends Record<string, any> = {}> =

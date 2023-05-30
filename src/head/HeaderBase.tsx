@@ -1,20 +1,39 @@
 import styled from '@emotion/styled'
+import Box from '@mui/material/Box'
 import React from 'react'
 
-import { Table_Column, Table_Header, TableInstance } from '../TableComponent'
+import { Text } from '../components/styles'
+import { TooltipOverflow } from '../components/TooltipOverflow'
+import { Table_Column } from '../TableComponent'
 
-const Box = styled('div')`
-	white-space: nowrap;
-	text-overflow: ellipsis;
-	overflow: inherit;
-`
 type Props<TData extends Record<string, any>> = {
 	column: Table_Column<TData>
-	header: Table_Header<TData>
-	table: TableInstance<TData>
 }
+
+const Subtitle = styled(Box)`
+	font-size: 12px;
+	line-height: 12px;
+	color: ${Text.Primary};
+	text-transform: none;
+	font-weight: normal;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+`
 export const HeaderBase = <T extends Record<string, any>>({
 	column,
 }: Props<T>) => {
-	return <Box title={column.columnDef.header}>{column.columnDef.header}</Box>
+	return (
+		<>
+			<TooltipOverflow
+				text={column.columnDef.header}
+				spacing={5}
+				placement="top"
+				arrow
+			/>
+			<Subtitle title={column.columnDef.subtitle}>
+				{column.columnDef.subtitle}
+			</Subtitle>
+		</>
+	)
 }

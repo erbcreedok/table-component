@@ -26,6 +26,7 @@ import { Sidebar } from './components/Sidebar'
 import { TableBodyRow } from './body/TableBodyRow'
 import { ExpandButton } from './buttons/ExpandButton'
 import { TableHeadRow } from './head/TableHeadRow'
+import { TooltipOverflow } from './components/TooltipOverflow'
 
 export default TableComponent
 export * from './TableComponent'
@@ -58,4 +59,5 @@ export {
 	TableBodyRow,
 	TableHeadRow,
 	ExpandButton,
+	TooltipOverflow,
 }

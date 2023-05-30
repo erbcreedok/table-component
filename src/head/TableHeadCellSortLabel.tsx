@@ -1,4 +1,4 @@
-import React, { FC, useMemo } from 'react'
+import React, { FC, useCallback, useMemo } from 'react'
 import TableSortLabel from '@mui/material/TableSortLabel'
 import Tooltip from '@mui/material/Tooltip'
 import type { TableCellProps } from '@mui/material/TableCell'
@@ -20,6 +20,7 @@ export const TableHeadCellSortLabel: FC<Props> = ({
 		options: {
 			icons: { SortDescIcon },
 			localization,
+			enableMultiSort,
 		},
 	} = table
 	const { column } = header
@@ -46,15 +47,24 @@ export const TableHeadCellSortLabel: FC<Props> = ({
 		return [translateX, rotateY].filter(Boolean).join(' ')
 	}, [isSorted, tableCellProps?.align])
 
+	const toggleSorting = useCallback(
+		(e) => {
+			e.stopPropagation()
+			column.toggleSorting(isSorted === 'asc', enableMultiSort)
+		},
+		[column, enableMultiSort, isSorted]
+	)
+
 	return (
 		<Tooltip arrow placement="top" title={sortTooltip}>
 			<TableSortLabel
 				aria-label={sortTooltip}
 				active={!!isSorted}
+				onClick={toggleSorting}
 				direction={isSorted ? (isSorted as 'asc' | 'desc') : undefined}
 				sx={{
 					flex: '0 0',
-					width: '2.3ch',
+					width: '18px',
 					transform,
 				}}
 				IconComponent={SortDescIcon}

@@ -1,9 +1,10 @@
-import styled from '@emotion/styled'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import {
 	IconButton,
 	InputAdornment,
+	outlinedInputClasses,
 	Popper,
+	styled,
 	TextField,
 	Typography,
 } from '@mui/material'
@@ -20,26 +21,35 @@ import {
 } from '../components/styles'
 import { useDelay } from '../hooks/useDelay'
 import { getValueFromObj } from '../utils/getValueFromObj'
-import { getColumnId } from '../column.utils'
 
-const EllipsisOverflow = styled('div')`
-	white-space: nowrap;
-	text-overflow: ellipsis;
-	overflow: inherit;
-`
+import { HeaderBase } from './HeaderBase'
 
-const SidebarSearch = styled(TextField)`
-	font-family: ${DEFAULT_FONT_FAMILY};
+type Props<TData extends Record<string, any>> = {
+	column: Table_Column<TData>
+	header: Table_Header<TData>
+	table: TableInstance<TData>
+	searchPath: string
+	placeholder: string
+}
+
+const SearchInput = styled(TextField)`
 	width: 100%;
 	box-sizing: border-box;
-	& > div {
-		padding-left: 5px;
+	& .${outlinedInputClasses.root} {
+		padding-left: 12px;
+		padding-right: 12px;
 	}
-	& fieldset {
-		border: none;
+	& .${outlinedInputClasses.notchedOutline} {
+		border-radius: 6px;
 	}
-	& input {
-		padding: 0;
+	&
+		.${outlinedInputClasses.root}.${outlinedInputClasses.focused}
+		.${outlinedInputClasses.notchedOutline} {
+		border-width: 1px;
+		border-color: ${Colors.LightBlue};
+	}
+	& .${outlinedInputClasses.input} {
+		padding: 9px 0;
 		font-family: ${DEFAULT_FONT_FAMILY};
 		font-size: 14px;
 		line-height: 18px;
@@ -47,21 +57,14 @@ const SidebarSearch = styled(TextField)`
 	}
 `
 
-type Props<TData extends Record<string, any>> = {
-	column: Table_Column<TData>
-	header: Table_Header<TData>
-	table: TableInstance<TData>
-	searchPath: string
-	placeHolder: string
-}
 export const HeaderSearch = <T extends Record<string, any>>({
 	column,
 	table,
 	searchPath,
-	placeHolder,
+	placeholder,
 }: Props<T>) => {
-	const [anchorElPopover, setAnchorElPopover] =
-		useState<HTMLButtonElement | null>(null)
+	const [showPopper, setShowPopper] = useState(false)
+	const anchorElRef = useRef<HTMLDivElement>(null)
 	const [isSearch, setIsSearch] = useState(false)
 	const [input, setInput] = useState('')
 	const [filtered, setFiltered] = useState<Record<string, any>>([])
@@ -73,19 +76,17 @@ export const HeaderSearch = <T extends Record<string, any>>({
 			setIsSearch(false)
 			setInput('')
 			setFiltered([])
-			setAnchorElPopover(null)
+			setShowPopper(false)
 			table.showSearchData(null)
-			table.setHighlightHeadCellId(null)
 		} else {
 			setIsSearch(true)
-			table.setHighlightHeadCellId(getColumnId(column.columnDef))
 		}
 	}
 
 	const handleInputChange = (e) => {
 		e.preventDefault()
 		setInput(e.target.value.toLowerCase())
-		setAnchorElPopover(e.currentTarget)
+		setShowPopper(true)
 	}
 
 	useEffect(() => {
@@ -104,6 +105,7 @@ export const HeaderSearch = <T extends Record<string, any>>({
 
 	return (
 		<Flex
+			ref={anchorElRef}
 			style={{
 				flexGrow: 1,
 				display: 'flex',
@@ -113,8 +115,9 @@ export const HeaderSearch = <T extends Record<string, any>>({
 		>
 			{isSearch ? (
 				<>
-					<SidebarSearch
-						placeholder={placeHolder}
+					<SearchInput
+						placeholder={placeholder}
+						classes={{ root: 'search-input' }}
 						InputProps={{
 							startAdornment: (
 								<InputAdornment position="start">
@@ -126,7 +129,7 @@ export const HeaderSearch = <T extends Record<string, any>>({
 									<IconButton
 										onClick={toggleSearch}
 										disableRipple
-										sx={{ '&:hover svg': { color: IconsColor.active } }}
+										sx={{ '&:hover svg': { color: IconsColor.active }, p: 0.5 }}
 									>
 										<CloseIcon
 											style={{ width: 18, height: 18 }}
@@ -138,19 +141,18 @@ export const HeaderSearch = <T extends Record<string, any>>({
 						}}
 						value={input}
 						onChange={handleInputChange}
+						onClick={(e) => e.stopPropagation()}
 						autoFocus
 					/>
 					<Popper
-						id={anchorElPopover ? 'popover' : undefined}
-						open={Boolean(anchorElPopover) && searchValue.length >= 3}
-						anchorEl={anchorElPopover}
+						open={showPopper}
+						anchorEl={anchorElRef.current}
 						placement="bottom-start"
 						sx={{
-							marginTop: '12px',
+							borderRadius: '6px',
+							width: anchorElRef.current?.clientWidth,
 							backgroundColor: Colors.White,
 							minWidth: 250,
-							left: '-25px !important',
-							top: '15px !important',
 							maxHeight: 200,
 							overflowY: 'auto',
 							filter:
@@ -175,7 +177,7 @@ export const HeaderSearch = <T extends Record<string, any>>({
 									setInput(getValueFromObj<string>(item, searchPath, input))
 									table.showSearchData(item.id)
 									setFiltered([])
-									setAnchorElPopover(null)
+									setShowPopper(false)
 								}}
 							>
 								{getValueFromObj(item, searchPath, '')}
@@ -184,7 +186,7 @@ export const HeaderSearch = <T extends Record<string, any>>({
 					</Popper>
 				</>
 			) : (
-				<EllipsisOverflow>{column.columnDef.header}</EllipsisOverflow>
+				<HeaderBase column={column} />
 			)}
 
 			{!isSearch && (

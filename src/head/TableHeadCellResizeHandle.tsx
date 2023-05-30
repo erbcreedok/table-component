@@ -3,6 +3,7 @@ import Box from '@mui/material/Box'
 import Divider from '@mui/material/Divider'
 
 import { Table_Header, TableInstance } from '..'
+import { Colors, IconsColor } from '../components/styles'
 
 interface Props {
 	header: Table_Header
@@ -14,10 +15,7 @@ export const TableHeadCellResizeHandle: FC<Props> = ({ header, table }) => {
 		getState,
 		options: { columnResizeMode },
 	} = table
-	const { showColumnFilters } = getState()
 	const { column } = header
-	const { columnDef } = column
-	const { columnDefType } = columnDef
 
 	return (
 		<Box
@@ -27,17 +25,21 @@ export const TableHeadCellResizeHandle: FC<Props> = ({ header, table }) => {
 			onTouchStart={header.getResizeHandler()}
 			sx={(theme) => ({
 				cursor: 'col-resize',
-				mr: '-1rem',
+				mr: '-11px',
 				position: 'absolute',
 				right: '1px',
-				px: '4px',
+				top: 0,
+				bottom: 0,
+				px: '11px',
 				opacity: column.getIsResizing() ? 1 : 0,
+				transition: 'opacity 0s',
 				'&:active > hr': {
 					backgroundColor: theme.palette.info.main,
 					opacity: 1,
 				},
-				'td:hover &, th:hover &, &:hover': {
+				'&:hover': {
 					opacity: 1,
+					transition: 'opacity 0.2s',
 				},
 			})}
 			style={{
@@ -51,16 +53,17 @@ export const TableHeadCellResizeHandle: FC<Props> = ({ header, table }) => {
 				flexItem
 				orientation="vertical"
 				sx={{
-					borderRadius: '2px',
-					borderWidth: '2px',
-					height:
-						showColumnFilters && columnDefType === 'data' ? '3.5rem' : '1.5rem',
+					borderWidth: '1px',
+					height: '100%',
 					touchAction: 'none',
 					transition: column.getIsResizing()
 						? undefined
 						: 'all 150ms ease-in-out',
 					userSelect: 'none',
 					zIndex: 4,
+					borderColor: column.getIsResizing()
+						? Colors.LightBlue
+						: IconsColor.active,
 				}}
 			/>
 		</Box>
