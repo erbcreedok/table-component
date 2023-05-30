@@ -7,8 +7,8 @@ const defaultTheme = MUICreateTheme({
 		},
 	},
 })
-export const createTheme = (options: ThemeOptions, ...args: object[]) =>
-	MUICreateTheme(
+export function createTheme(options: ThemeOptions, ...args: object[]) {
+	return MUICreateTheme(
 		{
 			...options,
 			palette: {
@@ -45,3 +45,4 @@ export const createTheme = (options: ThemeOptions, ...args: object[]) =>
 		},
 		...args
 	)
+}
