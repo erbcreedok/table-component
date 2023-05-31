@@ -72,15 +72,16 @@ export const FilterChip: FC<FilterChipProps> = ({
 		</Box>
 	)
 
+	const text =
+		(currentFilterValues?.reduce?.(
+			(acc, label, index) => (index === 0 ? label : `${acc}, ${label}`),
+			''
+		) as string) ?? ''
+
 	return (
 		<div>
 			<CommonChipWithPopover
-				text={
-					currentFilterValues?.reduce?.(
-						(acc, label, index) => (index === 0 ? label : `${acc}, ${label}`),
-						''
-					) || ''
-				}
+				text={text}
 				title={`${currentFilterHeader}: `}
 				dropdownContent={DropdownContent}
 				table={table}

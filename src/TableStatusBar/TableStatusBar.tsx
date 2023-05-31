@@ -1,5 +1,5 @@
 import styled from '@emotion/styled'
-import React, { useEffect, useRef, useState } from 'react'
+import React, { ReactNode, useEffect, useRef, useState } from 'react'
 import Box from '@mui/material/Box'
 import { ButtonBase } from '@mui/material'
 
@@ -53,8 +53,8 @@ export const TableStatusBar = <TData extends Record<string, any> = {}>({
 
 	const barRef = useRef<HTMLDivElement>(null)
 
-	const [visibleElements, setVisibleElements] = useState<Element[]>([])
-	const [hiddenElements, setHiddenElements] = useState<Element[]>([])
+	const [visibleElements, setVisibleElements] = useState<ReactNode[]>([])
+	const [hiddenElements, setHiddenElements] = useState<ReactNode[]>([])
 
 	const { removeAllGroup } = useGroupingControls(table)
 	const { columnFilters = [], columnsIdToHeaderMap } = useFilterControls(table)
@@ -102,8 +102,8 @@ export const TableStatusBar = <TData extends Record<string, any> = {}>({
 
 		if (totalElementsWidth > containerWidth) {
 			let total = 0
-			const hidden: Element[] = []
-			const visible: Element[] = []
+			const hidden: ReactNode[] = []
+			const visible: ReactNode[] = []
 
 			elements.forEach((element) => {
 				if (total > containerWidth - 860) {
@@ -144,13 +144,16 @@ export const TableStatusBar = <TData extends Record<string, any> = {}>({
 					table={table}
 					text={`+${hiddenElements.length} more`}
 					dropdownContent={
-						<div style={{ padding: 12 }}>
-							{hiddenElements.map((element) => (
-								<div key={element.id} style={{ marginBottom: 4 }}>
-									{element}
-								</div>
-							))}
-						</div>
+						<Box
+							sx={{
+								padding: '12px',
+								display: 'flex',
+								flexDirection: 'column',
+								gap: '4px',
+							}}
+						>
+							{hiddenElements}
+						</Box>
 					}
 				/>
 			)}

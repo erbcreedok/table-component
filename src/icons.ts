@@ -28,9 +28,12 @@ import SearchOffIcon from '@mui/icons-material/SearchOff'
 import ViewColumnIcon from '@mui/icons-material/ViewColumn'
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff'
 
+import { ArrowsIcon } from './icons/ArrowsIcon'
+import { ArrowDownIcon } from './icons/ArrowDownIcon'
 import { AnalyticsIcon } from './icons/AnalyticsIcon'
 import { GroupIcon } from './icons/GroupIcon'
 import { GroupingIcon } from './icons/GroupingIcon'
+import { EyeIcon } from './icons/EyeIcon'
 import { HideIcon } from './icons/HideIcon'
 import { SortAscIcon } from './icons/SortAscIcon'
 import { SortDescIcon } from './icons/SortDescIcon'
@@ -46,6 +49,8 @@ import { PlusIcon } from './icons/PlusIcon'
 
 export interface Table_Icons {
 	AnalyticsIcon: any
+	ArrowsIcon: any
+	ArrowDownIcon: any
 	ArrowDownwardIcon: any
 	ArrowRightIcon: any
 	CancelIcon: any
@@ -61,6 +66,7 @@ export interface Table_Icons {
 	EditIcon: any
 	ExpandLessIcon: any
 	ExpandMoreIcon: any
+	EyeIcon: any
 	FilterAltIcon: any
 	FilterListIcon: any
 	FilterListOffIcon: any
@@ -93,6 +99,8 @@ export interface Table_Icons {
 
 export const Default_Icons: Table_Icons = {
 	AnalyticsIcon,
+	ArrowsIcon,
+	ArrowDownIcon,
 	ArrowDownwardIcon,
 	ArrowRightIcon,
 	CancelIcon,
@@ -107,6 +115,7 @@ export const Default_Icons: Table_Icons = {
 	EditIcon,
 	ExpandLessIcon,
 	ExpandMoreIcon,
+	EyeIcon,
 	FilterAltIcon,
 	FilterListIcon,
 	FilterListOffIcon,

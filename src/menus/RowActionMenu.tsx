@@ -6,7 +6,7 @@ import MenuItem from '@mui/material/MenuItem'
 
 import type { Table_Row, TableInstance } from '..'
 
-import { commonListItemStyles, commonMenuItemStyles } from './ColumnActionMenu'
+import { commonListItemStyles, commonMenuItemStyles } from './constants'
 
 interface Props<TData extends Record<string, any> = {}> {
 	anchorEl: HTMLElement | null

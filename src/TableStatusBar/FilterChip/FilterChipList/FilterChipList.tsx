@@ -13,10 +13,10 @@ interface FilterChipListProps {
 export const FilterChipList: FC<FilterChipListProps> = (props) => {
 	const { table, filterId } = props
 
-	const { filtedList, currentFilterValues, currentFilterColumn } =
+	const { filteredList, currentFilterValues, currentFilterColumn } =
 		useFilterControls(table, filterId)
 
-	if (!filtedList?.length) {
+	if (!filteredList?.length) {
 		return <div>No options</div>
 	}
 

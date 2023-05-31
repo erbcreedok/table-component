@@ -169,7 +169,7 @@ export const PeopleTable: Story<TableComponentProps> = () => {
 				enablePinning
 				enableColumnFiltersSelection
 				// enableStickyHeader
-				subFilterSelection={(props) => {
+				ColumnActionsFiltersMenu={(props) => {
 					const {
 						selectedFilters,
 						filterValues,

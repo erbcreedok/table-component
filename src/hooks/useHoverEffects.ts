@@ -1,11 +1,17 @@
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 
-export const useHoverEffects = () => {
+export const useHoverEffects = (delay?: number) => {
 	const [hovered, setHovered] = useState(false)
+	const ref = useRef<ReturnType<typeof setTimeout>>()
 
 	const hoverProps = {
-		onMouseEnter: () => setHovered(true),
-		onMouseLeave: () => setTimeout(() => setHovered(false)),
+		onMouseEnter: () => {
+			if (ref.current) clearTimeout(ref.current)
+			setHovered(true)
+		},
+		onMouseLeave: () => {
+			ref.current = setTimeout(() => setHovered(false), delay)
+		},
 	}
 
 	return {

@@ -1,5 +1,9 @@
+import IconButton from '@mui/material/IconButton'
+import Skeleton from '@mui/material/Skeleton'
+import { darken, lighten, useTheme } from '@mui/material/styles'
+import MuiTableCell from '@mui/material/TableCell'
+import type { VirtualItem } from '@tanstack/react-virtual'
 import React, {
-	Fragment,
 	DragEvent,
 	FC,
 	HTMLProps,
@@ -11,21 +15,16 @@ import React, {
 	useMemo,
 	useState,
 } from 'react'
-import Box from '@mui/material/Box'
-import Skeleton from '@mui/material/Skeleton'
-import MuiTableCell from '@mui/material/TableCell'
-import IconButton from '@mui/material/IconButton'
-import { darken, lighten, useTheme } from '@mui/material/styles'
-import type { VirtualItem } from '@tanstack/react-virtual'
 
-import { EditCellTextField } from '../inputs/EditCellTextField'
+import type { Table_Cell, Table_ColumnDef, TableInstance } from '..'
 import { CopyButton } from '../buttons/CopyButton'
-import { GroupBorders } from '../utils/getGroupBorders'
 import { getCommonCellStyles } from '../column.utils'
-import type { Table_Cell, TableInstance, Table_ColumnDef } from '..'
+import { ConditionalBox } from '../components/ConditionalBox'
+import { EditCellTextField } from '../inputs/EditCellTextField'
+import { GroupBorders } from '../utils/getGroupBorders'
 
-import { TableBodyRowGrabHandle } from './TableBodyRowGrabHandle'
 import { TableBodyCellValue } from './TableBodyCellValue'
+import { TableBodyRowGrabHandle } from './TableBodyRowGrabHandle'
 
 interface Props {
 	cell: Table_Cell
@@ -349,8 +348,6 @@ export const TableBodyCell: FC<Props> = ({
 		}) as ReactElement
 	}
 
-	const CellComponent = columnDef.cellAction ? Box : Fragment
-
 	return (
 		<MuiTableCell
 			rowSpan={rowSpan}
@@ -366,7 +363,8 @@ export const TableBodyCell: FC<Props> = ({
 			onClick={handleSingleClick}
 			sx={(theme) => getTableCellStyles(theme)}
 		>
-			<CellComponent
+			<ConditionalBox
+				condition={!!columnDef.cellAction}
 				sx={{ display: 'flex', alignItems: 'center', marginRight: '5px' }}
 			>
 				{isGroupedCell ? (
@@ -434,7 +432,7 @@ export const TableBodyCell: FC<Props> = ({
 						<ExpandIcon />
 					</IconButton>
 				) : null}
-			</CellComponent>
+			</ConditionalBox>
 		</MuiTableCell>
 	)
 }

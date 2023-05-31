@@ -2,13 +2,15 @@ import type { Table_Localization } from '../TableComponent'
 
 export const Table_Localization_EN: Table_Localization = {
 	actions: 'Actions',
+	addToFilter: 'Add to Filter',
+	addSorting: 'Add Sorting',
 	and: 'and',
 	cancel: 'Cancel',
 	changeFilterMode: 'Change filter mode',
 	changeSearchMode: 'Change search mode',
 	clearFilter: 'Clear filter',
 	clearSearch: 'Clear search',
-	clearSort: 'Clear sort',
+	clearSort: 'Clear Sort',
 	clickToCopy: 'Click to copy',
 	collapse: 'Collapse',
 	collapseAll: 'Collapse all',

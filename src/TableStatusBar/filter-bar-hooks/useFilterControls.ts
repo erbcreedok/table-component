@@ -1,8 +1,11 @@
 import { useMemo } from 'react'
 
-import { Table_Column } from 'src'
+import { Table_Column, TableInstance } from 'src'
 
-export const useFilterControls = (table: any, filterId?: string) => {
+export const useFilterControls = <TData extends Record<string, any>>(
+	table: TableInstance<TData>,
+	filterId?: string
+) => {
 	const { getState, getAllColumns } = table
 
 	const { columnFilters } = getState()
@@ -29,13 +32,13 @@ export const useFilterControls = (table: any, filterId?: string) => {
 		[columns, columnFilters]
 	)
 
-	const filtedList = useMemo(
+	const filteredList = useMemo(
 		() => columns.filter((col) => col.getIsFiltered()),
 		[columns, columnFilters]
 	)
 
 	const getColumnFilterOptions: (
-		column: Table_Column<any>
+		column: Table_Column
 	) => { label: string; value: string }[] = (column) => {
 		try {
 			return Array.from(column.getFacetedUniqueValues().keys())
@@ -57,7 +60,7 @@ export const useFilterControls = (table: any, filterId?: string) => {
 
 		const filter = columnFilters.find((filter) => filter.id === filterId)
 
-		return filter?.value || []
+		return (filter?.value as unknown[]) || []
 	}
 
 	const getCurrentFilterHeader = (filterId?: string) => {
@@ -67,14 +70,14 @@ export const useFilterControls = (table: any, filterId?: string) => {
 
 		const column = columns.find((column) => column.id === filterId)
 
-		return column.columnDef.header || ''
+		return column?.columnDef.header || ''
 	}
 
 	return {
 		columns,
 		columnFilters,
 		columnsIdToHeaderMap,
-		filtedList,
+		filteredList,
 		nonFilteringList,
 
 		currentFilterValues: getCurrentFilterValues(filterId),

@@ -61,6 +61,8 @@ type LiteralUnion<T extends U, U = string> = T | (U & Record<never, never>)
 export interface Table_Localization {
 	actions: string
 	and: string
+	addToFilter: string
+	addSorting: string
 	cancel: string
 	changeFilterMode: string
 	changeSearchMode: string
@@ -1133,7 +1135,15 @@ export type TableComponentProps<TData extends Record<string, any> = {}> = Omit<
 		defaultStyles: Record<string, any>
 	}) => React.ReactNode
 	enableColumnFiltersSelection?: boolean
-	subFilterSelection?: ReactNode
+	ColumnActionsFiltersMenu?: FC<{
+		table: TableInstance<TData>
+		column: Table_Column<TData>
+		selectedFilters: any[]
+		filterValues: string[]
+		onCheckFilter: (value: string) => void
+		onCheckAllFilters: () => void
+		onApplyFilters: () => void
+	}>
 	columnVirtualizerInstanceRef?: MutableRefObject<Virtualizer<
 		HTMLDivElement,
 		HTMLTableCellElement

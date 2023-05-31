@@ -44,7 +44,6 @@ export const ColumnsButton = <TData extends Record<string, any> = {}>({
 					{...rest}
 				>
 					<ToggleIcon
-						sx={{ width: 21, height: 21 }}
 						htmlColor={disabled ? IconsColor.disabled : IconsColor.default}
 					/>
 					{enableCaption && <Typography>{localization.showColumns}</Typography>}

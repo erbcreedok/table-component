@@ -107,15 +107,15 @@ const SummaryRowExampleCellValue = (props) => {
 
 		return Math.round(100 - ((100 * partialCount) / rows.length))
 	}
-    
+
     if (column.id === 'mrt-row-select') {
         return <MuiTableCell sx={{ ...defaultStyles }}></MuiTableCell>
     }
-    
+
     if (column.id === 'teamMember') {
         return <MuiTableCell sx={{ ...defaultStyles }}>Statistics of your team:</MuiTableCell>
     }
-           
+
     return (
 		<MuiTableCell sx={{ ...defaultStyles }}>
 			<LinearProgress
@@ -263,6 +263,10 @@ const meta: Meta = {
 		enableColumnDragging: {
 			control: 'boolean',
 			defaultValue: false,
+		},
+		enableColumnFiltersSelection: {
+			control: 'boolean',
+			defaultValue: true,
 		},
 		enableSorting: {
 			control: 'boolean',
