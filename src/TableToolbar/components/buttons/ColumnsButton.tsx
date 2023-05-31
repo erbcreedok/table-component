@@ -14,14 +14,14 @@ interface Props<TData extends Record<string, any> = {}>
 	enableCaption: boolean
 }
 
-export const SettingsButton = <TData extends Record<string, any> = {}>({
+export const ColumnsButton = <TData extends Record<string, any> = {}>({
 	table,
 	enableCaption,
 	...rest
 }: Props<TData>) => {
 	const {
 		options: {
-			icons: { SettingsIcon },
+			icons: { ToggleIcon },
 			localization,
 		},
 	} = table
@@ -36,19 +36,18 @@ export const SettingsButton = <TData extends Record<string, any> = {}>({
 
 	return (
 		<>
-			<Tooltip placement="top" title={rest?.title ?? localization.showSettings}>
+			<Tooltip placement="top" title={rest?.title ?? localization.showColumns}>
 				<ToolbarIconButton
-					aria-label={localization.showSettings}
+					aria-label={localization.showColumns}
 					onClick={handleClick}
 					disableRipple
 					{...rest}
 				>
-					<SettingsIcon
+					<ToggleIcon
+						sx={{ width: 21, height: 21 }}
 						htmlColor={disabled ? IconsColor.disabled : IconsColor.default}
 					/>
-					{enableCaption && (
-						<Typography>{localization.showSettings}</Typography>
-					)}
+					{enableCaption && <Typography>{localization.showColumns}</Typography>}
 				</ToolbarIconButton>
 			</Tooltip>
 

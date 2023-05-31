@@ -102,7 +102,7 @@ export const Table_Localization_EN: Table_Localization = {
 	showGrouping: 'Group',
 	showSorting: 'Sort',
 	showFiltering: 'Filters',
-	showSettings: 'Settings',
+	showColumns: 'Columns',
 	showPreset: 'Preset',
 	removeAll: 'Remove all',
 	addFilter: 'Add filter',

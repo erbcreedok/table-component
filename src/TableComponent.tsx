@@ -142,7 +142,7 @@ export interface Table_Localization {
 	showSorting: string
 	showFiltering: string
 	showHideSearch: string
-	showSettings: string
+	showColumns: string
 	showPreset: string
 	sortAsc: string
 	sortDesc: string

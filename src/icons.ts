@@ -41,6 +41,7 @@ import { PencilIcon } from './icons/PencilIcon'
 import { TrashIcon } from './icons/TrashIcon'
 import { ClearIcon } from './icons/ClearIcon'
 import { ExpandIcon } from './icons/ExpandIcon'
+import { ToggleIcon } from './icons/ToggleIcon'
 
 export interface Table_Icons {
 	AnalyticsIcon: any
@@ -85,6 +86,7 @@ export interface Table_Icons {
 	FiltersIcon: any
 	SettingsIcon: any
 	ExpandIcon: any
+	ToggleIcon: any
 }
 
 export const Default_Icons: Table_Icons = {
@@ -130,4 +132,5 @@ export const Default_Icons: Table_Icons = {
 	SettingsIcon,
 	HideIcon,
 	ExpandIcon,
+	ToggleIcon,
 }

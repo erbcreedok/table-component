@@ -14,7 +14,7 @@ import type { TableInstance } from '../index'
 import { GroupingButton } from './components/buttons/GroupingButton'
 import { SortingButton } from './components/buttons/SortingButton'
 import { FiltersButton } from './components/buttons/FiltersButton'
-import { SettingsButton } from './components/buttons/SettingsButton'
+import { ColumnsButton } from './components/buttons/ColumnsButton'
 import { PresetButton } from './components/buttons/PresetButton'
 
 type Props<TData extends Record<string, any> = {}> = {
@@ -102,7 +102,7 @@ export const TableToolbar = <TData extends Record<string, any> = {}>({
 							/>
 						)}
 						{enableSettings && (
-							<SettingsButton
+							<ColumnsButton
 								enableCaption={computedEnableCaption}
 								table={table}
 							/>
