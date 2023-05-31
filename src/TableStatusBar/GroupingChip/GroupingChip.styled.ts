@@ -32,7 +32,15 @@ export const ItemBoxSearchedGroupingStyled = styled(Box)`
 	padding: 9px 12px;
 	cursor: pointer;
 
+	& > span {
+		visibility: hidden;
+	}
+
 	&:hover {
 		background-color: #f5f6fa;
+
+		& > span {
+			visibility: visible;
+		}
 	}
 `

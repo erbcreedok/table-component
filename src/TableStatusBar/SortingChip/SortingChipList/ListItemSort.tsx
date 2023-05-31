@@ -5,6 +5,7 @@ import { GrabHandleButton } from '../../../buttons/GrabHandleButton'
 import { SortingItemBoxStyled } from '../SortingChip.styled'
 import { SortingButtons } from '../../../TableToolbar/components/menus/SortingMenu/SortingButtons'
 import { DeleteIcon } from '../../../icons/DeleteIcon'
+import { useHoverEffects } from '../../../hooks/useHoverEffects'
 
 interface ListItemSortProps {
 	column: any
@@ -31,6 +32,7 @@ export const ListItemSort: FC<ListItemSortProps> = (props) => {
 
 	const rowRef = useRef<HTMLDivElement>(null)
 	const [isDragging, setIsDragging] = useState(false)
+	const { hovered, hoverProps } = useHoverEffects()
 
 	const handleDragStart = (event: DragEvent<any>) => {
 		setIsDragging(true)
@@ -62,11 +64,17 @@ export const ListItemSort: FC<ListItemSortProps> = (props) => {
 	}
 
 	return (
-		<MenuItem disableRipple ref={rowRef as any} onDragEnter={handleDragEnter}>
+		<MenuItem
+			disableRipple
+			ref={rowRef as any}
+			onDragEnter={handleDragEnter}
+			sx={{ pl: 0 }}
+			{...hoverProps}
+		>
 			<SortingItemBoxStyled component="div">
 				<div style={{ display: 'flex', alignItems: 'center' }}>
 					{isDragable && (
-						<div style={{ marginRight: 18 }}>
+						<div style={{ marginRight: 18, marginLeft: 6 }}>
 							<GrabHandleButton
 								iconButtonProps={muiTableBodyRowDragHandleProps}
 								onDragStart={handleDragStart}
@@ -82,11 +90,21 @@ export const ListItemSort: FC<ListItemSortProps> = (props) => {
 				</div>
 
 				<Box sx={{ display: 'flex', marginRight: -5, alignItems: 'center' }}>
-					<span className="sorting-trash">
-						<DeleteIcon onClick={handleDelete} />
-					</span>
+					<SortingButtons
+						column={column}
+						sx={{ marginRight: hovered ? '10px' : '20px' }}
+						hideUnselected={!hovered}
+					/>
 
-					<SortingButtons column={column} sx={{ marginRight: '20px' }} />
+					<Box
+						sx={{
+							display: hovered ? 'inline-block' : 'none',
+							height: '20px',
+							mr: '20px',
+						}}
+					>
+						<DeleteIcon onClick={handleDelete} />
+					</Box>
 				</Box>
 			</SortingItemBoxStyled>
 		</MenuItem>

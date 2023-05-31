@@ -4,6 +4,8 @@ import { Typography } from '@mui/material'
 import { ItemBoxSearchedSortingStyled } from '../SortingChip.styled'
 import { useSortingControls } from '../../filter-bar-hooks/useSortingControls'
 import { ButtonLink } from '../../../components/ButtonLink'
+import { IconsColor } from '../../../components/styles'
+import { PlusIcon } from '../../../icons/PlusIcon'
 
 export const ListSearchSortingItem: FC<any> = (props) => {
 	const {
@@ -33,7 +35,9 @@ export const ListSearchSortingItem: FC<any> = (props) => {
 				{header}
 			</Typography>
 
-			<ButtonLink style={{ fontWeight: 600 }}>+</ButtonLink>
+			<ButtonLink>
+				<PlusIcon htmlColor={IconsColor.default} />
+			</ButtonLink>
 		</ItemBoxSearchedSortingStyled>
 	)
 }

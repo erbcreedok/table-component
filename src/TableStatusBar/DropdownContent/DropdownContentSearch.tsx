@@ -18,6 +18,8 @@ type DropdownContentSearchProps = {
 const SearchInput = styled(TextField)`
 	font-family: ${DEFAULT_FONT_FAMILY};
 	padding: 12px;
+	padding-left: 7px;
+	padding-right: 0;
 	width: 100%;
 	box-sizing: border-box;
 	& > div {

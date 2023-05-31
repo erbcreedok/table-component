@@ -51,7 +51,7 @@ export const ListGroupItem: FC<any> = ({
 		<MenuItem disableRipple ref={rowRef as any} onDragEnter={handleDragEnter}>
 			<ItemBoxGroupingStyled component="div">
 				<div style={{ display: 'flex', alignItems: 'center' }}>
-					<div style={{ marginRight: 18 }}>
+					<div style={{ marginRight: 18, marginLeft: 6 }}>
 						<GrabHandleButton
 							iconButtonProps={iconButtonProps}
 							onDragStart={handleDragStart}

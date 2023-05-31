@@ -10,6 +10,7 @@ import { Colors, Text } from '../../../../components/styles'
 interface Props<TData extends Record<string, any> = {}> {
 	column: Table_Column<TData>
 	sx?: SxProps | undefined
+	hideUnselected?: boolean
 }
 export const SortingButtons = <TData extends Record<string, any> = {}>(
 	props: Props<TData>
@@ -42,8 +43,13 @@ export const SortingButtons = <TData extends Record<string, any> = {}>(
 				onClick={() => column.toggleSorting(false, true)}
 				disableRipple
 				sx={{
-					backgroundColor: sorting === 'asc' ? Colors.gray : 'initial',
-					marginRight: '4px',
+					display: props.hideUnselected && sorting === 'desc' ? 'none' : 'flex',
+					backgroundColor: props.hideUnselected
+						? 'initial'
+						: sorting === 'asc'
+						? Colors.gray
+						: 'initial',
+					marginRight: props.hideUnselected ? '0px' : '4px',
 				}}
 				size="small"
 			>
@@ -53,7 +59,12 @@ export const SortingButtons = <TData extends Record<string, any> = {}>(
 				onClick={() => column.toggleSorting(true, true)}
 				disableRipple
 				sx={{
-					backgroundColor: sorting === 'desc' ? Colors.gray : 'initial',
+					display: props.hideUnselected && sorting === 'asc' ? 'none' : 'flex',
+					backgroundColor: props.hideUnselected
+						? 'initial'
+						: sorting === 'desc'
+						? Colors.gray
+						: 'initial',
 				}}
 				size="small"
 			>

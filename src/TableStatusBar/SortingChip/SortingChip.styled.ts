@@ -12,15 +12,6 @@ export const SortingItemBoxStyled = styled(Box)`
 	&:hover {
 		background-color: #f5f6fa;
 	}
-
-	.sorting-trash {
-		display: none;
-		height: 20px;
-		margin-right: 10px;
-	}
-	&:hover .sorting-trash {
-		display: inline-block;
-	}
 `
 
 export const ItemBoxSearchedSortingStyled = styled(Box)`
@@ -30,7 +21,15 @@ export const ItemBoxSearchedSortingStyled = styled(Box)`
 	padding: 9px 12px;
 	cursor: pointer;
 
+	& > span {
+		visibility: hidden;
+	}
+
 	&:hover {
 		background-color: #f5f6fa;
+
+		& > span {
+			visibility: visible;
+		}
 	}
 `

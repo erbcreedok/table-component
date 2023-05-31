@@ -4,6 +4,8 @@ import { Typography } from '@mui/material'
 import { useGroupingControls } from '../../filter-bar-hooks/useGroupingControls'
 import { ItemBoxSearchedGroupingStyled } from '../GroupingChip.styled'
 import { ButtonLink } from '../../../components/ButtonLink'
+import { IconsColor } from '../../../components/styles'
+import { PlusIcon } from '../../../icons/PlusIcon'
 
 export const ListSearchedGroupItem: FC<any> = (props) => {
 	const {
@@ -33,7 +35,9 @@ export const ListSearchedGroupItem: FC<any> = (props) => {
 				{header}
 			</Typography>
 
-			<ButtonLink style={{ fontWeight: 600 }}>+</ButtonLink>
+			<ButtonLink>
+				<PlusIcon htmlColor={IconsColor.default} />
+			</ButtonLink>
 		</ItemBoxSearchedGroupingStyled>
 	)
 }
