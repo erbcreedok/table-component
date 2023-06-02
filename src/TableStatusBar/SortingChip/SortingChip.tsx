@@ -10,6 +10,7 @@ import { DescIcon } from '../../icons/DescIcon'
 import { DropdownContentHeader } from '../DropdownContent/DropdownContentHeader'
 import { DropdownContentSearch } from '../DropdownContent/DropdownContentSearch'
 import { useSortingControls } from '../filter-bar-hooks/useSortingControls'
+import { Colors, IconsColor } from '../../components/styles'
 
 import { SelectedSortsList } from './SortingChipList/SelectedSortsList'
 import { SortingSearchResult } from './SortingChipSearch/SortingSearchResult'
@@ -123,7 +124,7 @@ export const SortingChip = <TData extends Record<string, any> = {}>(
 		return <></>
 	}
 
-	const iconColor = isOpen ? '#FAFAFC' : '#6C6F80'
+	const iconColor = isOpen ? Colors.LightestGray : IconsColor.default
 
 	return (
 		<CommonChipWithPopover
@@ -134,9 +135,9 @@ export const SortingChip = <TData extends Record<string, any> = {}>(
 				sortedList?.length > 1 ? (
 					<SortIcon />
 				) : firstSorting?.desc ? (
-					<DescIcon fill={iconColor} />
+					<DescIcon htmlColor={iconColor} />
 				) : (
-					<AscIcon fill={iconColor} />
+					<AscIcon htmlColor={iconColor} />
 				)
 			}
 			dropdownContent={DropdownContent}

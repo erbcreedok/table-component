@@ -5,7 +5,7 @@ import { IconButton, SxProps } from '@mui/material'
 import { Table_Column } from '../../../../TableComponent'
 import { AscIcon } from '../../../../icons/AscIcon'
 import { DescIcon } from '../../../../icons/DescIcon'
-import { Colors, Text } from '../../../../components/styles'
+import { Colors, Text, IconsColor } from '../../../../components/styles'
 
 interface Props<TData extends Record<string, any> = {}> {
 	column: Table_Column<TData>
@@ -53,7 +53,10 @@ export const SortingButtons = <TData extends Record<string, any> = {}>(
 				}}
 				size="small"
 			>
-				<AscIcon />
+				<AscIcon
+					htmlColor={IconsColor.default}
+					sx={{ width: 18, height: 18 }}
+				/>
 			</IconButton>
 			<IconButton
 				onClick={() => column.toggleSorting(true, true)}
@@ -68,7 +71,10 @@ export const SortingButtons = <TData extends Record<string, any> = {}>(
 				}}
 				size="small"
 			>
-				<DescIcon />
+				<DescIcon
+					htmlColor={IconsColor.default}
+					sx={{ width: 18, height: 18 }}
+				/>
 			</IconButton>
 		</Box>
 	)
