@@ -1,3 +1,4 @@
+import Box from '@mui/material/Box'
 import React, { useEffect, useRef, useState } from 'react'
 import {
 	IconButton,
@@ -11,8 +12,6 @@ import {
 
 import { Flex } from '../components/Flex'
 import { Table_Column, Table_Header, TableInstance } from '../TableComponent'
-import { HeaderSearchIcon } from '../icons/HeaderSearchIcon'
-import { CloseIcon } from '../icons/CloseIcon'
 import {
 	Colors,
 	DEFAULT_FONT_FAMILY,
@@ -38,6 +37,7 @@ const SearchInput = styled(TextField)`
 	& .${outlinedInputClasses.root} {
 		padding-left: 12px;
 		padding-right: 12px;
+		background: ${Colors.White};
 	}
 	& .${outlinedInputClasses.notchedOutline} {
 		border-radius: 6px;
@@ -47,6 +47,7 @@ const SearchInput = styled(TextField)`
 		.${outlinedInputClasses.notchedOutline} {
 		border-width: 1px;
 		border-color: ${Colors.LightBlue};
+		box-shadow: 0 0 0 3px ${Colors.LightestBlue};
 	}
 	& .${outlinedInputClasses.input} {
 		padding: 9px 0;
@@ -69,15 +70,33 @@ export const HeaderSearch = <T extends Record<string, any>>({
 	const [input, setInput] = useState('')
 	const [filtered, setFiltered] = useState<Record<string, any>>([])
 	const searchValue = useDelay(input)
+	const {
+		options: {
+			icons: { SearchIcon, CloseIcon },
+		},
+	} = table
+
+	const searchIcon = (
+		<SearchIcon
+			sx={{
+				width: 18,
+				height: 18,
+			}}
+		/>
+	)
+
+	const clearSearch = () => {
+		setIsSearch(false)
+		setInput('')
+		setFiltered([])
+		setShowPopper(false)
+		table.showSearchData(null)
+	}
 
 	const toggleSearch = (e) => {
 		e.stopPropagation()
 		if (isSearch) {
-			setIsSearch(false)
-			setInput('')
-			setFiltered([])
-			setShowPopper(false)
-			table.showSearchData(null)
+			clearSearch()
 		} else {
 			setIsSearch(true)
 		}
@@ -106,11 +125,12 @@ export const HeaderSearch = <T extends Record<string, any>>({
 	return (
 		<Flex
 			ref={anchorElRef}
-			style={{
+			sx={{
 				flexGrow: 1,
 				display: 'flex',
 				alignItems: 'center',
 				justifyContent: 'space-between',
+				padding: isSearch ? '3px' : 0,
 			}}
 		>
 			{isSearch ? (
@@ -119,12 +139,16 @@ export const HeaderSearch = <T extends Record<string, any>>({
 						placeholder={placeholder}
 						classes={{ root: 'search-input' }}
 						InputProps={{
+							onBlur: () => searchValue.length === 0 && clearSearch(),
 							startAdornment: (
-								<InputAdornment position="start">
-									<HeaderSearchIcon htmlColor={IconsColor.disabled} />
+								<InputAdornment
+									position="start"
+									sx={{ color: IconsColor.default }}
+								>
+									{searchIcon}
 								</InputAdornment>
 							),
-							endAdornment: (
+							endAdornment: searchValue.length > 0 && (
 								<InputAdornment position="end">
 									<IconButton
 										onClick={toggleSearch}
@@ -186,7 +210,9 @@ export const HeaderSearch = <T extends Record<string, any>>({
 					</Popper>
 				</>
 			) : (
-				<HeaderBase column={column} />
+				<Box>
+					<HeaderBase column={column} />
+				</Box>
 			)}
 
 			{!isSearch && (
@@ -194,9 +220,12 @@ export const HeaderSearch = <T extends Record<string, any>>({
 					disableRipple
 					size="small"
 					onClick={toggleSearch}
-					sx={{ '&:hover svg': { color: IconsColor.active } }}
+					sx={{
+						color: IconsColor.default,
+						'&:hover': { color: IconsColor.active },
+					}}
 				>
-					<HeaderSearchIcon htmlColor={IconsColor.default} />
+					{searchIcon}
 				</IconButton>
 			)}
 		</Flex>

@@ -3,7 +3,7 @@ import { SvgIcon, SvgIconProps } from '@mui/material'
 
 export const SortAscIcon = (props: SvgIconProps) => {
 	return (
-		<SvgIcon {...props} viewBox="0 0 18 18" sx={{ width: 18, height: 18 }}>
+		<SvgIcon width={18} height={18} {...props} viewBox="0 0 18 18">
 			<path
 				fillRule="evenodd"
 				clipRule="evenodd"

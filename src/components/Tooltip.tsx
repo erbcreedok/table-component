@@ -34,30 +34,29 @@ type Spacing =
 			bottom?: number
 	  }
 
-const getSpacing = (
-	fallback: number,
-	spacing?: Spacing,
-	direction?: 'top' | 'left' | 'right' | 'bottom'
-) => {
-	if (!spacing) return fallback
-	if (typeof spacing === 'number') {
-		return spacing
-	}
-	if (direction === 'top') {
-		return spacing?.top ?? spacing?.y ?? fallback
-	}
-	if (direction === 'left') {
-		return spacing?.left ?? spacing?.x ?? fallback
-	}
-	if (direction === 'right') {
-		return spacing?.right ?? spacing?.x ?? fallback
-	}
-	if (direction === 'bottom') {
-		return spacing?.bottom ?? spacing?.y ?? fallback
-	}
+const getSpacing =
+	(direction?: 'top' | 'left' | 'right' | 'bottom') =>
+	({ spacing, arrow }: { spacing?: Spacing; arrow?: boolean }) => {
+		const fallback = arrow ? 8 : 3
+		if (!spacing) return fallback
+		if (typeof spacing === 'number') {
+			return spacing
+		}
+		if (direction === 'top') {
+			return spacing?.top ?? spacing?.y ?? fallback
+		}
+		if (direction === 'left') {
+			return spacing?.left ?? spacing?.x ?? fallback
+		}
+		if (direction === 'right') {
+			return spacing?.right ?? spacing?.x ?? fallback
+		}
+		if (direction === 'bottom') {
+			return spacing?.bottom ?? spacing?.y ?? fallback
+		}
 
-	return fallback
-}
+		return fallback
+	}
 
 export const Tooltip = styled(TooltipBase)<{
 	color?: string
@@ -68,15 +67,15 @@ export const Tooltip = styled(TooltipBase)<{
 		color: ${({ color }) => color ?? Colors.Gray};
 	}
 	.${tooltipClasses.popper}[data-popper-placement*='top'] > & {
-		margin-bottom: ${({ spacing }) => getSpacing(3, spacing, 'top')}px;
+		margin-bottom: ${getSpacing('top')}px;
 	}
 	.${tooltipClasses.popper}[data-popper-placement*='bottom'] > & {
-		margin-top: ${({ spacing }) => getSpacing(3, spacing, 'bottom')}px;
+		margin-top: ${getSpacing('bottom')}px;
 	}
 	.${tooltipClasses.popper}[data-popper-placement*='left'] > & {
-		margin-right: ${({ spacing }) => getSpacing(3, spacing, 'left')}px;
+		margin-right: ${getSpacing('left')}px;
 	}
 	.${tooltipClasses.popper}[data-popper-placement*='bottom'] > & {
-		margin-left: ${({ spacing }) => getSpacing(3, spacing, 'bottom')}px;
+		margin-left: ${getSpacing('bottom')}px;
 	}
 `

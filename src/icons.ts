@@ -23,7 +23,6 @@ import MoreVertIcon from '@mui/icons-material/MoreVert'
 import PushPinIcon from '@mui/icons-material/PushPin'
 import RestartAltIcon from '@mui/icons-material/RestartAlt'
 import SaveIcon from '@mui/icons-material/Save'
-import SearchIcon from '@mui/icons-material/Search'
 import SearchOffIcon from '@mui/icons-material/SearchOff'
 import ViewColumnIcon from '@mui/icons-material/ViewColumn'
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff'
@@ -31,10 +30,13 @@ import VisibilityOffIcon from '@mui/icons-material/VisibilityOff'
 import { ArrowsIcon } from './icons/ArrowsIcon'
 import { ArrowDownIcon } from './icons/ArrowDownIcon'
 import { AnalyticsIcon } from './icons/AnalyticsIcon'
+import { AscIcon } from './icons/AscIcon'
+import { DescIcon } from './icons/DescIcon'
 import { GroupIcon } from './icons/GroupIcon'
 import { GroupingIcon } from './icons/GroupingIcon'
 import { EyeIcon } from './icons/EyeIcon'
 import { HideIcon } from './icons/HideIcon'
+import { SearchIcon } from './icons/SearchIcon'
 import { SortAscIcon } from './icons/SortAscIcon'
 import { SortDescIcon } from './icons/SortDescIcon'
 import { SortIcon } from './icons/SortIcon'
@@ -53,6 +55,8 @@ export interface Table_Icons {
 	ArrowDownIcon: any
 	ArrowDownwardIcon: any
 	ArrowRightIcon: any
+	AscIcon: any
+	DescIcon: any
 	CancelIcon: any
 	CheckIcon: any
 	ClearAllIcon: any
@@ -103,6 +107,8 @@ export const Default_Icons: Table_Icons = {
 	ArrowDownIcon,
 	ArrowDownwardIcon,
 	ArrowRightIcon,
+	AscIcon,
+	DescIcon,
 	CancelIcon,
 	CheckIcon,
 	ClearAllIcon,

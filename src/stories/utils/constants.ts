@@ -2,6 +2,7 @@ export const Colors = {
 	danger: '#FA4B4B',
 	orange: '#F67E00',
 	lightestGrey: '#E1E3EB',
+	lightGrey: '#EBEDF5',
 	purple: '#7833FF',
 	ocean: '#009ECC',
 	leaf: '#6DBE72',

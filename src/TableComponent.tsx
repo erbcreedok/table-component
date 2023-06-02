@@ -388,6 +388,13 @@ export type Table_ColumnDef<TData extends Record<string, any> = {}> = Omit<
 	 */
 	accessorKey?: DeepKeys<TData>
 	aggregationFn?: Table_AggregationFn<TData> | Array<Table_AggregationFn<TData>>
+	getTableCellSx?: (options: {
+		cell: Table_Cell<TData>
+		column: Table_Column<TData>
+		isCurrentCellClicked?: boolean
+		row: Table_Row<TData>
+		table: TableInstance<TData>
+	}) => TableCellProps['sx']
 	/**
 	 * Specify what type of column this is. Either `data`, `display`, or `group`. Defaults to `data`.
 	 * Leave this blank if you are just creating a normal data column.
@@ -406,6 +413,8 @@ export type Table_ColumnDef<TData extends Record<string, any> = {}> = Omit<
 	enableColumnDragging?: boolean
 	enableColumnFilterModes?: boolean
 	enableColumnOrdering?: boolean
+	enableDividerLeft?: boolean
+	enableDividerRight?: boolean
 	enableEditing?: boolean
 	filterFn?: Table_FilterFn<TData>
 	filterSelectOptions?: (string | { text: string; value: any })[]
@@ -1134,7 +1143,6 @@ export type TableComponentProps<TData extends Record<string, any> = {}> = Omit<
 		column: Table_ColumnDef<TData>
 		defaultStyles: Record<string, any>
 	}) => React.ReactNode
-	enableColumnFiltersSelection?: boolean
 	ColumnActionsFiltersMenu?: FC<{
 		table: TableInstance<TData>
 		column: Table_Column<TData>

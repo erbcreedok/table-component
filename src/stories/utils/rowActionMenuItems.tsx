@@ -1,32 +1,42 @@
 import AccountCircleIcon from '@mui/icons-material/AccountCircle'
 import DeleteIcon from '@mui/icons-material/Delete'
 import ShareIcon from '@mui/icons-material/Share'
-import { MenuItem } from '@mui/material'
 import React from 'react'
+import { MenuItemBase } from '../../components/Menu'
 import { Table_Row } from '../../TableComponent'
 
 type ActionMenuItemProps = {
 	onClick?: (action: string) => void
 }
+
 export const ViewProfileActionMenuItem = ({ onClick }: ActionMenuItemProps) => (
-	<MenuItem
-		onClick={() => onClick?.('View Profile')}>
-		<AccountCircleIcon /> View Profile
-	</MenuItem>
+	<MenuItemBase
+		size="small"
+		icon={<AccountCircleIcon />}
+		onClick={() => onClick?.('View Profile')}
+	>
+		View Profile
+	</MenuItemBase>
 )
 
 export const RemoveActionMenuItem = ({ onClick }: ActionMenuItemProps) => (
-	<MenuItem
-		onClick={() => onClick?.('Remove')}>
-		<DeleteIcon /> Remove
-	</MenuItem>
+	<MenuItemBase
+		size="small"
+		icon={<DeleteIcon />}
+		onClick={() => onClick?.('Remove')}
+	>
+		Remove
+	</MenuItemBase>
 )
 
 export const ShareActionMenuItem = ({ onClick }: ActionMenuItemProps) => (
-	<MenuItem
-		onClick={() => onClick?.('Share')}>
-		<ShareIcon /> Share
-	</MenuItem>
+	<MenuItemBase
+		size="small"
+		icon={<ShareIcon />}
+		onClick={() => onClick?.('Share')}
+	>
+		Share
+	</MenuItemBase>
 )
 
 type GetDefaultRowActionMenuItemsProps<TData extends Record<string, any> = {}> = {

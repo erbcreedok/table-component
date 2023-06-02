@@ -58,6 +58,9 @@ export const ColumnActionMenu: FC<Props> = ({
 			minWidth={anchorEl?.clientWidth}
 			PaperProps={{
 				ref: menuRef,
+				sx: {
+					margin: '6px 0',
+				},
 			}}
 		>
 			{columnDef.renderColumnActionsMenuItems?.({

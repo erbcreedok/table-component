@@ -2,10 +2,9 @@ import { Avatar } from '@mui/material'
 import { TableCellProps } from '@mui/material/TableCell'
 import React from 'react'
 import { GroupedCellBase } from '../../body/GroupedCellBase'
-import { RowActionMenuButton } from '../../index'
+import { HeaderBase, HeaderSearch, RowActionMenuButton } from '../../index'
 import { Flex } from '../../components/Flex'
 import { TextEllipsis } from '../../components/TextEllipsis'
-import { HeaderBase } from '../../head/HeaderBase'
 import {
 	Table_Cell,
 	Table_Column,
@@ -21,7 +20,6 @@ import { createGetColors } from './createGetColors'
 import { isTeamMember } from './getTeamMembers'
 import { getTeamsBorderColorSet } from './getTeamsBorderColorSet'
 import { getTeamsCellBackgroundSet } from './getTeamsCellBackgroundSet'
-import { HeaderSearch } from '../../head/HeaderSearch'
 import { sortByArrayOrder } from './sortByArrayOrder'
 
 const getBorderColors = createGetColors(getTeamsBorderColorSet(), {
@@ -76,7 +74,6 @@ export const getTeamMembersColumns = () =>
 						center="y"
 						gap="0.75rem"
 						style={{ minWidth: '100%', padding: '0 0.575rem' }}
-						title={user.fullName}
 					>
 						<Avatar
 							sx={{ width: 24, height: 24 }}
@@ -84,7 +81,7 @@ export const getTeamMembersColumns = () =>
 							alt={user.fullName}
 						/>
 						<Flex column style={{ overflow: 'hidden' }}>
-							<TextEllipsis style={{ fontSize: '0.875rem' }}>
+							<TextEllipsis style={{ fontSize: '0.875rem' }} title={user.fullName}>
 								{user.fullName}
 							</TextEllipsis>
 							<TextEllipsis
@@ -103,6 +100,7 @@ export const getTeamMembersColumns = () =>
 			},
 			GroupedCell: ColoredGroupedCell,
 			enableColumnOrdering: false,
+			enableDividerRight: true,
 			enableGrouping: false,
 			enableHiding: false,
 			minSize: 250,

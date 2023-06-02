@@ -1,10 +1,10 @@
 import React, { MouseEvent } from 'react'
 import Box from '@mui/material/Box'
 import ListItemIcon from '@mui/material/ListItemIcon'
-import Menu from '@mui/material/Menu'
 import MenuItem from '@mui/material/MenuItem'
 
 import type { Table_Row, TableInstance } from '..'
+import { Menu } from '../components/Menu'
 
 import { commonListItemStyles, commonMenuItemStyles } from './constants'
 
@@ -12,7 +12,8 @@ interface Props<TData extends Record<string, any> = {}> {
 	anchorEl: HTMLElement | null
 	handleEdit: (event: MouseEvent) => void
 	row: Table_Row<TData>
-	setAnchorEl: (anchorEl: HTMLElement | null) => void
+	open: boolean
+	setOpen: (open: boolean) => void
 	table: TableInstance<TData>
 }
 
@@ -20,7 +21,8 @@ export const RowActionMenu = <TData extends Record<string, any> = {}>({
 	anchorEl,
 	handleEdit,
 	row,
-	setAnchorEl,
+	open,
+	setOpen,
 	table,
 }: Props<TData>) => {
 	const {
@@ -35,8 +37,28 @@ export const RowActionMenu = <TData extends Record<string, any> = {}>({
 	return (
 		<Menu
 			anchorEl={anchorEl}
-			open={!!anchorEl}
-			onClose={() => setAnchorEl(null)}
+			open={open}
+			onClose={() => setOpen(false)}
+			anchorOrigin={{
+				vertical: 'top',
+				horizontal: 'right',
+			}}
+			PaperProps={{
+				sx: {
+					margin: '0 12px',
+					overflow: 'visible',
+					'&:before': {
+						content: '""',
+						display: 'block',
+						position: 'absolute',
+						width: 8,
+						height: 8,
+						backgroundColor: 'white',
+						transform: 'translate(-3px, 7px) rotate(45deg)',
+						zIndex: 0,
+					},
+				},
+			}}
 		>
 			{enableEditing && (
 				<MenuItem onClick={handleEdit} sx={commonMenuItemStyles}>
@@ -51,7 +73,7 @@ export const RowActionMenu = <TData extends Record<string, any> = {}>({
 			{renderRowActionMenuItems?.({
 				row,
 				table,
-				closeMenu: () => setAnchorEl(null),
+				closeMenu: () => setOpen(false),
 			})}
 		</Menu>
 	)

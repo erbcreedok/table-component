@@ -1,3 +1,4 @@
+import { MenuItemBase } from './components/Menu'
 import { createTheme } from './theme/createTheme'
 import TableComponent from './TableComponent'
 import type { Table_Icons } from './icons'
@@ -18,6 +19,7 @@ import { ToggleRowActionMenuButton } from './buttons/ToggleRowActionMenuButton'
 import { TopToolbar } from './toolbar/TopToolbar'
 import { BottomToolbar } from './toolbar/BottomToolbar'
 import { TableToolbar } from './TableToolbar'
+import { TableStatusBar } from './TableStatusBar/TableStatusBar'
 import { TableProvider } from './context/TableProvider'
 import { useTableContext } from './context/useTableContext'
 import { HeaderSearch } from './head/HeaderSearch'
@@ -37,6 +39,7 @@ export {
 	FilterOptionMenu,
 	FullScreenToggleButton,
 	GlobalFilterTextField,
+	MenuItemBase,
 	RowActionMenuButton,
 	ShowHideColumnsButton,
 	TableMain,
@@ -51,6 +54,7 @@ export {
 	BottomToolbar,
 	createTheme,
 	TableToolbar,
+	TableStatusBar,
 	TableProvider,
 	useTableContext,
 	HeaderBase,

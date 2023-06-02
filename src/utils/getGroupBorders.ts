@@ -33,7 +33,9 @@ export const getCellGroupBorders = ({
 		: undefined
 	const borders: GroupBorders = {}
 
-	borders.borderBottom = 'none'
+	if (isGroupedColumn) {
+		borders.borderBottom = 'none'
+	}
 
 	if (isGroupedColumn && colIndex > 0) {
 		borders.borderLeft = borderLeft

@@ -2,9 +2,9 @@ import React, { FC, MouseEvent } from 'react'
 import Box from '@mui/material/Box'
 import Grow from '@mui/material/Grow'
 import IconButton from '@mui/material/IconButton'
-import Tooltip from '@mui/material/Tooltip'
 
 import { Table_Header, TableInstance } from '..'
+import { Tooltip } from '../components/Tooltip'
 
 interface Props {
 	header: Table_Header

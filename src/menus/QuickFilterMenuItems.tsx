@@ -11,20 +11,13 @@ export const QuickFilterMenuItems = ({ table, toggleSubMenu }) => {
 	const {
 		options: {
 			enableColumnFilters,
-			enableColumnFiltersSelection,
 			ColumnActionsFiltersMenu,
 			icons: { FiltersIcon },
 			localization,
 		},
 	} = table as TableInstance
 
-	if (
-		!(
-			enableColumnFilters &&
-			enableColumnFiltersSelection &&
-			ColumnActionsFiltersMenu
-		)
-	) {
+	if (!(enableColumnFilters && ColumnActionsFiltersMenu)) {
 		return null
 	}
 

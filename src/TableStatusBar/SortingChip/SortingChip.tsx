@@ -5,8 +5,6 @@ import { TableInstance } from 'src'
 
 import { SortIcon } from '../../icons/SortIcon'
 import { CommonChipWithPopover } from '../CommonChipWithPopover/CommonChipWithPopover'
-import { AscIcon } from '../../icons/AscIcon'
-import { DescIcon } from '../../icons/DescIcon'
 import { DropdownContentHeader } from '../DropdownContent/DropdownContentHeader'
 import { DropdownContentSearch } from '../DropdownContent/DropdownContentSearch'
 import { useSortingControls } from '../filter-bar-hooks/useSortingControls'
@@ -23,7 +21,14 @@ export const SortingChip = <TData extends Record<string, any> = {}>(
 	props: SortingChipProps<TData>
 ) => {
 	const { table } = props
-	const { getAllColumns, getState, resetSorting } = table
+	const {
+		getAllColumns,
+		getState,
+		resetSorting,
+		options: {
+			icons: { AscIcon, DescIcon },
+		},
+	} = table
 
 	const { sorting } = getState()
 	const isSortingExists = Boolean(sorting?.length)

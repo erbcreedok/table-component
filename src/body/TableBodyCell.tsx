@@ -20,6 +20,7 @@ import type { Table_Cell, Table_ColumnDef, TableInstance } from '..'
 import { CopyButton } from '../buttons/CopyButton'
 import { getCommonCellStyles } from '../column.utils'
 import { ConditionalBox } from '../components/ConditionalBox'
+import { Colors } from '../components/styles'
 import { EditCellTextField } from '../inputs/EditCellTextField'
 import { GroupBorders } from '../utils/getGroupBorders'
 
@@ -323,6 +324,15 @@ export const TableBodyCell: FC<Props> = ({
 		'& span': {
 			visibility: hideCheckBoxSpan ? 'hidden' : 'visible',
 		},
+		borderBottom: `1px solid ${Colors.Lightgray}`,
+		borderLeft:
+			columnDef.enableDividerLeft && !isSummaryRowCell
+				? `1px solid ${Colors.Lightgray}`
+				: 'none',
+		borderRight:
+			columnDef.enableDividerRight && !isSummaryRowCell
+				? `1px solid ${Colors.Lightgray}`
+				: 'none',
 		...groupBorders,
 		...getCommonCellStyles({
 			column,
@@ -338,6 +348,13 @@ export const TableBodyCell: FC<Props> = ({
 			table,
 			isCurrentCellClicked,
 		}) || {}),
+		...columnDef.getTableCellSx?.({
+			cell,
+			row,
+			column,
+			table,
+			isCurrentCellClicked,
+		}),
 	})
 
 	if (isSummaryRowCell && summaryRowCell) {

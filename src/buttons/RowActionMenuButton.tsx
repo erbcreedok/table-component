@@ -1,7 +1,8 @@
 import IconButton, { IconButtonProps } from '@mui/material/IconButton'
-import Tooltip from '@mui/material/Tooltip'
-import React, { MouseEvent, useState } from 'react'
+import React, { MouseEvent, useRef, useState } from 'react'
 
+import { Colors, IconsColor } from '../components/styles'
+import { Tooltip } from '../components/Tooltip'
 import { RowActionMenu } from '../menus/RowActionMenu'
 import { Table_Row, TableInstance } from '../TableComponent'
 
@@ -9,17 +10,6 @@ type Props<TData extends Record<string, any> = {}> = {
 	table: TableInstance<TData>
 	row: Table_Row<TData>
 	sx?: IconButtonProps['sx']
-}
-
-const commonIconButtonStyles = {
-	height: '2rem',
-	ml: '10px',
-	opacity: 0.5,
-	transition: 'opacity 150ms',
-	width: '2rem',
-	'&:hover': {
-		opacity: 1,
-	},
 }
 
 export const RowActionMenuButton = <TData extends Record<string, any> = {}>({
@@ -35,18 +25,19 @@ export const RowActionMenuButton = <TData extends Record<string, any> = {}>({
 		},
 		setEditingRow,
 	} = table
-	const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
+	const anchorRef = useRef(null)
+	const [open, setOpen] = useState(false)
 
 	const handleOpenRowActionMenu = (event: MouseEvent<HTMLElement>) => {
 		event.stopPropagation()
 		event.preventDefault()
-		setAnchorEl(event.currentTarget)
+		setOpen(true)
 	}
 
 	const handleStartEditMode = (event: MouseEvent) => {
 		event.stopPropagation()
 		setEditingRow({ ...row })
-		setAnchorEl(null)
+		setOpen(false)
 	}
 
 	return renderRowActionMenuItems ? (
@@ -56,21 +47,31 @@ export const RowActionMenuButton = <TData extends Record<string, any> = {}>({
 				enterDelay={1000}
 				enterNextDelay={1000}
 				title={localization.rowActions}
+				placement="top"
 			>
 				<IconButton
+					ref={anchorRef}
 					aria-label={localization.rowActions}
 					onClick={handleOpenRowActionMenu}
 					size="small"
-					sx={{ ...commonIconButtonStyles, ...sx }}
+					sx={{
+						height: '1.5rem',
+						width: '1.5rem',
+						borderRadius: '4px',
+						color: IconsColor.default,
+						backgroundColor: open ? Colors.Gray40 : undefined,
+						...sx,
+					}}
 				>
-					<MoreVertIcon />
+					<MoreVertIcon sx={{ height: 18, width: 18 }} />
 				</IconButton>
 			</Tooltip>
 			<RowActionMenu
-				anchorEl={anchorEl}
+				anchorEl={anchorRef.current}
 				handleEdit={handleStartEditMode}
+				open={open}
 				row={row}
-				setAnchorEl={setAnchorEl}
+				setOpen={setOpen}
 				table={table}
 			/>
 		</>

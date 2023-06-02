@@ -111,7 +111,6 @@
         "rollup-plugin-dts": "^5.2.0",
         "rollup-plugin-peer-deps-external": "^2.2.4",
         "react-is": "17.0.2",
-        "react-resize-detector": "8.0.4",
         "size-limit": "^8.1.0",
         "storybook-dark-mode": "^2.0.5",
         "tslib": "^2.4.1",
@@ -127,7 +126,8 @@
         "@tanstack/match-sorter-utils": "8.7.6",
         "@tanstack/react-table": "8.7.6",
         "@tanstack/react-virtual": "3.0.0-beta.30",
-        "@tanstack/table-core": "8.7.6"
+        "@tanstack/table-core": "8.7.6",
+        "react-resize-detector": "8.0.4"
     },
     "peerDependencies": {
         "@emotion/react": ">=11",

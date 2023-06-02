@@ -10,10 +10,13 @@ export const Colors = {
 	Lightgray: '#EBEDF5',
 	gray: '#E1E3EB',
 	LightBlue: '#009ECC',
+	LightestBlue: '#E1F4FA',
 	red: '#FA4B4B',
 	LightGreen: '#67A300',
 	White: '#fff',
 	Gray: '#1D1E26',
+	Gray40: '#CED0DB',
+	Gray10: '#F5F6FA',
 	LightestGray: '#FAFAFC',
 } as const
 

@@ -1,10 +1,12 @@
+import { tableRowClasses } from '@mui/material'
 import React, { DragEvent, FC, memo, useMemo, useRef } from 'react'
 import MuiTableRow from '@mui/material/TableRow'
-import { darken, lighten, useTheme } from '@mui/material/styles'
+import { lighten, useTheme } from '@mui/material/styles'
 import type { VirtualItem, Virtualizer } from '@tanstack/react-virtual'
 
 import type { Table_Cell, Table_Row, TableInstance } from '..'
 import { getColumnId } from '../column.utils'
+import { Colors } from '../components/styles'
 import { getCellGroupBorders } from '../utils/getGroupBorders'
 import { getGroupedRowsCount } from '../utils/getGroupedRowsCount'
 import { getIsFirstRowInGroup } from '../utils/getIsFirstRowInGroup'
@@ -159,12 +161,13 @@ export const TableBodyRow: FC<TableBodyRowProps> = ({
 						: undefined,
 					transition: virtualRow ? 'none' : 'all 150ms ease-in-out',
 					width: '100%',
+					[`&.${tableRowClasses.hover}:hover`]: {
+						backgroundColor: Colors.Gray10,
+					},
 					'&:hover td': {
 						backgroundColor:
 							tableRowProps?.hover !== false && getIsSomeColumnsPinned()
-								? theme.palette.mode === 'dark'
-									? `${lighten(theme.palette.background.default, 0.12)}`
-									: `${darken(theme.palette.background.default, 0.05)}`
+								? Colors.Gray10
 								: undefined,
 					},
 					...(tableRowProps?.sx instanceof Function

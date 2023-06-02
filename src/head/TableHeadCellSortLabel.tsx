@@ -1,9 +1,9 @@
 import React, { FC, useCallback, useMemo } from 'react'
 import TableSortLabel from '@mui/material/TableSortLabel'
-import Tooltip from '@mui/material/Tooltip'
 import type { TableCellProps } from '@mui/material/TableCell'
 
 import { Table_Header, TableInstance } from '..'
+import { Tooltip } from '../components/Tooltip'
 
 interface Props {
 	header: Table_Header
@@ -11,14 +11,10 @@ interface Props {
 	tableCellProps?: TableCellProps
 }
 
-export const TableHeadCellSortLabel: FC<Props> = ({
-	header,
-	table,
-	tableCellProps,
-}) => {
+export const TableHeadCellSortLabel: FC<Props> = ({ header, table }) => {
 	const {
 		options: {
-			icons: { SortDescIcon },
+			icons: { DescIcon },
 			localization,
 			enableMultiSort,
 		},
@@ -35,17 +31,8 @@ export const TableHeadCellSortLabel: FC<Props> = ({
 		: localization.unsorted
 
 	const transform = useMemo(() => {
-		let translateX = ''
-		if (tableCellProps?.align !== 'right') {
-			translateX = `translateX(-0.5ch)`
-			if (isSorted === 'asc') {
-				translateX = `translateX(0.5ch)`
-			}
-		}
-		const rotateY = isSorted === 'asc' ? 'rotateY(180deg)' : undefined
-
-		return [translateX, rotateY].filter(Boolean).join(' ')
-	}, [isSorted, tableCellProps?.align])
+		return isSorted === 'asc' ? 'rotateY(180deg)' : undefined
+	}, [isSorted])
 
 	const toggleSorting = useCallback(
 		(e) => {
@@ -65,9 +52,12 @@ export const TableHeadCellSortLabel: FC<Props> = ({
 				sx={{
 					flex: '0 0',
 					width: '18px',
+					'& svg': {
+						margin: 0,
+					},
 					transform,
 				}}
-				IconComponent={SortDescIcon}
+				IconComponent={DescIcon}
 			/>
 		</Tooltip>
 	)

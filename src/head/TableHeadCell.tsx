@@ -1,10 +1,20 @@
-import React, { DragEvent, FC, useEffect, useMemo, useRef } from 'react'
+import React, {
+	DragEvent,
+	FC,
+	useCallback,
+	useEffect,
+	useMemo,
+	useRef,
+	useState,
+} from 'react'
 import Box from '@mui/material/Box'
 import TableCell from '@mui/material/TableCell'
 import { useTheme } from '@mui/material/styles'
 import type { Theme } from '@mui/material/styles'
+import { useResizeDetector } from 'react-resize-detector'
 
 import { HeaderBase } from '..'
+import { Tooltip } from '../components/Tooltip'
 import { useHoverEffects } from '../hooks/useHoverEffects'
 import { GroupBorders } from '../utils/getGroupBorders'
 import { getCommonCellStyles, Table_DefaultColumn } from '../column.utils'
@@ -119,6 +129,18 @@ export const TableHeadCell: FC<Props> = ({
 		}
 	}
 
+	const isIconsVisible =
+		columnDef.headerEndAdornment ||
+		column.getIsSorted() ||
+		!!column.getFilterValue()
+	const [isTooShort, setIsTooShort] = useState(false)
+	const onResize = useCallback((width) => {
+		setIsTooShort(width < 30)
+	}, [])
+	const { ref: headerContentRef } = useResizeDetector({
+		handleHeight: false,
+		onResize,
+	})
 	const headerText = <HeaderBase column={column} />
 
 	const headerElement =
@@ -145,139 +167,150 @@ export const TableHeadCell: FC<Props> = ({
 			disabled={!showColumnActions}
 		>
 			{({ onClick, menuVisible }) => (
-				<TableCell
-					align={columnDefType === 'group' ? 'center' : 'left'}
-					colSpan={header.colSpan}
-					onDragEnter={handleDragEnter}
-					{...hoverProps}
-					onClick={onClick}
-					ref={localRef}
-					{...tableCellProps}
-					sx={(theme: Theme) => ({
-						boxSizing: 'border-ox',
-						cursor: showColumnActions ? 'pointer' : undefined,
-						fontSize: theme.typography.subtitle2.fontSize,
-						flexDirection: layoutMode === 'grid' ? 'column' : undefined,
-						fontWeight: 'bold',
-						height: '48px',
-						overflow: column.getIsResizing() ? 'visible' : 'hidden',
-						'&:hover, &:active': {
-							overflow: 'visible',
-							zIndex: 2,
-						},
-						p: '0',
-						pb: columnDefType === 'display' ? 0 : '0.25rem',
-						pt: '0.25rem',
-						userSelect:
-							enableMultiSort && column.getCanSort() ? 'none' : undefined,
-						verticalAlign: 'middle',
-						textTransform: uppercaseHeader && 'uppercase',
-						zIndex:
-							column.getIsResizing() || draggingColumn?.id === column.id
-								? 3
-								: column.getIsPinned() && columnDefType !== 'group'
-								? 2
-								: 1,
-						...groupBorders,
-						...getCommonCellStyles({
-							column,
-							header,
-							table,
-							tableCellProps,
-							theme,
-						}),
-						backgroundColor: menuVisible
-							? Colors.Lightgray
-							: Colors.LightestGray,
-						'&:hover': {
-							backgroundColor: showColumnActions
+				<Tooltip title={isTooShort ? columnDef.header : ''} placement="top">
+					<TableCell
+						align={columnDefType === 'group' ? 'center' : 'left'}
+						colSpan={header.colSpan}
+						onDragEnter={handleDragEnter}
+						{...hoverProps}
+						onClick={onClick}
+						ref={localRef}
+						{...tableCellProps}
+						sx={(theme: Theme) => ({
+							boxSizing: 'border-box',
+							cursor: showColumnActions ? 'pointer' : undefined,
+							fontSize: theme.typography.subtitle2.fontSize,
+							flexDirection: layoutMode === 'grid' ? 'column' : undefined,
+							fontWeight: 'bold',
+							height: '48px',
+							overflow: column.getIsResizing() ? 'visible' : 'hidden',
+							'&:hover, &:active': {
+								overflow: 'visible',
+								zIndex: 2,
+							},
+							p: '0',
+							pb: columnDefType === 'display' ? 0 : '0.1rem',
+							pt: '0.1rem',
+							userSelect:
+								enableMultiSort && column.getCanSort() ? 'none' : undefined,
+							verticalAlign: 'middle',
+							textTransform: uppercaseHeader && 'uppercase',
+							zIndex:
+								column.getIsResizing() || draggingColumn?.id === column.id
+									? 3
+									: column.getIsPinned() && columnDefType !== 'group'
+									? 2
+									: 1,
+							...groupBorders,
+							...getCommonCellStyles({
+								column,
+								header,
+								table,
+								tableCellProps,
+								theme,
+							}),
+							backgroundColor: menuVisible
 								? Colors.Lightgray
 								: Colors.LightestGray,
-						},
-						...draggingBorders,
-						...(highlightHeadCellId === column.id && {
-							border: `1px solid ${Colors.LightBlue}`,
-						}),
-					})}
-				>
-					{header.isPlaceholder ? null : (
-						<Box
-							className="Mui-TableHeadCell-Content"
-							sx={{
-								alignItems: 'flex-start',
-								display: 'flex',
-								flexDirection:
-									tableCellProps?.align === 'right' ? 'row-reverse' : 'row',
-								justifyContent:
-									columnDefType === 'group' ||
-									tableCellProps?.align === 'center'
-										? 'center'
-										: column.getCanResize()
-										? 'space-between'
-										: 'flex-start',
-								position: 'relative',
-								mx: 'auto',
-								width: `max(calc(100% - 1.4rem), ${Table_DefaultColumn.minSize}px)`,
-							}}
-						>
+							'&:hover': {
+								backgroundColor: showColumnActions
+									? Colors.Lightgray
+									: Colors.LightestGray,
+							},
+							...draggingBorders,
+							...(highlightHeadCellId === column.id && {
+								border: `1px solid ${Colors.LightBlue}`,
+							}),
+						})}
+					>
+						{header.isPlaceholder ? null : (
 							<Box
-								className="Mui-TableHeadCell-Content-Labels"
+								className="Mui-TableHeadCell-Content"
 								sx={{
-									gap: 'min(0.5rem, 10%)',
-									alignItems: 'center',
-									cursor:
-										column.getCanSort() && columnDefType !== 'group'
-											? 'pointer'
-											: undefined,
+									alignItems: 'flex-start',
 									display: 'flex',
-									flexGrow: 1,
 									flexDirection:
 										tableCellProps?.align === 'right' ? 'row-reverse' : 'row',
-									overflow: columnDefType === 'data' ? 'hidden' : undefined,
-									pl:
+									justifyContent:
+										columnDefType === 'group' ||
 										tableCellProps?.align === 'center'
-											? `${headerPL}rem`
-											: undefined,
+											? 'center'
+											: column.getCanResize()
+											? 'space-between'
+											: 'flex-start',
+									position: 'relative',
+									mx: 'auto',
+									width: `max(calc(100% - 1.4rem), ${Table_DefaultColumn.minSize}px)`,
 								}}
 							>
 								<Box
-									className="Mui-TableHeadCell-Content-Wrapper"
+									className="Mui-TableHeadCell-Content-Labels"
 									sx={{
-										overflow: columnDefType === 'data' ? 'hidden' : undefined,
-										textOverflow: 'ellipsis',
-										whiteSpace: 'nowrap',
+										alignItems: 'center',
+										cursor:
+											column.getCanSort() && columnDefType !== 'group'
+												? 'pointer'
+												: undefined,
+										display: 'flex',
 										flexGrow: 1,
+										flexDirection:
+											tableCellProps?.align === 'right' ? 'row-reverse' : 'row',
+										overflow: columnDefType === 'data' ? 'hidden' : undefined,
+										pl:
+											tableCellProps?.align === 'center'
+												? `${headerPL}rem`
+												: undefined,
 									}}
 								>
-									{headerElement}
+									<Box
+										ref={headerContentRef}
+										className="Mui-TableHeadCell-Content-Wrapper"
+										sx={{
+											overflow: columnDefType === 'data' ? 'hidden' : undefined,
+											flexGrow: 1,
+										}}
+									>
+										{!isTooShort ? headerElement : isIconsVisible ? '' : '...'}
+									</Box>
+									<Box
+										className="Mui-TableHeadCell-Content-Icons"
+										sx={{
+											gap: 'min(0.5rem, 10%)',
+											display: 'flex',
+											alignItems: 'center',
+											justifyContent: isTooShort ? 'flex-start' : 'flex-end',
+											flexGrow: isTooShort ? 1 : 0,
+										}}
+									>
+										{columnDef.headerEndAdornment}
+										{column.getIsSorted() && (
+											<TableHeadCellSortLabel
+												header={header}
+												table={table}
+												tableCellProps={tableCellProps}
+											/>
+										)}
+										{column.getCanFilter() && (
+											<TableHeadCellFilterLabel header={header} table={table} />
+										)}
+									</Box>
 								</Box>
-								{columnDef.headerEndAdornment}
-								{column.getIsSorted() && (
-									<TableHeadCellSortLabel
-										header={header}
-										table={table}
-										tableCellProps={tableCellProps}
-									/>
-								)}
-								{column.getCanFilter() && (
-									<TableHeadCellFilterLabel header={header} table={table} />
-								)}
 							</Box>
-						</Box>
-					)}
-					{column.getCanResize() && (
-						<TableHeadCellResizeHandle header={header} table={table} />
-					)}
-					{showDragHandle && (
-						<TableHeadCellGrabHandle
-							anchorEl={localRef.current}
-							column={column}
-							table={table}
-							visible={hovered}
-							tableHeadCellRef={localRef}
-						/>
-					)}
-				</TableCell>
+						)}
+						{column.getCanResize() && (
+							<TableHeadCellResizeHandle header={header} table={table} />
+						)}
+						{showDragHandle && (
+							<TableHeadCellGrabHandle
+								anchorEl={localRef.current}
+								column={column}
+								table={table}
+								visible={hovered}
+								tableHeadCellRef={localRef}
+							/>
+						)}
+					</TableCell>
+				</Tooltip>
 			)}
 		</TableHeadCellActionsButton>
 	)

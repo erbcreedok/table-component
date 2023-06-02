@@ -30,7 +30,8 @@ export const QuickSortMenuItems: FC<Props> = ({
 			enableSorting,
 			enableMultiSort,
 			icons: {
-				ArrowDownIcon,
+				AscIcon,
+				DescIcon,
 				CheckIcon,
 				ClearIcon,
 				ArrowsIcon,
@@ -103,7 +104,7 @@ export const QuickSortMenuItems: FC<Props> = ({
 						<MenuItem key={1} onClick={handleSortAsc} sx={commonMenuItemStyles}>
 							<Box sx={commonListItemStyles}>
 								<ListItemIcon>
-									<ArrowDownIcon sx={{ transform: 'rotate(180deg)' }} />
+									<AscIcon />
 								</ListItemIcon>
 								{localization.sortAsc}
 								{column.getIsSorted() === 'asc' && selectedChevron}
@@ -118,7 +119,7 @@ export const QuickSortMenuItems: FC<Props> = ({
 						>
 							<Box sx={commonListItemStyles}>
 								<ListItemIcon>
-									<ArrowDownIcon />
+									<DescIcon />
 								</ListItemIcon>
 								{localization.sortDesc}
 								{column.getIsSorted() === 'desc' && selectedChevron}

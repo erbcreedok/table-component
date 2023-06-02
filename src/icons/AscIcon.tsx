@@ -3,11 +3,7 @@ import { SvgIcon, SvgIconProps } from '@mui/material'
 
 export const AscIcon = (props: SvgIconProps) => {
 	return (
-		<SvgIcon
-			{...props}
-			viewBox="0 0 24 24"
-			sx={{ width: 24, height: 24, ...props.sx }}
-		>
+		<SvgIcon width={18} height={18} {...props} viewBox="0 0 24 24">
 			<path
 				xmlns="http://www.w3.org/2000/svg"
 				fillRule="evenodd"

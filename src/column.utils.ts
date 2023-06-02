@@ -232,7 +232,7 @@ export const getColumnWidth = ({
 	header?: Table_Header
 	column: Table_Column
 }) => {
-	const minSize = column.columnDef.minSize ?? 24
+	const minSize = column.columnDef.minSize ?? 28
 	const size = header?.getSize() ?? column.getSize()
 	if (column.getIsGrouped()) {
 		return {
@@ -329,7 +329,7 @@ export const Table_DisplayColumnIdsArray = [
 ]
 
 export const Table_DefaultColumn = {
-	minSize: 24,
+	minSize: 28,
 	maxSize: 1000,
 	size: 180,
 }

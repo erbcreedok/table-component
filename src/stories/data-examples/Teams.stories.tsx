@@ -15,6 +15,7 @@ import {
 } from '../utils/getTeamMembers'
 import { getTeamMembersColumns } from '../utils/getTeamMembersColumns'
 import { getDefaultRowActionMenuItems } from '../utils/rowActionMenuItems'
+import { ColumnActionsFiltersMenu } from './components/ColumnActionsFiltersMenu'
 import { UnitRow } from './components/UnitRow'
 
 const data = getSeparatedTeamMembers()
@@ -29,6 +30,7 @@ type TeamsTableConfigs = TableComponentProps<TeamMember> & {
 	defaultColumnOrder?: ColumnOrderState
 	defaultColumnVisibility?: VisibilityState
 	defaultColumnFilterFns?: string[]
+	columnSubtitles: Record<string, string>
 }
 
 type TeamsTableExample = Omit<TeamsTableConfigs, 'data' | 'columns'>
@@ -39,10 +41,16 @@ const disableSortingForColumns = (disableSortingFor: string[], columns: Table_Co
 		enableSorting: !disableSortingFor.includes(getColumnId(column)),
 	}))
 }
-const disableHidingForColumns = ( disableHidingFor: string[], columns: Table_ColumnDef<TeamMember>[]) => {
+const disableHidingForColumns = (disableHidingFor: string[], columns: Table_ColumnDef<TeamMember>[]) => {
 	return columns.map((column) => ({
 		...column,
 		enableHiding: !disableHidingFor.includes(getColumnId(column)),
+	}))
+}
+const addColumnSubtitle = (columnSubtitles: Record<string, string>, columns: Table_ColumnDef<TeamMember>[]) => {
+	return columns.map((column) => ({
+		...column,
+		subtitle: columnSubtitles[getColumnId(column)] ?? undefined,
 	}))
 }
 
@@ -61,13 +69,16 @@ const setColumnFilterFns = (filterFns: string[], columns: Table_ColumnDef<TeamMe
 }
 
 const getPropsHandledColumns = (columns: Table_ColumnDef<TeamMember>[], args: TeamsTableConfigs) => {
-	const { disableSortingFor, disableHidingFor, defaultColumnFilterFns } = args
-	return disableHidingForColumns(
-		[(disableHidingFor ?? [])].flat(),
-		disableSortingForColumns(
-			[(disableSortingFor ?? [])].flat(),
-			setColumnFilterFns(defaultColumnFilterFns ?? [], columns),
-		),
+	const { disableSortingFor, disableHidingFor, defaultColumnFilterFns, columnSubtitles } = args
+	return addColumnSubtitle(
+		columnSubtitles,
+		disableHidingForColumns(
+			[(disableHidingFor ?? [])].flat(),
+			disableSortingForColumns(
+				[(disableSortingFor ?? [])].flat(),
+				setColumnFilterFns(defaultColumnFilterFns ?? [], columns),
+			),
+		)
 	)
 }
 
@@ -142,6 +153,7 @@ const TeamsTable: Story<TeamsTableConfigs> = (args) => {
 			groupBorder={{ left: '12px solid white', top: '20px solid white' }}
 			initialState={{ sorting: defaultSorting, columnOrder: defaultColumnOrder, columnVisibility: defaultColumnVisibility, ...initialState }}
 			renderRowActionMenuItems={getDefaultRowActionMenuItems}
+			ColumnActionsFiltersMenu={ColumnActionsFiltersMenu}
 			summaryRowCell={(props) => <SummaryRowExampleCellValue {...props} />}
 			{...rest}
 		/>
@@ -264,7 +276,7 @@ const meta: Meta = {
 			control: 'boolean',
 			defaultValue: false,
 		},
-		enableColumnFiltersSelection: {
+		enableColumnFilters: {
 			control: 'boolean',
 			defaultValue: true,
 		},
@@ -348,6 +360,15 @@ const meta: Meta = {
 				'Set Default column visibility for Table. Rerender Table to apply value',
 		},
 		defaultColumnFilterFns: {
+			control: { type: 'object' },
+			defaultValue: columns.map(getColumnId).reduce((acc, columnId) => ({
+				...acc,
+				[columnId]: undefined,
+			}), {}),
+			description: '***THIS IS NOT A PROP***\n' +
+				'Set Default column filter function for Table. Rerender Table to apply value',
+		},
+		columnSubtitles: {
 			control: { type: 'object' },
 			defaultValue: columns.map(getColumnId).reduce((acc, columnId) => ({
 				...acc,

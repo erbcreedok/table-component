@@ -2,9 +2,8 @@ import React from 'react'
 import Box from '@mui/material/Box'
 import { IconButton, SxProps } from '@mui/material'
 
+import { useTableContext } from '../../../../context/useTableContext'
 import { Table_Column } from '../../../../TableComponent'
-import { AscIcon } from '../../../../icons/AscIcon'
-import { DescIcon } from '../../../../icons/DescIcon'
 import { Colors, Text, IconsColor } from '../../../../components/styles'
 
 interface Props<TData extends Record<string, any> = {}> {
@@ -15,7 +14,13 @@ interface Props<TData extends Record<string, any> = {}> {
 export const SortingButtons = <TData extends Record<string, any> = {}>(
 	props: Props<TData>
 ) => {
+	const { table } = useTableContext()
 	const { column } = props
+	const {
+		options: {
+			icons: { AscIcon, DescIcon },
+		},
+	} = table
 	const sorting = column?.getIsSorted()
 
 	return (
