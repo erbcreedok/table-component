@@ -17,6 +17,7 @@ export const TablePaper: FC<Props> = ({ table }) => {
 		getState,
 		options: {
 			enableBottomToolbar,
+			enableStatusBar,
 			enableTopToolbar,
 			muiTablePaperProps,
 			renderBottomToolbar,
@@ -45,6 +46,9 @@ export const TablePaper: FC<Props> = ({ table }) => {
 			}}
 			sx={(theme) => ({
 				transition: 'all 150ms ease-in-out',
+				display: 'flex',
+				flexDirection: 'column',
+				gap: '12px',
 				...(tablePaperProps?.sx instanceof Function
 					? tablePaperProps?.sx(theme)
 					: (tablePaperProps?.sx as any)),
@@ -66,13 +70,8 @@ export const TablePaper: FC<Props> = ({ table }) => {
 			{enableTopToolbar &&
 				(renderTopToolbar instanceof Function
 					? renderTopToolbar({ table })
-					: renderTopToolbar ?? (
-							<>
-								<TableToolbar table={table} />
-
-								<TableStatusBar table={table} />
-							</>
-					  ))}
+					: renderTopToolbar ?? <TableToolbar table={table} />)}
+			{enableStatusBar && <TableStatusBar table={table} />}
 			<TableContainer table={table} />
 			{enableBottomToolbar &&
 				(renderBottomToolbar instanceof Function

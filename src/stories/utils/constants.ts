@@ -1,4 +1,5 @@
 export const Colors = {
+	bg: '#EBEDF5',
 	danger: '#FA4B4B',
 	orange: '#F67E00',
 	lightestGrey: '#E1E3EB',
@@ -9,6 +10,7 @@ export const Colors = {
 	brick: '#B32424',
 	red1: '#FDE1E1',
 	red2: '#FFF6F6',
+	white: '#FFFFFF'
 }
 
 export const MOCK_STATE_1 = {

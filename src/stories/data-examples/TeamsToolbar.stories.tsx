@@ -1,12 +1,8 @@
 import styled from '@emotion/styled'
 import { Meta, Story } from '@storybook/react'
 import React from 'react'
-import { TableProvider } from '../../context/TableProvider'
-import { useTableContext } from '../../context/useTableContext'
-import { TableMain } from '../../table/TableMain'
-import { TableComponentProps } from '../../TableComponent'
-import { TableToolbar } from '../../TableToolbar'
-import { DEFAULT_TEAMS_PRESETS } from '../utils/constants'
+import { TableComponentProps, TableMain, TableProvider, TableStatusBar, TableToolbar, useTableContext } from '../../'
+import { Colors, DEFAULT_TEAMS_PRESETS } from '../utils/constants'
 import { getTablePresetProps } from '../utils/getTablePresetProps'
 import { getSeparatedTeamMembers } from '../utils/getTeamMembers'
 import { getTeamMembersColumns } from '../utils/getTeamMembersColumns'
@@ -34,9 +30,10 @@ const groupsSorting = {
 const Wrapper = styled.div`
 	display: flex;
 	flex-direction: column;
-	background: #f5f5f5;
+	background: ${Colors.bg};
 	border-radius: 10px;
 	padding: 10px;
+	gap: 12px;
 `
 const ToolbarWrapper = styled.div`
 	font-family: sans-serif;
@@ -58,6 +55,7 @@ const TableExample = () => {
 				<TableToolbar table={table} />
 			</ToolbarWrapper>
 			<Wrapper>
+				<TableStatusBar table={table} lineProps={{ sx: { backgroundColor: Colors.white } }} />
 				<TableMain />
 			</Wrapper>
 		</>
@@ -70,15 +68,17 @@ export const TeamsToolbar: Story<TableComponentProps> = () => (
 		data={data}
 		enableAggregationRow={false}
 		enableTopToolbar={false}
+		enableStatusBar={false}
 		enableGrouping
 		enableColumnResizing
 		enableColumnDragging={false}
 		enablePagination={false}
 		enableMultiSort
 		enableMultiRemove
-		groupBorder={{ left: '12px solid #f5f5f5', top: '20px solid #f5f5f5' }}
+		groupBorder={{ left: `12px solid ${Colors.bg}`, top: `20px solid ${Colors.bg}` }}
 		uppercaseHeader
 		groupsSorting={groupsSorting}
+		muiTablePaperProps={{ sx: { boxShadow: 'none' } }}
 		initialState={{
 			grouping: ['impact'],
 			columnSizing: { impact: 1, performance: 1 },

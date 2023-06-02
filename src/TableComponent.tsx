@@ -744,6 +744,7 @@ export type TableComponentProps<TData extends Record<string, any> = {}> = Omit<
 	enableRowSelection?: boolean | ((row: Table_Row<TData>) => boolean)
 	enableRowVirtualization?: boolean
 	enableSelectAll?: boolean
+	enableStatusBar?: boolean
 	enableStickyFooter?: boolean
 	enableStickyHeader?: boolean
 	enableSummaryRow?: boolean

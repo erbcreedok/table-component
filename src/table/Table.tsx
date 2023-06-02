@@ -150,6 +150,8 @@ export const Table: FC<Props> = ({ table }) => {
 			sx={(theme) => ({
 				borderCollapse: 'separate',
 				display: layoutMode === 'grid' ? 'grid' : 'table',
+				// Invisible Table Head margin
+				marginTop: enableTableHead ? '-2px' : undefined,
 				tableLayout:
 					layoutMode !== 'grid' && enableColumnResizing ? 'fixed' : undefined,
 				...(tableProps?.sx instanceof Function
