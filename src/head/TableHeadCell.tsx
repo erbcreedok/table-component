@@ -201,6 +201,7 @@ export const TableHeadCell: FC<Props> = ({
 									: column.getIsPinned() && columnDefType !== 'group'
 									? 2
 									: 1,
+							borderBottom: `1px solid ${Colors.Lightgray}`,
 							...groupBorders,
 							...getCommonCellStyles({
 								column,

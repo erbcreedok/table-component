@@ -33,7 +33,7 @@ const Wrapper = styled.div`
 	background: ${Colors.bg};
 	border-radius: 10px;
 	padding: 10px;
-	gap: 12px;
+	margin: 10px;
 `
 const ToolbarWrapper = styled.div`
 	font-family: sans-serif;
@@ -56,6 +56,8 @@ const TableExample = () => {
 			</ToolbarWrapper>
 			<Wrapper>
 				<TableStatusBar table={table} lineProps={{ sx: { backgroundColor: Colors.white } }} />
+			</Wrapper>
+			<Wrapper>
 				<TableMain />
 			</Wrapper>
 		</>

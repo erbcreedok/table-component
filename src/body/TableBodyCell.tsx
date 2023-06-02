@@ -293,8 +293,8 @@ export const TableBodyCell: FC<Props> = ({
 	const getTableCellStyles = (theme) => ({
 		alignItems: layoutMode === 'grid' ? 'center' : undefined,
 		cursor: isEditable && editingMode === 'cell' ? 'pointer' : 'inherit',
-		height: columnDefType === 'display' ? '1px' : '48px',
-		boxSizing: 'border-box',
+		height: columnDefType === 'display' ? '1px' : '47px',
+		boxSizing: 'content-box',
 		overflow: 'hidden',
 		verticalAlign: 'middle',
 		position: 'relative',

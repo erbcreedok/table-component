@@ -12,23 +12,18 @@ import { SortingChip } from './SortingChip/SortingChip'
 import { FilterChip } from './FilterChip/FilterChip'
 import { useFilterControls } from './filter-bar-hooks/useFilterControls'
 
-const Line = styled(Box)`
-	width: 1px;
-	height: 24px;
-	margin: 0 3px;
-	background-color: ${Colors.gray};
-`
-
-interface Props<TData extends Record<string, any> = {}> {
-	table: TableInstance<TData>
-	lineProps?: ComponentProps<typeof Line>
-}
 const ClearAllButton = styled(ButtonBase)`
 	color: ${Colors.LightBlue};
 	font-size: 12px;
 	visibility: hidden;
 	margin-left: 9px;
 	font-weight: 600;
+`
+const Line = styled(Box)`
+	width: 1px;
+	height: 24px;
+	margin: 0 3px;
+	background-color: ${Colors.gray};
 `
 const Wrapper = styled(Box)<{ hidden?: boolean }>`
 	align-items: center;
@@ -44,10 +39,15 @@ const Wrapper = styled(Box)<{ hidden?: boolean }>`
 		visibility: visible;
 	}
 `
+type Props<TData extends Record<string, any> = {}> = {
+	table: TableInstance<TData>
+	lineProps?: ComponentProps<typeof Line>
+} & ComponentProps<typeof Wrapper>
 
 export const TableStatusBar = <TData extends Record<string, any> = {}>({
 	table,
 	lineProps,
+	...rest
 }: Props<TData>) => {
 	const { getState, resetSorting, resetColumnFilters } = table
 
@@ -82,7 +82,7 @@ export const TableStatusBar = <TData extends Record<string, any> = {}>({
 	})
 
 	return (
-		<Wrapper ref={barRef} hidden={!isAnyChipVisible}>
+		<Wrapper ref={barRef} hidden={!isAnyChipVisible} {...rest}>
 			<GroupingChip table={table} />
 
 			<SortingChip table={table} />
