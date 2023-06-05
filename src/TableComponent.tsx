@@ -730,6 +730,8 @@ export type TableComponentProps<TData extends Record<string, any> = {}> = Omit<
 	enableEditing?: boolean
 	enableExpandAll?: boolean
 	enableDetailedPanel?: boolean
+	tablePlugSlot?: React.ReactNode
+	isTablePlugSlotActive?: boolean
 	cellStyleRules?: Record<
 		string,
 		{

@@ -122,19 +122,26 @@ export const PeopleTable: Story<TableComponentProps> = () => {
 	const [isSidebarOpen, setIsSidebarOpen] = useState(false)
 	const columnsWithCellActions = columns.map((column) => {
 		if (column.accessorKey === 'riskOfLeaving') {
-			return ({
+			return {
 				...column,
-				cellAction: ({ row, table }) => setIsSidebarOpen(true)
-			})
+				cellAction: ({ row, table }) => setIsSidebarOpen(true),
+			}
 		}
 		return column
 	})
 
 	return (
 		<>
-			<Sidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} withHeader headerTitle="Sidebar title"></Sidebar>
+			<Sidebar
+				isOpen={isSidebarOpen}
+				onClose={() => setIsSidebarOpen(false)}
+				withHeader
+				headerTitle="Sidebar title"
+			></Sidebar>
 			<TableComponent
 				data={data}
+				isTablePlugSlotActive={false}
+				tablePlugSlot={<Typography variant={'h6'}>No data</Typography>}
 				// enableExpanding
 				// manualExpanding
 				// enableDetailedPanel
