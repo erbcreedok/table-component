@@ -1,6 +1,6 @@
 import React, { FC } from 'react'
 import TableRow from '@mui/material/TableRow'
-import { alpha, lighten } from '@mui/material/styles'
+import { alpha } from '@mui/material/styles'
 import type { VirtualItem } from '@tanstack/react-virtual'
 
 import type {
@@ -9,6 +9,7 @@ import type {
 	Table_Row,
 	TableInstance,
 } from '..'
+import { Colors } from '../components/styles'
 import { getHeaderGroupBorders } from '../utils/getGroupBorders'
 
 import { TableHeadCell } from './TableHeadCell'
@@ -43,7 +44,7 @@ export const TableHeadRow: FC<Props> = ({
 		<TableRow
 			{...tableRowProps}
 			sx={(theme) => ({
-				backgroundColor: lighten(theme.palette.secondary.main, 0.04),
+				backgroundColor: Colors.LightestGray,
 				boxShadow: `4px 0 8px ${alpha(theme.palette.common.black, 0.1)}`,
 				display: layoutMode === 'grid' ? 'flex' : 'table-row',
 				top: 0,

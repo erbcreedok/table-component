@@ -86,8 +86,7 @@ export const TableHeadCell: FC<Props> = ({
 	const showDragHandle =
 		enableColumnDragging !== false &&
 		columnDef.enableColumnDragging !== false &&
-		(enableColumnDragging ||
-			(enableColumnOrdering && columnDef.enableColumnOrdering !== false) ||
+		((enableColumnOrdering && columnDef.enableColumnOrdering !== false) ||
 			(enableGrouping &&
 				columnDef.enableGrouping !== false &&
 				!grouping.includes(column.id)))
@@ -171,8 +170,8 @@ export const TableHeadCell: FC<Props> = ({
 					<TableCell
 						align={columnDefType === 'group' ? 'center' : 'left'}
 						colSpan={header.colSpan}
+						{...(!draggingColumn ? hoverProps : {})}
 						onDragEnter={handleDragEnter}
-						{...hoverProps}
 						onClick={onClick}
 						ref={localRef}
 						{...tableCellProps}
