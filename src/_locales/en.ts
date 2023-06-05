@@ -109,4 +109,5 @@ export const Table_Localization_EN: Table_Localization = {
 	removeAll: 'Remove all',
 	addFilter: 'Add filter',
 	isAnyOf: 'is any of',
+	locked: 'Locked',
 }

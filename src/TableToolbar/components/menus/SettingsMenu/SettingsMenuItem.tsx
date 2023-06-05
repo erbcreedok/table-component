@@ -8,20 +8,19 @@ import React, {
 import Box from '@mui/material/Box'
 import FormControlLabel from '@mui/material/FormControlLabel'
 import MenuItem from '@mui/material/MenuItem'
-import Tooltip from '@mui/material/Tooltip'
 import Typography from '@mui/material/Typography'
 
 import { ColumnPinningButtons } from '../../../../buttons/ColumnPinningButtons'
 import { GrabHandleButton } from '../../buttons/GrabHandleButton'
 import type { Table_Column, TableInstance } from '../../../../index'
 import { TableSwitch } from '../../../../components/TableSwitch'
+import { Tooltip } from '../../../../components/Tooltip'
 import {
 	Colors,
 	DEFAULT_FONT_FAMILY,
 	Text,
+	IconsColor,
 } from '../../../../components/styles'
-import { LockIcon } from '../../../../icons/LockIcon'
-import { GroupIcon } from '../../../../icons/GroupIcon'
 
 interface Props<TData extends Record<string, any> = {}> {
 	allColumns: Array<Table_Column<TData>>
@@ -49,7 +48,12 @@ export const SettingsMenuItem = <TData extends Record<string, any> = {}>({
 	onColumnOrderChange,
 }: Props<TData>) => {
 	const {
-		options: { enableHiding, enablePinning, localization },
+		options: {
+			enableHiding,
+			enablePinning,
+			localization,
+			icons: { GroupingIcon, LockedIcon },
+		},
 	} = table
 
 	const { columnDef } = column
@@ -119,7 +123,7 @@ export const SettingsMenuItem = <TData extends Record<string, any> = {}>({
 							: 'none',
 					pl: `${(column.depth + 0.5) * 2}rem`,
 					py: '6px',
-					height: 48,
+					height: 36,
 					'&:hover': {
 						backgroundColor: 'unset',
 					},
@@ -144,7 +148,9 @@ export const SettingsMenuItem = <TData extends Record<string, any> = {}>({
 						<GrabHandleButton
 							onDragEnd={handleDragEnd}
 							onDragStart={handleDragStart}
-							iconButtonProps={{ sx: { transform: 'translateX(-11px)' } }}
+							iconButtonProps={{
+								sx: { transform: 'translateX(-11px)', opacity: 1 },
+							}}
 						/>
 					) : (
 						<Box sx={{ width: '9px' }} />
@@ -190,11 +196,27 @@ export const SettingsMenuItem = <TData extends Record<string, any> = {}>({
 							{columnDef.header}
 						</Typography>
 					)}
-					{!column.getCanHide() && <LockIcon sx={{ marginLeft: 'auto' }} />}
-					{column.getIsGrouped() && (
-						<Tooltip placement="top" title={localization.groupedTableByColumn}>
+					{!column.getCanHide() && (
+						<Tooltip
+							placement="top"
+							title={localization.locked}
+							arrow
+							sx={{ height: '30px', mb: '2px' }}
+						>
 							<Box sx={{ marginLeft: 'auto' }}>
-								<GroupIcon />
+								<LockedIcon htmlColor={IconsColor.default} />
+							</Box>
+						</Tooltip>
+					)}
+					{column.getIsGrouped() && (
+						<Tooltip
+							placement="top"
+							title={localization.groupedBy}
+							arrow
+							sx={{ height: '30px', mb: '2px' }}
+						>
+							<Box sx={{ marginLeft: 'auto' }}>
+								<GroupingIcon />
 							</Box>
 						</Tooltip>
 					)}

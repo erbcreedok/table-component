@@ -80,12 +80,11 @@ export const ToolbarMultiselect = ({
 				disableCloseOnSelect
 				options={getDisplayedOptions(options, value)}
 				onOpen={() => setIsOpen(true)}
-				// onClose={() => setIsOpen(false)}
 				renderInput={(params) => (
 					<TextField
 						{...params}
 						variant="outlined"
-						placeholder="Type filter name"
+						placeholder="Choose a value"
 						hiddenLabel
 						autoFocus
 						sx={{ border: 'none' }}

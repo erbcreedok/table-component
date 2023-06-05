@@ -7,6 +7,12 @@ import { ContentTitle } from '../../../../components/ContentTitle'
 import { ButtonLink } from '../../../../components/ButtonLink'
 import { getColumnId, reorderColumn } from '../../../../column.utils'
 import { Sidebar } from '../../../../components/Sidebar'
+import {
+	Colors,
+	DEFAULT_FONT_FAMILY,
+	Text,
+	IconsColor,
+} from '../../../../components/styles'
 
 import { SettingsMenuItem } from './SettingsMenuItem'
 
@@ -120,6 +126,8 @@ export const SettingsMenu = <TData extends Record<string, any> = {}>({
 		return acc
 	}, 0)
 
+	const hiddenColumnsCount = allColumns.length - visibleColumnsCount
+
 	const handleCloseClick = () => setAnchorEl(null)
 
 	const handleHideAllClick = () => {
@@ -188,8 +196,9 @@ export const SettingsMenu = <TData extends Record<string, any> = {}>({
 			withHeader
 			headerTitle="Table Column Settings"
 			subHeader={
-				<Typography>
-					Shown: {visibleColumnsCount} of {allColumns.length}
+				<Typography sx={{ color: Text.Primary }}>
+					{visibleColumnsCount} columns shown, {hiddenColumnsCount} columns
+					hidden
 				</Typography>
 			}
 			withSearch
@@ -223,26 +232,6 @@ export const SettingsMenu = <TData extends Record<string, any> = {}>({
 					<Box
 						sx={{
 							display: 'flex',
-							padding: '12px 24px',
-							alignItems: 'center',
-							justifyContent: 'space-between',
-						}}
-					>
-						<ContentTitle>Shown Columns</ContentTitle>
-						<Box
-							sx={{
-								display: 'flex',
-								width: 120,
-								justifyContent: 'space-between',
-							}}
-						>
-							<ButtonLink onClick={handleHideAllClick}>Hide All</ButtonLink>
-							<ButtonLink onClick={handleShowAllClick}>Show All</ButtonLink>
-						</Box>
-					</Box>
-					<Box
-						sx={{
-							display: 'flex',
 							flexDirection: 'column',
 							maxHeight: 'calc(100vh - 180px)',
 							flexWrap: 'wrap',
@@ -255,6 +244,27 @@ export const SettingsMenu = <TData extends Record<string, any> = {}>({
 							},
 						}}
 					>
+						<Box
+							sx={{
+								display: 'flex',
+								padding: '12px 24px',
+								alignItems: 'center',
+								justifyContent: 'space-between',
+								maxWidth: '300px',
+							}}
+						>
+							<ContentTitle>Shown Columns</ContentTitle>
+							<Box
+								sx={{
+									display: 'flex',
+									width: 120,
+									justifyContent: 'space-between',
+								}}
+							>
+								<ButtonLink onClick={handleHideAllClick}>Hide All</ButtonLink>
+								<ButtonLink onClick={handleShowAllClick}>Show All</ButtonLink>
+							</Box>
+						</Box>
 						{groupedList.map((column, index) => (
 							<SettingsMenuItem
 								allColumns={allColumns}

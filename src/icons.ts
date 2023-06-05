@@ -48,6 +48,7 @@ import { ClearIcon } from './icons/ClearIcon'
 import { ExpandIcon } from './icons/ExpandIcon'
 import { ToggleIcon } from './icons/ToggleIcon'
 import { PlusIcon } from './icons/PlusIcon'
+import { LockedIcon } from './icons/LockedIcon'
 
 export interface Table_Icons {
 	AnalyticsIcon: any
@@ -99,6 +100,7 @@ export interface Table_Icons {
 	ExpandIcon: any
 	ToggleIcon: any
 	PlusIcon: any
+	LockedIcon: any
 }
 
 export const Default_Icons: Table_Icons = {
@@ -151,4 +153,5 @@ export const Default_Icons: Table_Icons = {
 	ExpandIcon,
 	ToggleIcon,
 	PlusIcon,
+	LockedIcon,
 }

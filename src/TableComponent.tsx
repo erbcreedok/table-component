@@ -166,6 +166,7 @@ export interface Table_Localization {
 	removeAll: string
 	addFilter: string
 	isAnyOf: string
+	locked: string
 }
 
 export interface Table_RowModel<TData extends Record<string, any> = {}> {
