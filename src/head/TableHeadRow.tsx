@@ -54,8 +54,10 @@ export const TableHeadRow: FC<Props> = ({
 			})}
 		>
 			{virtualPaddingLeft ? (
-				// eslint-disable-next-line jsx-a11y/control-has-associated-label
-				<th style={{ display: 'flex', width: virtualPaddingLeft }} />
+				<th
+					aria-label="virtual-padding-left"
+					style={{ display: 'flex', width: virtualPaddingLeft }}
+				/>
 			) : null}
 			{(virtualColumns ?? headerGroup.headers).map((headerOrVirtualHeader) => {
 				const header = virtualColumns
@@ -74,8 +76,10 @@ export const TableHeadRow: FC<Props> = ({
 				)
 			})}
 			{virtualPaddingRight ? (
-				// eslint-disable-next-line jsx-a11y/control-has-associated-label
-				<th style={{ display: 'flex', width: virtualPaddingRight }} />
+				<th
+					aria-label="virtual-padding-right"
+					style={{ display: 'flex', width: virtualPaddingRight }}
+				/>
 			) : null}
 		</TableRow>
 	)
