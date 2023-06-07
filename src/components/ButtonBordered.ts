@@ -9,15 +9,15 @@ export const ButtonBordered = styled(Button)`
 	font-size: 14px;
 	line-height: 18px;
 	font-weight: 400;
-	border-color: ${Colors.gray};
+	border-color: ${Colors.Gray};
 	border-radius: 6px;
 	text-transform: initial;
 	padding: 9px 15px;
 	&:hover {
-		background-color: ${Colors.Lightgray};
-		border-color: ${Colors.gray};
+		background-color: ${Colors.Gray20};
+		border-color: ${Colors.Gray};
 	}
 	&:active {
-		background-color: ${Colors.gray};
+		background-color: ${Colors.Gray};
 	}
 `

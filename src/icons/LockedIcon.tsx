@@ -1,13 +1,11 @@
 import React from 'react'
-import { SvgIcon, SvgIconProps } from '@mui/material'
+import { SvgIconProps } from '@mui/material'
+
+import { IconGeneral } from './IconGeneral'
 
 export const LockedIcon = (props: SvgIconProps) => {
 	return (
-		<SvgIcon
-			{...props}
-			viewBox="0 0 18 18"
-			sx={{ width: 18, height: 18, ...props.sx }}
-		>
+		<IconGeneral {...props} viewBox="0 0 18 18" size={18}>
 			<path
 				fillRule="evenodd"
 				clipRule="evenodd"
@@ -20,6 +18,6 @@ export const LockedIcon = (props: SvgIconProps) => {
 				d="M5.65625 6.0625V4.28125C5.65625 3.41101 6.00195 2.57641 6.61731 1.96106C7.23266 1.3457 8.06726 1 8.9375 1C9.80774 1 10.6423 1.3457 11.2577 1.96106C11.873 2.57641 12.2188 3.41101 12.2188 4.28125V6.0625H14.5625C15.2874 6.0625 15.875 6.65013 15.875 7.375V15.25C15.875 15.9749 15.2874 16.5625 14.5625 16.5625H3.3125C2.58763 16.5625 2 15.9749 2 15.25V7.375C2 6.65013 2.58763 6.0625 3.3125 6.0625H5.65625ZM7.67797 3.02172C8.01202 2.68767 8.46508 2.5 8.9375 2.5C9.40992 2.5 9.86298 2.68767 10.197 3.02172C10.5311 3.35577 10.7188 3.80883 10.7188 4.28125V6.0625H7.15625V4.28125C7.15625 3.80883 7.34392 3.35577 7.67797 3.02172ZM14.375 7.5625V15.0625H3.5V7.5625H14.375Z"
 				fill={props.htmlColor}
 			/>
-		</SvgIcon>
+		</IconGeneral>
 	)
 }

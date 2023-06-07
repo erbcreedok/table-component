@@ -3,7 +3,6 @@ import ArrowRightIcon from '@mui/icons-material/ArrowRight'
 import CancelIcon from '@mui/icons-material/Cancel'
 import CheckIcon from '@mui/icons-material/Check'
 import ClearAllIcon from '@mui/icons-material/ClearAll'
-import CloseIcon from '@mui/icons-material/Close'
 import DensityLargeIcon from '@mui/icons-material/DensityLarge'
 import DensityMediumIcon from '@mui/icons-material/DensityMedium'
 import DensitySmallIcon from '@mui/icons-material/DensitySmall'
@@ -31,11 +30,17 @@ import { ArrowsIcon } from './icons/ArrowsIcon'
 import { ArrowDownIcon } from './icons/ArrowDownIcon'
 import { AnalyticsIcon } from './icons/AnalyticsIcon'
 import { AscIcon } from './icons/AscIcon'
+import { CheckboxCheckedIcon } from './icons/CheckboxCheckedIcon'
+import { CheckboxIcon } from './icons/CheckboxIcon'
+import { CheckboxIndeterminateIcon } from './icons/CheckboxIndeterminateIcon'
+import { CloseIcon } from './icons/CloseIcon'
 import { DescIcon } from './icons/DescIcon'
 import { GroupIcon } from './icons/GroupIcon'
 import { GroupingIcon } from './icons/GroupingIcon'
 import { EyeIcon } from './icons/EyeIcon'
 import { HideIcon } from './icons/HideIcon'
+import { LocationLeft } from './icons/LocationLeft'
+import { LocationRight } from './icons/LocationRight'
 import { SearchIcon } from './icons/SearchIcon'
 import { SortAscIcon } from './icons/SortAscIcon'
 import { SortDescIcon } from './icons/SortDescIcon'
@@ -60,6 +65,9 @@ export interface Table_Icons {
 	DescIcon: any
 	CancelIcon: any
 	CheckIcon: any
+	CheckboxIcon: any
+	CheckboxCheckedIcon: any
+	CheckboxIndeterminateIcon: any
 	ClearAllIcon: any
 	CloseIcon: any
 	DensityLargeIcon: any
@@ -80,6 +88,8 @@ export interface Table_Icons {
 	GroupIcon: any
 	GroupingIcon: any
 	HideIcon: any
+	LocationLeft: any
+	LocationRight: any
 	MoreHorizIcon: any
 	MoreVertIcon: any
 	PencilIcon: any
@@ -113,6 +123,9 @@ export const Default_Icons: Table_Icons = {
 	DescIcon,
 	CancelIcon,
 	CheckIcon,
+	CheckboxIcon,
+	CheckboxCheckedIcon,
+	CheckboxIndeterminateIcon,
 	ClearAllIcon,
 	CloseIcon,
 	DensityLargeIcon,
@@ -130,6 +143,8 @@ export const Default_Icons: Table_Icons = {
 	FullscreenExitIcon,
 	FullscreenIcon,
 	KeyboardDoubleArrowDownIcon,
+	LocationLeft,
+	LocationRight,
 	MoreHorizIcon,
 	MoreVertIcon,
 	PencilIcon,

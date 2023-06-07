@@ -10,10 +10,10 @@ export const ToolbarIconButton = styled(IconButton)`
 	height: 30px;
 	position: relative;
 	&:hover {
-		background-color: ${Colors.Lightgray};
+		background-color: ${Colors.Gray20};
 	}
 	&:active {
-		background-color: ${Colors.gray};
+		background-color: ${Colors.Gray};
 	}
 	& > p {
 		font-family: ${DEFAULT_FONT_FAMILY};

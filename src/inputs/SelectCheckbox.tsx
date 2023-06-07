@@ -1,5 +1,7 @@
-import React, { FC, MouseEvent } from 'react'
-import Checkbox from '@mui/material/Checkbox'
+import { FormGroup } from '@mui/material'
+import FormControlLabel from '@mui/material/FormControlLabel'
+import React, { FC, MouseEvent, ReactNode } from 'react'
+import Checkbox, { CheckboxProps } from '@mui/material/Checkbox'
 import Tooltip from '@mui/material/Tooltip'
 import Radio from '@mui/material/Radio'
 import type { Theme } from '@mui/material/styles'
@@ -11,6 +13,7 @@ interface Props {
 	selectAll?: boolean
 	table: TableInstance
 	parentRow?: Table_Row
+	label?: ReactNode | ((props: CheckboxProps) => ReactNode)
 }
 
 export const SelectCheckbox: FC<Props> = ({
@@ -18,6 +21,7 @@ export const SelectCheckbox: FC<Props> = ({
 	selectAll,
 	table,
 	parentRow,
+	label,
 }) => {
 	const {
 		getState,
@@ -27,6 +31,7 @@ export const SelectCheckbox: FC<Props> = ({
 			muiSelectCheckboxProps,
 			muiSelectAllCheckboxProps,
 			selectAllMode,
+			icons: { CheckboxIcon, CheckboxCheckedIcon, CheckboxIndeterminateIcon },
 		},
 	} = table
 	const { isLoading } = getState()
@@ -39,7 +44,18 @@ export const SelectCheckbox: FC<Props> = ({
 		? muiSelectCheckboxProps({ row, table })
 		: muiSelectCheckboxProps
 
-	const commonProps = {
+	const commonProps: CheckboxProps = {
+		indeterminateIcon: <CheckboxIndeterminateIcon />,
+		checkedIcon: <CheckboxCheckedIcon />,
+		icon: <CheckboxIcon />,
+		indeterminate: parentRow
+			? parentRow.getIsSomeSelected()
+			: selectAll
+			? table.getIsSomeRowsSelected() &&
+			  !(selectAllMode === 'page'
+					? table.getIsAllPageRowsSelected()
+					: table.getIsAllRowsSelected())
+			: row?.getIsSomeSelected(),
 		checked: parentRow
 			? parentRow.getIsAllSubRowsSelected()
 			: selectAll
@@ -78,6 +94,13 @@ export const SelectCheckbox: FC<Props> = ({
 		title: undefined,
 	}
 
+	const checkbox =
+		enableMultiRowSelection === false ? (
+			<Radio {...commonProps} />
+		) : (
+			<Checkbox {...commonProps} />
+		)
+
 	return (
 		<Tooltip
 			arrow
@@ -90,22 +113,16 @@ export const SelectCheckbox: FC<Props> = ({
 					: localization.toggleSelectRow)
 			}
 		>
-			{enableMultiRowSelection === false ? (
-				<Radio {...commonProps} />
+			{label ? (
+				<FormGroup>
+					<FormControlLabel
+						sx={{ mx: 0 }}
+						control={checkbox}
+						label={label instanceof Function ? label(commonProps) : label}
+					/>
+				</FormGroup>
 			) : (
-				<Checkbox
-					indeterminate={
-						parentRow
-							? parentRow.getIsSomeSelected()
-							: selectAll
-							? table.getIsSomeRowsSelected() &&
-							  !(selectAllMode === 'page'
-									? table.getIsAllPageRowsSelected()
-									: table.getIsAllRowsSelected())
-							: row?.getIsSomeSelected()
-					}
-					{...commonProps}
-				/>
+				checkbox
 			)}
 		</Tooltip>
 	)

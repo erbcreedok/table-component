@@ -95,7 +95,7 @@ export const TableHeadCellGrabHandle: FC<Props> = ({
 			sx={{
 				borderRadius: '6px',
 				padding: '2px 12px 3px',
-				backgroundColor: Colors.Lightgray,
+				backgroundColor: Colors.Gray20,
 				marginBottom: '-14px !important',
 			}}
 		>

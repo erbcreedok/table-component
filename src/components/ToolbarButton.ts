@@ -14,11 +14,11 @@ export const ToolbarButton = styled(Button)`
 	position: relative;
 	padding: 4px 6px;
 	&:hover {
-		background-color: ${Colors.Lightgray};
+		background-color: ${Colors.Gray20};
 		border-color: #acafbf;
 	}
 	&:active {
-		background-color: ${Colors.gray};
+		background-color: ${Colors.Gray};
 	}
 	& > p {
 		font-family: ${DEFAULT_FONT_FAMILY};

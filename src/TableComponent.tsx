@@ -1,4 +1,5 @@
 /* eslint-disable no-param-reassign */
+import { Theme } from '@mui/material/styles'
 import React, {
 	Dispatch,
 	FC,
@@ -45,12 +46,17 @@ import type { VirtualizerOptions, Virtualizer } from '@tanstack/react-virtual'
 
 import { Table_AggregationFns } from './aggregationFns'
 import { TableBodyRowProps } from './body/TableBodyRow'
+import {
+	BulkActionButtonProps,
+	TableBulkActionsProps,
+} from './components/TableBulkActions'
 import { TableProvider } from './context/TableProvider'
 import { Table_FilterFns } from './filterFns'
 import { Table_Icons } from './icons'
 import { Table_SortingFns } from './sortingFns'
 import { TableMain } from './table/TableMain'
 import { Preset } from './TableToolbar/components/buttons/PresetButton'
+import { TableToolbarProps } from './TableToolbar/TableToolbar'
 
 /**
  * Most of this file is just TypeScript types
@@ -74,6 +80,7 @@ export interface Table_Localization {
 	collapseAll: string
 	columnActions: string
 	copiedToClipboard: string
+	deselectAll: string
 	dropToGroupBy: string
 	edit: string
 	expand: string
@@ -224,6 +231,7 @@ export type TableInstance<TData extends Record<string, any> = {}> = Omit<
 	}
 	refs: {
 		bottomToolbarRef: MutableRefObject<HTMLDivElement>
+		bulkActionsRef: MutableRefObject<HTMLDivElement>
 		editInputRefs: MutableRefObject<Record<string, HTMLInputElement>>
 		filterInputRefs: MutableRefObject<Record<string, HTMLInputElement>>
 		searchInputRef: MutableRefObject<HTMLInputElement>
@@ -647,11 +655,8 @@ export type Table_DisplayColumnIds =
 	| 'mrt-row-numbers'
 	| 'mrt-row-select'
 
-export type Table_Actions = {
-	text: string
-	icon: React.ReactNode
-	action: (rows: Table_Row[]) => void
-}
+export type Table_Actions<TData extends Record<string, any> = {}> =
+	BulkActionButtonProps<TData>
 
 /**
  * `columns` and `data` props are the only required props, but there are over 150 other optional props.
@@ -696,7 +701,8 @@ export type TableComponentProps<TData extends Record<string, any> = {}> = Omit<
 	 * @link https://www.material-react-table.com/docs/getting-started/usage
 	 */
 	data: TData[]
-	bulkActions?: Table_Actions[]
+	bulkActions?: Table_Actions<TData>[]
+	bulkActionProps?: TableBulkActionsProps<TData>
 	/**
 	 * Instead of specifying a bunch of the same options for each column, you can just change an option in the `defaultColumn` prop to change a default option for all columns.
 	 */
@@ -710,6 +716,8 @@ export type TableComponentProps<TData extends Record<string, any> = {}> = Omit<
 	}>
 	editingMode?: 'table' | 'modal' | 'row' | 'cell'
 	enableAggregationRow?: boolean
+	enableBulkActions?: boolean
+	enableBulkActionsCaptions?: boolean | 'auto'
 	enableMergedGrouping?: boolean
 	enableBottomToolbar?: boolean
 	enableClickToCopy?: boolean
@@ -1179,6 +1187,7 @@ export type TableComponentProps<TData extends Record<string, any> = {}> = Omit<
 				table: TableInstance<TData>
 		  }) => Partial<VirtualizerOptions<HTMLDivElement, HTMLTableRowElement>>)
 	tableInstanceRef?: MutableRefObject<TableInstance<TData> | null>
+	toolbarProps?: Partial<TableToolbarProps<TData>>
 	uppercaseHeader?: boolean
 	/**
 	 * @deprecated Use `rowVirtualizerInstanceRef` instead
@@ -1190,6 +1199,7 @@ export type TableComponentProps<TData extends Record<string, any> = {}> = Omit<
 	virtualizerProps?: any
 	detailedRowBackgroundColor?: string
 	CustomRow?: FC<TableBodyRowProps>
+	theme?: Theme
 }
 
 const TableComponent = <TData extends Record<string, any> = {}>(

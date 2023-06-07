@@ -110,10 +110,10 @@ export const SimpleMenuItem = <TData extends Record<string, any> = {}>({
 				},
 				'& button:hover': {
 					borderRadius: '4px',
-					backgroundColor: Colors.Lightgray,
+					backgroundColor: Colors.Gray20,
 				},
 				'& button:active': {
-					backgroundColor: Colors.gray,
+					backgroundColor: Colors.Gray,
 				},
 			})}
 			onClick={handleItemClick}

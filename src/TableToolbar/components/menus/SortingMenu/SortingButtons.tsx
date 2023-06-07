@@ -38,10 +38,10 @@ export const SortingButtons = <TData extends Record<string, any> = {}>(
 					borderRadius: '4px',
 				},
 				'& button:hover': {
-					backgroundColor: Colors.Lightgray,
+					backgroundColor: Colors.Gray20,
 				},
 				'& button:active': {
-					backgroundColor: Colors.gray,
+					backgroundColor: Colors.Gray,
 				},
 				...props.sx,
 			}}

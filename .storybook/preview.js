@@ -1,6 +1,5 @@
-import { ThemeProvider, Typography } from '@mui/material';
+import { Typography } from '@mui/material';
 import { useDarkMode } from 'storybook-dark-mode';
-import { createTheme } from '../src';
 import { version } from '../package.json';
 
 export const parameters = {
@@ -31,12 +30,8 @@ export const parameters = {
 };
 
 const withThemeProvider = (Story, context) => {
-  const defaultTheme = createTheme({
-    palette: { mode: useDarkMode() ? 'dark' : 'light' },
-  });
-
   return (
-    <ThemeProvider theme={defaultTheme}>
+    <>
       <Typography
         variant="subtitle2"
         sx={{
@@ -50,7 +45,7 @@ const withThemeProvider = (Story, context) => {
         Button in Docs. Toggle dark and light mode in the toolbar buttons above.
       </Typography>
       <Story {...context} />
-    </ThemeProvider>
+    </>
   );
 };
 

@@ -9,7 +9,8 @@ import { Table_Column } from '../TableComponent'
 type Props<TData extends Record<string, any>> = {
 	column: Table_Column<TData>
 	tooltipDisabled?: boolean
-} & ComponentProps<typeof TooltipOverflow>['boxProps']
+	boxProps?: ComponentProps<typeof TooltipOverflow>['boxProps']
+}
 
 const Subtitle = styled(Box)`
 	font-size: 12px;
@@ -24,7 +25,7 @@ const Subtitle = styled(Box)`
 export const HeaderBase = <TData extends Record<string, any>>({
 	column,
 	tooltipDisabled,
-	...rest
+	boxProps,
 }: Props<TData>) => {
 	return (
 		<>
@@ -34,7 +35,7 @@ export const HeaderBase = <TData extends Record<string, any>>({
 				spacing={5}
 				placement="top"
 				arrow
-				boxProps={rest}
+				boxProps={boxProps}
 			/>
 			<Subtitle title={column.columnDef.subtitle}>
 				{column.columnDef.subtitle}

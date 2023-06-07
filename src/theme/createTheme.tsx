@@ -1,20 +1,27 @@
 import { createTheme as MUICreateTheme, ThemeOptions } from '@mui/material'
 
-const defaultTheme = MUICreateTheme({
-	palette: {
-		text: {
-			primary: '#303240',
-		},
-	},
-})
+import { Colors } from '../components/styles'
+
+const defaultTheme = MUICreateTheme()
 export function createTheme(options: ThemeOptions, ...args: object[]) {
 	return MUICreateTheme(
 		{
 			...options,
 			palette: {
+				text: {
+					primary: Colors.Dark,
+				},
+				error: {
+					main: Colors.Red,
+				},
+				primary: {
+					...defaultTheme.palette.primary,
+					main: Colors.LightBlue,
+					...options.palette?.primary,
+				},
 				secondary: {
 					...defaultTheme.palette.secondary,
-					light: '#FAFAFC',
+					light: Colors.LightestGray,
 					...options.palette?.secondary,
 				},
 				...options.palette,

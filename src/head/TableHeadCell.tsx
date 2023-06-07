@@ -200,7 +200,7 @@ export const TableHeadCell: FC<Props> = ({
 									: column.getIsPinned() && columnDefType !== 'group'
 									? 2
 									: 1,
-							borderBottom: `1px solid ${Colors.Lightgray}`,
+							borderBottom: `1px solid ${Colors.Gray20}`,
 							...groupBorders,
 							...getCommonCellStyles({
 								column,
@@ -210,11 +210,11 @@ export const TableHeadCell: FC<Props> = ({
 								theme,
 							}),
 							backgroundColor: menuVisible
-								? Colors.Lightgray
+								? Colors.Gray20
 								: Colors.LightestGray,
 							'&:hover': {
 								backgroundColor: showColumnActions
-									? Colors.Lightgray
+									? Colors.Gray20
 									: Colors.LightestGray,
 							},
 							...draggingBorders,

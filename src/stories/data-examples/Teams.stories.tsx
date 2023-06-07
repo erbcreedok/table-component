@@ -5,6 +5,9 @@ import MuiTableCell from '@mui/material/TableCell'
 import { ColumnOrderState, VisibilityState, SortingState } from '@tanstack/react-table'
 import React, { useState } from 'react'
 import { getColumnId } from '../../column.utils'
+import { LocationRight } from '../../icons/LocationRight'
+import { LockedIcon } from '../../icons/LockedIcon'
+import { TrashIcon } from '../../icons/TrashIcon'
 import TableComponent, { Table_ColumnDef, Table_Row, TableComponentProps } from '../../index'
 import { TeamMember, UnitTreeItem } from '../types/TeamMember'
 import {
@@ -237,12 +240,34 @@ const meta: Meta = {
 	title: 'Data Examples/Teams',
 	argTypes: {
 		bulkActions: {
-			control: 'object',
-			defaultValue: [{
-				icon: <ModeIcon />,
-				text: 'Console log',
-				action: (props) => console.log('log', props)
+			control: 'multi-select',
+			options: [{
+
 			}],
+			defaultValue: [
+				{
+					icon: <LockedIcon />,
+					text: 'Lock',
+					enableCaption: false,
+					onClick: (props) => console.log('Lock', props),
+				},
+				{
+					icon: <LocationRight />,
+					text: 'Change location',
+					onClick: (props) => console.log('change location', props),
+				},
+				{
+					icon: <ModeIcon />,
+					text: 'Console log',
+					onClick: (props) => console.log('log', props),
+				},
+				{
+					icon: <TrashIcon />,
+					text: 'Delete',
+					onClick: (props) => console.log('Delete', props),
+					sx: { color: '#FA4B4B' },
+				}
+			],
 		},
 		enableRowSelection: {
 			defaultValue: (row) => row.original.impact !== 'Medium'
@@ -251,6 +276,10 @@ const meta: Meta = {
 		uppercaseHeader: {
 			control: 'boolean',
 			defaultValue: true,
+		},
+		enableBottomToolbar: {
+			control: 'boolean',
+			defaultValue: false,
 		},
 		enableExpanding: {
 			control: 'boolean',
@@ -290,7 +319,7 @@ const meta: Meta = {
 		},
 		enableSummaryRow: {
 			control: 'boolean',
-			defaultValue: true,
+			defaultValue: false,
 		},
 		enableRowActions: {
 			control: 'boolean',
@@ -375,12 +404,17 @@ const meta: Meta = {
 				[columnId]: undefined,
 			}), {}),
 			description: '***THIS IS NOT A PROP***\n' +
-				'Set Default column filter function for Table. Rerender Table to apply value',
+				'Set subtitles for Column Headers',
 		},
 		initialState: {
 			control: { type: 'object' },
 			defaultValue: {},
 			description: 'Set initial state for Table, this property rewrites `defaultSorting`, `defaultColumnVisibility`, `defaultColumnOrder`',
+		},
+		toolbarProps: {
+			control: { type: 'object' },
+			defaultValue: {},
+			description: 'Set props for toolbar component',
 		},
 	},
 };

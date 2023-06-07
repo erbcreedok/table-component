@@ -16,6 +16,7 @@ export const Table_Localization_EN: Table_Localization = {
 	collapseAll: 'Collapse all',
 	columnActions: 'Column Actions',
 	copiedToClipboard: 'Copied to clipboard',
+	deselectAll: 'Deselect all',
 	dropToGroupBy: 'Drop to group by {column}',
 	edit: 'Edit',
 	expand: 'Expand',
@@ -76,7 +77,7 @@ export const Table_Localization_EN: Table_Localization = {
 	save: 'Save',
 	search: 'Search',
 	selectedCountOfRowCountRowsSelected:
-		'{selectedCount} of {rowCount} row(s) selected',
+		'{selectedCount} items from {rowCount} selected',
 	select: 'Select',
 	selectAll: 'Select all',
 	showAll: 'Show all',

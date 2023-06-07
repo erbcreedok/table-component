@@ -13,7 +13,7 @@ import { getColorAlpha } from '../utils/getColorAlpha'
 import { Colors } from './styles'
 
 export const MenuPaper = styled(Paper)`
-	filter: drop-shadow(0 4px 22px ${getColorAlpha(Colors.Gray, 0.15)});
+	filter: drop-shadow(0 4px 22px ${getColorAlpha(Colors.Gray90, 0.15)});
 	box-shadow: none;
 	border-radius: 6px;
 `
@@ -22,7 +22,7 @@ export const Menu = styled(MuiMenu, {
 })<{ minWidth?: number; margin?: string }>`
 	& .${menuClasses.paper} {
 		min-width: ${({ minWidth }) => minWidth ?? 16}px;
-		filter: drop-shadow(0 4px 22px ${getColorAlpha(Colors.Gray, 0.15)});
+		filter: drop-shadow(0 4px 22px ${getColorAlpha(Colors.Gray90, 0.15)});
 		box-shadow: none;
 		border-radius: 6px;
 	}

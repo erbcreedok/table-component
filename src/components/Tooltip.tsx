@@ -62,9 +62,9 @@ export const Tooltip = styled(TooltipBase)<{
 	color?: string
 	spacing?: Spacing
 }>`
-	background: ${({ color }) => color ?? Colors.Gray};
+	background: ${({ color }) => color ?? Colors.Gray90};
 	.${tooltipClasses.arrow} {
-		color: ${({ color }) => color ?? Colors.Gray};
+		color: ${({ color }) => color ?? Colors.Gray90};
 	}
 	.${tooltipClasses.popper}[data-popper-placement*='top'] > & {
 		margin-bottom: ${getSpacing('top')}px;

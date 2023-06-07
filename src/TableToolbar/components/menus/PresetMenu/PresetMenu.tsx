@@ -91,7 +91,7 @@ export const PresetMenu = <TData extends Record<string, any> = {}>({
 				</MenuList>
 			</div>
 			{(!isStateTheSame || !!customPresets.length) && (
-				<Divider sx={{ borderColor: `${Colors.Lightgray}` }} />
+				<Divider sx={{ borderColor: `${Colors.Gray20}` }} />
 			)}
 			{!!customPresets.length && (
 				<div>

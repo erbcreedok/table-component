@@ -1,15 +1,15 @@
-import styled from '@emotion/styled'
+import { styled } from '@mui/material'
 
-import { DEFAULT_FONT_FAMILY, Colors } from './styles'
+import { DEFAULT_FONT_FAMILY } from './styles'
 
 export const NotificationDot = styled('span')`
 	font-family: ${DEFAULT_FONT_FAMILY};
 	width: 6px;
 	height: 6px;
-	background-color: ${Colors.red};
+	background-color: ${({ theme }) => theme.palette.error.main};
 	position: absolute;
 	right: 23px;
 	top: 5px;
-	box-shadow: 0px 1px 6px #fa4b4b;
+	box-shadow: 0 1px 6px ${({ theme }) => theme.palette.error.main};
 	border-radius: 50%;
 `

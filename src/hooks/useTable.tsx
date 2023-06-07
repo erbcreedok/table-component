@@ -54,6 +54,7 @@ export const useTable = <TData extends Record<string, any> = {}>(
 	const tableHeadCellRefs = useRef<Record<string, HTMLTableCellElement>>({})
 	const tablePaperRef = useRef<HTMLDivElement>(null)
 	const topToolbarRef = useRef<HTMLDivElement>(null)
+	const bulkActionsRef = useRef<HTMLDivElement>(null)
 
 	const initialState: Partial<Table_TableState<TData>> = useMemo(() => {
 		const initState = config.initialState ?? {}
@@ -406,6 +407,7 @@ export const useTable = <TData extends Record<string, any> = {}>(
 		}),
 		refs: {
 			bottomToolbarRef,
+			bulkActionsRef,
 			editInputRefs,
 			filterInputRefs,
 			searchInputRef,

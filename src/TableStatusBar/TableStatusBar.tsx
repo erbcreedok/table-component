@@ -23,7 +23,7 @@ const Line = styled(Box)`
 	width: 1px;
 	height: 24px;
 	margin: 0 3px;
-	background-color: ${Colors.gray};
+	background-color: ${Colors.Gray};
 `
 const Wrapper = styled(Box)<{ hidden?: boolean }>`
 	align-items: center;

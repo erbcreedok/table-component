@@ -187,7 +187,7 @@ export const HeaderSearch = <T extends Record<string, any>>({
 								cursor: 'pointer',
 							},
 							'& p:hover': {
-								backgroundColor: Colors.Lightgray,
+								backgroundColor: Colors.Gray20,
 							},
 						}}
 					>

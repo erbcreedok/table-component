@@ -1,30 +1,24 @@
 import styled from '@emotion/styled'
-import React, {
-	ComponentProps,
-	useCallback,
-	useLayoutEffect,
-	useRef,
-	useState,
-} from 'react'
 import Box from '@mui/material/Box'
-import { useResizeDetector } from 'react-resize-detector'
+import React, { ComponentProps } from 'react'
 
+import { useComputedEnableCaptions } from '../hooks/useComputedEnableCaptions'
 import type { TableInstance } from '../index'
 
-import { GroupingButton } from './components/buttons/GroupingButton'
-import { SortingButton } from './components/buttons/SortingButton'
-import { FiltersButton } from './components/buttons/FiltersButton'
 import { ColumnsButton } from './components/buttons/ColumnsButton'
+import { FiltersButton } from './components/buttons/FiltersButton'
+import { GroupingButton } from './components/buttons/GroupingButton'
 import { PresetButton } from './components/buttons/PresetButton'
+import { SortingButton } from './components/buttons/SortingButton'
 
-type Props<TData extends Record<string, any> = {}> = {
+export type TableToolbarProps<TData extends Record<string, any> = {}> = {
 	table: TableInstance<TData>
 	enableGrouping?: boolean
 	enableSorting?: boolean
 	enableFiltering?: boolean
 	enableSettings?: boolean
 	enablePreset?: boolean
-	enableCaption?: boolean | 'auto'
+	enableCaptions?: boolean | 'auto'
 	innerProps?: ComponentProps<typeof Box>
 } & ComponentProps<typeof Box>
 
@@ -48,36 +42,18 @@ export const TableToolbar = <TData extends Record<string, any> = {}>({
 	enableFiltering = true,
 	enableGrouping = true,
 	enablePreset = true,
-	enableCaption = 'auto',
+	enableCaptions = 'auto',
 	innerProps,
 	...rest
-}: Props<TData>) => {
+}: TableToolbarProps<TData>) => {
 	const {
 		options: { renderToolbarInternalActions },
 	} = table
-	const [isCaptionEnabled, setIsCaptionEnabled] = useState(!!enableCaption)
-	const innerRef = useRef<HTMLDivElement>(null)
-	const widthWithCaption = useRef(0)
-	const onResize = useCallback((width) => {
-		setIsCaptionEnabled(Math.round(width) > widthWithCaption.current)
-	}, [])
-	const { ref } = useResizeDetector({
-		onResize,
-		handleHeight: false,
-		handleWidth: enableCaption === 'auto',
-	})
-
-	const computedEnableCaption =
-		enableCaption === 'auto' ? isCaptionEnabled : enableCaption
-
-	useLayoutEffect(() => {
-		if (computedEnableCaption) {
-			widthWithCaption.current = innerRef.current?.scrollWidth ?? 0
-		}
-	}, [computedEnableCaption])
+	const { innerRef, outerRef, computedEnableCaptions } =
+		useComputedEnableCaptions(enableCaptions)
 
 	return (
-		<ToolbarWrapper ref={ref} {...rest}>
+		<ToolbarWrapper ref={outerRef} {...rest}>
 			<ToolbarInner ref={innerRef} {...innerProps}>
 				{renderToolbarInternalActions?.({
 					table,
@@ -85,25 +61,25 @@ export const TableToolbar = <TData extends Record<string, any> = {}>({
 					<>
 						{enableGrouping && (
 							<GroupingButton
-								enableCaption={computedEnableCaption}
+								enableCaption={computedEnableCaptions}
 								table={table}
 							/>
 						)}
 						{enableSorting && (
 							<SortingButton
-								enableCaption={computedEnableCaption}
+								enableCaption={computedEnableCaptions}
 								table={table}
 							/>
 						)}
 						{enableFiltering && (
 							<FiltersButton
-								enableCaption={computedEnableCaption}
+								enableCaption={computedEnableCaptions}
 								table={table}
 							/>
 						)}
 						{enableSettings && (
 							<ColumnsButton
-								enableCaption={computedEnableCaption}
+								enableCaption={computedEnableCaptions}
 								table={table}
 							/>
 						)}

@@ -1,10 +1,11 @@
 import React, { FC } from 'react'
 import Paper from '@mui/material/Paper'
 
+import { TableBulkActions } from '../components/TableBulkActions'
 import { BottomToolbar } from '../toolbar/BottomToolbar'
 import type { TableInstance } from '..'
 import { TableToolbar } from '../TableToolbar'
-import { TableStatusBar } from '../TableStatusBar/TableStatusBar'
+import { TableStatusBar } from '../TableStatusBar'
 
 import { TableContainer } from './TableContainer'
 
@@ -17,11 +18,14 @@ export const TablePaper: FC<Props> = ({ table }) => {
 		getState,
 		options: {
 			enableBottomToolbar,
+			enableBulkActions,
 			enableStatusBar,
 			enableTopToolbar,
 			muiTablePaperProps,
 			renderBottomToolbar,
 			renderTopToolbar,
+			toolbarProps,
+			bulkActionProps,
 		},
 		refs: { tablePaperRef },
 	} = table
@@ -48,7 +52,7 @@ export const TablePaper: FC<Props> = ({ table }) => {
 				transition: 'all 150ms ease-in-out',
 				display: 'flex',
 				flexDirection: 'column',
-				gap: '12px',
+				gap: '6px',
 				...(tablePaperProps?.sx instanceof Function
 					? tablePaperProps?.sx(theme)
 					: (tablePaperProps?.sx as any)),
@@ -70,13 +74,18 @@ export const TablePaper: FC<Props> = ({ table }) => {
 			{enableTopToolbar &&
 				(renderTopToolbar instanceof Function
 					? renderTopToolbar({ table })
-					: renderTopToolbar ?? <TableToolbar table={table} />)}
-			{enableStatusBar && <TableStatusBar table={table} />}
+					: renderTopToolbar ?? (
+							<TableToolbar sx={{ p: '6px' }} table={table} {...toolbarProps} />
+					  ))}
+			{enableStatusBar && <TableStatusBar sx={{ p: '6px' }} table={table} />}
 			<TableContainer table={table} />
 			{enableBottomToolbar &&
 				(renderBottomToolbar instanceof Function
 					? renderBottomToolbar({ table })
 					: renderBottomToolbar ?? <BottomToolbar table={table} />)}
+			{enableBulkActions && (
+				<TableBulkActions table={table} {...bulkActionProps} />
+			)}
 		</Paper>
 	)
 }

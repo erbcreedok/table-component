@@ -1,4 +1,5 @@
 /* eslint-disable no-param-reassign */
+import { ThemeProvider } from '@mui/material'
 import { ReactNode, useMemo } from 'react'
 
 import { Table_Localization_EN } from '../_locales/en'
@@ -16,8 +17,11 @@ import {
 	Table_Localization,
 	TableComponentProps,
 } from '../TableComponent'
+import { createTheme } from '../theme/createTheme'
 
 import { TableContext } from './TableContext'
+
+const defaultTheme = createTheme({})
 
 export const TableProvider = <TData extends Record<string, any> = {}>({
 	aggregationFns,
@@ -28,6 +32,8 @@ export const TableProvider = <TData extends Record<string, any> = {}>({
 	defaultDisplayColumn,
 	editingMode = 'modal',
 	enableBottomToolbar = true,
+	enableBulkActions = true,
+	enableBulkActionsCaptions = 'auto',
 	enableColumnActions = true,
 	enableColumnFilters = true,
 	enableColumnOrdering = false,
@@ -71,6 +77,7 @@ export const TableProvider = <TData extends Record<string, any> = {}>({
 	selectAllMode = 'all',
 	sortingFns,
 	columns,
+	theme,
 	...rest
 }: TableComponentProps<TData> & {
 	children?: ReactNode | null
@@ -152,6 +159,8 @@ export const TableProvider = <TData extends Record<string, any> = {}>({
 		defaultDisplayColumn: _defaultDisplayColumn,
 		editingMode,
 		enableBottomToolbar,
+		enableBulkActions,
+		enableBulkActionsCaptions,
 		enableColumnActions,
 		enableColumnFilters,
 		enableColumnOrdering,
@@ -201,8 +210,10 @@ export const TableProvider = <TData extends Record<string, any> = {}>({
 	const tableContext = useTable(props)
 
 	return (
-		<TableContext.Provider value={tableContext}>
-			{children}
-		</TableContext.Provider>
+		<ThemeProvider theme={theme ?? defaultTheme}>
+			<TableContext.Provider value={tableContext}>
+				{children}
+			</TableContext.Provider>
+		</ThemeProvider>
 	)
 }

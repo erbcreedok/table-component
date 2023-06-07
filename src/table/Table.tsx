@@ -11,7 +11,7 @@ import { TableHead } from '../head/TableHead'
 import { Memo_TableBody, TableBody } from '../body/TableBody'
 import { TableBodyRow } from '../body/TableBodyRow'
 import { TableFooter } from '../footer/TableFooter'
-import type { TableInstance } from '..'
+import type { Table_Row, TableInstance } from '..'
 import { TableHeadInvisible } from '../head/TableHeadInvisible'
 
 interface Props {
@@ -133,14 +133,13 @@ export const Table: FC<Props> = ({ table }) => {
 
 	const summaryRowProps = {
 		columnVirtualizer,
-		key: 'summaryRow',
-		numRows: table.getRowModel().rows.length,
+		numRows: table.getRowModel().rows.length as number,
 		rowIndex: -1,
 		table,
 		row: {
 			getIsSelected: () => false,
 			getVisibleCells: table.getRowModel()?.rows[0]?.getVisibleCells,
-		},
+		} as Table_Row,
 	}
 
 	return (
@@ -161,9 +160,9 @@ export const Table: FC<Props> = ({ table }) => {
 		>
 			{enableTableHead && <TableHeadInvisible table={table} />}
 			{enableSummaryRow && summaryRowCell && (
-				/* eslint-disable-next-line @typescript-eslint/ban-ts-comment */
-				/* @ts-ignore */
-				<TableBodyRow isSummaryRow {...summaryRowProps} />
+				<thead>
+					<TableBodyRow key="summaryRow" isSummaryRow {...summaryRowProps} />
+				</thead>
 			)}
 			{enableTableHead && !hideTableHead && <TableHead {...props} />}
 			{memoMode === 'table-body' ? (

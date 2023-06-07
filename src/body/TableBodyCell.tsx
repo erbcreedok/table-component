@@ -324,14 +324,14 @@ export const TableBodyCell: FC<Props> = ({
 		'& span': {
 			visibility: hideCheckBoxSpan ? 'hidden' : 'visible',
 		},
-		borderBottom: `1px solid ${Colors.Lightgray}`,
+		borderBottom: `1px solid ${Colors.Gray20}`,
 		borderLeft:
 			columnDef.enableDividerLeft && !isSummaryRowCell
-				? `1px solid ${Colors.Lightgray}`
+				? `1px solid ${Colors.Gray20}`
 				: 'none',
 		borderRight:
 			columnDef.enableDividerRight && !isSummaryRowCell
-				? `1px solid ${Colors.Lightgray}`
+				? `1px solid ${Colors.Gray20}`
 				: 'none',
 		...groupBorders,
 		...getCommonCellStyles({
