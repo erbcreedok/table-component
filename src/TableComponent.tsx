@@ -167,6 +167,8 @@ export interface Table_Localization {
 	addFilter: string
 	isAnyOf: string
 	locked: string
+	grouping: string
+	sorting: string
 }
 
 export interface Table_RowModel<TData extends Record<string, any> = {}> {

@@ -3,7 +3,7 @@ import { MenuItem, Typography } from '@mui/material'
 
 import { GrabHandleButton } from '../../../buttons/GrabHandleButton'
 import { ItemBoxGroupingStyled } from '../GroupingChip.styled'
-import { DeleteIcon } from '../../../icons/DeleteIcon'
+import { IconsColor } from '../../../components/styles'
 
 export const ListGroupItem: FC<any> = ({
 	title,
@@ -15,6 +15,11 @@ export const ListGroupItem: FC<any> = ({
 	onColumnOrderChanged,
 	columnDef,
 }) => {
+	const {
+		options: {
+			icons: { TrashIcon },
+		},
+	} = table
 	const rowRef = useRef<HTMLDivElement>(null)
 	const [isDragging, setIsDragging] = useState(false)
 
@@ -66,7 +71,7 @@ export const ListGroupItem: FC<any> = ({
 				</div>
 
 				<div className="grouping-trash">
-					<DeleteIcon onClick={handleDelete} />
+					<TrashIcon onClick={handleDelete} htmlColor={IconsColor.default} />
 				</div>
 			</ItemBoxGroupingStyled>
 		</MenuItem>

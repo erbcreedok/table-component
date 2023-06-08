@@ -27,6 +27,7 @@ export const SortingChip = <TData extends Record<string, any> = {}>(
 		resetSorting,
 		options: {
 			icons: { AscIcon, DescIcon },
+			localization,
 		},
 	} = table
 
@@ -69,7 +70,7 @@ export const SortingChip = <TData extends Record<string, any> = {}>(
 		<>
 			<Box sx={{ width: 300, padding: '6px 0' }}>
 				<DropdownContentHeader
-					headerTile="Sort by"
+					headerTile={localization.sorting}
 					onClearAll={handleClearAll}
 				/>
 
@@ -113,7 +114,7 @@ export const SortingChip = <TData extends Record<string, any> = {}>(
 		}
 
 		if (sortedList?.length > 1) {
-			return `${sortedList.length} sorts`
+			return `${sortedList.length} Sorts`
 		}
 
 		return ''

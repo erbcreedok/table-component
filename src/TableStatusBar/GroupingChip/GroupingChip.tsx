@@ -20,6 +20,7 @@ export const GroupingChip: FC<GroupingChipProps> = (props) => {
 		getState,
 		options: {
 			icons: { GroupingIcon },
+			localization,
 		},
 	} = table
 
@@ -45,7 +46,7 @@ export const GroupingChip: FC<GroupingChipProps> = (props) => {
 	const DropdownContent = (
 		<Box sx={{ width: 300, padding: '6px 0' }}>
 			<DropdownContentHeader
-				headerTile="Group by"
+				headerTile={localization.grouping}
 				onClearAll={handleClearAll}
 			/>
 
@@ -85,7 +86,7 @@ export const GroupingChip: FC<GroupingChipProps> = (props) => {
 		}
 
 		if (groupedList?.length > 1) {
-			return `${groupedList.length} groups`
+			return `${groupedList.length} Groups`
 		}
 
 		return ''

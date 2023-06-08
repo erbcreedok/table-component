@@ -17,7 +17,7 @@ export const DropdownContentHeader: FC<DropdownContentHeaderProps> = ({
 				display: 'flex',
 				alignItems: 'center',
 				justifyContent: 'space-between',
-				p: '15px 12px 6px',
+				p: '9px 12px',
 				borderBottom: '1px solid #EBEDF5',
 			}}
 		>

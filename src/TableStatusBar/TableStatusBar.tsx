@@ -83,9 +83,9 @@ export const TableStatusBar = <TData extends Record<string, any> = {}>({
 
 	return (
 		<Wrapper ref={barRef} hidden={!isAnyChipVisible} {...rest}>
-			<GroupingChip table={table} />
-
 			<SortingChip table={table} />
+
+			<GroupingChip table={table} />
 
 			{(isGroupingExists || isSortingExists) && filterChips.length > 0 && (
 				<Line {...lineProps} />

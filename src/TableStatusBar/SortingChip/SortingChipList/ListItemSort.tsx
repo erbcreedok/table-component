@@ -4,7 +4,7 @@ import { Box, MenuItem, Typography } from '@mui/material'
 import { GrabHandleButton } from '../../../buttons/GrabHandleButton'
 import { SortingItemBoxStyled } from '../SortingChip.styled'
 import { SortingButtons } from '../../../TableToolbar/components/menus/SortingMenu/SortingButtons'
-import { DeleteIcon } from '../../../icons/DeleteIcon'
+import { IconsColor } from '../../../components/styles'
 import { useHoverEffects } from '../../../hooks/useHoverEffects'
 
 interface ListItemSortProps {
@@ -27,7 +27,10 @@ export const ListItemSort: FC<ListItemSortProps> = (props) => {
 	} = props
 
 	const {
-		options: { muiTableBodyRowDragHandleProps },
+		options: {
+			muiTableBodyRowDragHandleProps,
+			icons: { TrashIcon },
+		},
 	} = table
 
 	const rowRef = useRef<HTMLDivElement>(null)
@@ -93,6 +96,7 @@ export const ListItemSort: FC<ListItemSortProps> = (props) => {
 					<SortingButtons
 						column={column}
 						sx={{ marginRight: hovered ? '10px' : '20px' }}
+						groupButtons
 						hideUnselected={!hovered}
 					/>
 
@@ -103,7 +107,7 @@ export const ListItemSort: FC<ListItemSortProps> = (props) => {
 							mr: '20px',
 						}}
 					>
-						<DeleteIcon onClick={handleDelete} />
+						<TrashIcon onClick={handleDelete} htmlColor={IconsColor.default} />
 					</Box>
 				</Box>
 			</SortingItemBoxStyled>
