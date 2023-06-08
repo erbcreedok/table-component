@@ -3,12 +3,10 @@ import { Box } from '@mui/material'
 
 import { TableInstance } from 'src'
 
-import { SortIcon } from '../../icons/SortIcon'
 import { CommonChipWithPopover } from '../CommonChipWithPopover/CommonChipWithPopover'
 import { DropdownContentHeader } from '../DropdownContent/DropdownContentHeader'
 import { DropdownContentSearch } from '../DropdownContent/DropdownContentSearch'
 import { useSortingControls } from '../filter-bar-hooks/useSortingControls'
-import { Colors, IconsColor } from '../../components/styles'
 
 import { SelectedSortsList } from './SortingChipList/SelectedSortsList'
 import { SortingSearchResult } from './SortingChipSearch/SortingSearchResult'
@@ -26,7 +24,7 @@ export const SortingChip = <TData extends Record<string, any> = {}>(
 		getState,
 		resetSorting,
 		options: {
-			icons: { AscIcon, DescIcon },
+			icons: { AscIcon, DescIcon, ArrowsIcon },
 			localization,
 		},
 	} = table
@@ -38,7 +36,6 @@ export const SortingChip = <TData extends Record<string, any> = {}>(
 
 	const [searchValue, setSearchValue] = useState('')
 	const [selectedSearchedItems, setSelectedSearchedItems] = useState<any>([])
-	const [isOpen, setIsOpen] = useState(false)
 
 	const sortedList = useMemo(
 		() =>
@@ -130,20 +127,17 @@ export const SortingChip = <TData extends Record<string, any> = {}>(
 		return <></>
 	}
 
-	const iconColor = isOpen ? Colors.LightestGray : IconsColor.default
-
 	return (
 		<CommonChipWithPopover
 			table={table}
-			setIsOpen={setIsOpen}
 			text={getSortingChipText()}
 			icon={
 				sortedList?.length > 1 ? (
-					<SortIcon />
+					<ArrowsIcon />
 				) : firstSorting?.desc ? (
-					<DescIcon htmlColor={iconColor} />
+					<DescIcon />
 				) : (
-					<AscIcon htmlColor={iconColor} />
+					<AscIcon />
 				)
 			}
 			dropdownContent={DropdownContent}

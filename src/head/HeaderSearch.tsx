@@ -29,6 +29,7 @@ type Props<TData extends Record<string, any>> = {
 	table: TableInstance<TData>
 	searchPath: string
 	placeholder: string
+	minLengthSearch?: number
 }
 
 const SearchInput = styled(TextField)`
@@ -63,6 +64,7 @@ export const HeaderSearch = <T extends Record<string, any>>({
 	table,
 	searchPath,
 	placeholder,
+	minLengthSearch = 1,
 }: Props<T>) => {
 	const [showPopper, setShowPopper] = useState(false)
 	const anchorElRef = useRef<HTMLDivElement>(null)
@@ -109,7 +111,7 @@ export const HeaderSearch = <T extends Record<string, any>>({
 	}
 
 	useEffect(() => {
-		if (searchValue.length >= 3) {
+		if (searchValue.length >= minLengthSearch) {
 			setFiltered(
 				table.options.data.filter((item) =>
 					getValueFromObj(item, searchPath, '')
@@ -120,7 +122,7 @@ export const HeaderSearch = <T extends Record<string, any>>({
 		} else {
 			setFiltered([])
 		}
-	}, [searchValue])
+	}, [minLengthSearch, searchPath, searchValue])
 
 	return (
 		<Flex
@@ -191,7 +193,7 @@ export const HeaderSearch = <T extends Record<string, any>>({
 							},
 						}}
 					>
-						{searchValue.length >= 3 && !filtered.length && (
+						{searchValue.length >= minLengthSearch && !filtered.length && (
 							<Typography>No options</Typography>
 						)}
 						{filtered.map((item: Record<string, any>) => (

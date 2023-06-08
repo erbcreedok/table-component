@@ -1,7 +1,8 @@
 import React, { cloneElement, useMemo, useState } from 'react'
-import { Box, Chip, Popover, Tooltip, Typography } from '@mui/material'
+import { Box, Chip, Popover, Typography } from '@mui/material'
 
 import { Text } from '../../components/styles'
+import { Tooltip } from '../../components/Tooltip'
 import { TableInstance } from '../../TableComponent'
 
 type CommonChipWithPopoverProps<TData extends Record<string, any>> = {

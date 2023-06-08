@@ -64,7 +64,7 @@ export const SortingButtons = <TData extends Record<string, any> = {}>(
 						backgroundColor: hideUnselected
 							? 'initial'
 							: sorting === 'asc'
-							? Colors.gray
+							? Colors.Gray
 							: 'initial',
 						marginRight: hideUnselected ? '0px' : '4px',
 					}}
@@ -83,7 +83,7 @@ export const SortingButtons = <TData extends Record<string, any> = {}>(
 						backgroundColor: hideUnselected
 							? 'initial'
 							: sorting === 'desc'
-							? Colors.gray
+							? Colors.Gray
 							: 'initial',
 					}}
 					size="small"
