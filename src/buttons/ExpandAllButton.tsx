@@ -15,7 +15,7 @@ export const ExpandAllButton: FC<Props> = ({ table }) => {
 		getCanSomeRowsExpand,
 		getState,
 		options: {
-			icons: { KeyboardDoubleArrowDownIcon },
+			icons: { ExpandIcon, CollapseIcon },
 			localization,
 			muiExpandAllButtonProps,
 			renderDetailPanel,
@@ -60,14 +60,11 @@ export const ExpandAllButton: FC<Props> = ({ table }) => {
 					})}
 					title={undefined}
 				>
-					<KeyboardDoubleArrowDownIcon
-						style={{
-							transform: `rotate(${
-								isAllRowsExpanded ? -180 : getIsSomeRowsExpanded() ? -90 : 0
-							}deg)`,
-							transition: 'transform 150ms',
-						}}
-					/>
+					{isAllRowsExpanded || getIsSomeRowsExpanded() ? (
+						<ExpandIcon />
+					) : (
+						<CollapseIcon />
+					)}
 				</IconButton>
 			</span>
 		</Tooltip>

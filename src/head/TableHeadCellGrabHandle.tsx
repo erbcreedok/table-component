@@ -1,5 +1,11 @@
 import { Popper } from '@mui/material'
-import React, { ComponentProps, DragEvent, FC, RefObject } from 'react'
+import React, {
+	ComponentProps,
+	DragEvent,
+	FC,
+	RefObject,
+	useEffect,
+} from 'react'
 
 import { GrabHandleButton } from '../buttons/GrabHandleButton'
 import { reorderColumn } from '../column.utils'
@@ -13,6 +19,8 @@ interface Props {
 	table: TableInstance
 	tableHeadCellRef: RefObject<HTMLTableCellElement>
 	visible?: boolean
+	backgroundColor?: string
+	onComputedVisibleChange?: (visible: boolean) => void
 }
 
 export const TableHeadCellGrabHandle: FC<Props> = ({
@@ -21,6 +29,8 @@ export const TableHeadCellGrabHandle: FC<Props> = ({
 	tableHeadCellRef,
 	anchorEl,
 	visible,
+	backgroundColor = Colors.LightestGray,
+	onComputedVisibleChange,
 }) => {
 	const {
 		getState,
@@ -82,9 +92,14 @@ export const TableHeadCellGrabHandle: FC<Props> = ({
 		setHoveredColumn(null)
 	}
 
+	const computedVisible = !!visible || hovered
+	useEffect(() => {
+		onComputedVisibleChange?.(computedVisible)
+	}, [computedVisible, onComputedVisibleChange])
+
 	return (
 		<Popper
-			open={!!visible || hovered}
+			open={computedVisible}
 			anchorEl={anchorEl}
 			placement="top"
 			componentsProps={{
@@ -95,7 +110,7 @@ export const TableHeadCellGrabHandle: FC<Props> = ({
 			sx={{
 				borderRadius: '6px',
 				padding: '2px 12px 3px',
-				backgroundColor: Colors.Gray20,
+				backgroundColor,
 				marginBottom: '-14px !important',
 			}}
 		>

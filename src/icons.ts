@@ -34,13 +34,17 @@ import { CheckboxCheckedIcon } from './icons/CheckboxCheckedIcon'
 import { CheckboxIcon } from './icons/CheckboxIcon'
 import { CheckboxIndeterminateIcon } from './icons/CheckboxIndeterminateIcon'
 import { CloseIcon } from './icons/CloseIcon'
+import { CollapseFilledIcon } from './icons/CollapseFilledIcon'
+import { CollapseIcon } from './icons/CollapseIcon'
 import { DescIcon } from './icons/DescIcon'
 import { GroupIcon } from './icons/GroupIcon'
 import { GroupingIcon } from './icons/GroupingIcon'
+import { ExpandIcon } from './icons/ExpandIcon'
 import { EyeIcon } from './icons/EyeIcon'
 import { HideIcon } from './icons/HideIcon'
 import { LocationLeft } from './icons/LocationLeft'
 import { LocationRight } from './icons/LocationRight'
+import { OpenIcon } from './icons/OpenIcon'
 import { SearchIcon } from './icons/SearchIcon'
 import { SortAscIcon } from './icons/SortAscIcon'
 import { SortDescIcon } from './icons/SortDescIcon'
@@ -50,7 +54,6 @@ import { SettingsIcon } from './icons/SettingsIcon'
 import { PencilIcon } from './icons/PencilIcon'
 import { TrashIcon } from './icons/TrashIcon'
 import { ClearIcon } from './icons/ClearIcon'
-import { ExpandIcon } from './icons/ExpandIcon'
 import { ToggleIcon } from './icons/ToggleIcon'
 import { PlusIcon } from './icons/PlusIcon'
 import { LockedIcon } from './icons/LockedIcon'
@@ -70,6 +73,8 @@ export interface Table_Icons {
 	CheckboxIndeterminateIcon: any
 	ClearAllIcon: any
 	CloseIcon: any
+	CollapseIcon: any
+	CollapseFilledIcon: any
 	DensityLargeIcon: any
 	DensityMediumIcon: any
 	DensitySmallIcon: any
@@ -77,6 +82,7 @@ export interface Table_Icons {
 	DragHandleIcon: any
 	DynamicFeedIcon: any
 	EditIcon: any
+	ExpandIcon: any
 	ExpandLessIcon: any
 	ExpandMoreIcon: any
 	EyeIcon: any
@@ -92,6 +98,7 @@ export interface Table_Icons {
 	LocationRight: any
 	MoreHorizIcon: any
 	MoreVertIcon: any
+	OpenIcon: any
 	PencilIcon: any
 	PushPinIcon: any
 	RestartAltIcon: any
@@ -107,7 +114,6 @@ export interface Table_Icons {
 	VisibilityOffIcon: any
 	FiltersIcon: any
 	SettingsIcon: any
-	ExpandIcon: any
 	ToggleIcon: any
 	PlusIcon: any
 	LockedIcon: any
@@ -128,12 +134,15 @@ export const Default_Icons: Table_Icons = {
 	CheckboxIndeterminateIcon,
 	ClearAllIcon,
 	CloseIcon,
+	CollapseIcon,
+	CollapseFilledIcon,
 	DensityLargeIcon,
 	DensityMediumIcon,
 	DensitySmallIcon,
 	DragHandleIcon,
 	DynamicFeedIcon,
 	EditIcon,
+	ExpandIcon,
 	ExpandLessIcon,
 	ExpandMoreIcon,
 	EyeIcon,
@@ -145,6 +154,7 @@ export const Default_Icons: Table_Icons = {
 	KeyboardDoubleArrowDownIcon,
 	LocationLeft,
 	LocationRight,
+	OpenIcon,
 	MoreHorizIcon,
 	MoreVertIcon,
 	PencilIcon,
@@ -165,7 +175,6 @@ export const Default_Icons: Table_Icons = {
 	FiltersIcon,
 	SettingsIcon,
 	HideIcon,
-	ExpandIcon,
 	ToggleIcon,
 	PlusIcon,
 	LockedIcon,

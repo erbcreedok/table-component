@@ -1,5 +1,5 @@
 import React, { FC, MouseEvent } from 'react'
-import IconButton from '@mui/material/IconButton'
+import IconButton, { IconButtonProps } from '@mui/material/IconButton'
 import Tooltip from '@mui/material/Tooltip'
 
 import type { Table_Row, TableInstance } from '..'
@@ -7,12 +7,13 @@ import type { Table_Row, TableInstance } from '..'
 interface Props {
 	row: Table_Row
 	table: TableInstance
+	sx?: IconButtonProps['sx']
 }
 
-export const ExpandButton: FC<Props> = ({ row, table }) => {
+export const ExpandButton: FC<Props> = ({ row, table, sx }) => {
 	const {
 		options: {
-			icons: { ExpandMoreIcon },
+			icons: { ExpandIcon, CollapseFilledIcon },
 			localization,
 			muiExpandButtonProps,
 			renderDetailPanel,
@@ -71,17 +72,22 @@ export const ExpandButton: FC<Props> = ({ row, table }) => {
 						...(iconButtonProps?.sx instanceof Function
 							? iconButtonProps.sx(theme)
 							: (iconButtonProps?.sx as any)),
+						...(sx instanceof Function ? sx(theme) : (sx as any)),
 					})}
 					title={undefined}
 				>
-					<ExpandMoreIcon
-						style={{
-							transform: `rotate(${
-								!canExpand && !renderDetailPanel ? -90 : isExpanded ? -180 : 0
-							}deg)`,
-							transition: 'transform 150ms',
-						}}
-					/>
+					{!canExpand ? null : renderDetailPanel ? (
+						<ExpandIcon
+							style={{
+								transform: `rotate(${isExpanded ? -180 : -90}deg)`,
+								transition: 'transform 150ms',
+							}}
+						/>
+					) : !isExpanded ? (
+						<ExpandIcon />
+					) : (
+						<CollapseFilledIcon />
+					)}
 				</IconButton>
 			</span>
 		</Tooltip>

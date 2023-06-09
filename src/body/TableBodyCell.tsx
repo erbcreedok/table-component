@@ -74,7 +74,7 @@ export const TableBodyCell: FC<Props> = ({
 			cellStyleRules,
 			notClickableCells,
 			summaryRowCell,
-			icons: { ExpandIcon, ExpandMoreIcon },
+			icons: { ExpandMoreIcon },
 		},
 		refs: { editInputRefs },
 		setEditingCell,
@@ -90,7 +90,7 @@ export const TableBodyCell: FC<Props> = ({
 	} = getState()
 	const { column, row } = cell
 	const { columnDef } = column
-	const { columnDefType } = columnDef
+	const { columnDefType, cellAction, cellActionIcon } = columnDef
 
 	const mTableCellBodyProps =
 		muiTableBodyCellProps instanceof Function
@@ -262,7 +262,7 @@ export const TableBodyCell: FC<Props> = ({
 	}
 
 	const handleExpand = (event: MouseEvent<HTMLButtonElement>) => {
-		if (columnDef.cellAction === 'expand') {
+		if (cellAction === 'expand') {
 			const rowId = row.id
 			const clickedCells = table.getState().clickedCells
 
@@ -412,7 +412,7 @@ export const TableBodyCell: FC<Props> = ({
 				) : (
 					<TableBodyCellValue cell={cell} table={table} />
 				)}
-				{columnDef?.cellAction === 'expand' ? (
+				{cellAction === 'expand' ? (
 					<IconButton
 						sx={{
 							width: '24px',
@@ -431,8 +431,7 @@ export const TableBodyCell: FC<Props> = ({
 							}}
 						/>
 					</IconButton>
-				) : columnDef?.cellAction &&
-				  typeof columnDef.cellAction === 'function' ? (
+				) : columnDef.cellAction instanceof Function ? (
 					<IconButton
 						sx={{
 							width: '24px',
@@ -442,11 +441,11 @@ export const TableBodyCell: FC<Props> = ({
 							backgroundColor: '#F5F6FA',
 							visibility: 'hidden',
 						}}
-						// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-						// @ts-ignore
-						onClick={() => columnDef.cellAction({ row, table })}
+						onClick={() =>
+							cellAction instanceof Function && cellAction({ row, table })
+						}
 					>
-						<ExpandIcon />
+						{cellActionIcon}
 					</IconButton>
 				) : null}
 			</ConditionalBox>

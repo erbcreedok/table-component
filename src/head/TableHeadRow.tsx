@@ -1,6 +1,5 @@
 import React, { FC } from 'react'
-import TableRow from '@mui/material/TableRow'
-import { alpha } from '@mui/material/styles'
+import TableRow, { TableRowProps } from '@mui/material/TableRow'
 import type { VirtualItem } from '@tanstack/react-virtual'
 
 import type {
@@ -21,6 +20,9 @@ interface Props {
 	virtualPaddingLeft?: number
 	virtualPaddingRight?: number
 	parentRow?: Table_Row
+	sx?: TableRowProps['sx']
+	cellBackgroundColor?: string
+	cellBackgroundColorHover?: string
 }
 
 export const TableHeadRow: FC<Props> = ({
@@ -30,6 +32,9 @@ export const TableHeadRow: FC<Props> = ({
 	virtualPaddingLeft,
 	virtualPaddingRight,
 	parentRow,
+	sx,
+	cellBackgroundColor,
+	cellBackgroundColorHover,
 }) => {
 	const {
 		options: { layoutMode, muiTableHeadRowProps },
@@ -45,12 +50,12 @@ export const TableHeadRow: FC<Props> = ({
 			{...tableRowProps}
 			sx={(theme) => ({
 				backgroundColor: Colors.LightestGray,
-				boxShadow: `4px 0 8px ${alpha(theme.palette.common.black, 0.1)}`,
 				display: layoutMode === 'grid' ? 'flex' : 'table-row',
 				top: 0,
 				...(tableRowProps?.sx instanceof Function
 					? tableRowProps?.sx(theme)
 					: (tableRowProps?.sx as any)),
+				...(sx instanceof Function ? sx(theme) : (sx as any)),
 			})}
 		>
 			{virtualPaddingLeft ? (
@@ -72,6 +77,8 @@ export const TableHeadRow: FC<Props> = ({
 						key={header.id}
 						table={table}
 						groupBorders={groupBorders}
+						backgroundColor={cellBackgroundColor}
+						backgroundColorHover={cellBackgroundColorHover}
 					/>
 				)
 			})}

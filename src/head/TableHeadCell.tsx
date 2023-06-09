@@ -32,6 +32,8 @@ interface Props {
 	table: TableInstance
 	parentRow?: Table_Row
 	groupBorders?: GroupBorders
+	backgroundColor?: string
+	backgroundColorHover?: string
 }
 
 export const TableHeadCell: FC<Props> = ({
@@ -39,6 +41,8 @@ export const TableHeadCell: FC<Props> = ({
 	table,
 	parentRow,
 	groupBorders,
+	backgroundColor = Colors.LightestGray,
+	backgroundColorHover = Colors.Gray20,
 }) => {
 	const theme = useTheme()
 	const {
@@ -63,6 +67,7 @@ export const TableHeadCell: FC<Props> = ({
 	const { columnDef } = column
 	const { columnDefType } = columnDef
 	const { hovered, hoverProps } = useHoverEffects()
+	const [grabHandleVisible, setGrabHandleVisible] = useState(false)
 
 	const mTableHeadCellProps =
 		muiTableHeadCellProps instanceof Function
@@ -209,13 +214,14 @@ export const TableHeadCell: FC<Props> = ({
 								tableCellProps,
 								theme,
 							}),
-							backgroundColor: menuVisible
-								? Colors.Gray20
-								: Colors.LightestGray,
+							backgroundColor:
+								menuVisible || grabHandleVisible
+									? backgroundColorHover
+									: backgroundColor,
 							'&:hover': {
 								backgroundColor: showColumnActions
-									? Colors.Gray20
-									: Colors.LightestGray,
+									? backgroundColorHover
+									: backgroundColor,
 							},
 							...draggingBorders,
 							...(highlightHeadCellId === column.id && {
@@ -307,6 +313,8 @@ export const TableHeadCell: FC<Props> = ({
 								table={table}
 								visible={hovered}
 								tableHeadCellRef={localRef}
+								backgroundColor={backgroundColorHover}
+								onComputedVisibleChange={setGrabHandleVisible}
 							/>
 						)}
 					</TableCell>

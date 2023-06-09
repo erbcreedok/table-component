@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { Meta, Story } from '@storybook/react'
 import TableComponent, { TableComponentProps, Sidebar } from '../../'
 import { Typography } from '@mui/material'
+import { OpenIcon } from '../../icons/OpenIcon'
 import {
 	getPeopleColumns,
 	getSeparatedPeopleMembers,
@@ -125,6 +126,7 @@ export const PeopleTable: Story<TableComponentProps> = () => {
 			return {
 				...column,
 				cellAction: ({ row, table }) => setIsSidebarOpen(true),
+				cellActionIcon: <OpenIcon />,
 			}
 		}
 		return column

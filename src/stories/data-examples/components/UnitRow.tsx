@@ -9,11 +9,11 @@ import { isUnitTreeItem } from '../../utils/getTeamMembers'
 const Wrapper = styled(Box)`
 	display: flex;
 	align-items: center;
-	background: #fafafa;
 	height: 32px;
 	font-family: sans-serif;
-	padding-top: 8px;
-	padding-bottom: 8px;
+	padding-top: 4px;
+	padding-bottom: 4px;
+	border-bottom: 1px solid #E1E3EB;
 `
 
 type Props<TData extends Record<string, any> = {}> = TableBodyRowProps
@@ -30,13 +30,10 @@ export const UnitRow = <TData extends Record<string, any> = {}>(props: Props<TDa
 
 	const unitRow = unit ? (
 		<tr>
-			<td colSpan={getVisibleLeafColumns().length}>
-				<Wrapper sx={{ pl: `${(row.depth + 1) * 12}px` }}>
-					<ExpandButton row={row} table={table} />
-					<div style={{ marginRight: 'auto', height: '100%' }}>
-						<div style={{ color: '#303240', fontSize: '14px' }}>{unit.name}</div>
-						<span style={{ color: '#ACAFBF', fontSize: '12px' }}>{unit.type}</span>
-					</div>
+			<td style={{ padding: 0, background: '#FAFAFC' }} colSpan={getVisibleLeafColumns().length}>
+				<Wrapper sx={{ ml: `${(row.depth + 2) * 12}px` }}>
+					<ExpandButton sx={{ mx: '-8px' }} row={row} table={table} />
+					<div style={{ color: '#303240', fontSize: '14px', lineHeight: '18px' }}>{unit.name}</div>
 				</Wrapper>
 			</td>
 		</tr>
@@ -55,6 +52,8 @@ export const UnitRow = <TData extends Record<string, any> = {}>(props: Props<TDa
 			virtualColumns={virtualColumns}
 			virtualPaddingLeft={virtualPaddingLeft}
 			virtualPaddingRight={virtualPaddingRight}
+			cellBackgroundColor="#EBEDF5"
+			cellBackgroundColorHover="#FAFAFC"
 		/>
 	)) : null
 

@@ -63,7 +63,7 @@ export const SortingChip = <TData extends Record<string, any> = {}>(
 		setSelectedSearchedItems([])
 	}
 
-	const DropdownContent = (
+	const dropdownContent = (
 		<>
 			<Box sx={{ width: 300, padding: '6px 0' }}>
 				<DropdownContentHeader
@@ -140,7 +140,7 @@ export const SortingChip = <TData extends Record<string, any> = {}>(
 					<AscIcon />
 				)
 			}
-			dropdownContent={DropdownContent}
+			dropdownContent={dropdownContent}
 		/>
 	)
 }
