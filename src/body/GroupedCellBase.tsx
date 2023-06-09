@@ -1,6 +1,4 @@
-import { css } from '@emotion/react'
-import styled from '@emotion/styled'
-import { Box as MuiBox } from '@mui/material'
+import { styled, Box as MuiBox, css } from '@mui/material'
 import { useResizeDetector } from 'react-resize-detector'
 import React, { ReactNode, useCallback, useState } from 'react'
 

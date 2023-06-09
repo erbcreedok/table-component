@@ -1,35 +1,40 @@
-import styled from '@emotion/styled'
-import { Switch } from '@mui/material'
+import { styled, Switch, switchClasses } from '@mui/material'
 
 import { Text, Colors } from './styles'
 
 export const TableSwitch = styled(Switch)`
 	padding: 5px;
-	&:hover .MuiSwitch-switchBase {
+	&:hover .${switchClasses.switchBase} {
 		background-color: unset;
 	}
-	& + .Mui-disabled {
+	& + .${switchClasses.disabled} {
 		color: ${Text.Primary} !important;
 	}
-	& .Mui-checked,
-	& .MuiSwitch-switchBase.Mui-checked.Mui-disabled {
+	&
+		.${switchClasses.checked},
+		&
+		.${switchClasses.switchBase}.${switchClasses.checked}.${switchClasses.disabled} {
 		color: #fff;
 	}
-	& .MuiSwitch-switchBase {
+	& .${switchClasses.switchBase} {
 		padding: 6px;
 	}
 
-	& .MuiSwitch-thumb {
+	& .${switchClasses.thumb} {
 		width: 11px;
 		height: 11px;
 		box-shadow: none;
 		color: #fff;
 	}
-	& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track {
+	&
+		.${switchClasses.switchBase}.${switchClasses.checked}
+		+ .${switchClasses.track} {
 		background-color: ${Colors.LightBlue};
 		opacity: 1;
 	}
-	& .Mui-disabled.MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track {
+	&
+		.${switchClasses.disabled}.${switchClasses.switchBase}.${switchClasses.checked}
+		+ .${switchClasses.track} {
 		opacity: 0.5;
 	}
 `

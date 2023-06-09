@@ -55,6 +55,7 @@ export const TableHead: FC<Props> = ({
 					virtualColumns={virtualColumns}
 					virtualPaddingLeft={virtualPaddingLeft}
 					virtualPaddingRight={virtualPaddingRight}
+					stickyHeader={stickyHeader}
 				/>
 			))}
 		</MuiTableHead>

@@ -1,4 +1,4 @@
-import styled from "@emotion/styled"
+import { styled } from '@mui/material'
 import Box from '@mui/material/Box'
 import React from 'react'
 import { TableBodyRow, TableBodyRowProps } from '../../../body/TableBodyRow'
@@ -8,6 +8,7 @@ import { isUnitTreeItem } from '../../utils/getTeamMembers'
 
 const Wrapper = styled(Box)`
 	display: flex;
+	gap: 9px;
 	align-items: center;
 	height: 32px;
 	font-family: sans-serif;

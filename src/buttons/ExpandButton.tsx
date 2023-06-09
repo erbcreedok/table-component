@@ -3,6 +3,7 @@ import IconButton, { IconButtonProps } from '@mui/material/IconButton'
 import Tooltip from '@mui/material/Tooltip'
 
 import type { Table_Row, TableInstance } from '..'
+import { IconsColor } from '../components/styles'
 
 interface Props {
 	row: Table_Row
@@ -69,6 +70,7 @@ export const ExpandButton: FC<Props> = ({ row, table, sx }) => {
 					sx={(theme) => ({
 						height: '2.25rem',
 						width: '2.25rem',
+						color: IconsColor.default,
 						...(iconButtonProps?.sx instanceof Function
 							? iconButtonProps.sx(theme)
 							: (iconButtonProps?.sx as any)),

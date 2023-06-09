@@ -1,4 +1,4 @@
-import styled from '@emotion/styled'
+import { styled } from '@mui/material'
 import { Meta, Story } from '@storybook/react'
 import React from 'react'
 import { TableComponentProps, TableMain, TableProvider, TableStatusBar, TableToolbar, useTableContext } from '../../'
@@ -27,7 +27,7 @@ const groupsSorting = {
 	riskOfLeaving: sortByArrayOrder(['Leaver', 'High', 'Medium', 'Low']),
 }
 
-const Wrapper = styled.div`
+const Wrapper = styled('div')`
 	display: flex;
 	flex-direction: column;
 	background: ${Colors.bg};
@@ -35,15 +35,12 @@ const Wrapper = styled.div`
 	padding: 10px;
 	margin: 10px;
 `
-const ToolbarWrapper = styled.div`
+const ToolbarWrapper = styled('div')`
 	font-family: sans-serif;
 	align-items: center;
 	display: flex;
 	padding: 10px;
 	margin-bottom: 20px;
-	${TableToolbar.Wrapper} {
-		justify-content: flex-end;
-	}
 `
 
 const TableExample = () => {
@@ -52,7 +49,7 @@ const TableExample = () => {
 	return (
 		<>
 			<ToolbarWrapper>
-				<TableToolbar table={table} />
+				<TableToolbar table={table} sx={{ justifyContent: 'flex-end' }} />
 			</ToolbarWrapper>
 			<Wrapper>
 				<TableStatusBar table={table} lineProps={{ sx: { backgroundColor: Colors.white } }} />

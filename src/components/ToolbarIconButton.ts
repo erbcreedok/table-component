@@ -1,5 +1,4 @@
-import styled from '@emotion/styled'
-import { IconButton } from '@mui/material'
+import { styled, IconButton } from '@mui/material'
 
 import { DEFAULT_FONT_FAMILY, Text, Colors } from './styles'
 

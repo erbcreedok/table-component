@@ -1,6 +1,11 @@
 import React, { FC, useEffect, SyntheticEvent } from 'react'
-import { Divider, IconButton, InputAdornment, TextField } from '@mui/material'
-import styled from '@emotion/styled'
+import {
+	Divider,
+	IconButton,
+	InputAdornment,
+	TextField,
+	styled,
+} from '@mui/material'
 
 import { CloseIcon } from '../../icons/CloseIcon'
 import { SearchIcon } from '../../icons/SearchIcon'

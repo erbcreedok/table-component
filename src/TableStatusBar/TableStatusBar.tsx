@@ -1,7 +1,6 @@
-import styled from '@emotion/styled'
+import { styled, ButtonBase } from '@mui/material'
 import React, { ComponentProps, useRef } from 'react'
 import Box from '@mui/material/Box'
-import { ButtonBase } from '@mui/material'
 
 import { Colors } from '../components/styles'
 import type { TableInstance } from '../index'
@@ -12,10 +11,10 @@ import { SortingChip } from './SortingChip/SortingChip'
 import { FilterChip } from './FilterChip/FilterChip'
 import { useFilterControls } from './filter-bar-hooks/useFilterControls'
 
+const clearButtonClassName = 'clear-button'
 const ClearAllButton = styled(ButtonBase)`
 	color: ${Colors.LightBlue};
 	font-size: 12px;
-	visibility: hidden;
 	margin-left: 9px;
 	font-weight: 600;
 `
@@ -32,10 +31,10 @@ const Wrapper = styled(Box)<{ hidden?: boolean }>`
 	gap: 6px;
 	flex-wrap: wrap;
 	${({ hidden }) => hidden && `display: none;`}
-	${ClearAllButton} {
+	.${clearButtonClassName} {
 		visibility: hidden;
 	}
-	&:hover ${ClearAllButton} {
+	&:hover .${clearButtonClassName} {
 		visibility: visible;
 	}
 `
@@ -93,7 +92,12 @@ export const TableStatusBar = <TData extends Record<string, any> = {}>({
 
 			<Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 'inherit' }}>
 				{filterChips}
-				<ClearAllButton onClick={handleClearAll}>Clear all</ClearAllButton>
+				<ClearAllButton
+					className={clearButtonClassName}
+					onClick={handleClearAll}
+				>
+					Clear all
+				</ClearAllButton>
 			</Box>
 		</Wrapper>
 	)

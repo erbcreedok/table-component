@@ -1,5 +1,4 @@
-import styled from '@emotion/styled'
-import { Chip } from '@mui/material'
+import { styled, Chip } from '@mui/material'
 
 import { DEFAULT_FONT_FAMILY, Colors } from './styles'
 

@@ -1,4 +1,4 @@
-import styled from '@emotion/styled'
+import { styled } from '@mui/material'
 
 import { DEFAULT_FONT_FAMILY, Colors } from './styles'
 

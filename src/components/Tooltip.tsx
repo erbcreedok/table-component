@@ -1,5 +1,4 @@
-import styled from '@emotion/styled'
-import { tooltipClasses } from '@mui/material'
+import { styled, tooltipClasses } from '@mui/material'
 import MuiTooltip from '@mui/material/Tooltip'
 
 import { Colors } from './styles'

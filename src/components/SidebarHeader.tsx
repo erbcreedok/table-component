@@ -1,5 +1,4 @@
-import styled from '@emotion/styled'
-import { Box, Divider, IconButton } from '@mui/material'
+import { styled, Box, Divider, IconButton } from '@mui/material'
 import React, { ReactElement } from 'react'
 
 import { CloseIcon } from '../icons/CloseIcon'

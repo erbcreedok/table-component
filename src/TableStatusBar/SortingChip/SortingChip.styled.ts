@@ -1,5 +1,4 @@
-import { Box } from '@mui/material'
-import styled from '@emotion/styled'
+import { Box, styled } from '@mui/material'
 
 export const SortingItemBoxStyled = styled(Box)`
 	display: flex;

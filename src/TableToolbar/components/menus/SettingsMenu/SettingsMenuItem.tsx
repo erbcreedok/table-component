@@ -204,7 +204,7 @@ export const SettingsMenuItem = <TData extends Record<string, any> = {}>({
 							sx={{ height: '30px', mb: '2px' }}
 						>
 							<Box sx={{ marginLeft: 'auto' }}>
-								<LockedIcon htmlColor={IconsColor.default} />
+								<LockedIcon style={{ color: IconsColor.default }} />
 							</Box>
 						</Tooltip>
 					)}
@@ -216,7 +216,13 @@ export const SettingsMenuItem = <TData extends Record<string, any> = {}>({
 							sx={{ height: '30px', mb: '2px' }}
 						>
 							<Box sx={{ marginLeft: 'auto' }}>
-								<GroupingIcon />
+								<GroupingIcon
+									style={{
+										width: '18px',
+										height: '18px',
+										color: IconsColor.default,
+									}}
+								/>
 							</Box>
 						</Tooltip>
 					)}

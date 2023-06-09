@@ -1,5 +1,4 @@
-import styled from '@emotion/styled'
-import { Box } from '@mui/material'
+import { styled, Box } from '@mui/material'
 
 export const FilterItemBoxStyled = styled(Box)`
 	display: flex;

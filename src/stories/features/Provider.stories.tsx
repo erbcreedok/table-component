@@ -1,11 +1,11 @@
-import styled from '@emotion/styled'
+import { styled } from '@mui/material'
 import { Meta, Story } from '@storybook/react'
 import React from 'react'
 import { TableProvider } from '../../context/TableProvider'
 import { useTableContext } from '../../context/useTableContext'
 import { TableMain } from '../../table/TableMain'
 import { TableComponentProps } from '../../TableComponent'
-import { TableToolbar } from '../../TableToolbar/TableToolbar'
+import { TableToolbar } from '../../TableToolbar'
 import { getSeparatedTeamMembers } from '../utils/getTeamMembers'
 import { getTeamMembersColumns } from '../utils/getTeamMembersColumns'
 
@@ -19,14 +19,14 @@ export default meta;
 const data = getSeparatedTeamMembers()
 const columns = getTeamMembersColumns()
 
-const Wrapper = styled.div`
+const Wrapper = styled('div')`
 	display: flex;
 	flex-direction: column;
 	background: #f5f5f5;
 	border-radius: 10px;
 	padding: 10px;
 `
-const ToolbarWrapper = styled.div`
+const ToolbarWrapper = styled('div')`
 	font-family: sans-serif;
 	align-items: center;
 	display: flex;

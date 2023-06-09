@@ -14,6 +14,7 @@ import { getHeaderGroupBorders } from '../utils/getGroupBorders'
 import { TableHeadCell } from './TableHeadCell'
 
 interface Props {
+	stickyHeader?: boolean
 	headerGroup: Table_HeaderGroup
 	table: TableInstance
 	virtualColumns?: VirtualItem[]
@@ -35,6 +36,7 @@ export const TableHeadRow: FC<Props> = ({
 	sx,
 	cellBackgroundColor,
 	cellBackgroundColorHover,
+	stickyHeader,
 }) => {
 	const {
 		options: { layoutMode, muiTableHeadRowProps },
@@ -49,6 +51,7 @@ export const TableHeadRow: FC<Props> = ({
 		<TableRow
 			{...tableRowProps}
 			sx={(theme) => ({
+				position: stickyHeader ? 'sticky' : 'relative',
 				backgroundColor: Colors.LightestGray,
 				display: layoutMode === 'grid' ? 'flex' : 'table-row',
 				top: 0,
