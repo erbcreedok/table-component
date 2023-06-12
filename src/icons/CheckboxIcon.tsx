@@ -2,7 +2,8 @@ import { IconGeneral, IconGeneralProps } from './IconGeneral'
 
 export const CheckboxIcon = (props: IconGeneralProps) => {
 	return (
-		<IconGeneral viewBox="0 0 18 18" size={18} {...props}>
+		// icon is cropped at right and bottom borders, so we need to add 0.5 to width and height
+		<IconGeneral viewBox="0 0 18.5 18.5" size={18} {...props}>
 			<rect
 				x="0.5"
 				y="0.5"
