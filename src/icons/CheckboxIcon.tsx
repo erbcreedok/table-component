@@ -9,9 +9,10 @@ export const CheckboxIcon = (props: IconGeneralProps) => {
 				width="17"
 				height="17"
 				rx="2.5"
+				strokeWidth="0.5"
 				stroke="currentColor"
+				fill="white"
 			/>
-			<rect x="0.5" y="0.5" width="17" height="17" rx="2.5" fill="white" />
 		</IconGeneral>
 	)
 }

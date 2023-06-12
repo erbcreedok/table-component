@@ -12,6 +12,7 @@ export const Table_Localization_EN: Table_Localization = {
 	clearSearch: 'Clear search',
 	clearSort: 'Clear Sort',
 	clickToCopy: 'Click to copy',
+	close: 'Close',
 	collapse: 'Collapse',
 	collapseAll: 'Collapse all',
 	columnActions: 'Column Actions',

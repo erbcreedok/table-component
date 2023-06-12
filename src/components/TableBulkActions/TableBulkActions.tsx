@@ -10,6 +10,7 @@ import { SelectCheckbox } from '../../inputs/SelectCheckbox'
 import { TableInstance } from '../../TableComponent'
 import { getColorAlpha } from '../../utils/getColorAlpha'
 import { Colors, IconsColor } from '../styles'
+import { Tooltip } from '../Tooltip'
 
 import { BulkActionButton } from './BulkActionButton'
 
@@ -145,20 +146,22 @@ export const TableBulkActions = ({
 					</Box>
 				</Box>
 				<Line orientation="vertical" height={18} sx={{ mx: '9px' }} />
-				<IconButton
-					onClick={() => resetRowSelection()}
-					sx={{
-						color: Colors.Gray10,
-						cursor: 'pointer',
-						p: '3px',
-						borderRadius: '6px',
-						'&:hover': {
-							background: Colors.Dark,
-						},
-					}}
-				>
-					<CloseIcon sx={{ width: 18, height: 18 }} />
-				</IconButton>
+				<Tooltip title={localization.close}>
+					<IconButton
+						onClick={() => resetRowSelection()}
+						sx={{
+							color: Colors.Gray10,
+							cursor: 'pointer',
+							p: '3px',
+							borderRadius: '6px',
+							'&:hover': {
+								background: Colors.Dark,
+							},
+						}}
+					>
+						<CloseIcon sx={{ width: 18, height: 18 }} />
+					</IconButton>
+				</Tooltip>
 			</Box>
 		</Box>
 	)

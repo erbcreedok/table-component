@@ -76,6 +76,7 @@ export interface Table_Localization {
 	clearSearch: string
 	clearSort: string
 	clickToCopy: string
+	close: string
 	collapse: string
 	collapseAll: string
 	columnActions: string

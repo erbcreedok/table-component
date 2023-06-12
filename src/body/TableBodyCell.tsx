@@ -314,14 +314,16 @@ export const TableBodyCell: FC<Props> = ({
 						? `${lighten(theme.palette.background.default, 0.2)} !important`
 						: `${darken(theme.palette.background.default, 0.1)} !important`
 					: undefined,
-			'& span': {
-				visibility: 'visible',
-			},
 			'& > div > button': {
 				visibility: 'visible',
 			},
 		},
+		'tr:hover & span': {
+			visibility: 'visible',
+			transition: '0.2s ease-in-out',
+		},
 		'& span': {
+			transition: 'visibility 0s',
 			visibility: hideCheckBoxSpan ? 'hidden' : 'visible',
 		},
 		borderBottom: `1px solid ${Colors.Gray20}`,
