@@ -160,6 +160,12 @@ export interface Table_Localization {
 	showPreset: string
 	sortAsc: string
 	sortDesc: string
+	ascending: string
+	descending: string
+	AZ: string
+	ZA: string
+	firstLast: string
+	lastFirst: string
 	sortByColumnAsc: string
 	sortByColumnDesc: string
 	sortedByColumnAsc: string
@@ -440,6 +446,14 @@ export type Table_ColumnDef<TData extends Record<string, any> = {}> = Omit<
 		LiteralUnion<string & Table_FilterOption>
 	> | null
 	columns?: Table_ColumnDef<TData>[]
+	dataType?:
+		| 'textual'
+		| 'numeric'
+		| 'date'
+		| 'formula'
+		| 'single-select'
+		| 'multi-select'
+		| 'custom'
 	enableClickToCopy?: boolean
 	enableColumnActions?: boolean
 	enableColumnDragging?: boolean

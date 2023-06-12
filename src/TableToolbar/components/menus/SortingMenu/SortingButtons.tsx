@@ -2,9 +2,10 @@ import React from 'react'
 import Box from '@mui/material/Box'
 import { IconButton, SxProps } from '@mui/material'
 
+import { getSortingIcon } from '../../../../utils/getSortingInfo'
 import { useTableContext } from '../../../../context/useTableContext'
 import { Table_Column } from '../../../../TableComponent'
-import { Colors, Text, IconsColor } from '../../../../components/styles'
+import { Colors, Text } from '../../../../components/styles'
 import { ConditionalBox } from '../../../../components/ConditionalBox'
 
 interface Props<TData extends Record<string, any> = {}> {
@@ -18,11 +19,6 @@ export const SortingButtons = <TData extends Record<string, any> = {}>(
 ) => {
 	const { table } = useTableContext()
 	const { column, hideUnselected } = props
-	const {
-		options: {
-			icons: { AscIcon, DescIcon },
-		},
-	} = table
 	const sorting = column?.getIsSorted()
 
 	return (
@@ -70,10 +66,14 @@ export const SortingButtons = <TData extends Record<string, any> = {}>(
 					}}
 					size="small"
 				>
-					<AscIcon
-						htmlColor={IconsColor.default}
-						sx={{ width: 18, height: 18 }}
-					/>
+					{getSortingIcon({
+						table,
+						sortingFn: column.getSortingFn(),
+						isAsc: true,
+						sortingIconProps: {
+							sx: { width: 18, height: 18 },
+						},
+					})}
 				</IconButton>
 				<IconButton
 					onClick={() => column.toggleSorting(true, true)}
@@ -88,10 +88,14 @@ export const SortingButtons = <TData extends Record<string, any> = {}>(
 					}}
 					size="small"
 				>
-					<DescIcon
-						htmlColor={IconsColor.default}
-						sx={{ width: 18, height: 18 }}
-					/>
+					{getSortingIcon({
+						table,
+						sortingFn: column.getSortingFn(),
+						isAsc: false,
+						sortingIconProps: {
+							sx: { width: 18, height: 18 },
+						},
+					})}
 				</IconButton>
 			</ConditionalBox>
 		</Box>

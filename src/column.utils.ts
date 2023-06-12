@@ -106,6 +106,22 @@ export const prepareColumns = <TData extends Record<string, any> = {}>({
 				// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 				// @ts-ignore
 				columnDef.sortingFn = sortingFns[columnDef.sortingFn]
+			} else if (!columnDef.sortingFn) {
+				if (
+					columnDef.dataType &&
+					['numeric', 'date', 'formula'].includes(columnDef.dataType)
+				) {
+					columnDef.sortingFn = 'basic'
+				}
+
+				if (
+					columnDef.dataType &&
+					['textual', 'single-select', 'multi-select'].includes(
+						columnDef?.dataType
+					)
+				) {
+					columnDef.sortingFn = 'text'
+				}
 			}
 		} else if (columnDef.columnDefType === 'display') {
 			return {

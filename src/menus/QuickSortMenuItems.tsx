@@ -6,10 +6,10 @@ import zIndex from '@mui/material/styles/zIndex'
 import React, { FC, MutableRefObject } from 'react'
 
 import { MenuPaper } from '../components/Menu'
-import { Colors } from '../components/styles'
 import { useHoverEffects } from '../hooks/useHoverEffects'
 import { Table_Column, TableInstance } from '../TableComponent'
 
+import { QuickSortMenuItemOptions } from './QuickSortMenuItemOptions'
 import { commonListItemStyles, commonMenuItemStyles } from './constants'
 
 type Props = {
@@ -28,15 +28,7 @@ export const QuickSortMenuItems: FC<Props> = ({
 	const {
 		options: {
 			enableSorting,
-			enableMultiSort,
-			icons: {
-				AscIcon,
-				DescIcon,
-				CheckIcon,
-				ClearIcon,
-				ArrowsIcon,
-				ExpandMoreIcon,
-			},
+			icons: { ClearIcon, ArrowsIcon, ExpandMoreIcon },
 			localization,
 		},
 	} = table
@@ -46,25 +38,9 @@ export const QuickSortMenuItems: FC<Props> = ({
 		setVisible(false)
 	}
 
-	const handleSortAsc = () => {
-		column.toggleSorting(false, enableMultiSort)
-		setVisible(false)
-	}
-
-	const handleSortDesc = () => {
-		column.toggleSorting(true, enableMultiSort)
-		setVisible(false)
-	}
-
 	if (!enableSorting || !column.getCanSort()) {
 		return null
 	}
-
-	const selectedChevron = (
-		<Box sx={{ ml: 'auto', color: Colors.LightBlue, height: '24px' }}>
-			<CheckIcon />
-		</Box>
-	)
 
 	return (
 		<>
@@ -101,30 +77,11 @@ export const QuickSortMenuItems: FC<Props> = ({
 			>
 				<MenuPaper sx={{ mx: '6px' }} {...hoverProps}>
 					<MenuList>
-						<MenuItem key={1} onClick={handleSortAsc} sx={commonMenuItemStyles}>
-							<Box sx={commonListItemStyles}>
-								<ListItemIcon>
-									<AscIcon />
-								</ListItemIcon>
-								{localization.sortAsc}
-								{column.getIsSorted() === 'asc' && selectedChevron}
-							</Box>
-						</MenuItem>
-
-						<MenuItem
-							key={2}
-							divider
-							onClick={handleSortDesc}
-							sx={commonMenuItemStyles}
-						>
-							<Box sx={commonListItemStyles}>
-								<ListItemIcon>
-									<DescIcon />
-								</ListItemIcon>
-								{localization.sortDesc}
-								{column.getIsSorted() === 'desc' && selectedChevron}
-							</Box>
-						</MenuItem>
+						<QuickSortMenuItemOptions
+							column={column}
+							table={table}
+							setVisible={setVisible}
+						/>
 						<MenuItem
 							key={0}
 							onClick={handleClearSort}

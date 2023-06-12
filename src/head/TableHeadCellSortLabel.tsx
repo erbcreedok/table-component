@@ -1,9 +1,10 @@
-import React, { FC, useCallback, useMemo } from 'react'
+import React, { FC, useCallback } from 'react'
 import TableSortLabel from '@mui/material/TableSortLabel'
 import type { TableCellProps } from '@mui/material/TableCell'
 
 import { Table_Header, TableInstance } from '..'
 import { Tooltip } from '../components/Tooltip'
+import { getSortingIconConstructor } from '../utils/getSortingInfo'
 
 interface Props {
 	header: Table_Header
@@ -13,11 +14,7 @@ interface Props {
 
 export const TableHeadCellSortLabel: FC<Props> = ({ header, table }) => {
 	const {
-		options: {
-			icons: { DescIcon },
-			localization,
-			enableMultiSort,
-		},
+		options: { localization, enableMultiSort },
 	} = table
 	const { column } = header
 	const { columnDef } = column
@@ -29,10 +26,6 @@ export const TableHeadCellSortLabel: FC<Props> = ({ header, table }) => {
 			? localization.sortedByColumnDesc.replace('{column}', columnDef.header)
 			: localization.sortedByColumnAsc.replace('{column}', columnDef.header)
 		: localization.unsorted
-
-	const transform = useMemo(() => {
-		return isSorted === 'asc' ? 'rotateY(180deg)' : undefined
-	}, [isSorted])
 
 	const toggleSorting = useCallback(
 		(e) => {
@@ -48,16 +41,18 @@ export const TableHeadCellSortLabel: FC<Props> = ({ header, table }) => {
 				aria-label={sortTooltip}
 				active={!!isSorted}
 				onClick={toggleSorting}
-				direction={isSorted ? (isSorted as 'asc' | 'desc') : undefined}
+				direction="desc"
 				sx={{
 					flex: '0 0',
-					width: '18px',
 					'& svg': {
 						margin: 0,
 					},
-					transform,
 				}}
-				IconComponent={DescIcon}
+				IconComponent={getSortingIconConstructor({
+					table,
+					sortingFn: column.getSortingFn(),
+					isAsc: isSorted === 'asc',
+				})}
 			/>
 		</Tooltip>
 	)

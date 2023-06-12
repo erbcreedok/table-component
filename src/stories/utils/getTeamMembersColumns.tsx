@@ -67,6 +67,7 @@ export const getTeamMembersColumns = () =>
 			displayDataKey: 'member.fullName',
 			filterVariant: 'multi-select',
 			id: 'teamMember',
+			dataType: 'textual',
 			Cell: ({ row, table }) => {
 				const user = row.original.member
 				return (
@@ -117,6 +118,7 @@ export const getTeamMembersColumns = () =>
 		{
 			header: 'Impact on the project',
 			id: 'impact',
+			dataType: 'textual',
 			accessorFn: teamMemberAccessorFn('impact'),
 			filterVariant: 'multi-select',
 			GroupedCell: ColoredGroupedCell,
@@ -127,6 +129,7 @@ export const getTeamMembersColumns = () =>
 		{
 			header: 'Performance',
 			id: 'performance',
+			dataType: 'textual',
 			accessorFn: teamMemberAccessorFn('performance'),
 			filterVariant: 'multi-select',
 			GroupedCell: ColoredGroupedCell,
@@ -140,6 +143,7 @@ export const getTeamMembersColumns = () =>
 		{
 			header: 'Risk of leaving',
 			id: 'riskOfLeaving',
+			dataType: 'textual',
 			accessorFn: teamMemberAccessorFn('riskOfLeaving'),
 			filterVariant: 'multi-select',
 			GroupedCell: ColoredGroupedCell,
@@ -151,6 +155,7 @@ export const getTeamMembersColumns = () =>
 		{
 			header: 'Succession status',
 			id: 'successionStatus',
+			dataType: 'textual',
 			accessorFn: teamMemberAccessorFn('successionStatus'),
 			filterVariant: 'multi-select',
 			GroupedCell: ColoredGroupedCell,
@@ -161,6 +166,7 @@ export const getTeamMembersColumns = () =>
 		{
 			header: 'Location',
 			id: 'location',
+			dataType: 'textual',
 			accessorFn: teamMemberAccessorFn('location'),
 			filterVariant: 'multi-select',
 			GroupedCell: ColoredGroupedCell,

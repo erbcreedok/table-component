@@ -11,6 +11,8 @@ import MenuItem from '@mui/material/MenuItem'
 import Typography from '@mui/material/Typography'
 import IconButton from '@mui/material/IconButton'
 
+import { getSortingText } from '../../../../utils/getSortingInfo'
+import { useTableContext } from '../../../../context/useTableContext'
 import type { Table_Column } from '../../../../'
 import { ButtonLink } from '../../../../components/ButtonLink'
 import { Colors, Text } from '../../../../components/styles'
@@ -42,6 +44,7 @@ export const SimpleMenuItem = <TData extends Record<string, any> = {}>({
 	setHoveredColumn,
 	onColumnOrderChange,
 }: Props<TData>) => {
+	const { table } = useTableContext()
 	const { columnDef } = column
 	const menuItemRef = useRef<HTMLElement>(null)
 	const [isDragging, setIsDragging] = useState(false)
@@ -158,13 +161,25 @@ export const SimpleMenuItem = <TData extends Record<string, any> = {}>({
 										style={{ marginRight: '18px', fontWeight: 600 }}
 										onClick={() => column.toggleSorting(false, true)}
 									>
-										Ascending +
+										{getSortingText({
+											table,
+											sortingFn: column.getSortingFn(),
+											isAsc: true,
+											withSortWord: false,
+										})}{' '}
+										+
 									</ButtonLink>
 									<ButtonLink
 										onClick={() => column.toggleSorting(true, true)}
 										style={{ fontWeight: 600 }}
 									>
-										Descending +
+										{getSortingText({
+											table,
+											sortingFn: column.getSortingFn(),
+											isAsc: false,
+											withSortWord: false,
+										})}{' '}
+										+
 									</ButtonLink>
 								</>
 							)}

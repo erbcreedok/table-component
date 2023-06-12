@@ -58,6 +58,10 @@ import { PlusIcon } from './icons/PlusIcon'
 import { PresetIcon } from './icons/PresetIcon'
 import { ToggleIcon } from './icons/ToggleIcon'
 import { TrashIcon } from './icons/TrashIcon'
+import { AscNumIcon } from './icons/AscNumIcon'
+import { DescNumIcon } from './icons/DescNumIcon'
+import { AscTextIcon } from './icons/AscTextIcon'
+import { DescTextIcon } from './icons/DescTextIcon'
 
 export interface Table_Icons {
 	AnalyticsIcon: any
@@ -119,6 +123,10 @@ export interface Table_Icons {
 	ToggleIcon: any
 	PlusIcon: any
 	LockedIcon: any
+	AscNumIcon: any
+	DescNumIcon: any
+	AscTextIcon: any
+	DescTextIcon: any
 }
 
 export const Default_Icons: Table_Icons = {
@@ -181,4 +189,8 @@ export const Default_Icons: Table_Icons = {
 	ToggleIcon,
 	PlusIcon,
 	LockedIcon,
+	AscNumIcon,
+	DescNumIcon,
+	AscTextIcon,
+	DescTextIcon,
 }
