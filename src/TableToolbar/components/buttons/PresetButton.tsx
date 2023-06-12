@@ -8,20 +8,21 @@ import {
 	VisibilityState,
 } from '@tanstack/react-table'
 
+import { ToolbarIconButton } from '../../../components/ToolbarIconButton'
 import { Tooltip } from '../../../components/Tooltip'
 import { createTheme } from '../../../index'
 import type { TableInstance } from '../../../index'
-import { ToolbarButton } from '../../../components/ToolbarButton'
 import { NotificationDot } from '../../../components/NotificationDot'
 import { PresetMenu } from '../menus/PresetMenu/PresetMenu'
-import { PresetNotifcation } from '../menus/PresetMenu/components/PresetNotification'
+import { PresetNotification } from '../menus/PresetMenu/components/PresetNotification'
 import { useTableContext } from '../../../context/useTableContext'
 
-import { getIsStateTheSame } from './helpers/presetHelpers'
+import { getIsStateTheSame, isPresetStateEmpty } from './helpers/presetHelpers'
 import { PRESET_THEME } from './presetContants'
 
 interface PresetButtonProps<TData extends Record<string, any> = {}> {
 	table: TableInstance<TData>
+	enableCaption?: boolean
 }
 
 export interface PresetState {
@@ -43,6 +44,7 @@ const theme = createTheme(PRESET_THEME)
 
 export const PresetButton = <TData extends Record<string, any> = {}>({
 	table,
+	enableCaption = true,
 }: PresetButtonProps<TData>) => {
 	const {
 		getPresets,
@@ -54,12 +56,11 @@ export const PresetButton = <TData extends Record<string, any> = {}>({
 		setColumnVisibility,
 		options: {
 			localization,
-			icons: { ExpandLessIcon, ExpandMoreIcon },
+			icons: { PresetIcon },
 		},
 	} = table
 
 	const { state: tableState } = useTableContext()
-	const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null)
 	const [isStateTheSame, setIsStateTheSame] = useState<boolean>(true)
 	const [isNotificationShowedOnce, setIsNotificationShowedOnce] =
 		useState<boolean>(false)
@@ -69,14 +70,14 @@ export const PresetButton = <TData extends Record<string, any> = {}>({
 	)
 	const toolbarRef = useRef<HTMLButtonElement>(null)
 
-	const open = Boolean(anchorEl)
+	const [open, setOpen] = useState(false)
 
-	const handleClick = useCallback((event: React.MouseEvent<HTMLElement>) => {
-		setAnchorEl(event.currentTarget)
+	const handleClick = useCallback(() => {
+		setOpen(true)
 	}, [])
 
 	const handleClose = useCallback(() => {
-		setAnchorEl(null)
+		setOpen(false)
 	}, [])
 
 	const handleApplyPresetState = ({
@@ -121,6 +122,11 @@ export const PresetButton = <TData extends Record<string, any> = {}>({
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [])
 
+	const isEmptyPreset = useMemo(
+		() => (checkedPreset ? isPresetStateEmpty(checkedPreset?.state) : true),
+		[checkedPreset]
+	)
+
 	useEffect(() => {
 		if (checkedPreset) {
 			setIsStateTheSame(getIsStateTheSame(checkedPreset?.state, tableState))
@@ -142,36 +148,42 @@ export const PresetButton = <TData extends Record<string, any> = {}>({
 	return (
 		<ThemeProvider theme={theme}>
 			<Tooltip placement="top" title={capitalize(tooltipTitle)}>
-				<ToolbarButton
+				<ToolbarIconButton
 					aria-label={localization.showPreset}
-					endIcon={open ? <ExpandLessIcon /> : <ExpandMoreIcon />}
 					onClick={handleClick}
-					variant="outlined"
 					disableRipple
 					ref={toolbarRef}
+					toggled={open}
+					enableCaption={enableCaption}
 				>
-					<Typography
-						sx={{
-							textOverflow: 'ellipsis',
-							overflow: 'hidden',
-							whiteSpace: 'nowrap',
-						}}
-					>
-						{checkedPreset?.name}
-					</Typography>
-					{!isStateTheSame && <NotificationDot />}
-				</ToolbarButton>
+					<PresetIcon />
+					{enableCaption && (
+						<Typography
+							sx={{
+								textOverflow: 'ellipsis',
+								overflow: 'hidden',
+								whiteSpace: 'nowrap',
+							}}
+						>
+							{checkedPreset?.name}
+						</Typography>
+					)}
+					{!isStateTheSame && !open && <NotificationDot />}
+				</ToolbarIconButton>
 			</Tooltip>
-			{!!toolbarRef.current && !isStateTheSame && !isNotificationShowedOnce && (
-				<PresetNotifcation
-					anchorEl={toolbarRef.current}
-					setIsNotificationShowedOnce={setIsNotificationShowedOnce}
-				/>
-			)}
-			{anchorEl && (
+			{!isEmptyPreset &&
+				!!toolbarRef.current &&
+				!isStateTheSame &&
+				!isNotificationShowedOnce && (
+					<PresetNotification
+						anchorEl={toolbarRef.current}
+						setIsNotificationShowedOnce={setIsNotificationShowedOnce}
+					/>
+				)}
+			{toolbarRef.current && (
 				<PresetMenu
 					table={table}
-					anchorEl={anchorEl}
+					anchorEl={toolbarRef.current}
 					presets={presets}
 					checkedPreset={checkedPreset}
 					isStateTheSame={isStateTheSame}

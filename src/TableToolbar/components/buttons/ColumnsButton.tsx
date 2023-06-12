@@ -41,6 +41,7 @@ export const ColumnsButton = <TData extends Record<string, any> = {}>({
 					aria-label={localization.showColumns}
 					onClick={handleClick}
 					disableRipple
+					enableCaption={enableCaption}
 					{...rest}
 				>
 					<ToggleIcon

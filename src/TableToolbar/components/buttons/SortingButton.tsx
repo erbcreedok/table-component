@@ -41,6 +41,7 @@ export const SortingButton = <TData extends Record<string, any> = {}>({
 					aria-label={localization.showSorting}
 					onClick={handleClick}
 					disableRipple
+					enableCaption={enableCaption}
 					{...rest}
 				>
 					<SortIcon

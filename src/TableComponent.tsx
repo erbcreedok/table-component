@@ -81,6 +81,8 @@ export interface Table_Localization {
 	collapseAll: string
 	columns: string
 	columnActions: string
+	confirmDeletion: string
+	confirmPresetDeletionMessage: string
 	copiedToClipboard: string
 	deselectAll: string
 	dropToGroupBy: string
@@ -141,6 +143,7 @@ export interface Table_Localization {
 	rowNumbers: string
 	rowsPerPage: string
 	save: string
+	saveAsNew: string
 	search: string
 	select: string
 	selectAll: string
@@ -172,6 +175,7 @@ export interface Table_Localization {
 	unpin: string
 	unpinAll: string
 	unsorted: string
+	updateCurrent: string
 	removeAll: string
 	addFilter: string
 	isAnyOf: string

@@ -1,26 +1,29 @@
+import IconButton from '@mui/material/IconButton'
 import { useState, KeyboardEvent } from 'react'
 import {
 	Box,
-	Button,
 	ClickAwayListener,
 	InputAdornment,
+	inputBaseClasses,
 	OutlinedInput,
+	outlinedInputClasses,
 } from '@mui/material'
 
+import { Colors } from '../../../../../components/styles'
 import { useTableContext } from '../../../../../context/useTableContext'
 
 interface PresetInputProps {
 	id?: number
 	name?: string
 	onSavePreset(value: string, id?: number): void
-	setEditMode(value: boolean): void
+	onClose(): void
 }
 
 export const PresetInput = ({
 	id,
 	name = '',
 	onSavePreset,
-	setEditMode,
+	onClose,
 }: PresetInputProps) => {
 	const {
 		table: {
@@ -32,7 +35,7 @@ export const PresetInput = ({
 
 	const handleCloseEditMode = (newName: string = name) => {
 		setValue(newName)
-		setEditMode(false)
+		onClose()
 	}
 
 	const [value, setValue] = useState(name)
@@ -59,49 +62,38 @@ export const PresetInput = ({
 
 	return (
 		<ClickAwayListener mouseEvent="onMouseDown" onClickAway={handleResetValue}>
-			<Box sx={{ m: '4px', mb: '8px' }}>
+			<Box sx={{ py: '3px', px: '6px' }}>
 				<OutlinedInput
 					placeholder="Enter name"
 					fullWidth
 					autoFocus
 					sx={{
-						pr: '3px',
-						'& .MuiInputBase-input': {
+						pr: '6px',
+						[`& .${inputBaseClasses.input}`]: {
 							fontSize: '14px',
-							p: '8px 12px',
+							p: '6px',
+							height: '18px',
 						},
+						[`&.${outlinedInputClasses.focused} .${outlinedInputClasses.notchedOutline}`]:
+							{
+								borderWidth: '1px',
+								boxShadow: `0 0 0 3px ${Colors.LightestBlue}`,
+							},
 					}}
 					endAdornment={
 						<InputAdornment position="end" sx={{}}>
 							{value.length > 0 && (
-								<Box sx={{ display: 'flex', gap: '2px' }}>
-									<Button
-										variant="contained"
-										color="success"
-										onClick={handleSave}
-										disableRipple
-										sx={{
-											minWidth: 'auto',
-											width: '30px',
-											height: '30px',
-											boxShadow: 'none',
-										}}
-									>
+								<Box sx={{ display: 'flex', gap: '6px' }}>
+									<IconButton onClick={handleSave} disableRipple sx={{ p: 0 }}>
 										<CheckIcon style={{ width: 18, height: 18 }} />
-									</Button>
-									<Button
-										variant="outlined"
-										color="secondary"
+									</IconButton>
+									<IconButton
 										onClick={handleResetValue}
 										disableRipple
-										sx={{
-											minWidth: 'auto',
-											width: '30px',
-											height: '30px',
-										}}
+										sx={{ p: 0 }}
 									>
 										<CloseIcon style={{ width: 18, height: 18 }} />
-									</Button>
+									</IconButton>
 								</Box>
 							)}
 						</InputAdornment>

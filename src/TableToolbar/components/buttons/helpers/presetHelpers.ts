@@ -108,3 +108,14 @@ export const getIsStateTheSame = (
 		isVisibilityTheSame
 	)
 }
+
+export const isPresetStateEmpty = (presetState: PresetState) => {
+	// check if state in preset has no order, grouping, sorting, filters and visibility
+	return (
+		!presetState.columnOrder &&
+		!presetState.grouping &&
+		!presetState.sorting &&
+		!presetState.columnFilters &&
+		!presetState.columnVisibility
+	)
+}

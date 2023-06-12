@@ -42,6 +42,7 @@ export const FiltersButton = <TData extends Record<string, any> = {}>({
 					aria-label={localization.showFiltering}
 					onClick={handleClick}
 					disableRipple
+					enableCaption={enableCaption}
 					{...rest}
 				>
 					<FiltersIcon

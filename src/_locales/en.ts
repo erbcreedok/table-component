@@ -17,6 +17,9 @@ export const Table_Localization_EN: Table_Localization = {
 	collapseAll: 'Collapse all',
 	columns: 'Columns',
 	columnActions: 'Column Actions',
+	confirmDeletion: 'Confirm Deletion',
+	confirmPresetDeletionMessage:
+		'Are you sure you want to delete preset {presetName}? You will not be able to restore it.',
 	copiedToClipboard: 'Copied to clipboard',
 	deselectAll: 'Deselect all',
 	dropToGroupBy: 'Drop to group by {column}',
@@ -77,6 +80,7 @@ export const Table_Localization_EN: Table_Localization = {
 	rowNumbers: 'Row Numbers',
 	rowsPerPage: 'Rows per page',
 	save: 'Save',
+	saveAsNew: 'Save as New',
 	search: 'Search',
 	selectedCountOfRowCountRowsSelected:
 		'{selectedCount} items from {rowCount} selected',
@@ -104,6 +108,7 @@ export const Table_Localization_EN: Table_Localization = {
 	unpin: 'Unpin',
 	unpinAll: 'Unpin all',
 	unsorted: 'Unsorted',
+	updateCurrent: 'Update Current',
 	showGrouping: 'Group',
 	showSorting: 'Sort',
 	showFiltering: 'Filters',

@@ -10,7 +10,7 @@ export const Colors = {
 	LightBlue: '#009ECC',
 	LightestBlue: '#E1F4FA',
 	LightGreen: '#67A300',
-	White: '#fff',
+	White: '#ffffff',
 	Gray90: '#1D1E26',
 	Gray40: '#CED0DB',
 	Gray20: '#EBEDF5',
@@ -19,6 +19,7 @@ export const Colors = {
 	LightestGray: '#FAFAFC',
 	Dark: '#303240',
 	Red: '#FA4B4B',
+	BorderMain: '#E1E3EB',
 } as const
 
 export const IconsColor = {

@@ -1,7 +1,9 @@
-import { ListItemIcon, MenuItem, Typography } from '@mui/material'
+import { MenuItem, Typography } from '@mui/material'
 
 import { Colors } from '../../../../../components/styles'
 import { useTableContext } from '../../../../../context/useTableContext'
+
+import { PresetIcon } from './PresetIcon'
 
 interface SuggestedPresetProps {
 	id: number
@@ -28,26 +30,23 @@ export const SuggestedPreset = ({
 		<MenuItem
 			sx={{
 				display: 'flex',
-				justifyContent: 'space-between',
-				p: '8px 16px',
-				'& .MuiListItemIcon-root': {
-					minWidth: '18px',
+				p: '9px 12px',
+				'&:hover': {
+					backgroundColor: Colors.Gray20,
 				},
 			}}
 			onClick={onSelectPreset(id)}
 		>
-			<Typography variant="body2" noWrap>
+			<Typography
+				variant="body2"
+				noWrap
+				sx={{ lineHeight: '18px', mr: 'auto' }}
+			>
 				{name}
 			</Typography>
-			{checkedPresetId === id && (
-				<ListItemIcon
-					sx={{
-						color: `${Colors.LightBlue}`,
-					}}
-				>
-					<CheckIcon />
-				</ListItemIcon>
-			)}
+			<PresetIcon selected={checkedPresetId === id}>
+				<CheckIcon />
+			</PresetIcon>
 		</MenuItem>
 	)
 }

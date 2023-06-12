@@ -1,10 +1,13 @@
-import { Divider, Menu, MenuList, Typography } from '@mui/material'
+import { Divider, MenuList, Typography } from '@mui/material'
+import Box from '@mui/material/Box'
 
+import { Menu } from '../../../../components/Menu'
 import type { TableInstance } from '../../../../index'
 import { Colors, Text } from '../../../../components/styles'
 import { Preset, PresetState } from '../../buttons/PresetButton'
 
 import { CustomPreset } from './components/CustomPreset'
+import { PresetInput } from './components/PresetInput'
 import { SuggestedPreset } from './components/SuggestedPreset'
 import { PresetsFooter } from './components/PresetsFooter'
 import { usePresetMenu } from './usePresetMenu'
@@ -35,13 +38,15 @@ export const PresetMenu = <TData extends Record<string, any> = {}>({
 	handleApplyPresetState,
 }: PresetMenuProps<TData>) => {
 	const {
+		editingPresetId,
+		setEditingPresetId,
 		suggestedPresets,
 		customPresets,
 		handleSelectPreset,
 		handleDeletePreset,
 		handleSavePresetWithNewName,
 		handleCreateNewPreset,
-		handleSaveInCurrent,
+		handleUpdateCurrent,
 	} = usePresetMenu({
 		checkedPreset,
 		presets,
@@ -60,23 +65,28 @@ export const PresetMenu = <TData extends Record<string, any> = {}>({
 			PaperProps={{
 				sx: {
 					width: '260px',
-					boxShadow:
-						'0px 2px 10px rgba(29, 30, 38, 0.1), 0px 1px 2px rgba(29, 30, 38, 0.1)',
-					mt: 1.5,
+					mt: '6px',
+				},
+			}}
+			MenuListProps={{
+				sx: {
+					p: 0,
 				},
 			}}
 			transformOrigin={{ horizontal: 'right', vertical: 'top' }}
 			anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
 		>
-			<div>
+			<Box sx={{ py: '6px' }}>
 				<Typography
 					variant="subtitle2"
 					sx={{
-						marginLeft: '16px',
+						boxSizing: 'border-box',
+						height: '30px',
 						color: `${Text.Primary}`,
+						padding: '9px 0 3px 12px',
 					}}
 				>
-					Suggested presets
+					Suggested View
 				</Typography>
 				<MenuList dense sx={{ p: 0 }}>
 					{suggestedPresets.map(({ id, name }) => (
@@ -89,45 +99,58 @@ export const PresetMenu = <TData extends Record<string, any> = {}>({
 						/>
 					))}
 				</MenuList>
-			</div>
-			{(!isStateTheSame || !!customPresets.length) && (
-				<Divider sx={{ borderColor: `${Colors.Gray20}` }} />
-			)}
-			{!!customPresets.length && (
-				<div>
-					<Typography
-						variant="subtitle2"
-						sx={{
-							paddingTop: '8px',
-							marginLeft: '16px',
-							color: `${Text.Primary}`,
-						}}
-					>
-						My presets
-					</Typography>
-					<MenuList dense sx={{ p: 0 }}>
-						{customPresets.map(({ id, name }) => (
-							<CustomPreset
-								key={id}
-								id={id}
-								name={name}
-								checkedPresetId={checkedPreset?.id}
-								onDeletePreset={handleDeletePreset}
-								onSelectPreset={handleSelectPreset}
-								onSaveWithNewName={handleSavePresetWithNewName}
+			</Box>
+			{(!!customPresets.length || editingPresetId === 'new') && (
+				<>
+					<Divider sx={{ borderColor: `${Colors.Gray20}` }} />
+					<Box sx={{ py: '6px' }}>
+						<Typography
+							variant="subtitle2"
+							sx={{
+								boxSizing: 'border-box',
+								height: '30px',
+								color: `${Text.Primary}`,
+								padding: '9px 0 3px 12px',
+							}}
+						>
+							My presets
+						</Typography>
+						<MenuList dense sx={{ p: 0 }}>
+							{customPresets.map(({ id, name }) => (
+								<CustomPreset
+									key={id}
+									id={id}
+									name={name}
+									checkedPresetId={checkedPreset?.id}
+									onDeletePreset={handleDeletePreset}
+									onSelectPreset={handleSelectPreset}
+									onSaveWithNewName={handleSavePresetWithNewName}
+									editingPresetId={editingPresetId}
+									setEditingPresetId={setEditingPresetId}
+								/>
+							))}
+						</MenuList>
+						{editingPresetId === 'new' && (
+							<PresetInput
+								onSavePreset={handleCreateNewPreset}
+								onClose={() => setEditingPresetId(null)}
 							/>
-						))}
-					</MenuList>
-				</div>
+						)}
+					</Box>
+				</>
 			)}
-			{!isStateTheSame && (
-				<PresetsFooter
-					checkedPresetId={checkedPreset?.id}
-					customPresets={customPresets}
-					onCreateNewPreset={handleCreateNewPreset}
-					onSaveInCurrent={handleSaveInCurrent}
-				/>
-			)}
+			<Divider sx={{ borderColor: `${Colors.Gray20}` }} />
+			<PresetsFooter
+				onSaveAsNew={() => setEditingPresetId('new')}
+				onUpdateCurrent={handleUpdateCurrent}
+				isSaveAsNewEnabled={!editingPresetId}
+				isUpdateCurrentEnabled={
+					!editingPresetId &&
+					!isStateTheSame &&
+					customPresets?.some((preset) => preset.id === checkedPreset?.id)
+				}
+				table={table}
+			/>
 		</Menu>
 	)
 }

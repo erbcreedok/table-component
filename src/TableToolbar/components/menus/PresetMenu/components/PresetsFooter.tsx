@@ -1,78 +1,59 @@
-import { useCallback, useState } from 'react'
-import { Box, Button, Typography } from '@mui/material'
+import { Box, ButtonBase } from '@mui/material'
 
-import { Preset } from '../../../buttons/PresetButton'
+import { Colors, Text } from '../../../../../components/styles'
+import { TableInstance } from '../../../../../TableComponent'
 
-import { PresetInput } from './PresetInput'
-
-interface PresetsFooterProps {
-	checkedPresetId?: number
-	customPresets: Preset[]
-	onCreateNewPreset(value: string): void
-	onSaveInCurrent(): void
+interface PresetsFooterProps<TData extends Record<string, any>> {
+	table: TableInstance<TData> | TableInstance
+	isSaveAsNewEnabled?: boolean
+	isUpdateCurrentEnabled?: boolean
+	onSaveAsNew(): void
+	onUpdateCurrent(): void
 }
 
-export const PresetsFooter = ({
-	checkedPresetId,
-	customPresets,
-	onCreateNewPreset,
-	onSaveInCurrent,
-}: PresetsFooterProps) => {
-	const [isEditMode, setIsEditMode] = useState(false)
-
-	const handleOpenEditMode = useCallback((event) => {
-		event.stopPropagation()
-
-		setIsEditMode(true)
-	}, [])
+export const PresetsFooter = <TData extends Record<string, any>>({
+	isSaveAsNewEnabled,
+	isUpdateCurrentEnabled,
+	onSaveAsNew,
+	onUpdateCurrent,
+	table,
+}: PresetsFooterProps<TData>) => {
+	const {
+		options: { localization },
+	} = table
 
 	return (
-		<div>
-			{isEditMode ? (
-				<PresetInput
-					onSavePreset={onCreateNewPreset}
-					setEditMode={setIsEditMode}
-				/>
-			) : (
-				<Box sx={{ display: 'flex', m: '10px 0 2px 16px', gap: '8px' }}>
-					<Button
-						variant="contained"
-						color="success"
-						sx={{
-							textTransform: 'none',
-							height: '24px',
-							p: '6px',
-						}}
-						onClick={handleOpenEditMode}
-					>
-						<Typography variant="subtitle1" sx={{ flex: 'none' }} noWrap>
-							Save as new
-						</Typography>
-					</Button>
-					{customPresets.some(({ id }) => checkedPresetId === id) && (
-						<Button
-							variant="outlined"
-							color="success"
-							sx={{
-								textTransform: 'none',
-								height: '26px',
-								p: '6px',
-							}}
-							onClick={onSaveInCurrent}
-						>
-							<Typography
-								variant="subtitle1"
-								sx={{
-									flex: 'none',
-								}}
-								noWrap
-							>
-								Save in current
-							</Typography>
-						</Button>
-					)}
-				</Box>
-			)}
-		</div>
+		<Box
+			sx={{
+				display: 'flex',
+				p: '9px 12px',
+				justifyContent: 'space-between',
+			}}
+		>
+			<ButtonBase
+				sx={{
+					height: '18px',
+					fontSize: '12px',
+					fontWeight: 'bold',
+					color: isSaveAsNewEnabled ? Colors.LightBlue : Text.Disabled,
+				}}
+				disabled={!isSaveAsNewEnabled}
+				onClick={onSaveAsNew}
+			>
+				{localization.saveAsNew}
+			</ButtonBase>
+			<ButtonBase
+				disabled={!isUpdateCurrentEnabled}
+				sx={{
+					height: '18px',
+					fontSize: '12px',
+					fontWeight: 'bold',
+					color: isUpdateCurrentEnabled ? Text.Primary : Text.Disabled,
+				}}
+				onClick={onUpdateCurrent}
+			>
+				{localization.updateCurrent}
+			</ButtonBase>
+		</Box>
 	)
 }

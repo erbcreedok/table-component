@@ -8,8 +8,8 @@ export const NotificationDot = styled('span')`
 	height: 6px;
 	background-color: ${({ theme }) => theme.palette.error.main};
 	position: absolute;
-	right: 23px;
-	top: 5px;
+	right: 0;
+	top: 0;
 	box-shadow: 0 1px 6px ${({ theme }) => theme.palette.error.main};
 	border-radius: 50%;
 `

@@ -1,7 +1,6 @@
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward'
 import ArrowRightIcon from '@mui/icons-material/ArrowRight'
 import CancelIcon from '@mui/icons-material/Cancel'
-import CheckIcon from '@mui/icons-material/Check'
 import ClearAllIcon from '@mui/icons-material/ClearAll'
 import DensityLargeIcon from '@mui/icons-material/DensityLarge'
 import DensityMediumIcon from '@mui/icons-material/DensityMedium'
@@ -30,9 +29,11 @@ import { ArrowsIcon } from './icons/ArrowsIcon'
 import { ArrowDownIcon } from './icons/ArrowDownIcon'
 import { AnalyticsIcon } from './icons/AnalyticsIcon'
 import { AscIcon } from './icons/AscIcon'
+import { CheckIcon } from './icons/CheckIcon'
 import { CheckboxCheckedIcon } from './icons/CheckboxCheckedIcon'
 import { CheckboxIcon } from './icons/CheckboxIcon'
 import { CheckboxIndeterminateIcon } from './icons/CheckboxIndeterminateIcon'
+import { ClearIcon } from './icons/ClearIcon'
 import { CloseIcon } from './icons/CloseIcon'
 import { CollapseFilledIcon } from './icons/CollapseFilledIcon'
 import { CollapseIcon } from './icons/CollapseIcon'
@@ -41,22 +42,22 @@ import { GroupIcon } from './icons/GroupIcon'
 import { GroupingIcon } from './icons/GroupingIcon'
 import { ExpandIcon } from './icons/ExpandIcon'
 import { EyeIcon } from './icons/EyeIcon'
+import { FiltersIcon } from './icons/FiltersIcon'
 import { HideIcon } from './icons/HideIcon'
 import { LocationLeft } from './icons/LocationLeft'
 import { LocationRight } from './icons/LocationRight'
+import { LockedIcon } from './icons/LockedIcon'
 import { OpenIcon } from './icons/OpenIcon'
 import { SearchIcon } from './icons/SearchIcon'
 import { SortAscIcon } from './icons/SortAscIcon'
 import { SortDescIcon } from './icons/SortDescIcon'
 import { SortIcon } from './icons/SortIcon'
-import { FiltersIcon } from './icons/FiltersIcon'
 import { SettingsIcon } from './icons/SettingsIcon'
 import { PencilIcon } from './icons/PencilIcon'
-import { TrashIcon } from './icons/TrashIcon'
-import { ClearIcon } from './icons/ClearIcon'
-import { ToggleIcon } from './icons/ToggleIcon'
 import { PlusIcon } from './icons/PlusIcon'
-import { LockedIcon } from './icons/LockedIcon'
+import { PresetIcon } from './icons/PresetIcon'
+import { ToggleIcon } from './icons/ToggleIcon'
+import { TrashIcon } from './icons/TrashIcon'
 
 export interface Table_Icons {
 	AnalyticsIcon: any
@@ -100,6 +101,7 @@ export interface Table_Icons {
 	MoreVertIcon: any
 	OpenIcon: any
 	PencilIcon: any
+	PresetIcon: any
 	PushPinIcon: any
 	RestartAltIcon: any
 	SaveIcon: any
@@ -158,6 +160,7 @@ export const Default_Icons: Table_Icons = {
 	MoreHorizIcon,
 	MoreVertIcon,
 	PencilIcon,
+	PresetIcon,
 	PushPinIcon,
 	RestartAltIcon,
 	SaveIcon,

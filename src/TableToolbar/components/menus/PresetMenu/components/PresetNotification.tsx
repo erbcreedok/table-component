@@ -1,14 +1,16 @@
-import { Box, Button, Divider, Menu, Typography } from '@mui/material'
+import { Box, Button, Divider, Typography } from '@mui/material'
 
-interface PresetNotifcationProps {
+import { Menu } from '../../../../../components/Menu'
+
+interface PresetNotificationProps {
 	anchorEl: HTMLElement
 	setIsNotificationShowedOnce(value: boolean): void
 }
 
-export const PresetNotifcation = ({
+export const PresetNotification = ({
 	anchorEl,
 	setIsNotificationShowedOnce,
-}: PresetNotifcationProps) => {
+}: PresetNotificationProps) => {
 	const handleClose = () => {
 		setIsNotificationShowedOnce(true)
 	}
@@ -22,9 +24,7 @@ export const PresetNotifcation = ({
 				sx: {
 					overflow: 'visible',
 					width: '360px',
-					boxShadow:
-						'0px 2px 10px rgba(29, 30, 38, 0.1), 0px 1px 2px rgba(29, 30, 38, 0.1)',
-					mt: 1.5,
+					mt: '6px',
 					left: '10px',
 					'&:before': {
 						content: '""',

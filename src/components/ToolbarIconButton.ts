@@ -1,21 +1,42 @@
-import { styled, IconButton } from '@mui/material'
+import { styled, IconButton, css } from '@mui/material'
 
-import { DEFAULT_FONT_FAMILY, Text, Colors } from './styles'
+import { getColorAlpha } from '../utils/getColorAlpha'
 
-export const ToolbarIconButton = styled(IconButton)`
+import { Text, Colors } from './styles'
+
+export const ToolbarIconButton = styled(IconButton)<{
+	toggled?: boolean
+	enableCaption?: boolean
+}>`
 	color: ${Text.Primary};
-	padding: 6px 9px;
+	padding: ${({ enableCaption }) => (enableCaption ? '6px 9px' : '4.5px')};
 	border-radius: 3px;
 	height: 30px;
 	position: relative;
+	max-width: 160px;
 	&:hover {
 		background-color: ${Colors.Gray20};
 	}
 	&:active {
 		background-color: ${Colors.Gray};
 	}
+	${({ toggled }) =>
+		toggled &&
+		css`
+			background-color: ${Colors.Dark};
+			color: ${getColorAlpha(Colors.White, 0.8)};
+			&:hover {
+				background-color: ${Colors.Dark};
+			}
+			&:active {
+				background-color: ${Colors.Dark};
+			}
+		`};
+	& > svg {
+		width: 21px;
+		height: 21px;
+	}
 	& > p {
-		font-family: ${DEFAULT_FONT_FAMILY};
 		font-size: 14px;
 		line-height: 18px;
 		margin-left: 6px;

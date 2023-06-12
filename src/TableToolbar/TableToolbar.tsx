@@ -32,7 +32,7 @@ const ToolbarWrapper = styled(Box)`
 const ToolbarInner = styled(Box)`
 	display: flex;
 	align-items: center;
-	gap: 12px;
+	gap: 6px;
 `
 
 export const TableToolbar = <TData extends Record<string, any> = {}>({
@@ -83,7 +83,12 @@ export const TableToolbar = <TData extends Record<string, any> = {}>({
 								table={table}
 							/>
 						)}
-						{enablePreset && <PresetButton table={table} />}
+						{enablePreset && (
+							<PresetButton
+								enableCaption={computedEnableCaptions}
+								table={table}
+							/>
+						)}
 					</>
 				)}
 			</ToolbarInner>

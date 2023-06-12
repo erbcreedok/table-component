@@ -39,6 +39,7 @@ export const GroupingButton = <TData extends Record<string, any> = {}>({
 					aria-label={localization.showGrouping}
 					onClick={handleClick}
 					disableRipple
+					enableCaption={enableCaption}
 					{...rest}
 				>
 					<GroupingIcon

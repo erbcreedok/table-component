@@ -1,4 +1,4 @@
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
 
 export const usePresetMenu = ({
 	checkedPreset,
@@ -9,6 +9,9 @@ export const usePresetMenu = ({
 	setCheckedPreset,
 	setPresets,
 }) => {
+	const [editingPresetId, setEditingPresetId] = useState<
+		number | null | string
+	>(null)
 	const getPresetState = () => {
 		const { columnFilters, columnOrder, columnVisibility, grouping, sorting } =
 			getState()
@@ -101,7 +104,7 @@ export const usePresetMenu = ({
 		onClose()
 	}
 
-	const handleSaveInCurrent = () => {
+	const handleUpdateCurrent = () => {
 		const indexOfPreset = presets.findIndex(
 			(preset) => preset.id === checkedPreset.id
 		)
@@ -115,12 +118,14 @@ export const usePresetMenu = ({
 	}
 
 	return {
+		editingPresetId,
+		setEditingPresetId,
 		suggestedPresets,
 		customPresets,
 		handleSelectPreset,
 		handleDeletePreset,
 		handleSavePresetWithNewName,
 		handleCreateNewPreset,
-		handleSaveInCurrent,
+		handleUpdateCurrent,
 	}
 }
