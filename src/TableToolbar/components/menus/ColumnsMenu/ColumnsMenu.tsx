@@ -7,14 +7,9 @@ import { ContentTitle } from '../../../../components/ContentTitle'
 import { ButtonLink } from '../../../../components/ButtonLink'
 import { getColumnId, reorderColumn } from '../../../../column.utils'
 import { Sidebar } from '../../../../components/Sidebar'
-import {
-	Colors,
-	DEFAULT_FONT_FAMILY,
-	Text,
-	IconsColor,
-} from '../../../../components/styles'
+import { Text } from '../../../../components/styles'
 
-import { SettingsMenuItem } from './SettingsMenuItem'
+import { ColumnsMenuItem } from './ColumnsMenuItem'
 
 interface Props<TData extends Record<string, any> = {}> {
 	anchorEl: HTMLElement | null
@@ -22,7 +17,7 @@ interface Props<TData extends Record<string, any> = {}> {
 	table: TableInstance<TData>
 }
 
-export const SettingsMenu = <TData extends Record<string, any> = {}>({
+export const ColumnsMenu = <TData extends Record<string, any> = {}>({
 	anchorEl,
 	setAnchorEl,
 	table,
@@ -35,6 +30,7 @@ export const SettingsMenu = <TData extends Record<string, any> = {}>({
 		getState,
 		setColumnOrder,
 		setGrouping,
+		options: { localization },
 	} = table
 	const { columnOrder, columnPinning, columnVisibility, grouping } = getState()
 	const [isSearchActive, setIsSearchActive] = useState<boolean>(false)
@@ -194,7 +190,7 @@ export const SettingsMenu = <TData extends Record<string, any> = {}>({
 			onClose={handleCloseClick}
 			styles={{ minWidth: 660 }}
 			withHeader
-			headerTitle="Table Column Settings"
+			headerTitle={localization.columns}
 			subHeader={
 				<Typography sx={{ color: Text.Primary }}>
 					{visibleColumnsCount} columns shown, {hiddenColumnsCount} columns
@@ -207,7 +203,7 @@ export const SettingsMenu = <TData extends Record<string, any> = {}>({
 			{isSearchActive ? (
 				searchList.length ? (
 					searchList.map((column, index) => (
-						<SettingsMenuItem
+						<ColumnsMenuItem
 							allColumns={allColumns}
 							column={column}
 							hoveredColumn={hoveredColumn}
@@ -266,7 +262,7 @@ export const SettingsMenu = <TData extends Record<string, any> = {}>({
 							</Box>
 						</Box>
 						{groupedList.map((column, index) => (
-							<SettingsMenuItem
+							<ColumnsMenuItem
 								allColumns={allColumns}
 								column={column as Table_Column<TData>}
 								hoveredColumn={hoveredColumn}
@@ -287,7 +283,7 @@ export const SettingsMenu = <TData extends Record<string, any> = {}>({
 									!grouping.includes(getColumnId(col.columnDef))
 							)
 							.map((column, index) => (
-								<SettingsMenuItem
+								<ColumnsMenuItem
 									allColumns={allColumns}
 									column={column}
 									hoveredColumn={hoveredColumn}
@@ -317,7 +313,7 @@ export const SettingsMenu = <TData extends Record<string, any> = {}>({
 										columnIds.hidden.includes(getColumnId(col.columnDef))
 									)
 									.map((column, index) => (
-										<SettingsMenuItem
+										<ColumnsMenuItem
 											allColumns={allColumns}
 											column={column}
 											hoveredColumn={hoveredColumn}

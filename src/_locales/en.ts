@@ -15,6 +15,7 @@ export const Table_Localization_EN: Table_Localization = {
 	close: 'Close',
 	collapse: 'Collapse',
 	collapseAll: 'Collapse all',
+	columns: 'Columns',
 	columnActions: 'Column Actions',
 	copiedToClipboard: 'Copied to clipboard',
 	deselectAll: 'Deselect all',

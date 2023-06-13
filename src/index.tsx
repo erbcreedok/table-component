@@ -29,12 +29,14 @@ import { TableBodyRow } from './body/TableBodyRow'
 import { ExpandButton } from './buttons/ExpandButton'
 import { TableHeadRow } from './head/TableHeadRow'
 import { TooltipOverflow } from './components/TooltipOverflow'
+import { SelectCheckbox } from './inputs/SelectCheckbox'
 
 export default TableComponent
 export * from './TableComponent'
 export type { Table_Icons }
 
 export {
+	SelectCheckbox,
 	CopyButton,
 	FilterOptionMenu,
 	FullScreenToggleButton,

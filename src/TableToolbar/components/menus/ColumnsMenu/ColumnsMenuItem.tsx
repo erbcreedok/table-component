@@ -37,7 +37,7 @@ interface Props<TData extends Record<string, any> = {}> {
 	): void
 }
 
-export const SettingsMenuItem = <TData extends Record<string, any> = {}>({
+export const ColumnsMenuItem = <TData extends Record<string, any> = {}>({
 	hoveredColumn,
 	setHoveredColumn,
 	column,

@@ -79,6 +79,7 @@ export interface Table_Localization {
 	close: string
 	collapse: string
 	collapseAll: string
+	columns: string
 	columnActions: string
 	copiedToClipboard: string
 	deselectAll: string

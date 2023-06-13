@@ -6,7 +6,7 @@ import { Tooltip } from '../../../components/Tooltip'
 import type { TableInstance } from '../../../index'
 import { ToolbarIconButton } from '../../../components/ToolbarIconButton'
 import { IconsColor } from '../../../components/styles'
-import { SettingsMenu } from '../menus/SettingsMenu/SettingsMenu'
+import { ColumnsMenu } from '../menus/ColumnsMenu/ColumnsMenu'
 
 interface Props<TData extends Record<string, any> = {}>
 	extends IconButtonProps {
@@ -51,7 +51,7 @@ export const ColumnsButton = <TData extends Record<string, any> = {}>({
 			</Tooltip>
 
 			{anchorEl && (
-				<SettingsMenu
+				<ColumnsMenu
 					anchorEl={anchorEl}
 					setAnchorEl={setAnchorEl}
 					table={table}
