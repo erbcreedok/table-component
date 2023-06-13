@@ -1,19 +1,14 @@
 import React from 'react'
 
 import { Flex } from '../../components/Flex'
-import { Avatar, Box, Typography } from '@mui/material'
+import { Avatar, Typography } from '@mui/material'
 import { faker } from '@faker-js/faker'
 import { getRandomFromArray } from './getRandomFromArray'
-import { Close } from '@mui/icons-material'
 import { TextEllipsis } from '../../components/TextEllipsis'
 import { RowActionMenuButton } from '../../buttons/RowActionMenuButton'
 
-const ClickableCell = ({ row, table, cell, accessorKey }) => {
+const ClickableCell = ({ row, accessorKey }) => {
 	const title = row.original[accessorKey]
-	const clickedCells = table.getState()?.clickedCells || []
-	const isCurrentCellClicked = clickedCells.some(
-		(clickedCell) => cell?.id === clickedCell?.id
-	)
 
 	let cellContent = <></>
 
@@ -51,21 +46,6 @@ const ClickableCell = ({ row, table, cell, accessorKey }) => {
 			}}
 		>
 			{cellContent}
-			{isCurrentCellClicked && (
-				<Box
-					sx={{
-						border: '1px solid #ced0db',
-						borderRadius: '5px',
-						display: 'flex',
-						justifyContent: 'center',
-						alignItems: 'center',
-						width: 25,
-						height: 25,
-					}}
-				>
-					<Close style={{ fontSize: 14 }} />
-				</Box>
-			)}
 		</Flex>
 	)
 }
@@ -144,6 +124,7 @@ export const getPeopleColumns = () =>
 					accessorKey="riskOfLeaving"
 				/>
 			),
+			cellAction: 'expand'
 		},
 		{
 			header: 'Mood',
@@ -155,6 +136,7 @@ export const getPeopleColumns = () =>
 			Cell: ({ row, table, cell }) => (
 				<ClickableCell row={row} table={table} cell={cell} accessorKey="mood" />
 			),
+			cellAction: 'expand'
 		},
 		{
 			header: 'Last talk',
@@ -171,6 +153,7 @@ export const getPeopleColumns = () =>
 					accessorKey="lastTalk"
 				/>
 			),
+			cellAction: 'expand'
 		},
 		{
 			header: 'Total workload',
@@ -186,6 +169,7 @@ export const getPeopleColumns = () =>
 					accessorKey="totalWorkload"
 				/>
 			),
+			cellAction: 'expand'
 		},
 	] as any
 
@@ -216,5 +200,5 @@ export const getPeopleMember = (user?: any) => ({
 	),
 	totalWorkload: getRandomFromArray(totalWorkload),
 })
-export const getSeparatedPeopleMembers = (length = 200): ReturnType<typeof getPeopleMember>[] =>
+export const getSeparatedPeopleMembers = (length = 10): ReturnType<typeof getPeopleMember>[] =>
 	[...Array(length)].map(() => getPeopleMember(getRandomFromArray(savedUsers)))

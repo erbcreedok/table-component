@@ -15,14 +15,13 @@ import { ColumnActionsFiltersMenu } from './components/ColumnActionsFiltersMenu'
 
 interface DetailedPannelProps {
 	userId: string
-	clickedCells: any
+	rowId: string
+	openedDetailedPanels: any
 }
 
 const DetailedPanel = (props: DetailedPannelProps) => {
 	const clickedCell =
-		props?.clickedCells?.find((cell) => {
-			return cell.row.original.member.id === props.userId
-		}) || {}
+		props?.openedDetailedPanels?.[props?.rowId]?.cell || {}
 
 	if (
 		clickedCell?.row?.original.member.id === props.userId &&
@@ -146,7 +145,7 @@ export const PeopleTable: Story<TableComponentProps> = () => {
 				tablePlugSlot={<Typography variant={'h6'}>No data</Typography>}
 				// enableExpanding
 				// manualExpanding
-				// enableDetailedPanel
+				enableDetailedPanel
 				enableColumnFilters
 				enablePinning
 				// enableStickyHeader
@@ -154,7 +153,6 @@ export const PeopleTable: Story<TableComponentProps> = () => {
 				enableColumnFilterModes
 				summaryRowCell={(props) => <SummaryRowExampleCellValue {...props} />}
 				// enableSummaryRow
-				notClickableCells={['member']}
 				detailedRowBackgroundColor={'#fafafc'}
 				enableRowSelection
 				// enableRowVirtualization
@@ -275,7 +273,8 @@ export const PeopleTable: Story<TableComponentProps> = () => {
 				renderDetailPanel={({ row, ...rest }) => (
 					<DetailedPanel
 						userId={row?.original?.member?.id}
-						clickedCells={rest.table.getState().clickedCells}
+						rowId={row?.id}
+						openedDetailedPanels={rest.table.getState().openedDetailedPanels}
 					/>
 				)}
 				hideDefaultExpandIcon
