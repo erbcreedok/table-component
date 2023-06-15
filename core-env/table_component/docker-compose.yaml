@@ -1,10 +1,21 @@
 version: '3'
 services:
-  nginx:
-    image: harbor.delivery.epam.com/spectrum/table_component:$NODE_TAG
+  table-component:
+    container_name: table-component
+    image: harbor.delivery.epam.com/spectrum/table_component:$TABLE_COMPONENT_TAG
     restart: always
     ports:
       - 6006:443
     volumes:
-      - "./nginx/certs:/etc/nginx/certs/core/"
-      - "./nginx/conf:/etc/nginx/conf.d/"
+      - "./nginx/certs:/etc/nginx/certs/core/:ro"
+      - "./nginx/conf:/etc/nginx/conf.d/:ro"
+
+  table-component-qa:
+    container_name: table-component-qa
+    image: harbor.delivery.epam.com/spectrum/table_component:$TABLE_COMPONENT_TAG
+    restart: always
+    ports:
+      - 6007:443
+    volumes:
+      - "./nginx/certs:/etc/nginx/certs/core/:ro"
+      - "./nginx/conf:/etc/nginx/conf.d/:ro"

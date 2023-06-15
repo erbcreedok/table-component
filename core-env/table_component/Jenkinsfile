@@ -8,11 +8,11 @@ try {
         node('jenkins-node14') {
             container('npm') {
                 env.SUPER_VERSION = ''
-                env.SERVER = 'ecsb00301372.epam.com'
                 stage("Checkout") {
                     cleanWs deleteDirs: true, notFailBuild: true
-                    git credentialsId: 'auto-epm-dce-ci-ssh-key',
-                    url: 'git@git.epam.com:epm-dce/core/table-component.git', branch: '$BRANCH'
+                    res_branch = env.GERRIT_BRANCH ? env.GERRIT_BRANCH : env.BRANCH
+                    echo res_branch
+                    git url: 'https://auto_epm-dce_ci@gerrit.delivery.epam.com/a/table-component', branch: res_branch, credentialsId: 'auto-epm-dce-ci-gerrit'
                     }
                 withNPM(npmrcConfig:'npm-dce') {
                     stage('Preparation') {
@@ -33,16 +33,10 @@ try {
             }
             container('docker') {
                 stage('Publish') {
-                    sh """docker build -t harbor.delivery.epam.com/spectrum/table_component:${SUPER_VERSION} ./core-env/core_nginx && \
+                    sh """
+                        docker build -t harbor.delivery.epam.com/spectrum/table_component:${SUPER_VERSION} ./core-env/core_nginx && \
                         docker push harbor.delivery.epam.com/spectrum/table_component:${SUPER_VERSION}
                     """
-                }
-            }
-            container('ssh') {
-                stage('Deploy storybook on UIKIT server') {
-                    sh "rsync -e 'ssh -o StrictHostKeyChecking=no -i /var/run/secrets/auth/id_rsa' --delete -rptv core-env/table_component/ auto_epm-dce_ci@epam.com@${env.SERVER}:/opt/table_component"
-                    sh "ssh -o StrictHostKeyChecking=no -i /var/run/secrets/auth/id_rsa -C auto_epm-dce_ci@epam.com@${env.SERVER} 'cp -r /opt/certs /opt/table_component/nginx/'"
-                    sh "ssh -o StrictHostKeyChecking=no -i /var/run/secrets/auth/id_rsa -C auto_epm-dce_ci@epam.com@${env.SERVER} 'export NODE_TAG=\"${env.SUPER_VERSION}\"; cd /opt/table_component && docker-compose up -d'"
                 }
             }
         }
