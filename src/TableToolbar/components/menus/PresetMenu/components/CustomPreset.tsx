@@ -135,7 +135,7 @@ export const CustomPreset = ({
 							dangerouslySetInnerHTML={{
 								__html: localization.confirmPresetDeletionMessage.replace(
 									'{presetName}',
-									'<strong>"preset"</strong>'
+									`<strong>"${name}"</strong>`
 								),
 							}}
 						/>
