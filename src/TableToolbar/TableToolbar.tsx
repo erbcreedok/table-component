@@ -24,7 +24,6 @@ export type TableToolbarProps<TData extends Record<string, any> = {}> = {
 
 const ToolbarWrapper = styled(Box)`
 	display: flex;
-	z-index: 3;
 	max-width: 100%;
 	overflow: hidden;
 	flex-grow: 1;

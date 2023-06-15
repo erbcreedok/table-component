@@ -1,4 +1,5 @@
-import React, { FC, useEffect, SyntheticEvent } from 'react'
+import { TextFieldProps } from '@mui/material/TextField'
+import React, { FC, MouseEventHandler } from 'react'
 import {
 	Divider,
 	IconButton,
@@ -11,20 +12,9 @@ import { CloseIcon } from '../../icons/CloseIcon'
 import { SearchIcon } from '../../icons/SearchIcon'
 import { DEFAULT_FONT_FAMILY, Text } from '../../components/styles'
 
-type DropdownContentSearchProps = {
-	isSearchActive: boolean
-	searchValue: string
-	setIsSearchActive: (value: boolean) => void
-	onApplySelectedItems: () => void
-	onChange: (value: any) => void
-	onClick?: () => void
-}
-
 const SearchInput = styled(TextField)`
 	font-family: ${DEFAULT_FONT_FAMILY};
-	padding: 12px;
-	padding-left: 7px;
-	padding-right: 0;
+	padding: 12px 0 12px 7px;
 	width: 100%;
 	box-sizing: border-box;
 	& > div {
@@ -42,35 +32,24 @@ const SearchInput = styled(TextField)`
 	}
 `
 
+type DropdownContentSearchProps = {
+	isSearchActive: boolean
+	onClearClick?: MouseEventHandler<HTMLButtonElement>
+	setIsSearchActive?: (value: boolean) => void
+	onChange?: (value: string) => void
+} & Omit<TextFieldProps, 'onChange'>
+
 export const DropdownContentSearch: FC<DropdownContentSearchProps> = (
 	props
 ) => {
 	const {
-		searchValue,
+		onClearClick,
 		isSearchActive,
 		setIsSearchActive,
-		onApplySelectedItems,
+		onClick,
 		onChange,
-		onClick = () => {},
+		...rest
 	} = props
-
-	const handleSearchChange = (e: any) => {
-		e.preventDefault()
-
-		onChange(e.target.value.toLowerCase())
-	}
-
-	const handleClearCLick = (e: SyntheticEvent) => {
-		e.stopPropagation()
-
-		onChange('')
-		setIsSearchActive?.(false)
-		onApplySelectedItems()
-	}
-
-	useEffect(() => {
-		setIsSearchActive?.(Boolean(searchValue?.length))
-	}, [searchValue])
 
 	return (
 		<>
@@ -87,7 +66,15 @@ export const DropdownContentSearch: FC<DropdownContentSearchProps> = (
 						<>
 							{isSearchActive && (
 								<InputAdornment position="end" style={{ marginRight: -10 }}>
-									<IconButton onClick={handleClearCLick} disableRipple>
+									<IconButton
+										onClick={(e) => {
+											e.stopPropagation()
+											setIsSearchActive?.(false)
+											onChange?.('')
+											onClearClick?.(e)
+										}}
+										disableRipple
+									>
 										<CloseIcon style={{ width: 18, height: 18 }} />
 									</IconButton>
 								</InputAdornment>
@@ -95,9 +82,15 @@ export const DropdownContentSearch: FC<DropdownContentSearchProps> = (
 						</>
 					),
 				}}
-				value={searchValue}
-				onChange={handleSearchChange}
-				onClick={onClick}
+				onChange={(e) => {
+					setIsSearchActive?.(!!e.target.value.length)
+					onChange?.(e.target.value)
+				}}
+				onClick={(e) => {
+					setIsSearchActive?.(true)
+					onClick?.(e)
+				}}
+				{...rest}
 			/>
 			<Divider />
 		</>

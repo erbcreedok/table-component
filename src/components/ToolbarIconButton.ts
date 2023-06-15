@@ -1,10 +1,14 @@
 import { styled, IconButton, css } from '@mui/material'
 
 import { getColorAlpha } from '../utils/getColorAlpha'
+import { makeShouldForwardProp } from '../utils/makeShouldForwardProp'
 
 import { Text, Colors } from './styles'
 
-export const ToolbarIconButton = styled(IconButton)<{
+export const ToolbarIconButton = styled(
+	IconButton,
+	makeShouldForwardProp(['toggled', 'enableCaption'])
+)<{
 	toggled?: boolean
 	enableCaption?: boolean
 }>`

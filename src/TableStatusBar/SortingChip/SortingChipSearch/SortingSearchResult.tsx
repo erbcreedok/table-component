@@ -1,4 +1,4 @@
-import { Dispatch, FC, SetStateAction, useEffect, useState } from 'react'
+import { FC, useEffect, useState } from 'react'
 
 import { NoOptions } from '../../NoOptions/NoOptions'
 
@@ -10,7 +10,7 @@ interface SortingSearchResultProps {
 	nonSortedList: any
 	table: any
 	setSelectedSearchedItems: any
-	setSearchValue: Dispatch<SetStateAction<string>>
+	onSelect: () => void
 }
 
 export const SortingSearchResult: FC<SortingSearchResultProps> = (props) => {
@@ -18,7 +18,7 @@ export const SortingSearchResult: FC<SortingSearchResultProps> = (props) => {
 		searchValue,
 		nonSortedList,
 		table,
-		setSearchValue,
+		onSelect,
 		selectedSearchedItems,
 		setSelectedSearchedItems,
 	} = props
@@ -55,7 +55,7 @@ export const SortingSearchResult: FC<SortingSearchResultProps> = (props) => {
 						table={table}
 						selectedSearchedItems={selectedSearchedItems}
 						setSelectedSearchedItems={setSelectedSearchedItems}
-						setSearchValue={setSearchValue}
+						onSelect={onSelect}
 					/>
 				)
 			})}

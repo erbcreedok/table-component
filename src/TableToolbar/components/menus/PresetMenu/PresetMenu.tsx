@@ -100,45 +100,43 @@ export const PresetMenu = <TData extends Record<string, any> = {}>({
 					))}
 				</MenuList>
 			</Box>
-			{(!!customPresets.length || editingPresetId === 'new') && (
-				<>
-					<Divider sx={{ borderColor: `${Colors.Gray20}` }} />
-					<Box sx={{ py: '6px' }}>
-						<Typography
-							variant="subtitle2"
-							sx={{
-								boxSizing: 'border-box',
-								height: '30px',
-								color: `${Text.Primary}`,
-								padding: '9px 0 3px 12px',
-							}}
-						>
-							My presets
-						</Typography>
-						<MenuList dense sx={{ p: 0 }}>
-							{customPresets.map(({ id, name }) => (
-								<CustomPreset
-									key={id}
-									id={id}
-									name={name}
-									checkedPresetId={checkedPreset?.id}
-									onDeletePreset={handleDeletePreset}
-									onSelectPreset={handleSelectPreset}
-									onSaveWithNewName={handleSavePresetWithNewName}
-									editingPresetId={editingPresetId}
-									setEditingPresetId={setEditingPresetId}
-								/>
-							))}
-						</MenuList>
-						{editingPresetId === 'new' && (
-							<PresetInput
-								onSavePreset={handleCreateNewPreset}
-								onClose={() => setEditingPresetId(null)}
+			{(!!customPresets.length || editingPresetId === 'new') && [
+				<Divider key="divider" sx={{ borderColor: `${Colors.Gray20}` }} />,
+				<Box key="box" sx={{ py: '6px' }}>
+					<Typography
+						variant="subtitle2"
+						sx={{
+							boxSizing: 'border-box',
+							height: '30px',
+							color: `${Text.Primary}`,
+							padding: '9px 0 3px 12px',
+						}}
+					>
+						My presets
+					</Typography>
+					<MenuList dense sx={{ p: 0 }}>
+						{customPresets.map(({ id, name }) => (
+							<CustomPreset
+								key={id}
+								id={id}
+								name={name}
+								checkedPresetId={checkedPreset?.id}
+								onDeletePreset={handleDeletePreset}
+								onSelectPreset={handleSelectPreset}
+								onSaveWithNewName={handleSavePresetWithNewName}
+								editingPresetId={editingPresetId}
+								setEditingPresetId={setEditingPresetId}
 							/>
-						)}
-					</Box>
-				</>
-			)}
+						))}
+					</MenuList>
+					{editingPresetId === 'new' && (
+						<PresetInput
+							onSavePreset={handleCreateNewPreset}
+							onClose={() => setEditingPresetId(null)}
+						/>
+					)}
+				</Box>,
+			]}
 			<Divider sx={{ borderColor: `${Colors.Gray20}` }} />
 			<PresetsFooter
 				onSaveAsNew={() => setEditingPresetId('new')}

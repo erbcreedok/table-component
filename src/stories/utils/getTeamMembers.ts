@@ -16,6 +16,11 @@ export const getUsers = (length = 200, prefix = '') => [...Array(length)].map((_
 
 const savedUsers = getUsers();
 
+const getDateOrEmpty = (emptinessRarity = 6) => Math.round(Math.random() * emptinessRarity) % emptinessRarity ? faker.date.between(
+	'2023-01-01T00:00:00.000Z',
+	'2023-06-01T00:00:00.000Z'
+) : undefined
+
 export const getTeamMember = (user?: User) => ({
 	id: faker.datatype.uuid(),
 	member: user ?? getRandomFromArray(savedUsers),
@@ -24,6 +29,7 @@ export const getTeamMember = (user?: User) => ({
 	riskOfLeaving: getRandomFromArray(risksOfLeaving),
 	successionStatus: getRandomFromArray(successionStatuses),
 	location: faker.address.city(),
+	hiredAt: getDateOrEmpty()?.toString(),
 })
 
 export const getTeamMembers = (length = 200, prefix = ''): TeamMember[] => getUsers(length, prefix).map((user) => ({
@@ -34,6 +40,7 @@ export const getTeamMembers = (length = 200, prefix = ''): TeamMember[] => getUs
 	riskOfLeaving: getRandomFromArray(risksOfLeaving),
 	successionStatus: getRandomFromArray(successionStatuses),
 	location: faker.address.city(),
+	hiredAt: getDateOrEmpty()
 }));
 
 export const getExpandingTeamMembers = (length = 200, prefix = ''): TeamMember[] => {

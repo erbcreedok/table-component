@@ -167,6 +167,21 @@ const notEmpty = <TData extends Record<string, any> = {}>(
 
 notEmpty.autoRemove = (val: any) => !val
 
+const arrIncludesSome = <TData extends Record<string, any> = {}>(
+	row: Row<TData>,
+	columnId: string,
+	filterValue: unknown[]
+) => {
+	if (!filterValue || !filterValue.length) return true
+
+	return filterValue.some((val) => {
+		const value = row.getValue<unknown[]>(columnId)
+
+		return value?.includes(val) || value === val
+	})
+}
+arrIncludesSome.autoRemove = filterFns.arrIncludesSome.autoRemove
+
 export const Table_FilterFns = {
 	...filterFns,
 	between,
@@ -183,4 +198,5 @@ export const Table_FilterFns = {
 	notEmpty,
 	notEquals,
 	startsWith,
+	arrIncludesSome,
 }

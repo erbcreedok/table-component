@@ -5,8 +5,8 @@ import Drawer from '@mui/material/Drawer'
 import { SidebarHeaderComponent } from './SidebarHeader'
 import { SidebarSearchComponent } from './SidebarSearch'
 
-interface Props<TData extends Record<string, any> = {}> {
-	isOpen: boolean
+interface Props {
+	open: boolean
 	onClose(): void
 	withHeader?: boolean
 	withSearch?: boolean
@@ -17,8 +17,8 @@ interface Props<TData extends Record<string, any> = {}> {
 	children?: ReactNode
 }
 
-export const Sidebar = <TData extends Record<string, any> = {}>({
-	isOpen,
+export const Sidebar = ({
+	open,
 	onClose,
 	withHeader = false,
 	withSearch = false,
@@ -27,16 +27,12 @@ export const Sidebar = <TData extends Record<string, any> = {}>({
 	subHeader,
 	styles = { minWidth: 400 },
 	children,
-}: Props<TData>) => {
-	const handleCloseCLick = () => {
-		onClose()
-	}
-
+}: Props) => {
 	return (
 		<Drawer
 			anchor="right"
-			open={isOpen}
-			onClose={handleCloseCLick}
+			open={open}
+			onClose={onClose}
 			transitionDuration={400}
 		>
 			<Box sx={styles}>
@@ -45,7 +41,7 @@ export const Sidebar = <TData extends Record<string, any> = {}>({
 						<SidebarHeaderComponent
 							title={headerTitle}
 							subHeader={subHeader}
-							onClick={handleCloseCLick}
+							onClick={onClose}
 						/>
 					)}
 					{withSearch && <SidebarSearchComponent onChange={onSearchChange} />}

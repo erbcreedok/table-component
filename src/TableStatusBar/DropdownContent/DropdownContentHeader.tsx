@@ -2,12 +2,12 @@ import { Box, Typography } from '@mui/material'
 import React, { FC } from 'react'
 
 type DropdownContentHeaderProps = {
-	headerTile: string
+	headerTitle: string
 	onClearAll: () => void
 }
 
 export const DropdownContentHeader: FC<DropdownContentHeaderProps> = ({
-	headerTile,
+	headerTitle,
 	onClearAll,
 }) => {
 	return (
@@ -22,7 +22,7 @@ export const DropdownContentHeader: FC<DropdownContentHeaderProps> = ({
 			}}
 		>
 			<Typography variant="body1" style={{ fontWeight: 600, fontSize: 12 }}>
-				{headerTile}
+				{headerTitle}
 			</Typography>
 
 			<Typography

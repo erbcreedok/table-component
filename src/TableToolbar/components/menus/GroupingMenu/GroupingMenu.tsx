@@ -110,7 +110,7 @@ export const GroupingMenu = <TData extends Record<string, any> = {}>({
 
 	return (
 		<Sidebar
-			isOpen={!!anchorEl}
+			open={!!anchorEl}
 			onClose={handleCloseClick}
 			styles={{ minWidth: 500 }}
 			withHeader

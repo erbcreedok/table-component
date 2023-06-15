@@ -1,32 +1,29 @@
-import React, { useEffect, useState, useMemo, useCallback } from 'react'
+import React, { useState, useMemo, useCallback } from 'react'
 import Box from '@mui/material/Box'
-import Button from '@mui/material/Button'
 import Divider from '@mui/material/Divider'
 import { Typography } from '@mui/material'
 
+import { ButtonBordered } from '../../../../components/ButtonBordered'
+import { TableData } from '../../../../index'
 import type { Table_Column, TableInstance } from '../../../../index'
-import { Table_DisplayColumnIdsArray } from '../../../../column.utils'
+import { getColumnId } from '../../../../column.utils'
 import { SidebarSearchComponent } from '../../../../components/SidebarSearch'
 import { Sidebar } from '../../../../components/Sidebar'
+import { splitFilterColumns } from '../../../../utils/splitFilterColumns'
 
 import { FiltersMenuListItem } from './FiltersMenuListItem'
-import { FiltersMenuAppliedFilter } from './FiltersMenuAppliedFilter'
+import { ColumnFilterField } from './ColumnFilterField'
+import { FilterWrapper } from './FilterWrapper'
 
-interface Props<TData extends Record<string, any> = {}> {
-	anchorEl: HTMLElement | null
-	setAnchorEl: (anchorEl: HTMLElement | null) => void
+interface Props<TData extends TableData> {
+	open: boolean
+	onClose: () => void
 	table: TableInstance<TData>
 }
 
-export type FilterType<TData extends Record<string, any> = {}> = {
-	value: any[]
-	id: string
-	column: Table_Column<TData>
-}
-
-export const FiltersMenu = <TData extends Record<string, any> = {}>({
-	anchorEl,
-	setAnchorEl,
+export const FiltersMenu = <TData extends TableData>({
+	open,
+	onClose,
 	table,
 }: Props<TData>) => {
 	const {
@@ -35,165 +32,92 @@ export const FiltersMenu = <TData extends Record<string, any> = {}>({
 		resetColumnFilters,
 		options: { localization },
 	} = table
-	const [isSearchActive, setIsSearchActive] = useState<boolean>(false)
-	const [searchList, setSearchList] = useState<Array<Table_Column<TData>>>([])
-	const [isFilterAddition, setIsFilterAddition] = useState<boolean | null>(true)
-	const [appliedFilters, setAppliedFilters] = useState<FilterType<TData>[]>([])
+	const [searchValue, setSearchValue] = useState<string>('')
+	const [newColumnFilter, setNewColumnFilter] =
+		useState<Table_Column<TData> | null>(null)
+	const { columnFilters } = getState()
+	const [isSearchActive, setSearchActive] = useState<boolean>(
+		!columnFilters || !columnFilters.length
+	)
 
+	// all columns that can be filtered
 	const allColumns = useMemo(() => {
 		const columns = getAllColumns()
 
-		return columns.filter(
-			(column) => !Table_DisplayColumnIdsArray.includes(column.id)
-		)
+		return columns.filter((column) => column.getCanFilter())
 	}, [getAllColumns])
 
-	const getActiveFiltersData = useCallback(() => {
-		const filters = getState().columnFilters
+	// all columns that can be filtered, but not already filtered
+	const { filterAppliedColumns, filterNonAppliedColumns } = useMemo(
+		() => splitFilterColumns(allColumns, columnFilters, newColumnFilter),
+		[allColumns, columnFilters, newColumnFilter]
+	)
 
-		return filters.map((filter) => ({
-			...filter,
-			column: allColumns.find(({ id }) => id === filter.id),
-		}))
-	}, [allColumns, getState])
+	const handleSetColumnFilter = useCallback((column: Table_Column<TData>) => {
+		setSearchActive(false)
+		setNewColumnFilter(column)
+	}, [])
 
-	useEffect(() => {
-		const activeFilters = getActiveFiltersData()
+	const changeFilter = useCallback((column, value) => {
+		column.setFilterValue(value)
+	}, [])
 
-		if (activeFilters.length) {
-			setIsFilterAddition(false)
-		}
-		setAppliedFilters(activeFilters as FilterType<TData>[])
-	}, [getActiveFiltersData])
-
-	const handleCloseClick = () => setAnchorEl(null)
-
-	const handleOnSearchChange = (value: string) => {
-		if (value) {
-			setIsSearchActive(true)
-		} else {
-			setIsSearchActive(false)
-		}
-		setSearchList(
-			value.length
-				? allColumns.filter((col) =>
-						col.columnDef.header.toLowerCase().includes(value)
-				  )
-				: []
-		)
-	}
-
-	const handleSetColumnFilter = (column) => {
-		const lastFilter = {
-			id: column.id,
-			value: [],
-			column,
-		}
-		setAppliedFilters([...appliedFilters, lastFilter])
-		setIsFilterAddition(false)
-		column.setFilterValue()
-	}
-
-	const changeFilter = (filter, value) => {
-		const updatedAppliedFilters = appliedFilters.map((el) => {
-			if (el.id === filter.id) {
-				return {
-					...el,
-					value,
-				}
-			}
-
-			return el
-		})
-
-		setAppliedFilters(updatedAppliedFilters)
-		filter.column.setFilterValue(value)
-	}
-
-	const handleRemoveAllFilter = () => {
-		setIsFilterAddition(true)
-		setAppliedFilters([])
+	const handleRemoveAllFilter = useCallback(() => {
+		setSearchActive(true)
 		resetColumnFilters()
-	}
+	}, [resetColumnFilters])
 
-	const handleRemoveFilter = (filter) => {
-		setAppliedFilters(
-			appliedFilters.filter((applied) => applied.id !== filter.id)
-		)
-		filter.column.setFilterValue()
+	const handleRemoveFilter = useCallback((column: Table_Column<TData>) => {
+		column.setFilterValue(undefined)
+	}, [])
 
-		if (appliedFilters.length === 1) {
-			setIsFilterAddition(true)
-		}
-	}
-
-	const renderListItems = (list) => {
-		return (
-			<>
-				{list
-					.filter((column) =>
-						appliedFilters.every((filter) => filter.id !== column.id)
-					)
-					.map((column, index) => (
-						<FiltersMenuListItem
-							allColumns={allColumns}
-							column={column}
-							table={table}
-							key={`${index}-${column.id}`}
-							onAddFilter={handleSetColumnFilter}
-						/>
-					))}
-			</>
-		)
-	}
-
-	const renderMenuList = () => {
-		if (isSearchActive) {
-			if (searchList.length) {
-				return renderListItems(searchList)
-			}
-
-			return (
-				<Typography
-					sx={{ display: 'flex', justifyContent: 'center', mt: '20px' }}
-				>
-					No options
-				</Typography>
+	// Columns that are non-filtered, and match the search value
+	const menuItems = useMemo(() => {
+		return filterNonAppliedColumns
+			.filter((col) =>
+				col.columnDef.header.toLowerCase().includes(searchValue.toLowerCase())
 			)
-		}
-
-		return renderListItems(allColumns)
-	}
+			.map((column) => (
+				<FiltersMenuListItem
+					key={column.id}
+					column={column}
+					onAddFilter={handleSetColumnFilter}
+				/>
+			))
+	}, [filterNonAppliedColumns, handleSetColumnFilter, searchValue])
 
 	return (
 		<Sidebar
-			isOpen={!!anchorEl}
-			onClose={handleCloseClick}
+			open={open}
+			onClose={onClose}
 			styles={{ minWidth: 660 }}
 			withHeader
 			headerTitle="Filters"
 		>
-			{!isFilterAddition && appliedFilters.length ? (
+			{!isSearchActive && !!filterAppliedColumns.length ? (
 				<>
-					{appliedFilters
-						.filter((el) => el)
-						.map((filter, index) => (
-							<FiltersMenuAppliedFilter
-								firstInList={index === 0}
-								table={table}
-								filter={filter}
+					{filterAppliedColumns.map((column, index) => (
+						<FilterWrapper
+							key={getColumnId(column.columnDef)}
+							onDelete={() => handleRemoveFilter(column)}
+							table={table}
+							column={column}
+							isFirst={index === 0}
+						>
+							<ColumnFilterField
+								autoFocus={newColumnFilter === column}
 								changeFilter={changeFilter}
-								removeFilter={handleRemoveFilter}
-								key={`${index}-${index}`}
+								column={column}
+								table={table}
 							/>
-						))}
+						</FilterWrapper>
+					))}
 					<Box
 						sx={{
 							alignItems: 'center',
 							justifyContent: 'space-between',
 							my: 0,
 							mx: '12px',
-							// px: '12px',
 							py: '6px',
 						}}
 					>
@@ -205,33 +129,35 @@ export const FiltersMenu = <TData extends Record<string, any> = {}>({
 								justifyContent: 'space-between',
 							}}
 						>
-							<Button
+							<ButtonBordered
 								variant="outlined"
-								onClick={() => setIsFilterAddition(true)}
-								sx={{ fontWeight: 600, fontSize: '14px' }}
+								onClick={() => setSearchActive(true)}
 							>
 								{localization.addFilter} +
-							</Button>
-							<Button
-								onClick={() => handleRemoveAllFilter()}
-								sx={{ fontWeight: 600, fontSize: '14px' }}
-							>
+							</ButtonBordered>
+							<ButtonBordered onClick={() => handleRemoveAllFilter()}>
 								{localization.removeAll}
-							</Button>
+							</ButtonBordered>
 						</Box>
 					</Box>
 				</>
-			) : null}
-
-			{isFilterAddition ? (
+			) : (
 				<>
 					<SidebarSearchComponent
 						dividerProps={{ sx: { mb: '12px' } }}
-						onChange={handleOnSearchChange}
+						onChange={setSearchValue}
 					/>
-					{renderMenuList()}
+					{menuItems.length ? (
+						menuItems
+					) : (
+						<Typography
+							sx={{ display: 'flex', justifyContent: 'center', mt: '20px' }}
+						>
+							{localization.noOptions}
+						</Typography>
+					)}
 				</>
-			) : null}
+			)}
 		</Sidebar>
 	)
 }

@@ -9,7 +9,6 @@ import { GroupingChip } from './GroupingChip/GroupingChip'
 import { useGroupingControls } from './filter-bar-hooks/useGroupingControls'
 import { SortingChip } from './SortingChip/SortingChip'
 import { FilterChip } from './FilterChip/FilterChip'
-import { useFilterControls } from './filter-bar-hooks/useFilterControls'
 
 const clearButtonClassName = 'clear-button'
 const ClearAllButton = styled(ButtonBase)`
@@ -27,7 +26,6 @@ const Line = styled(Box)`
 const Wrapper = styled(Box)<{ hidden?: boolean }>`
 	align-items: center;
 	display: flex;
-	z-index: 3;
 	gap: 6px;
 	flex-wrap: wrap;
 	${({ hidden }) => hidden && `display: none;`}
@@ -50,12 +48,11 @@ export const TableStatusBar = <TData extends Record<string, any> = {}>({
 }: Props<TData>) => {
 	const { getState, resetSorting, resetColumnFilters } = table
 
-	const { grouping, sorting } = getState()
+	const { grouping, sorting, columnFilters } = getState()
 
 	const barRef = useRef<HTMLDivElement>(null)
 
 	const { removeAllGroup } = useGroupingControls(table)
-	const { columnFilters = [], columnsIdToHeaderMap } = useFilterControls(table)
 
 	const handleClearAll = () => {
 		removeAllGroup()
@@ -70,14 +67,7 @@ export const TableStatusBar = <TData extends Record<string, any> = {}>({
 		isGroupingExists || isSortingExists || isFiltersExists
 
 	const filterChips = columnFilters.map((filter) => {
-		return (
-			<FilterChip
-				key={filter.id}
-				filterId={filter.id}
-				headerTile={columnsIdToHeaderMap[filter.id].header}
-				table={table}
-			/>
-		)
+		return <FilterChip key={filter.id} filterId={filter.id} table={table} />
 	})
 
 	return (

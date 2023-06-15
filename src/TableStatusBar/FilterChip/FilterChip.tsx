@@ -1,82 +1,29 @@
-import { FC, useState } from 'react'
-import { Box } from '@mui/material'
+import { useMemo } from 'react'
 
+import { TableData, TableInstance } from '../../TableComponent'
 import { CommonChipWithPopover } from '../CommonChipWithPopover/CommonChipWithPopover'
-import { useFilterControls } from '../filter-bar-hooks/useFilterControls'
-import { DropdownContentHeader } from '../DropdownContent/DropdownContentHeader'
-import { DropdownContentSearch } from '../DropdownContent/DropdownContentSearch'
 
-import { FiltersSearchResult } from './FilterChipSearch/FiltersSearchResult'
-import { FilterChipList } from './FilterChipList/FilterChipList'
+import { FilterChipDropdownContent } from './FilterChipDropdownContent'
+import { getFilterChipText } from './getFilterChipText'
 
-type FilterChipProps = {
-	headerTile: string
-	table: any
+type FilterChipProps<TData extends TableData> = {
+	table: TableInstance<TData>
 	filterId: string
 }
 
-export const FilterChip: FC<FilterChipProps> = ({
+export const FilterChip = <TData extends TableData>({
 	table,
 	filterId,
-	headerTile,
-}) => {
-	const { currentFilterColumn, currentFilterValues, currentFilterHeader } =
-		useFilterControls(table, filterId)
+}: FilterChipProps<TData>) => {
+	const column = useMemo(() => table.getColumn(filterId), [table, filterId])
+	const filterValue = column.getFilterValue() as string[]
 
-	const [isSearchActive, setIsSearchActive] = useState(false)
-
-	const [searchValue, setSearchValue] = useState('')
-	const [selectedSearchedItems, setSelectedSearchedItems] = useState<any>([])
-
-	const handleClearAll = () => {
-		currentFilterColumn.setFilterValue([])
-	}
-	const applySelectedFilters = () => {
-		setSearchValue('')
-		setSelectedSearchedItems([])
-	}
+	const currentFilterHeader = column.columnDef.header
+	const text = useMemo(() => getFilterChipText(filterValue), [filterValue])
 
 	const DropdownContent = (
-		<Box sx={{ width: 300, padding: '6px 0' }}>
-			<DropdownContentHeader
-				headerTile={headerTile}
-				onClearAll={handleClearAll}
-			/>
-
-			<DropdownContentSearch
-				searchValue={searchValue}
-				onChange={setSearchValue}
-				isSearchActive={isSearchActive}
-				setIsSearchActive={setIsSearchActive}
-				onApplySelectedItems={applySelectedFilters}
-				onClick={() => setIsSearchActive(true)}
-			/>
-
-			<>
-				{isSearchActive && (
-					<FiltersSearchResult
-						table={table}
-						searchValue={searchValue}
-						filterId={filterId}
-						selectedSearchedItems={selectedSearchedItems}
-						setSelectedSearchedItems={setSelectedSearchedItems}
-						setSearchValue={setSearchValue}
-						setIsSearchActive={setIsSearchActive}
-					/>
-				)}
-
-				{!isSearchActive && (
-					<FilterChipList table={table} filterId={filterId} />
-				)}
-			</>
-		</Box>
+		<FilterChipDropdownContent table={table} column={column} />
 	)
-
-	const text =
-		(currentFilterValues?.reduce?.(
-			(acc, label, index) => (index === 0 ? label : `${acc}, ${label}`),
-			''
-		) as string) ?? ''
 
 	return (
 		<div>

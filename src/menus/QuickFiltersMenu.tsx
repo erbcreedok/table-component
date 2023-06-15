@@ -2,7 +2,6 @@ import React, { ComponentProps, FC, useEffect, useState } from 'react'
 
 import { Menu } from '../components/Menu'
 import { Table_Column, TableInstance } from '../TableComponent'
-import { useFilterControls } from '../TableStatusBar/filter-bar-hooks/useFilterControls'
 
 type Props = ComponentProps<typeof Menu> & {
 	table: TableInstance
@@ -17,11 +16,9 @@ export const QuickFiltersMenu: FC<Props> = ({
 }) => {
 	const {
 		options: { ColumnActionsFiltersMenu },
+		getState,
 	} = table
-	const { columnFilters, currentFilterColumn } = useFilterControls(
-		table,
-		column.id
-	)
+	const { columnFilters } = getState()
 
 	const [selectedFilters, setSelectedFilters] = useState<unknown[]>([])
 	const [filterValues, setFilterValues] = useState<string[]>([])
@@ -45,7 +42,7 @@ export const QuickFiltersMenu: FC<Props> = ({
 	}, [columnFilters])
 
 	const handleApplyFilters = () => {
-		currentFilterColumn.setFilterValue([...selectedFilters])
+		column.setFilterValue([...selectedFilters])
 
 		toggleSubMenu()
 	}

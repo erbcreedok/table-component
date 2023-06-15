@@ -7,11 +7,14 @@ import { ButtonLink } from '../../../components/ButtonLink'
 import { IconsColor } from '../../../components/styles'
 import { PlusIcon } from '../../../icons/PlusIcon'
 
+// TODO:
+//  1. define props properly
+//  2. handle sort selection higher in component tree (ex. SortingChip.tsx)
 export const ListSearchSortingItem: FC<any> = (props) => {
 	const {
 		item,
 		table,
-		setSearchValue,
+		onSelect,
 		selectedSearchedItems,
 		setSelectedSearchedItems,
 	} = props
@@ -26,7 +29,7 @@ export const ListSearchSortingItem: FC<any> = (props) => {
 		column?.toggleSorting?.(false, true)
 
 		setSelectedSearchedItems([...selectedSearchedItems, id])
-		setSearchValue('')
+		onSelect()
 	}
 
 	return (

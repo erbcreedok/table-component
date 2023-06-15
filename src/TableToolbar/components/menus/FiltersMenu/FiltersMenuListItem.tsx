@@ -3,19 +3,15 @@ import Box from '@mui/material/Box'
 import MenuItem from '@mui/material/MenuItem'
 import Typography from '@mui/material/Typography'
 
-import type { Table_Column, TableInstance } from '../../../..'
+import type { Table_Column } from '../../../..'
 
 interface Props<TData extends Record<string, any> = {}> {
 	column: Table_Column<TData>
-	table: TableInstance<TData>
-	allColumns: Table_Column<TData>[]
 	onAddFilter(column: Table_Column<TData>): void
 }
 
 export const FiltersMenuListItem = <TData extends Record<string, any> = {}>({
 	column,
-	table,
-	allColumns,
 	onAddFilter,
 }: Props<TData>) => {
 	const { columnDef } = column

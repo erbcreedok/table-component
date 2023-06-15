@@ -134,7 +134,7 @@ export const PeopleTable: Story<TableComponentProps> = () => {
 	return (
 		<>
 			<Sidebar
-				isOpen={isSidebarOpen}
+				open={isSidebarOpen}
 				onClose={() => setIsSidebarOpen(false)}
 				withHeader
 				headerTitle="Sidebar title"

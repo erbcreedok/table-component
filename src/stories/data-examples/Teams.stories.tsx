@@ -240,10 +240,7 @@ const meta: Meta = {
 	title: 'Data Examples/Teams',
 	argTypes: {
 		bulkActions: {
-			control: 'multi-select',
-			options: [{
-
-			}],
+			control: 'object',
 			defaultValue: [
 				{
 					icon: <LockedIcon />,
@@ -270,6 +267,7 @@ const meta: Meta = {
 			],
 		},
 		enableRowSelection: {
+			control: 'boolean',
 			defaultValue: (row) => row.original.impact !== 'Medium'
 			// defaultValue: (row) => true
 		},

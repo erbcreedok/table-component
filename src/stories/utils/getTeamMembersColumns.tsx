@@ -1,5 +1,7 @@
-import { Avatar } from '@mui/material'
+import { Avatar, TextField } from '@mui/material'
+import Box from '@mui/material/Box'
 import { TableCellProps } from '@mui/material/TableCell'
+import Typography from '@mui/material/Typography'
 import React from 'react'
 import { GroupedCellBase } from '../../body/GroupedCellBase'
 import { HeaderBase, HeaderSearch, RowActionMenuButton } from '../../index'
@@ -16,7 +18,9 @@ import { AnalyticsIcon } from '../../icons/AnalyticsIcon'
 import { getNestedProp } from '../../utils/getNestedProp'
 import { TeamMember } from '../types/TeamMember'
 import { Colors } from './constants'
+import { convertDate } from './convertDate'
 import { createGetColors } from './createGetColors'
+import { anyOfDateRange } from './customFilterFns'
 import { isTeamMember } from './getTeamMembers'
 import { getTeamsBorderColorSet } from './getTeamsBorderColorSet'
 import { getTeamsCellBackgroundSet } from './getTeamsCellBackgroundSet'
@@ -59,15 +63,15 @@ export const teamMemberAccessorFn = (accessorKey: string) => (item: TeamMember) 
 	}
 	return ''
 }
-export const getTeamMembersColumns = () =>
-	[
+export const getTeamMembersColumns = () => {
+	return [
 		{
 			header: 'Team member',
 			accessorFn: teamMemberAccessorFn('member.fullName'),
 			displayDataKey: 'member.fullName',
-			filterVariant: 'multi-select',
 			id: 'teamMember',
 			dataType: 'textual',
+			filterVariant: 'text',
 			Cell: ({ row, table }) => {
 				const user = row.original.member
 				return (
@@ -95,7 +99,7 @@ export const getTeamMembersColumns = () =>
 								{user.role}
 							</TextEllipsis>
 						</Flex>
-						<RowActionMenuButton table={table} row={row} sx={{ ml: 'auto' }} />
+						<RowActionMenuButton table={table} row={row} sx={{ ml: 'auto' }}/>
 					</Flex>
 				)
 			},
@@ -113,6 +117,18 @@ export const getTeamMembersColumns = () =>
 					searchPath="member.fullName"
 					placeholder="Search for employee"
 				/>
+			),
+			FilterField: ({ onChange, value, autoFocus}) => (
+				<Box sx={{ px: '12px', width: '100%', boxSizing: 'border-box' }}>
+					<Typography>Custom Filter Field</Typography>
+					<TextField fullWidth variant="outlined" value={value} onChange={(e) => onChange(e.target.value)} autoFocus={autoFocus} />
+				</Box>
+			),
+			FilterChipField: ({ onChange, value }) => (
+				<Box sx={{ px: '12px', width: '100%', boxSizing: 'border-box' }}>
+					<Typography>Custom Filter Chip Field</Typography>
+					<TextField size="small" fullWidth variant="outlined" value={value} onChange={(e) => onChange(e.target.value)} />
+				</Box>
 			),
 		},
 		{
@@ -133,11 +149,12 @@ export const getTeamMembersColumns = () =>
 			accessorFn: teamMemberAccessorFn('performance'),
 			filterVariant: 'multi-select',
 			GroupedCell: ColoredGroupedCell,
-			headerEndAdornment: <AnalyticsIcon />,
+			headerEndAdornment: <AnalyticsIcon/>,
 			muiTableBodyCellProps: coloredCellProps,
 			enableColumnOrdering: true,
+			filterSelectOptions: ['Often exceeds', 'Sometimes exceeds', 'Meets', { value: null, label: 'N/A' }],
 			sortingFn(rowA, rowB) {
-				return sortByArrayOrder(['Often exceeds', 'Sometimes exceeds', 'Meets'])(rowA.getValue('performance'),  rowB.getValue('performance'))
+				return sortByArrayOrder(['Often exceeds', 'Sometimes exceeds', 'Meets'])(rowA.getValue('performance'), rowB.getValue('performance'))
 			},
 		},
 		{
@@ -173,4 +190,22 @@ export const getTeamMembersColumns = () =>
 			Header: HeaderBase,
 			enableColumnOrdering: true,
 		},
+		{
+			header: 'Hired At',
+			id: 'hiredAt',
+			accessorFn: teamMemberAccessorFn('hiredAt'),
+			filterVariant: 'multi-select',
+			GroupedCell: ColoredGroupedCell,
+			Header: HeaderBase,
+			enableColumnOrdering: true,
+			Cell: ({ cell }) => <div onClick={() => console.log(cell.getValue())}>{convertDate(cell.getValue() as Date)}</div>,
+			filterSelectOptions: [
+				'Less than 1 months',
+				'Between 1 and 3 months',
+				'More than 3 months',
+				'N/A',
+			],
+			filterFn: anyOfDateRange,
+		}
 	] as Array<Table_ColumnDef<TeamMember>>
+}

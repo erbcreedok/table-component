@@ -99,11 +99,9 @@ export const getPeopleColumns = () =>
 			enableFiltering: true,
 			filterVariant: 'multi-select',
 			enableColumnOrdering: true,
-			Cell: ({ row, table, cell }) => (
+			Cell: ({ row }) => (
 				<ClickableCell
 					row={row}
-					table={table}
-					cell={cell}
 					accessorKey="performance"
 				/>
 			),
@@ -116,11 +114,9 @@ export const getPeopleColumns = () =>
 			filterVariant: 'multi-select',
 			enableColumnOrdering: true,
 			sortDescFirst: false,
-			Cell: ({ row, table, cell }) => (
+			Cell: ({ row }) => (
 				<ClickableCell
 					row={row}
-					table={table}
-					cell={cell}
 					accessorKey="riskOfLeaving"
 				/>
 			),
@@ -133,8 +129,8 @@ export const getPeopleColumns = () =>
 			enableFiltering: true,
 			enableColumnOrdering: true,
 			enableSorting: false,
-			Cell: ({ row, table, cell }) => (
-				<ClickableCell row={row} table={table} cell={cell} accessorKey="mood" />
+			Cell: ({ row }) => (
+				<ClickableCell row={row} accessorKey="mood" />
 			),
 			cellAction: 'expand'
 		},
@@ -145,11 +141,9 @@ export const getPeopleColumns = () =>
 			filterVariant: 'multi-select',
 			enableColumnOrdering: true,
 			enableGrouping: false,
-			Cell: ({ row, table, cell }) => (
+			Cell: ({ row }) => (
 				<ClickableCell
 					row={row}
-					table={table}
-					cell={cell}
 					accessorKey="lastTalk"
 				/>
 			),
@@ -161,11 +155,9 @@ export const getPeopleColumns = () =>
 			accessorKey: 'totalWorkload',
 			filterVariant: 'multi-select',
 			enableColumnOrdering: true,
-			Cell: ({ row, table, cell }) => (
+			Cell: ({ row }) => (
 				<ClickableCell
 					row={row}
-					table={table}
-					cell={cell}
 					accessorKey="totalWorkload"
 				/>
 			),

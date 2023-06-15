@@ -1,4 +1,4 @@
-import React, { MouseEvent, useState } from 'react'
+import React, { useState } from 'react'
 import type { IconButtonProps } from '@mui/material/IconButton'
 import { Typography } from '@mui/material'
 
@@ -12,11 +12,13 @@ interface Props<TData extends Record<string, any> = {}>
 	extends IconButtonProps {
 	table: TableInstance<TData>
 	enableCaption: boolean
+	disabled?: boolean
 }
 
 export const FiltersButton = <TData extends Record<string, any> = {}>({
 	table,
 	enableCaption,
+	disabled,
 	...rest
 }: Props<TData>) => {
 	const {
@@ -25,12 +27,7 @@ export const FiltersButton = <TData extends Record<string, any> = {}>({
 			localization,
 		},
 	} = table
-	const disabled = false
-	const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
-
-	const handleClick = (_event: MouseEvent<HTMLElement>) => {
-		setAnchorEl(_event.currentTarget)
-	}
+	const [open, setOpen] = useState(false)
 
 	return (
 		<>
@@ -40,7 +37,7 @@ export const FiltersButton = <TData extends Record<string, any> = {}>({
 			>
 				<ToolbarIconButton
 					aria-label={localization.showFiltering}
-					onClick={handleClick}
+					onClick={() => setOpen(true)}
 					disableRipple
 					enableCaption={enableCaption}
 					{...rest}
@@ -54,12 +51,8 @@ export const FiltersButton = <TData extends Record<string, any> = {}>({
 				</ToolbarIconButton>
 			</Tooltip>
 
-			{anchorEl && (
-				<FiltersMenu
-					anchorEl={anchorEl}
-					setAnchorEl={setAnchorEl}
-					table={table}
-				/>
+			{open && (
+				<FiltersMenu open onClose={() => setOpen(false)} table={table} />
 			)}
 		</>
 	)

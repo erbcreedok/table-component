@@ -4,6 +4,7 @@ import React, {
 	Dispatch,
 	FC,
 	MutableRefObject,
+	ReactElement,
 	ReactNode,
 	SetStateAction,
 } from 'react'
@@ -63,6 +64,8 @@ import { TableToolbarProps } from './TableToolbar/TableToolbar'
  */
 
 type LiteralUnion<T extends U, U = string> = T | (U & Record<never, never>)
+
+export type TableData = Record<string, any>
 
 export interface Table_Localization {
 	actions: string
@@ -130,6 +133,7 @@ export interface Table_Localization {
 	max: string
 	min: string
 	move: string
+	noOptions: string
 	noRecordsToDisplay: string
 	noResultsFound: string
 	of: string
@@ -316,6 +320,11 @@ export type Table_TableState<TData extends Record<string, any> = {}> =
 		highlightHeadCellId: string | null
 	}
 
+export type FilterOption = {
+	label: string
+	value: any
+}
+
 export type Table_ColumnDef<TData extends Record<string, any> = {}> = Omit<
 	ColumnDef<TData, unknown>,
 	| 'accessorKey'
@@ -408,6 +417,30 @@ export type Table_ColumnDef<TData extends Record<string, any> = {}> = Omit<
 				table: TableInstance<TData>
 				parentRow?: Table_Row<TData>
 		  }) => ReactNode)
+	FilterField?: ({
+		column,
+		table,
+		onChange,
+		value,
+		autoFocus,
+	}: {
+		column: Table_Column<TData>
+		table: TableInstance<TData>
+		onChange: (value: unknown) => void
+		value: unknown
+		autoFocus?: boolean
+	}) => ReactElement
+	FilterChipField?: ({
+		column,
+		table,
+		onChange,
+		value,
+	}: {
+		column: Table_Column<TData>
+		table: TableInstance<TData>
+		onChange: (value: unknown) => void
+		value: unknown
+	}) => ReactElement
 	headerEndAdornment?: ReactNode
 	/**
 	 * Either an `accessorKey` or a combination of an `accessorFn` and `id` are required for a data column definition.
@@ -463,7 +496,7 @@ export type Table_ColumnDef<TData extends Record<string, any> = {}> = Omit<
 	enableDividerRight?: boolean
 	enableEditing?: boolean
 	filterFn?: Table_FilterFn<TData>
-	filterSelectOptions?: (string | { text: string; value: any })[]
+	filterSelectOptions?: (string | FilterOption)[]
 	filterVariant?: 'text' | 'select' | 'multi-select' | 'range' | 'checkbox'
 	/**
 	 * footer must be a string. If you want custom JSX to render the footer, you can also specify a `Footer` option. (Capital F)
@@ -610,6 +643,7 @@ export type Table_DefinedColumnDef<TData extends Record<string, any> = {}> =
 		_filterFn: Table_FilterOption
 		cellAction?: string | (({ row, table }) => void)
 		cellActionIcon?: any
+		filterTypeLabel?: string
 	}
 
 export type Table_Column<TData extends Record<string, any> = {}> = Omit<

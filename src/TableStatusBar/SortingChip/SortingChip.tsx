@@ -58,8 +58,7 @@ export const SortingChip = <TData extends Record<string, any> = {}>(
 		resetSorting()
 	}
 
-	const applySelectedItems = () => {
-		setIsSearchActive(false)
+	const onClearClick = () => {
 		setSelectedSearchedItems([])
 	}
 
@@ -67,16 +66,16 @@ export const SortingChip = <TData extends Record<string, any> = {}>(
 		<>
 			<Box sx={{ width: 300, padding: '6px 0' }}>
 				<DropdownContentHeader
-					headerTile={localization.sorting}
+					headerTitle={localization.sorting}
 					onClearAll={handleClearAll}
 				/>
 
 				<DropdownContentSearch
-					searchValue={searchValue}
+					value={searchValue}
 					onChange={setSearchValue}
 					isSearchActive={isSearchActive}
 					setIsSearchActive={setIsSearchActive}
-					onApplySelectedItems={applySelectedItems}
+					onClearClick={onClearClick}
 				/>
 
 				<>
@@ -87,7 +86,7 @@ export const SortingChip = <TData extends Record<string, any> = {}>(
 							selectedSearchedItems={selectedSearchedItems}
 							setSelectedSearchedItems={setSelectedSearchedItems}
 							table={table}
-							setSearchValue={setSearchValue}
+							onSelect={() => setIsSearchActive(false)}
 						/>
 					)}
 
