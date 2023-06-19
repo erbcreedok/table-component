@@ -18,4 +18,4 @@ services:
       - 6007:443
     volumes:
       - "./nginx/certs:/etc/nginx/certs/core/:ro"
-      - "./nginx/conf:/etc/nginx/conf.d/:ro"
+      - "./nginx/conf-qa:/etc/nginx/conf.d/:ro"
