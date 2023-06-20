@@ -379,12 +379,18 @@ export const TableBodyCell: FC<Props> = ({
 						}}
 						onClick={handleExpand}
 					>
-						<ExpandMoreIcon
-							sx={{
-								transform: `rotate(${isDettailedPanelExpanded ? -180 : 0}deg)`,
-								transition: 'transform 150ms',
-							}}
-						/>
+						<>
+							{cellActionIcon || (
+								<ExpandMoreIcon
+									sx={{
+										transform: `rotate(${
+											isDettailedPanelExpanded ? -180 : 0
+										}deg)`,
+										transition: 'transform 150ms',
+									}}
+								/>
+							)}
+						</>
 					</IconButton>
 				) : columnDef.cellAction instanceof Function ? (
 					<IconButton

@@ -20,8 +20,7 @@ interface DetailedPannelProps {
 }
 
 const DetailedPanel = (props: DetailedPannelProps) => {
-	const clickedCell =
-		props?.openedDetailedPanels?.[props?.rowId]?.cell || {}
+	const clickedCell = props?.openedDetailedPanels?.[props?.rowId]?.cell || {}
 
 	if (
 		clickedCell?.row?.original.member.id === props.userId &&
@@ -268,8 +267,12 @@ export const PeopleTable: Story<TableComponentProps> = () => {
 					},
 				}}
 				columns={columnsWithCellActions}
-				// @ts-ignore
-				initialState={{ expanded: false, showColumnFilters: true }}
+				initialState={{
+					// @ts-ignore
+					expanded: false,
+					showColumnFilters: true,
+
+				}}
 				renderDetailPanel={({ row, ...rest }) => (
 					<DetailedPanel
 						userId={row?.original?.member?.id}

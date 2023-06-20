@@ -105,7 +105,7 @@ export const getPeopleColumns = () =>
 					accessorKey="performance"
 				/>
 			),
-			cellAction: 'expand'
+			cellAction: 'expand',
 		},
 		{
 			header: 'Risk of leaving',
