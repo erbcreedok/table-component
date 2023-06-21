@@ -11,7 +11,12 @@ import {
 } from '@mui/material'
 
 import { Flex } from '../components/Flex'
-import { Table_Column, Table_Header, TableInstance } from '../TableComponent'
+import {
+	Table_Column,
+	Table_Header,
+	TableData,
+	TableInstance,
+} from '../TableComponent'
 import {
 	Colors,
 	DEFAULT_FONT_FAMILY,
@@ -23,13 +28,20 @@ import { getValueFromObj } from '../utils/getValueFromObj'
 
 import { HeaderBase } from './HeaderBase'
 
-type Props<TData extends Record<string, any>> = {
+type Props<TData extends TableData> = {
 	column: Table_Column<TData>
 	header: Table_Header<TData>
 	table: TableInstance<TData>
 	searchPath: string
 	placeholder: string
 	minLengthSearch?: number
+	targetUnitId?: string
+	getFilteredData?(args: {
+		tableData: TableData[]
+		value: string
+		path: string
+	}): TableData[]
+	onSearch?(data: TableData): void
 }
 
 const SearchInput = styled(TextField)`
@@ -59,18 +71,24 @@ const SearchInput = styled(TextField)`
 	}
 `
 
-export const HeaderSearch = <T extends Record<string, any>>({
+export const HeaderSearch = <T extends TableData>({
 	column,
 	table,
 	searchPath,
 	placeholder,
 	minLengthSearch = 1,
+	getFilteredData = ({ tableData, value, path }) => {
+		return tableData.filter((item) =>
+			getValueFromObj(item, path, '')?.toLowerCase().includes(value)
+		)
+	},
+	onSearch,
 }: Props<T>) => {
 	const [showPopper, setShowPopper] = useState(false)
 	const anchorElRef = useRef<HTMLDivElement>(null)
 	const [isSearch, setIsSearch] = useState(false)
 	const [input, setInput] = useState('')
-	const [filtered, setFiltered] = useState<Record<string, any>>([])
+	const [filtered, setFiltered] = useState<TableData>([])
 	const searchValue = useDelay(input)
 	const {
 		options: {
@@ -113,11 +131,11 @@ export const HeaderSearch = <T extends Record<string, any>>({
 	useEffect(() => {
 		if (searchValue.length >= minLengthSearch) {
 			setFiltered(
-				table.options.data.filter((item) =>
-					getValueFromObj(item, searchPath, '')
-						?.toLowerCase()
-						.includes(searchValue)
-				)
+				getFilteredData({
+					tableData: table.options.data,
+					value: searchValue,
+					path: searchPath,
+				})
 			)
 		} else {
 			setFiltered([])
@@ -196,7 +214,7 @@ export const HeaderSearch = <T extends Record<string, any>>({
 						{searchValue.length >= minLengthSearch && !filtered.length && (
 							<Typography>No options</Typography>
 						)}
-						{filtered.map((item: Record<string, any>) => (
+						{filtered.map((item: TableData) => (
 							<Typography
 								key={item.id}
 								onClick={() => {
@@ -204,6 +222,8 @@ export const HeaderSearch = <T extends Record<string, any>>({
 									table.showSearchData(item.id)
 									setFiltered([])
 									setShowPopper(false)
+
+									if (onSearch) onSearch(item)
 								}}
 							>
 								{getValueFromObj(item, searchPath, '')}
