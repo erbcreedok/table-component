@@ -1,15 +1,7 @@
-import { Table_Row, TableInstance } from '../TableComponent'
+import { Table_Row } from '../TableComponent'
 
-import { getParentRow } from './getParentRow'
+export function getSubRowIndex({ row }: { row: Table_Row }) {
+	const parentRow = row.getParent()
 
-export function getSubRowIndex({
-	row,
-	table,
-}: {
-	row: Table_Row
-	table: TableInstance
-}) {
-	const parentRow = getParentRow({ row, table })
-
-	return parentRow?.subRows?.indexOf(row)
+	return parentRow?.subRows?.findIndex((pR) => pR.id === row.id)
 }

@@ -5,7 +5,6 @@ type CellProps = {
 	colIndex: number
 	rowIndex: number
 	isFirstOfGroup: boolean
-	isLastOfGroup: boolean
 	isGroupedColumn: boolean
 }
 type HeaderProps = {
@@ -19,7 +18,6 @@ export const getCellGroupBorders = ({
 	rowIndex,
 	colIndex,
 	isFirstOfGroup,
-	isLastOfGroup,
 	isGroupedColumn,
 }: CellProps) => {
 	const groupBorder = table.options.groupBorder
@@ -32,11 +30,6 @@ export const getCellGroupBorders = ({
 		? typeof groupBorder === 'string'
 			? groupBorder
 			: groupBorder.top
-		: undefined
-	const borderDivider = groupBorder
-		? typeof groupBorder === 'string'
-			? groupBorder
-			: groupBorder.divider
 		: undefined
 	const borders: GroupBorders = {}
 
@@ -51,10 +44,6 @@ export const getCellGroupBorders = ({
 		borders.borderTop = borderTop
 	}
 
-	if (isLastOfGroup) {
-		borders.borderRight = borderDivider
-	}
-
 	return borders
 }
 
@@ -65,26 +54,13 @@ export const getHeaderGroupBorders = ({ header, table }: HeaderProps) => {
 			? groupBorder
 			: groupBorder.left
 		: undefined
-	const borderDivider = groupBorder
-		? typeof groupBorder === 'string'
-			? groupBorder
-			: groupBorder.divider
-		: undefined
 	const borders: GroupBorders = {}
 	const { column } = header
 	const allColumns = table.getVisibleLeafColumns()
 	const colIndex = allColumns.findIndex((c) => c.id === column.id)
-	const groupedColumns = allColumns.filter((col) => col.getIsGrouped())
 
 	if (colIndex > 0 && column.getIsGrouped()) {
 		borders.borderLeft = borderLeft
-	}
-
-	if (
-		groupedColumns.length &&
-		groupedColumns[groupedColumns.length - 1].id === column.id
-	) {
-		borders.borderRight = borderDivider
 	}
 
 	return borders

@@ -6,7 +6,6 @@ import MuiTableCell from '@mui/material/TableCell'
 import type { VirtualItem } from '@tanstack/react-virtual'
 import React, {
 	DragEvent,
-	FC,
 	HTMLProps,
 	memo,
 	MouseEvent,
@@ -21,6 +20,7 @@ import {
 	ExpandByClick,
 	type Table_Cell,
 	type Table_ColumnDef,
+	type Table_Row,
 	type TableInstance,
 } from '..'
 import { CopyButton } from '../buttons/CopyButton'
@@ -38,6 +38,7 @@ interface Props {
 	enableHover?: boolean
 	measureElement?: (element: HTMLTableCellElement) => void
 	numRows: number
+	row: Table_Row<{}>
 	rowIndex: number
 	rowRef: RefObject<HTMLTableRowElement>
 	rowSpan?: HTMLProps<HTMLTableCellElement>['rowSpan']
@@ -48,12 +49,13 @@ interface Props {
 	groupBorders?: GroupBorders
 }
 
-export const TableBodyCell: FC<Props> = ({
+export const TableBodyCell = ({
 	isGroupedCell,
 	cell,
 	enableHover,
 	measureElement,
 	numRows,
+	row,
 	rowIndex,
 	rowRef,
 	rowSpan,
@@ -61,7 +63,7 @@ export const TableBodyCell: FC<Props> = ({
 	virtualCell,
 	isSummaryRowCell,
 	groupBorders,
-}) => {
+}: Props) => {
 	const theme = useTheme()
 	const {
 		getState,
@@ -76,7 +78,6 @@ export const TableBodyCell: FC<Props> = ({
 			layoutMode,
 			muiTableBodyCellProps,
 			muiTableBodyCellSkeletonProps,
-			rowNumberMode,
 			enableDetailedPanel,
 			cellStyleRules,
 			expandByClick,
@@ -96,7 +97,7 @@ export const TableBodyCell: FC<Props> = ({
 		isLoading,
 		showSkeletons,
 	} = getState()
-	const { column, row } = cell
+	const { column } = cell
 	const { columnDef } = column
 	const { columnDefType, cellAction, cellActionIcon } = columnDef
 
@@ -399,7 +400,7 @@ export const TableBodyCell: FC<Props> = ({
 				}}
 			>
 				{isGroupedCell ? (
-					<TableBodyCellValue cell={cell} table={table} />
+					<TableBodyCellValue cell={cell} row={row} table={table} />
 				) : cell.getIsPlaceholder() ? null : isLoading || showSkeletons ? (
 					<Skeleton
 						animation="wave"
@@ -424,10 +425,10 @@ export const TableBodyCell: FC<Props> = ({
 				) : (enableClickToCopy || columnDef.enableClickToCopy) &&
 				  columnDef.enableClickToCopy !== false ? (
 					<CopyButton cell={cell} table={table}>
-						<TableBodyCellValue cell={cell} table={table} />
+						<TableBodyCellValue cell={cell} table={table} row={row} />
 					</CopyButton>
 				) : (
-					<TableBodyCellValue cell={cell} table={table} />
+					<TableBodyCellValue cell={cell} table={table} row={row} />
 				)}
 				{cellAction === 'expand' ? (
 					<IconButton

@@ -1,14 +1,15 @@
 import React, { FC } from 'react'
 
-import { Table_Cell, TableInstance } from '..'
+import { Table_Cell, Table_Row, TableInstance } from '..'
 
 interface Props {
 	cell: Table_Cell
 	table: TableInstance
+	row: Table_Row
 }
 
-export const TableBodyCellValue: FC<Props> = ({ cell, table }) => {
-	const { column, row } = cell
+export const TableBodyCellValue: FC<Props> = ({ cell, table, row }) => {
+	const { column } = cell
 	const { columnDef } = column
 
 	return (
@@ -17,7 +18,6 @@ export const TableBodyCellValue: FC<Props> = ({ cell, table }) => {
 				? columnDef.AggregatedCell({
 						cell,
 						column,
-
 						row,
 						table,
 				  })

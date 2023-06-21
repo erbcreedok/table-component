@@ -60,9 +60,9 @@ export const TooltipOverflow = forwardRef<HTMLDivElement, Props>(
 		const computedContent = content ?? text
 
 		return (
-			<Tooltip title={visible && !disabled ? computedContent : null} {...rest}>
+			<Tooltip title={visible && !disabled ? text : null} {...rest}>
 				<Ellipsis ref={ref} {...boxProps}>
-					{text}
+					{computedContent}
 				</Ellipsis>
 			</Tooltip>
 		)

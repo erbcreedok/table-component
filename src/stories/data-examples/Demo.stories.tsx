@@ -3,7 +3,7 @@ import React from 'react'
 import { Avatar } from '@mui/material';
 import TableComponent from '../../index'
 import { TableComponentProps, Table_ColumnDef, Table_Cell, } from '../../TableComponent'
-import { GroupedCellBase } from '../../body/GroupedCellBase';
+import { GroupedCellBase } from '../../components/GroupedCellBase';
 import { getSeparatedTeamMembers } from '../utils/getTeamMembers'
 import { sortByArrayOrder } from '../utils/sortByArrayOrder'
 import { TopToolbar } from './components/TopToolbar'

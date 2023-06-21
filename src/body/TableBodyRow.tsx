@@ -1,16 +1,14 @@
 import { tableRowClasses } from '@mui/material'
-import Box from '@mui/material/Box'
 import React, { FC, memo, useMemo, useRef } from 'react'
 import MuiTableRow from '@mui/material/TableRow'
-import { lighten, useTheme } from '@mui/material/styles'
+import { lighten } from '@mui/material/styles'
 import type { VirtualItem, Virtualizer } from '@tanstack/react-virtual'
 
+import { EmptyCell } from '../components/EmptyCell'
+import { getCellGroupBorders } from '../utils/getGroupBorders'
 import type { Table_Cell, Table_Row, TableInstance } from '..'
 import { getColumnId } from '../column.utils'
 import { Colors } from '../components/styles'
-import { getCellGroupBorders } from '../utils/getGroupBorders'
-import { getGroupedRowsCount } from '../utils/getGroupedRowsCount'
-import { getIsFirstRowInGroup } from '../utils/getIsFirstRowInGroup'
 import { getSubRowIndex } from '../utils/getSubRowIndex'
 
 import { Memo_TableBodyCell, TableBodyCell } from './TableBodyCell'
@@ -18,6 +16,7 @@ import { TableDetailPanel } from './TableDetailPanel'
 
 export interface TableBodyRowProps {
 	columnVirtualizer?: Virtualizer<HTMLDivElement, HTMLTableCellElement>
+	domIndex?: number
 	measureElement?: (element: HTMLTableRowElement) => void
 	numRows: number
 	row: Table_Row
@@ -28,6 +27,12 @@ export interface TableBodyRowProps {
 	virtualPaddingRight?: number
 	virtualRow?: VirtualItem
 	isSummaryRow?: boolean
+	groupingProps?: {
+		groupId: string
+		columnIndex: number
+		columnId: string
+		count: number
+	}[]
 }
 
 export const TableBodyRow: FC<TableBodyRowProps> = ({
@@ -42,8 +47,8 @@ export const TableBodyRow: FC<TableBodyRowProps> = ({
 	virtualPaddingRight,
 	virtualRow,
 	isSummaryRow = false,
+	groupingProps,
 }) => {
-	const theme = useTheme()
 	const {
 		getIsSomeColumnsPinned,
 		getState,
@@ -53,18 +58,11 @@ export const TableBodyRow: FC<TableBodyRowProps> = ({
 			memoMode,
 			muiTableBodyRowProps,
 			renderDetailPanel,
-			validateHoveredRow,
 		},
+		refs: { rowDragEnterTimeoutRef },
 		setHoveredRow,
 	} = table
-	const {
-		draggingColumn,
-		draggingRows,
-		editingCell,
-		editingRow,
-		hoveredRow,
-		grouping,
-	} = getState()
+	const { draggingColumn, draggingRows, editingCell, editingRow } = getState()
 
 	const tableRowProps =
 		muiTableBodyRowProps instanceof Function
@@ -80,9 +78,12 @@ export const TableBodyRow: FC<TableBodyRowProps> = ({
 	)
 
 	const handleDragEnter = () => {
-		if (enableRowDragging && draggingRows.length > 0) {
-			setHoveredRow(currentHoveredRow)
-		}
+		clearTimeout(rowDragEnterTimeoutRef.current)
+		rowDragEnterTimeoutRef.current = setTimeout(() => {
+			if (enableRowDragging && draggingRows.length > 0) {
+				setHoveredRow({ ...currentHoveredRow, rowRef })
+			}
+		}, 250)
 	}
 
 	const rowRef = useRef<HTMLTableRowElement | null>(null)
@@ -91,102 +92,57 @@ export const TableBodyRow: FC<TableBodyRowProps> = ({
 		() => draggingRows.some((dRow) => dRow?.id === row.id),
 		[draggingRows, row.id]
 	)
-	const isHoveredRow = hoveredRow?.row?.id === row.id
-	const canDragOver = useMemo(() => {
-		if (!hoveredRow) return false
 
-		return validateHoveredRow?.(hoveredRow, table) === true
-	}, [isHoveredRow])
-
-	const draggingBorder = useMemo(
-		() =>
-			isDraggingRow
-				? `1px dashed ${theme.palette.text.secondary}`
-				: isHoveredRow
-				? `2px dashed ${theme.palette.primary.main}`
-				: undefined,
-		[isDraggingRow, hoveredRow]
-	)
-
-	const draggingBorders = draggingBorder
-		? {
-				border: draggingBorder,
-		  }
-		: undefined
-
-	const groupedCells = grouping
-		.map((columnId, colIndex) => {
-			if (getIsFirstRowInGroup({ row, table, columnId })) {
-				const rowSpan = getGroupedRowsCount({ row, table, columnId })
-				const cell = row
-					.getVisibleCells()
-					.find((cell) => getColumnId(cell.column.columnDef) === columnId)
-				if (cell === undefined) {
-					return null
-				}
-				const props = {
-					cell,
-					enableHover: false,
-					measureElement: columnVirtualizer?.measureElement,
-					numRows,
-					rowIndex,
-					rowRef,
-					table,
-					isSummaryRowCell: isSummaryRow,
-					rowSpan,
-					isGroupedCell: true,
-					groupBorders: getCellGroupBorders({
-						table,
-						isFirstOfGroup: true,
-						isLastOfGroup: grouping.length === colIndex + 1,
-						isGroupedColumn: true,
-						rowIndex: getSubRowIndex({ row, table }) ?? rowIndex,
-						colIndex,
-					}),
-				}
-
+	const { collapsedColumnIndex } = row
+	const groupedCells = (groupingProps ?? [])
+		.map((group, index, arr) => {
+			const rowSpan = group.count
+			const cell = row
+				.getVisibleCells()
+				.find((cell) => getColumnId(cell.column.columnDef) === group.columnId)
+			if (cell === undefined) {
+				return null
+			}
+			const groupBorders = getCellGroupBorders({
+				table,
+				isFirstOfGroup: true,
+				isGroupedColumn: true,
+				rowIndex: getSubRowIndex({ row }) ?? rowIndex,
+				colIndex: group.columnIndex,
+			})
+			if (collapsedColumnIndex !== undefined && collapsedColumnIndex < index) {
 				return (
-					<TableBodyCell
-						key={`grouped-cell-${columnId}-${row.getValue(columnId)}`}
-						{...props}
+					<EmptyCell
+						key={group.groupId}
+						groupBorders={groupBorders}
+						isGroupedCell
+						isLastGroupedColumn={index === arr.length - 1}
 					/>
 				)
 			}
+			const props = {
+				cell,
+				enableHover: false,
+				measureElement: columnVirtualizer?.measureElement,
+				numRows,
+				row,
+				rowIndex,
+				rowRef,
+				table,
+				isSummaryRowCell: isSummaryRow,
+				rowSpan,
+				isGroupedCell: true,
+				groupBorders,
+			}
 
-			return null
+			return <TableBodyCell key={group.groupId} {...props} />
 		})
 		.filter(Boolean)
 
 	const cells = virtualColumns ?? row?.getVisibleCells?.() ?? []
 
-	const getHoveredRowDropLine = (isTopLine: boolean) =>
-		isHoveredRow ? (
-			<tr>
-				{isTopLine && grouping.length > 0 ? (
-					<td colSpan={grouping.length} />
-				) : null}
-				<td
-					colSpan={cells.length - grouping.length}
-					style={{ position: 'relative' }}
-				>
-					<Box
-						sx={{
-							position: 'absolute',
-							left: '0',
-							right: '0',
-							bottom: '0',
-							zIndex: '1',
-							background: canDragOver ? Colors.LightBlue : Colors.Gray20,
-							height: '1px',
-						}}
-					/>
-				</td>
-			</tr>
-		) : null
-
 	return (
 		<>
-			{hoveredRow?.position === 'top' && getHoveredRowDropLine(true)}
 			<MuiTableRow
 				data-index={virtualRow?.index}
 				hover
@@ -222,14 +178,20 @@ export const TableBodyRow: FC<TableBodyRowProps> = ({
 					...(tableRowProps?.sx instanceof Function
 						? tableRowProps.sx(theme)
 						: (tableRowProps?.sx as any)),
-					...draggingBorders,
 				})}
 			>
 				{groupedCells}
 				{virtualPaddingLeft ? (
 					<td style={{ display: 'flex', width: virtualPaddingLeft }} />
 				) : null}
-				{cells.map((cellOrVirtualCell, colIndex) => {
+				{cells.map((cellOrVirtualCell, index) => {
+					const groupBorders = getCellGroupBorders({
+						table,
+						rowIndex: getSubRowIndex({ row }) ?? rowIndex,
+						colIndex: index,
+						isGroupedColumn: false,
+						isFirstOfGroup: !!groupingProps,
+					})
 					const cell = columnVirtualizer
 						? row?.getVisibleCells?.()?.[
 								(cellOrVirtualCell as VirtualItem).index
@@ -238,12 +200,15 @@ export const TableBodyRow: FC<TableBodyRowProps> = ({
 					if (cell.getIsPlaceholder() && !isSummaryRow) {
 						return null
 					}
+					if (collapsedColumnIndex !== undefined && !isSummaryRow)
+						return <EmptyCell key={cell.id} groupBorders={groupBorders} />
 					const props = {
 						cell,
 						enableHover: tableRowProps?.hover !== false,
 						key: cell.id,
 						measureElement: columnVirtualizer?.measureElement,
 						numRows,
+						row,
 						rowIndex,
 						rowRef,
 						table,
@@ -251,14 +216,7 @@ export const TableBodyRow: FC<TableBodyRowProps> = ({
 							? (cellOrVirtualCell as VirtualItem)
 							: undefined,
 						isSummaryRowCell: isSummaryRow,
-						groupBorders: getCellGroupBorders({
-							table,
-							isFirstOfGroup: groupedCells.length > 0,
-							isLastOfGroup: false,
-							rowIndex: getSubRowIndex({ row, table }) ?? rowIndex,
-							colIndex,
-							isGroupedColumn: false,
-						}),
+						groupBorders,
 					}
 
 					return memoMode === 'cells' &&
@@ -277,7 +235,6 @@ export const TableBodyRow: FC<TableBodyRowProps> = ({
 					<td style={{ display: 'flex', width: virtualPaddingRight }} />
 				) : null}
 			</MuiTableRow>
-			{hoveredRow?.position === 'bottom' && getHoveredRowDropLine(false)}
 			{renderDetailPanel && !row?.getIsGrouped?.() && (
 				<TableDetailPanel
 					parentRowRef={rowRef}

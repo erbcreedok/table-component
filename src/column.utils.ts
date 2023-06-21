@@ -4,6 +4,7 @@ import type { TableCellProps } from '@mui/material/TableCell'
 import type { Theme } from '@mui/material/styles'
 
 import { Table_AggregationFns } from './aggregationFns'
+import { GroupedCellBase } from './components/GroupedCellBase'
 import { Table_FilterFns } from './filterFns'
 import { Table_SortingFns } from './sortingFns'
 import { utilColumns } from './utilColumns'
@@ -92,6 +93,10 @@ export const prepareColumns = <TData extends Record<string, any> = {}>({
 					aggFns.map((fn) =>
 						aggregationFns[fn]?.(columnId, leafRows, childRows)
 					)
+			}
+
+			if (!columnDef.GroupedCell) {
+				columnDef.GroupedCell = GroupedCellBase
 			}
 
 			// assign filterFns

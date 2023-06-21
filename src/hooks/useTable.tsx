@@ -1,6 +1,4 @@
 import {
-	getCoreRowModel,
-	getExpandedRowModel,
 	getFacetedRowModel,
 	getFilteredRowModel,
 	getPaginationRowModel,
@@ -29,6 +27,7 @@ import {
 } from '../column.utils'
 import { TableComponentState } from '../context/TableContext'
 import {
+	GroupCollapsed,
 	HoveredRowState,
 	Table_Cell,
 	Table_Column,
@@ -41,6 +40,8 @@ import {
 	TableInstance,
 } from '../TableComponent'
 import { getUtilColumn, utilColumns } from '../utilColumns'
+import { getCoreRowModel } from '../utils/getCoreRowModel'
+import { getExpandedRowModel } from '../utils/getExpandedRowModel'
 import { getGroupedRowModel } from '../utils/getGroupedRowModel'
 import { getSortedRowModel } from '../utils/getSortedRowModel'
 
@@ -56,6 +57,7 @@ export const useTable = <TData extends Record<string, any> = {}>(
 	const tablePaperRef = useRef<HTMLDivElement>(null)
 	const topToolbarRef = useRef<HTMLDivElement>(null)
 	const bulkActionsRef = useRef<HTMLDivElement>(null)
+	const rowDragEnterTimeoutRef = useRef<NodeJS.Timeout>()
 
 	const initialState: Partial<Table_TableState<TData>> = useMemo(() => {
 		const initState = config.initialState ?? {}
@@ -145,6 +147,7 @@ export const useTable = <TData extends Record<string, any> = {}>(
 	const [highlightHeadCellId, setHighlightHeadCellId] = useState<string | null>(
 		null
 	)
+	const [groupCollapsed, setGroupCollapsed] = useState<GroupCollapsed>({})
 
 	useEffect(() => {
 		if (
@@ -343,6 +346,7 @@ export const useTable = <TData extends Record<string, any> = {}>(
 		editingRow,
 		globalFilterFn,
 		grouping,
+		groupCollapsed,
 		hoveredColumn,
 		hoveredRow,
 		openedDetailedPanels,
@@ -357,6 +361,15 @@ export const useTable = <TData extends Record<string, any> = {}>(
 		...config.state,
 	} as TableComponentState<TData>
 
+	const isGroupableRow = useCallback(
+		(row: Table_Row<TData>) => {
+			return config.getIsUnitTreeItem
+				? !config.getIsUnitTreeItem(row.original)
+				: true
+		},
+		[config.getIsUnitTreeItem]
+	)
+
 	// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 	// @ts-ignore
 	const table = {
@@ -365,7 +378,9 @@ export const useTable = <TData extends Record<string, any> = {}>(
 			getExpandedRowModel: getExpandedRowModel(),
 			getFacetedRowModel: getFacetedRowModel(),
 			getFilteredRowModel: getFilteredRowModel(),
-			getGroupedRowModel: getGroupedRowModel(),
+			getGroupedRowModel: getGroupedRowModel({
+				isGroupableRow,
+			}),
 			getPaginationRowModel: getPaginationRowModel(),
 			getSortedRowModel: getSortedRowModel(),
 			getFacetedUniqueValues: getFacetedUniqueValues(),
@@ -376,6 +391,7 @@ export const useTable = <TData extends Record<string, any> = {}>(
 			onColumnVisibilityChange: setColumnVisibility,
 			onGroupingChange: setMergedGrouping,
 			onSortingChange: setSorting,
+			onStateChange: config.onStateChange,
 			...config,
 			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 			// @ts-ignore
@@ -395,6 +411,7 @@ export const useTable = <TData extends Record<string, any> = {}>(
 			editInputRefs,
 			filterInputRefs,
 			searchInputRef,
+			rowDragEnterTimeoutRef,
 			tableContainerRef,
 			tableHeadCellRefs,
 			tablePaperRef,
@@ -406,6 +423,7 @@ export const useTable = <TData extends Record<string, any> = {}>(
 		setEditingCell: config.onEditingCellChange ?? setEditingCell,
 		setEditingRow: config.onEditingRowChange ?? setEditingRow,
 		setGlobalFilterFn: config.onGlobalFilterFnChange ?? setGlobalFilterFn,
+		setGroupCollapsed: config.onGroupCollapsedChange ?? setGroupCollapsed,
 		setHoveredColumn: config.onHoveredColumnChange ?? setHoveredColumn,
 		setHoveredRow: config.onHoveredRowChange ?? setHoveredRow,
 		setOpenedDetailedPanels,

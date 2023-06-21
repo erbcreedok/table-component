@@ -7,10 +7,15 @@ import {
 import MuiTableBody from '@mui/material/TableBody'
 import Typography from '@mui/material/Typography'
 
+import { HoveredRowLine } from '../components/HoveredRowLine'
 import { rankGlobalFuzzy } from '../sortingFns'
 import type { Table_Row, TableInstance } from '..'
 
-import { Memo_TableBodyRow, TableBodyRow } from './TableBodyRow'
+import {
+	Memo_TableBodyRow,
+	TableBodyRow,
+	TableBodyRowProps,
+} from './TableBodyRow'
 
 interface Props {
 	columnVirtualizer?: Virtualizer<HTMLDivElement, HTMLTableCellElement>
@@ -128,6 +133,77 @@ export const TableBody: FC<Props> = ({
 		? rowVirtualizer.getVirtualItems()
 		: undefined
 
+	const rowsOrVirtualRows = virtualRows ?? rows
+
+	const rowProps = useMemo(() => {
+		return rowsOrVirtualRows.map((rowOrVirtualRow, rowIndex) => {
+			const row = rowVirtualizer
+				? rows[rowOrVirtualRow.index]
+				: (rowOrVirtualRow as Table_Row)
+
+			return {
+				columnVirtualizer,
+				key: row.id,
+				measureElement: rowVirtualizer?.measureElement,
+				numRows: rows.length,
+				row,
+				rowIndex: rowVirtualizer ? rowOrVirtualRow.index : rowIndex,
+				domIndex: rowIndex,
+				table,
+				virtualColumns,
+				virtualPaddingLeft,
+				virtualPaddingRight,
+				virtualRow: rowVirtualizer
+					? (rowOrVirtualRow as VirtualItem)
+					: undefined,
+			} as TableBodyRowProps
+		})
+	}, [
+		rowsOrVirtualRows,
+		rowVirtualizer,
+		rows,
+		columnVirtualizer,
+		table,
+		virtualColumns,
+		virtualPaddingLeft,
+		virtualPaddingRight,
+	])
+
+	const rowsGroupingProps = useMemo(() => {
+		const groupRows = {}
+		const { grouping } = table.getState()
+		rowProps.forEach(({ row }) => {
+			grouping.forEach((columnId, columnIndex) => {
+				if (!row.groupIds) return
+				const groupId = row.groupIds[columnId]
+				if (!groupId) return
+				if (!groupRows[groupId])
+					groupRows[groupId] = {
+						rowId: row.id,
+						count: 1,
+						columnIndex,
+						columnId,
+					}
+				else {
+					groupRows[groupId].count += 1
+				}
+			})
+		})
+		const rowsGroupingProps = {}
+		Object.keys(groupRows).forEach((groupId) => {
+			const groupRow = groupRows[groupId]
+			if (!rowsGroupingProps[groupRow.rowId]) {
+				rowsGroupingProps[groupRow.rowId] = []
+			}
+			rowsGroupingProps[groupRow.rowId][groupRow.columnIndex] = {
+				...groupRow,
+				groupId,
+			}
+		})
+
+		return rowsGroupingProps
+	}, [rowProps, table])
+
 	return (
 		<MuiTableBody
 			{...tableBodyProps}
@@ -187,39 +263,26 @@ export const TableBody: FC<Props> = ({
 							</tr>
 						) : (
 							<>
-								{(virtualRows ?? rows).map((rowOrVirtualRow, rowIndex) => {
-									const row = rowVirtualizer
-										? rows[rowOrVirtualRow.index]
-										: (rowOrVirtualRow as Table_Row)
-									const props = {
-										columnVirtualizer,
-										key: row.id,
-										measureElement: rowVirtualizer?.measureElement,
-										numRows: rows.length,
-										row,
-										rowIndex: rowVirtualizer ? rowOrVirtualRow.index : rowIndex,
-										table,
-										virtualColumns,
-										virtualPaddingLeft,
-										virtualPaddingRight,
-										virtualRow: rowVirtualizer
-											? (rowOrVirtualRow as VirtualItem)
-											: undefined,
+								{rowProps.map((props) => {
+									const computedProps = {
+										...props,
+										groupingProps: rowsGroupingProps[props.row.id],
 									}
 
 									return memoMode === 'rows' ? (
 										// eslint-disable-next-line react/jsx-pascal-case
-										<Memo_TableBodyRow {...props} />
+										<Memo_TableBodyRow {...computedProps} />
 									) : CustomRow ? (
-										<CustomRow {...props} />
+										<CustomRow {...computedProps} />
 									) : (
-										<TableBodyRow {...props} />
+										<TableBodyRow {...computedProps} />
 									)
 								})}
 							</>
 						))}
 				</>
 			)}
+			<HoveredRowLine />
 		</MuiTableBody>
 	)
 }

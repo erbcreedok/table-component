@@ -23,6 +23,7 @@ import {
 	getExpandingTeamMembers,
 	getTeamMembers,
 	getUnitTreeItems,
+    isUnitTreeItem,
 } from '../utils/getTeamMembers'
 import { getTeamMembersColumns } from '../utils/getTeamMembersColumns'
 import { getDefaultRowActionMenuItems } from '../utils/rowActionMenuItems'
@@ -203,7 +204,7 @@ const TeamsTable: Story<TeamsTableConfigs> = (args) => {
 		<TableComponent
 			data={data}
 			columns={getPropsHandledColumns(columns, args)}
-			groupBorder={{ left: '12px solid white', top: '20px solid white', divider: '3px solid #E1E3EB' }}
+			groupBorder={{ left: '6px solid white', top: '6px solid white' }}
 			initialState={{
 				sorting: defaultSorting,
 				columnOrder: defaultColumnOrder,
@@ -254,15 +255,17 @@ const TeamsTable: Story<TeamsTableConfigs> = (args) => {
 	)
 }
 
-export const TeamsTableDefault: Story<TeamsTableExample> = (args) => (
-	<TeamsTable columns={columns} {...args} />
-)
+export const TeamsTableDefault: Story<TeamsTableExample> = (args) => {
+	return (
+		<TeamsTable columns={columns} {...args} />
+	)
+}
 
 export const TeamsTableSubtree: Story<TeamsTableExample> = (args) => (
 	<TeamsTable
 		columns={columns}
 		data={dataTree}
-		groupBorder={{ left: '12px solid white', top: '20px solid white', divider: '3px solid #E1E3EB' }}
+		groupBorder={{ left: '6px solid white', top: '6px solid white' }}
 		{...args}
 		enableExpanding
 	/>
@@ -277,12 +280,13 @@ export const HierarchyGroupTableExample: Story = (args) => {
 				columns={columns as unknown as Table_ColumnDef<UnitTreeItem>[]}
 				data={data}
 				CustomRow={UnitRow}
-				groupBorder={{ left: '12px solid white', top: '20px solid white', divider: '3px solid #E1E3EB' }}
+				groupBorder={{ left: '6px solid white', top: '6px solid white' }}
 				{...args}
 				enableExpanding
 				hideRowExpandColumn
 				hideTableHead
 				filterFromLeafRows
+				getIsUnitTreeItem={isUnitTreeItem}
 				{...getTablePresetProps('teamsDefaultTable')}
 				muiTableBodyRowDragHandleProps={({ table }) => ({
 					onDragEnd: () => {

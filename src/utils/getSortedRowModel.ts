@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { Row, Table } from '@tanstack/react-table'
 import { memo, RowData, RowModel, SortingFn } from '@tanstack/table-core'
 
@@ -6,13 +7,11 @@ export function getSortedRowModel<TData extends RowData>(): (
 ) => () => RowModel<TData> {
 	return (table) =>
 		memo(
-			() => [table.getState().sorting, table.getPreSortedRowModel()],
-			(sorting, rowModel) => {
-				if (!rowModel.rows.length || !sorting?.length) {
+			() => [table.getState().sorting, table.getFilteredRowModel()],
+			(sortingState, rowModel) => {
+				if (!rowModel.rows.length || !sortingState?.length) {
 					return rowModel
 				}
-
-				const sortingState = table.getState().sorting
 
 				const sortedFlatRows: Row<TData>[] = []
 

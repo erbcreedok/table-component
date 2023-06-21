@@ -67,6 +67,8 @@ type LiteralUnion<T extends U, U = string> = T | (U & Record<never, never>)
 
 export type TableData = Record<string, any>
 
+export type GroupCollapsed = Record<string, boolean | undefined>
+
 export interface Table_Localization {
 	actions: string
 	and: string
@@ -220,6 +222,7 @@ export type TableInstance<TData extends Record<string, any> = {}> = Omit<
 	| 'getPrePaginationRowModel'
 	| 'getRightLeafColumns'
 	| 'getRowModel'
+	| 'getRow'
 	| 'getSelectedRowModel'
 	| 'getState'
 	| 'options'
@@ -236,6 +239,7 @@ export type TableInstance<TData extends Record<string, any> = {}> = Omit<
 	getPreFilteredRowModel: () => Table_RowModel<TData>
 	getPrePaginationRowModel: () => Table_RowModel<TData>
 	getRightLeafColumns: () => Table_Column<TData>[]
+	getRow: (rowId: string) => Table_Row<TData>
 	getRowModel: () => Table_RowModel<TData>
 	getSelectedRowModel: () => Table_RowModel<TData>
 	getState: () => Table_TableState<TData>
@@ -256,6 +260,7 @@ export type TableInstance<TData extends Record<string, any> = {}> = Omit<
 		editInputRefs: MutableRefObject<Record<string, HTMLInputElement>>
 		filterInputRefs: MutableRefObject<Record<string, HTMLInputElement>>
 		searchInputRef: MutableRefObject<HTMLInputElement>
+		rowDragEnterTimeoutRef: MutableRefObject<NodeJS.Timeout>
 		tableContainerRef: MutableRefObject<HTMLDivElement>
 		tableHeadCellRefs: MutableRefObject<Record<string, HTMLTableCellElement>>
 		tablePaperRef: MutableRefObject<HTMLDivElement>
@@ -271,6 +276,7 @@ export type TableInstance<TData extends Record<string, any> = {}> = Omit<
 	setEditingCell: Dispatch<SetStateAction<Table_Cell<TData> | null>>
 	setEditingRow: Dispatch<SetStateAction<Table_Row<TData> | null>>
 	setGlobalFilterFn: Dispatch<SetStateAction<Table_FilterOption>>
+	setGroupCollapsed: Dispatch<SetStateAction<GroupCollapsed>>
 	setHoveredColumn: Dispatch<
 		SetStateAction<Table_Column<TData> | { id: string } | null>
 	>
@@ -321,6 +327,7 @@ export type Table_TableState<TData extends Record<string, any> = {}> =
 		showToolbarDropZone: boolean
 		searchId: string | null
 		highlightHeadCellId: string | null
+		groupCollapsed: GroupCollapsed
 	}
 
 export type FilterOption = {
@@ -682,6 +689,10 @@ export type Table_Row<TData extends Record<string, any> = {}> = Omit<
 	getVisibleCells: () => Table_Cell<TData>[]
 	subRows?: Table_Row<TData>[]
 	_valuesCache: Record<LiteralUnion<string & DeepKeys<TData>>, any>
+	groupIds?: Record<string, string>
+	groupRows?: Record<string, Table_Row<TData>>
+	collapsedColumnIndex?: number
+	getParent(): Table_Row<TData> | undefined
 }
 
 export type Table_Cell<TData extends Record<string, any> = {}> = Omit<
@@ -738,6 +749,7 @@ export enum ExpandByClick {
 export type HoveredRowState<TData extends TableData> = {
 	row: Table_Row<TData>
 	position: 'bottom' | 'top'
+	rowRef: MutableRefObject<HTMLTableRowElement | null>
 } | null
 
 /**
@@ -759,7 +771,6 @@ export type TableComponentProps<TData extends Record<string, any> = {}> = Omit<
 	| 'getRowId'
 	| 'globalFilterFn'
 	| 'initialState'
-	| 'onStateChange'
 	| 'state'
 > & {
 	columnFilterModeOptions?: Array<
@@ -857,10 +868,12 @@ export type TableComponentProps<TData extends Record<string, any> = {}> = Omit<
 		index: number,
 		parentRow: Table_Row<TData>
 	) => string
+	getIsUnitTreeItem?: (row: TData) => boolean
 	globalFilterFn?: Table_FilterOption
 	globalFilterModeOptions?: Table_FilterOption[] | null
 	groupsSorting?: any
-	groupBorder?: string | { left: string; top: string; divider: string }
+	groupBorder?: string | { left: string; top: string }
+	groupDivider?: string
 	hideRowExpandColumn?: boolean
 	hideRowSelectionColumn?: boolean
 	hideTableHead?: boolean
@@ -1147,6 +1160,7 @@ export type TableComponentProps<TData extends Record<string, any> = {}> = Omit<
 	onGlobalFilterFnChange?: OnChangeFn<Table_FilterOption>
 	onHoveredColumnChange?: OnChangeFn<Table_Column<TData> | null>
 	onHoveredRowChange?: OnChangeFn<HoveredRowState<TData> | null>
+	onGroupCollapsedChange?: OnChangeFn<GroupCollapsed>
 	onIsFullScreenChange?: OnChangeFn<boolean>
 	onShowAlertBannerChange?: OnChangeFn<boolean>
 	onShowFiltersChange?: OnChangeFn<boolean>

@@ -1,5 +1,7 @@
+import IconButton from '@mui/material/IconButton'
 import React, {
 	FC,
+	MouseEventHandler,
 	useCallback,
 	useEffect,
 	useMemo,
@@ -15,6 +17,7 @@ import { useResizeDetector } from 'react-resize-detector'
 import { HeaderBase, utilColumns } from '..'
 import { Tooltip } from '../components/Tooltip'
 import { useHoverEffects } from '../hooks/useHoverEffects'
+import { getColumnGroupIds } from '../utils/getColumnGroupIds'
 import { GroupBorders } from '../utils/getGroupBorders'
 import {
 	getColumnId,
@@ -61,16 +64,25 @@ export const TableHeadCell: FC<Props> = ({
 			muiTableHeadCellProps,
 			uppercaseHeader,
 			enableRowNumbers,
+			groupDivider,
+			icons: { ExpandIcon, CollapseIcon },
 		},
 		refs: { tableHeadCellRefs },
 		setHoveredColumn,
+		setGroupCollapsed,
 	} = table
 	const localRef = useRef<HTMLTableCellElement>(null)
-	const { draggingColumn, grouping, hoveredColumn, highlightHeadCellId } =
-		getState()
+	const {
+		draggingColumn,
+		grouping,
+		groupCollapsed,
+		hoveredColumn,
+		highlightHeadCellId,
+	} = getState()
 	const { column } = header
 	const { columnDef } = column
 	const { columnDefType } = columnDef
+	const columnId = getColumnId(columnDef)
 	const { hovered, hoverProps } = useHoverEffects()
 	const [grabHandleVisible, setGrabHandleVisible] = useState(false)
 	const isUtilColumn = utilColumns.column === getColumnId(columnDef)
@@ -141,7 +153,8 @@ export const TableHeadCell: FC<Props> = ({
 	const isIconsVisible =
 		columnDef.headerEndAdornment ||
 		column.getIsSorted() ||
-		!!column.getFilterValue()
+		!!column.getFilterValue() ||
+		column.getIsGrouped()
 	const [isTooShort, setIsTooShort] = useState(false)
 	const onResize = useCallback(
 		(width) => {
@@ -173,6 +186,31 @@ export const TableHeadCell: FC<Props> = ({
 			tableHeadCellRefs.current[column.id] = localRef.current
 		}
 	}, [column.id, tableHeadCellRefs])
+
+	const isLastGroupedColumn = grouping[grouping.length - 1] === columnId
+
+	const rows = table.getGroupedRowModel().flatRows as Table_Row[]
+	const collapseIds = useMemo(
+		() => getColumnGroupIds(rows, columnId),
+		[columnId, rows, groupCollapsed]
+	)
+	const expanded = useMemo(() => {
+		return collapseIds.some((id) => !groupCollapsed[id])
+	}, [collapseIds, groupCollapsed])
+	const toggleGroupCollapsed: MouseEventHandler = (event) => {
+		event.stopPropagation()
+		const values = collapseIds.reduce(
+			(acc, id) => ({
+				...acc,
+				[id]: expanded,
+			}),
+			{}
+		)
+		setGroupCollapsed((prev) => ({
+			...prev,
+			...values,
+		}))
+	}
 
 	return (
 		<TableHeadCellActionsButton
@@ -240,6 +278,18 @@ export const TableHeadCell: FC<Props> = ({
 							}),
 						})}
 					>
+						{isLastGroupedColumn && (
+							<Box
+								sx={{
+									position: 'absolute',
+									top: 0,
+									right: 0,
+									bottom: 0,
+									width: '1px',
+									borderRight: groupDivider,
+								}}
+							/>
+						)}
 						{header.isPlaceholder ? null : (
 							<Box
 								className="Mui-TableHeadCell-Content"
@@ -281,12 +331,21 @@ export const TableHeadCell: FC<Props> = ({
 												: undefined,
 									}}
 								>
+									{column.getIsGrouped() && (
+										<IconButton
+											sx={{ p: 0, mr: `min(0.5rem, 10%)` }}
+											onClick={toggleGroupCollapsed}
+										>
+											{expanded ? <CollapseIcon /> : <ExpandIcon />}
+										</IconButton>
+									)}
 									<Box
 										ref={headerContentRef}
 										className="Mui-TableHeadCell-Content-Wrapper"
 										sx={{
 											overflow: columnDefType === 'data' ? 'hidden' : undefined,
 											flexGrow: 1,
+											order: isTooShort && column.getIsGrouped() ? -1 : 0,
 										}}
 									>
 										{!isTooShort ? (

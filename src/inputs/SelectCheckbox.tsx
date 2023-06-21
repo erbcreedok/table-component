@@ -8,13 +8,13 @@ import type { Theme } from '@mui/material/styles'
 
 import type { Table_Row, TableData, TableInstance } from '..'
 
-interface Props<TData extends TableData> {
+type Props<TData extends TableData> = {
 	row?: Table_Row | Table_Row<TData>
 	selectAll?: boolean
 	table: TableInstance | TableInstance<TData>
 	parentRow?: Table_Row | Table_Row<TData>
 	label?: ReactNode | ((props: CheckboxProps) => ReactNode)
-}
+} & CheckboxProps
 
 export const SelectCheckbox = <TData extends TableData>({
 	row,
@@ -22,6 +22,7 @@ export const SelectCheckbox = <TData extends TableData>({
 	table,
 	parentRow,
 	label,
+	...rest
 }: Props<TData>) => {
 	const {
 		getState,
@@ -36,13 +37,18 @@ export const SelectCheckbox = <TData extends TableData>({
 	} = table
 	const { isLoading } = getState()
 
-	const checkboxProps = !row
+	const muiCheckboxProps = !row
 		? muiSelectAllCheckboxProps instanceof Function
 			? muiSelectAllCheckboxProps({ table } as any)
 			: muiSelectAllCheckboxProps
 		: muiSelectCheckboxProps instanceof Function
 		? muiSelectCheckboxProps({ row, table } as any)
 		: muiSelectCheckboxProps
+
+	const checkboxProps = {
+		...muiCheckboxProps,
+		...rest,
+	}
 
 	const commonProps: CheckboxProps = {
 		disableRipple: true,
@@ -64,7 +70,10 @@ export const SelectCheckbox = <TData extends TableData>({
 				? table.getIsAllPageRowsSelected()
 				: table.getIsAllRowsSelected()
 			: row?.getIsSelected(),
-		disabled: (row && !row.getCanSelect()) || isLoading,
+		disabled:
+			parentRow && parentRow.subRows
+				? [...parentRow.subRows].every((row) => !row.getCanSelect())
+				: (row && !row.getCanSelect()) || isLoading,
 		inputProps: {
 			'aria-label': selectAll
 				? localization.toggleSelectAll

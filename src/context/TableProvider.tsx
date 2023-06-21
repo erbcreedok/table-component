@@ -8,6 +8,7 @@ import {
 	Table_DefaultColumn,
 	Table_DefaultDisplayColumn,
 } from '../column.utils'
+import { Colors } from '../components/styles'
 import { Table_FilterFns } from '../filterFns'
 import { useTable } from '../hooks/useTable'
 import { Default_Icons } from '../icons'
@@ -61,6 +62,7 @@ export const TableProvider = <TData extends Record<string, any> = {}>({
 	enableToolbarInternalActions = true,
 	enableTopToolbar = true,
 	filterFns,
+	groupDivider = `3px solid ${Colors.Gray}`,
 	icons,
 	innerTable = false,
 	innerTableTitle,
@@ -194,6 +196,7 @@ export const TableProvider = <TData extends Record<string, any> = {}>({
 		enableToolbarInternalActions,
 		enableTopToolbar,
 		filterFns: _filterFns,
+		groupDivider,
 		icons: _icons,
 		innerTable,
 		innerTableTitle,

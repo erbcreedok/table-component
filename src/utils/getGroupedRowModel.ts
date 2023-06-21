@@ -1,12 +1,34 @@
+/* eslint-disable consistent-return,no-prototype-builtins,default-param-last */
 import { Row, Table } from '@tanstack/react-table'
-import { memo, RowData, RowModel, SortingFn } from '@tanstack/table-core'
+import { createRow, memo, RowData, RowModel } from '@tanstack/table-core'
 
-export function getGroupedRowModel<TData extends RowData>(): (
-	table: Table<TData>
-) => () => RowModel<TData> {
+import { Table_Row, TableData } from '../TableComponent'
+
+function groupBy<TData extends RowData>(rows: Row<TData>[], columnId: string) {
+	const groupMap = new Map<any, Row<TData>[]>()
+
+	return rows.reduce((map, row) => {
+		const resKey = `${row.getValue(columnId)}`
+		const previous = map.get(resKey)
+		if (!previous) {
+			map.set(resKey, [row])
+		} else {
+			previous.push(row)
+		}
+
+		return map
+	}, groupMap)
+}
+
+export function getGroupedRowModel<
+	TData extends RowData,
+	TDData extends TableData
+>(opt?: {
+	isGroupableRow?: (row: Table_Row<TDData>) => boolean
+}): (table: Table<TData>) => () => RowModel<TData> {
 	return (table) =>
 		memo(
-			() => [table.getState().grouping, table.getPreGroupedRowModel()],
+			() => [table.getState().grouping, table.getSortedRowModel()],
 			(grouping, rowModel) => {
 				if (!rowModel.rows.length || !grouping.length) {
 					return rowModel
@@ -18,89 +40,117 @@ export function getGroupedRowModel<TData extends RowData>(): (
 				)
 
 				const groupedFlatRows: Row<TData>[] = []
-
-				const columnInfoById: Record<
-					string,
-					{
-						sortUndefined?: false | -1 | 1
-						invertSorting?: boolean
-						sortingFn: SortingFn<TData>
-					}
-				> = {}
-
-				existingGrouping.forEach((groupEntry) => {
-					const column = table.getColumn(groupEntry)
-
-					columnInfoById[groupEntry] = {
-						sortUndefined: column.columnDef.sortUndefined,
-						invertSorting: column.columnDef.invertSorting,
-						sortingFn: column.getSortingFn(),
-					}
-				})
+				const groupedRowsById: Record<string, Row<TData>> = {}
 
 				// Recursively group the data
 				const groupUpRecursively = (
-					rows: Row<TData>[]
-					// eslint-disable-next-line default-param-last
+					rows: Row<TData>[],
+					depth = 0,
+					parentId?: string
 				) => {
-					const groupedData = [...rows]
-
-					groupedData.sort((rowA, rowB) => {
-						for (let i = 0; i < existingGrouping.length; i += 1) {
-							const groupEntry = existingGrouping[i]
-							const columnInfo = columnInfoById[groupEntry]
-							const isDesc = false
-							if (columnInfo.sortUndefined) {
-								const aValue = rowA.getValue(groupEntry)
-								const bValue = rowB.getValue(groupEntry)
-
-								const aUndefined = typeof aValue === 'undefined'
-								const bUndefined = typeof bValue === 'undefined'
-
-								if (aUndefined || bUndefined) {
-									return aUndefined && bUndefined
-										? 0
-										: aUndefined
-										? columnInfo.sortUndefined
-										: -columnInfo.sortUndefined
-								}
+					let groupableRows: Row<TData>[] = []
+					let notGroupableRows: Row<TData>[] = []
+					if (opt?.isGroupableRow) {
+						rows.forEach((row) => {
+							if (!opt.isGroupableRow?.(row as any)) {
+								notGroupableRows.push(row)
+							} else {
+								groupableRows.push(row)
 							}
-
-							let sortInt = columnInfo.sortingFn(rowA, rowB, groupEntry)
-
-							if (sortInt !== 0) {
-								if (isDesc) {
-									sortInt *= -1
-								}
-
-								if (columnInfo.invertSorting) {
-									sortInt *= -1
-								}
-
-								return sortInt
+						})
+					} else {
+						groupableRows = rows
+					}
+					notGroupableRows = notGroupableRows.map((row) => {
+						if (row.subRows && row.getIsExpanded() && row.subRows.length > 0) {
+							return {
+								...row,
+								subRows: groupUpRecursively(row.subRows, depth, row.id),
 							}
 						}
 
-						return rowA.index - rowB.index
+						return row
 					})
+					// Grouping depth has been met
+					// Stop grouping and simply rewrite thd depth and row relationships
+					if (depth >= existingGrouping.length) {
+						return groupableRows.map((row) => {
+							row.depth = depth
 
-					// If there are sub-rows, sort them
-					groupedData.forEach((row) => {
-						groupedFlatRows.push(row)
-						if (row.subRows?.length) {
-							row.subRows = groupUpRecursively(row.subRows)
+							groupedFlatRows.push(row)
+							groupedRowsById[row.id] = row
+
+							if (row.subRows) {
+								row.subRows = groupUpRecursively(row.subRows, depth + 1)
+							}
+
+							return row
+						})
+					}
+
+					const columnId = existingGrouping[depth]
+
+					// Group the rows together for this level
+					const rowGroupsMap = groupBy(
+						groupableRows.flatMap((row) => [
+							{ ...row, subRows: [] },
+							...(row.subRows ?? []),
+						]),
+						columnId
+					)
+
+					// Peform aggregations for each group
+					const aggregatedGroupedRows = Array.from(rowGroupsMap.entries()).map(
+						([groupingValue, groupedRows], index) => {
+							let id = `${columnId}:${groupingValue}`
+							id = parentId ? `${parentId}>${id}` : id
+
+							groupedRows.forEach((row) => {
+								if (row.subRows) {
+									row.subRows = groupUpRecursively(row.subRows, depth, row.id)
+								}
+							})
+
+							const localRows = groupUpRecursively(groupedRows, depth + 1, id)
+
+							const groupRow = createRow(
+								table,
+								id,
+								groupedRows[0].original,
+								index,
+								depth,
+								localRows
+							)
+							localRows.forEach((row) =>
+								Object.assign(row, {
+									groupIds: {
+										...row.groupIds,
+										[columnId]: id,
+									},
+									groupRows: {
+										...row.groupRows,
+										[id]: groupRow,
+									},
+								})
+							)
+
+							return localRows
 						}
-					})
+					)
 
-					return groupedData
+					return [...aggregatedGroupedRows.flat(), ...notGroupableRows]
 				}
 
-				const groupedRows = groupUpRecursively(rowModel.rows)
+				const groupedRows = groupUpRecursively(rowModel.rows, 0, '')
+
+				groupedRows.forEach((subRow) => {
+					groupedRowsById[subRow.id] = subRow
+				})
 
 				return {
-					rows: groupedRows,
+					rows: groupedRows.flat(),
 					flatRows: groupedFlatRows,
-					rowsById: rowModel.rowsById,
+					rowsById: groupedRowsById,
 				}
 			},
 			{
