@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { Meta, Story } from '@storybook/react'
-import TableComponent, { TableComponentProps, Sidebar } from '../../'
+import TableComponent, { TableComponentProps, Sidebar, ExpandByClick } from '../../'
 import { Typography } from '@mui/material'
 import { OpenIcon } from '../../icons/OpenIcon'
 import {
@@ -154,6 +154,7 @@ export const PeopleTable: Story<TableComponentProps> = () => {
 				// enableSummaryRow
 				detailedRowBackgroundColor={'#fafafc'}
 				enableRowSelection
+				expandByClick={ExpandByClick.CellAction}
 				// enableRowVirtualization
 				cellStyleRules={{
 					performance: {

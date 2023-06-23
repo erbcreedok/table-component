@@ -9,6 +9,7 @@ import React, {
 	HTMLProps,
 	memo,
 	MouseEvent,
+	MouseEventHandler,
 	ReactElement,
 	RefObject,
 	useEffect,
@@ -16,7 +17,12 @@ import React, {
 	useState,
 } from 'react'
 
-import type { Table_Cell, Table_ColumnDef, TableInstance } from '..'
+import {
+	ExpandByClick,
+	type Table_Cell,
+	type Table_ColumnDef,
+	type TableInstance,
+} from '..'
 import { CopyButton } from '../buttons/CopyButton'
 import { getCommonCellStyles } from '../column.utils'
 import { ConditionalBox } from '../components/ConditionalBox'
@@ -72,6 +78,7 @@ export const TableBodyCell: FC<Props> = ({
 			rowNumberMode,
 			enableDetailedPanel,
 			cellStyleRules,
+			expandByClick,
 			summaryRowCell,
 			icons: { ExpandMoreIcon },
 		},
@@ -191,7 +198,9 @@ export const TableBodyCell: FC<Props> = ({
 		}
 	}
 
-	const handleExpand = (event: MouseEvent<HTMLButtonElement>) => {
+	const handleExpand = (
+		event: MouseEvent<HTMLButtonElement> | MouseEvent<HTMLTableCellElement>
+	) => {
 		if (cellAction === 'expand') {
 			const rowId = row.id
 			const openedDetailedPanels = table.getState().openedDetailedPanels
@@ -199,7 +208,9 @@ export const TableBodyCell: FC<Props> = ({
 			const isCurrentCellClicked =
 				openedDetailedPanels?.[rowId]?.cell.id === cell.id
 
-			if (isClicked && isCurrentCellClicked) {
+			const isOpenedPanelClicked = isClicked && isCurrentCellClicked
+
+			if (isOpenedPanelClicked) {
 				const filteredClickedCells = Object.keys(openedDetailedPanels).reduce(
 					(acc, key) => {
 						if (key !== rowId) {
@@ -214,11 +225,19 @@ export const TableBodyCell: FC<Props> = ({
 				table.setOpenedDetailedPanels(filteredClickedCells)
 			} else {
 				table.setOpenedDetailedPanels({
-					...openedDetailedPanels,
 					[rowId]: {
 						cell,
 						row,
 					},
+				})
+
+				Object.values(openedDetailedPanels || {}).forEach((openedPanel) => {
+					if (
+						openedPanel?.cell.id !== cell.id &&
+						openedPanel?.row.id !== rowId
+					) {
+						openedPanel.row.toggleExpanded()
+					}
 				})
 			}
 
@@ -232,6 +251,26 @@ export const TableBodyCell: FC<Props> = ({
 
 		event.stopPropagation()
 		row.toggleExpanded()
+	}
+
+	const handleExpandByClickOnCell = (
+		event: MouseEvent<HTMLTableCellElement>
+	) => {
+		if (expandByClick !== ExpandByClick.Cell) {
+			return
+		}
+
+		handleExpand(event)
+	}
+
+	const handleExpandByClickOnCellActionButton = (
+		event: MouseEvent<HTMLButtonElement>
+	) => {
+		if (expandByClick !== ExpandByClick.CellAction) {
+			return
+		}
+
+		handleExpand(event)
 	}
 
 	const isSelectCell = column.id === 'mrt-row-select'
@@ -333,6 +372,7 @@ export const TableBodyCell: FC<Props> = ({
 			{...tableCellProps}
 			onDragEnter={handleDragEnter}
 			onDoubleClick={handleDoubleClick}
+			onClick={handleExpandByClickOnCell}
 			sx={(theme) => getTableCellStyles(theme)}
 		>
 			<ConditionalBox
@@ -377,7 +417,7 @@ export const TableBodyCell: FC<Props> = ({
 							backgroundColor: '#F5F6FA',
 							visibility: isDettailedPanelExpanded ? 'visible' : 'hidden',
 						}}
-						onClick={handleExpand}
+						onClick={handleExpandByClickOnCellActionButton}
 					>
 						<>
 							{cellActionIcon || (

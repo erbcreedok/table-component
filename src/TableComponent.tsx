@@ -728,6 +728,11 @@ export type Table_DisplayColumnIds =
 export type Table_Actions<TData extends Record<string, any> = {}> =
 	BulkActionButtonProps<TData>
 
+export enum ExpandByClick {
+	Cell = 'Cell',
+	CellAction = 'CellAction',
+}
+
 /**
  * `columns` and `data` props are the only required props, but there are over 150 other optional props.
  *
@@ -800,6 +805,7 @@ export type TableComponentProps<TData extends Record<string, any> = {}> = Omit<
 	enableEditing?: boolean
 	enableExpandAll?: boolean
 	enableDetailedPanel?: boolean
+	expandByClick?: ExpandByClick
 	tablePlugSlot?: React.ReactNode
 	isTablePlugSlotActive?: boolean
 	cellStyleRules?: Record<
