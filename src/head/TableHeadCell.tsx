@@ -13,11 +13,15 @@ import { useTheme } from '@mui/material/styles'
 import type { Theme } from '@mui/material/styles'
 import { useResizeDetector } from 'react-resize-detector'
 
-import { HeaderBase } from '..'
+import { HeaderBase, utilColumns } from '..'
 import { Tooltip } from '../components/Tooltip'
 import { useHoverEffects } from '../hooks/useHoverEffects'
 import { GroupBorders } from '../utils/getGroupBorders'
-import { getCommonCellStyles, Table_DefaultColumn } from '../column.utils'
+import {
+	getColumnId,
+	getCommonCellStyles,
+	Table_DefaultColumn,
+} from '../column.utils'
 import type { Table_Header, Table_Row, TableInstance } from '..'
 import { Colors } from '../components/styles'
 
@@ -68,6 +72,9 @@ export const TableHeadCell: FC<Props> = ({
 	const { columnDefType } = columnDef
 	const { hovered, hoverProps } = useHoverEffects()
 	const [grabHandleVisible, setGrabHandleVisible] = useState(false)
+	const isUtilityColumn = !Object.keys(utilColumns).includes(
+		getColumnId(columnDef)
+	)
 
 	const mTableHeadCellProps =
 		muiTableHeadCellProps instanceof Function
@@ -138,11 +145,17 @@ export const TableHeadCell: FC<Props> = ({
 		column.getIsSorted() ||
 		!!column.getFilterValue()
 	const [isTooShort, setIsTooShort] = useState(false)
-	const onResize = useCallback((width) => {
-		setIsTooShort(width < 30)
-	}, [])
+	const onResize = useCallback(
+		(width) => {
+			if (isUtilityColumn) return
+
+			setIsTooShort(width < 30)
+		},
+		[isUtilityColumn]
+	)
 	const { ref: headerContentRef } = useResizeDetector({
 		handleHeight: false,
+		handleWidth: !isUtilityColumn,
 		onResize,
 	})
 	const headerText = <HeaderBase column={column} />

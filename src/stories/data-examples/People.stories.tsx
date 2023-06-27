@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { Meta, Story } from '@storybook/react'
-import TableComponent, { TableComponentProps, Sidebar, ExpandByClick } from '../../'
+import TableComponent, { TableComponentProps, Sidebar, ExpandByClick, utilColumns } from '../../'
 import { Typography } from '@mui/material'
 import { OpenIcon } from '../../icons/OpenIcon'
 import {
@@ -84,7 +84,7 @@ const SummaryRowExampleCellValue = (props) => {
 		return Math.round(100 - (100 * partialCount) / rows.length)
 	}
 
-	if (column.id === 'mrt-row-select') {
+	if (column.id === utilColumns.select) {
 		return <MuiTableCell sx={{ ...defaultStyles }}></MuiTableCell>
 	}
 

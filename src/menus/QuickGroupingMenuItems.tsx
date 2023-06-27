@@ -3,6 +3,8 @@ import ListItemIcon from '@mui/material/ListItemIcon'
 import MenuItem from '@mui/material/MenuItem'
 import React from 'react'
 
+import { utilColumns } from '../'
+
 import { commonListItemStyles, commonMenuItemStyles } from './constants'
 
 export const QuickGroupingMenuItems = ({ column, table, setVisible }) => {
@@ -17,7 +19,7 @@ export const QuickGroupingMenuItems = ({ column, table, setVisible }) => {
 
 	const handleGroupByColumn = () => {
 		column.toggleGrouping()
-		setColumnOrder((old: any) => ['mrt-row-expand', ...old])
+		setColumnOrder((old: any) => [utilColumns.expand, ...old])
 		setVisible(false)
 	}
 

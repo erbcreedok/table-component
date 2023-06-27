@@ -1,3 +1,4 @@
+import Box from '@mui/material/Box'
 import IconButton from '@mui/material/IconButton'
 import Skeleton from '@mui/material/Skeleton'
 import { darken, lighten, useTheme } from '@mui/material/styles'
@@ -23,10 +24,10 @@ import {
 	type TableInstance,
 } from '..'
 import { CopyButton } from '../buttons/CopyButton'
-import { getCommonCellStyles } from '../column.utils'
-import { ConditionalBox } from '../components/ConditionalBox'
+import { getCommonCellStyles, Table_DefaultColumn } from '../column.utils'
 import { Colors } from '../components/styles'
 import { EditCellTextField } from '../inputs/EditCellTextField'
+import { utilColumns } from '../utilColumns'
 import { GroupBorders } from '../utils/getGroupBorders'
 
 import { TableBodyCellValue } from './TableBodyCellValue'
@@ -277,7 +278,7 @@ export const TableBodyCell: FC<Props> = ({
 		handleExpand(event)
 	}
 
-	const isSelectCell = column.id === 'mrt-row-select'
+	const isSelectCell = column.id === utilColumns.select
 	const isAnyRowSelected = table.getSelectedRowModel().flatRows.length > 0
 	const hideCheckBoxSpan = isSelectCell && !isAnyRowSelected
 
@@ -295,9 +296,9 @@ export const TableBodyCell: FC<Props> = ({
 		overflow: 'hidden',
 		verticalAlign: 'middle',
 		position: 'relative',
-		p: columnDefType === 'display' || isGroupedCell ? '0.5rem 0.75rem' : '0rem',
-		px: columnDefType === 'display' ? '0.5rem 0.75rem' : '0.75rem',
-		pl: column.id === 'mrt-row-expand' ? `${row.depth + 0.75}rem` : undefined,
+		p: columnDefType === 'display' || isGroupedCell ? '0.5rem 0.75rem' : '0',
+		px: 0,
+		pl: column.id === utilColumns.expand ? `${row.depth + 0.75}rem` : undefined,
 		textOverflow: columnDefType !== 'display' ? 'ellipsis' : undefined,
 		whiteSpace: 'normal',
 		zIndex: draggingColumn?.id === column.id ? 2 : column.getIsPinned() ? 1 : 0,
@@ -379,9 +380,13 @@ export const TableBodyCell: FC<Props> = ({
 			onClick={handleExpandByClickOnCell}
 			sx={(theme) => getTableCellStyles(theme)}
 		>
-			<ConditionalBox
-				condition={!!columnDef.cellAction}
-				sx={{ display: 'flex', alignItems: 'center', marginRight: '5px' }}
+			<Box
+				sx={{
+					display: 'flex',
+					alignItems: 'center',
+					mx: 'auto',
+					width: `max(calc(100% - 1.4rem), ${Table_DefaultColumn.minSize}px)`,
+				}}
 			>
 				{isGroupedCell ? (
 					<TableBodyCellValue cell={cell} table={table} />
@@ -394,12 +399,13 @@ export const TableBodyCell: FC<Props> = ({
 					/>
 				) : enableRowNumbers &&
 				  rowNumberMode === 'static' &&
-				  column.id === 'mrt-row-numbers' ? (
+				  column.id === utilColumns.numbers ? (
 					rowIndex + 1
-				) : column.id === 'mrt-row-drag' ? (
+				) : column.id === utilColumns.drag ? (
 					<TableBodyRowGrabHandle cell={cell} rowRef={rowRef} table={table} />
 				) : columnDefType === 'display' &&
-				  (column.id === 'mrt-row-select' || column.id === 'mrt-row-expand') ? (
+				  (column.id === utilColumns.select ||
+						column.id === utilColumns.expand) ? (
 					columnDef.Cell?.({ cell, column, row, table })
 				) : isEditing ? (
 					<EditCellTextField cell={cell} table={table} />
@@ -453,7 +459,7 @@ export const TableBodyCell: FC<Props> = ({
 						{cellActionIcon}
 					</IconButton>
 				) : null}
-			</ConditionalBox>
+			</Box>
 		</MuiTableCell>
 	)
 }

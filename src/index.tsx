@@ -33,6 +33,7 @@ import { SelectCheckbox } from './inputs/SelectCheckbox'
 
 export default TableComponent
 export * from './TableComponent'
+export * from './utilColumns'
 export type { Table_Icons }
 
 export {

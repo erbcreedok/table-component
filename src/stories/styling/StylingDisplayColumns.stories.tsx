@@ -2,8 +2,8 @@ import React from 'react';
 import { Meta, Story } from '@storybook/react';
 import TableComponent, {
   TableComponentProps,
-  Table_ColumnDef,
-} from '../../';
+  Table_ColumnDef, utilColumns,
+} from '../../'
 import { faker } from '@faker-js/faker';
 import { Button } from '@mui/material';
 
@@ -43,7 +43,7 @@ export const CustomizeDisplayColumns: Story<TableComponentProps> = () => (
     columns={columns}
     data={data}
     displayColumnDefOptions={{
-      'mrt-row-actions': {
+      [utilColumns.actions]: {
         muiTableHeadCellProps: {
           sx: {
             fontSize: '1.25rem',
@@ -52,12 +52,12 @@ export const CustomizeDisplayColumns: Story<TableComponentProps> = () => (
         },
         size: 160,
       },
-      'mrt-row-expand': {
+      [utilColumns.expand]: {
         size: 70,
         enableColumnActions: true,
         enableResizing: true,
       },
-      'mrt-row-numbers': {
+      [utilColumns.numbers]: {
         enableColumnOrdering: true,
         muiTableBodyCellProps: {
           sx: {

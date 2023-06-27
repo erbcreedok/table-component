@@ -41,8 +41,7 @@ const ClickableCell = ({ row, accessorKey }) => {
 			center="y"
 			justifyContent="space-between"
 			style={{
-				minWidth: '100%',
-				margin: '0 -5px',
+				flexGrow: 1,
 			}}
 		>
 			{cellContent}

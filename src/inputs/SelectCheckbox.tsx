@@ -45,6 +45,7 @@ export const SelectCheckbox: FC<Props> = ({
 		: muiSelectCheckboxProps
 
 	const commonProps: CheckboxProps = {
+		disableRipple: true,
 		indeterminateIcon: <CheckboxIndeterminateIcon />,
 		checkedIcon: <CheckboxCheckedIcon />,
 		icon: <CheckboxIcon />,

@@ -8,7 +8,7 @@ import { getColumnId } from '../../column.utils'
 import { LocationRight } from '../../icons/LocationRight'
 import { LockedIcon } from '../../icons/LockedIcon'
 import { TrashIcon } from '../../icons/TrashIcon'
-import TableComponent, { Table_ColumnDef, Table_Row, TableComponentProps } from '../../index'
+import TableComponent, { Table_ColumnDef, Table_Row, TableComponentProps, utilColumns } from '../../index'
 import { TeamMember, UnitTreeItem } from '../types/TeamMember'
 import {
 	getExpandingTeamMembers,
@@ -122,7 +122,7 @@ const SummaryRowExampleCellValue = (props) => {
 		return Math.round(100 - ((100 * partialCount) / rows.length))
 	}
 
-    if (column.id === 'mrt-row-select') {
+    if (column.id === 'table-row-select') {
         return <MuiTableCell sx={{ ...defaultStyles }}></MuiTableCell>
     }
 
@@ -324,6 +324,10 @@ const meta: Meta = {
 			defaultValue: false,
 			description: 'Row actions column will not be visible, if column order state is provided',
 		},
+		enableRowNumbers: {
+			control: 'boolean',
+			defaultValue: false,
+		},
 		enablePinning: {
 			control: 'boolean',
 			defaultValue: false,
@@ -373,7 +377,7 @@ const meta: Meta = {
 		},
 		defaultColumnOrder: {
 			control: { type: 'object' },
-			defaultValue: ['mrt-row-expand', ...columns.map(getColumnId)],
+			defaultValue: [utilColumns.expand, ...columns.map(getColumnId)],
 			description: '***THIS IS NOT A PROP***\n' +
 				'Set Default column order for Table. Rerender Table to apply value',
 		},

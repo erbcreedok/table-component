@@ -40,6 +40,7 @@ import {
 	TableComponentProps,
 	TableInstance,
 } from '../TableComponent'
+import { utilColumns } from '../utilColumns'
 import { getGroupedRowModel } from '../utils/getGroupedRowModel'
 import { getSortedRowModel } from '../utils/getSortedRowModel'
 
@@ -146,23 +147,36 @@ export const useTable = <TData extends Record<string, any> = {}>(
 	)
 
 	useEffect(() => {
-		if (config.enableRowSelection && !columnOrder.includes('mrt-row-select')) {
-			setColumnOrder(['mrt-row-select', ...columnOrder])
+		if (config.enableRowNumbers && !columnOrder.includes(utilColumns.numbers)) {
+			setColumnOrder([utilColumns.numbers, ...columnOrder])
+		}
+	}, [columnOrder, config.enableRowNumbers])
+	useEffect(() => {
+		if (
+			config.enableRowSelection &&
+			!columnOrder.includes(utilColumns.select)
+		) {
+			setColumnOrder([utilColumns.select, ...columnOrder])
 		}
 	}, [columnOrder, config.enableRowSelection])
+	useEffect(() => {
+		if (config.enableRowDragging && !columnOrder.includes(utilColumns.drag)) {
+			setColumnOrder([utilColumns.drag, ...columnOrder])
+		}
+	}, [columnOrder, config.enableRowDragging])
 
 	const displayColumns = useMemo(
 		() =>
 			(
 				[
-					columnOrder.includes('mrt-row-drag') && {
+					columnOrder.includes(utilColumns.drag) && {
 						header: config.localization.move,
 						size: 60,
 						...config.defaultDisplayColumn,
-						...config.displayColumnDefOptions?.['mrt-row-drag'],
-						id: 'mrt-row-drag',
+						...config.displayColumnDefOptions?.[utilColumns.drag],
+						id: utilColumns.drag,
 					},
-					columnOrder.includes('mrt-row-actions') && {
+					columnOrder.includes(utilColumns.actions) && {
 						Cell: ({ cell, row }) => (
 							<ToggleRowActionMenuButton
 								cell={cell as any}
@@ -173,10 +187,10 @@ export const useTable = <TData extends Record<string, any> = {}>(
 						header: config.localization.actions,
 						size: 70,
 						...config.defaultDisplayColumn,
-						...config.displayColumnDefOptions?.['mrt-row-actions'],
-						id: 'mrt-row-actions',
+						...config.displayColumnDefOptions?.[utilColumns.actions],
+						id: utilColumns.actions,
 					},
-					columnOrder.includes('mrt-row-expand') &&
+					columnOrder.includes(utilColumns.expand) &&
 						!config.hideRowExpandColumn &&
 						showExpandColumn(config) && {
 							Cell: ({ row }) => (
@@ -188,10 +202,10 @@ export const useTable = <TData extends Record<string, any> = {}>(
 							header: config.localization.expand,
 							size: 60,
 							...config.defaultDisplayColumn,
-							...config.displayColumnDefOptions?.['mrt-row-expand'],
-							id: 'mrt-row-expand',
+							...config.displayColumnDefOptions?.[utilColumns.expand],
+							id: utilColumns.expand,
 						},
-					columnOrder.includes('mrt-row-select') && {
+					columnOrder.includes(utilColumns.select) && {
 						Cell: ({ row }) => (
 							<SelectCheckbox row={row as any} table={table as any} />
 						),
@@ -206,19 +220,19 @@ export const useTable = <TData extends Record<string, any> = {}>(
 								  )
 								: null,
 						header: config.localization.select,
-						size: 60,
+						size: 30,
 						...config.defaultDisplayColumn,
-						...config.displayColumnDefOptions?.['mrt-row-select'],
-						id: 'mrt-row-select',
+						...config.displayColumnDefOptions?.[utilColumns.select],
+						id: utilColumns.select,
 					},
-					columnOrder.includes('mrt-row-numbers') && {
+					columnOrder.includes(utilColumns.numbers) && {
 						Cell: ({ row }) => row.index + 1,
 						Header: () => config.localization.rowNumber,
 						header: config.localization.rowNumbers,
 						size: 60,
 						...config.defaultDisplayColumn,
-						...config.displayColumnDefOptions?.['mrt-row-numbers'],
-						id: 'mrt-row-numbers',
+						...config.displayColumnDefOptions?.[utilColumns.numbers],
+						id: utilColumns.numbers,
 					},
 				] as Array<Table_ColumnDef<TData>>
 			).filter(Boolean),

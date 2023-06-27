@@ -1,8 +1,8 @@
 import React from 'react';
 import { Meta, Story } from '@storybook/react';
 import TableComponent, {
-  TableComponentProps,
-} from '../../';
+  TableComponentProps, utilColumns,
+} from '../../'
 import { faker } from '@faker-js/faker';
 
 const meta: Meta = {
@@ -127,7 +127,7 @@ export const DetailPanelExpandColumnLast: Story<
       phone: faker.phone.number(),
     }))}
     displayColumnDefOptions={{
-      'mrt-row-expand': {
+      [utilColumns.expand]: {
         muiTableHeadCellProps: {
           align: 'right',
         },

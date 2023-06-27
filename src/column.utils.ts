@@ -6,6 +6,7 @@ import type { Theme } from '@mui/material/styles'
 import { Table_AggregationFns } from './aggregationFns'
 import { Table_FilterFns } from './filterFns'
 import { Table_SortingFns } from './sortingFns'
+import { utilColumns } from './utilColumns'
 
 import type {
 	TableComponentProps,
@@ -167,17 +168,17 @@ export const getLeadingDisplayColumnIds = <
 	props: TableComponentProps<TData>
 ) =>
 	[
-		(props.enableRowDragging || props.enableRowOrdering) && 'mrt-row-drag',
+		(props.enableRowDragging || props.enableRowOrdering) && utilColumns.drag,
 		props.positionActionsColumn === 'first' &&
 			(props.enableRowActions ||
 				(props.enableEditing &&
 					['row', 'modal'].includes(props.editingMode ?? ''))) &&
-			'mrt-row-actions',
+			utilColumns.actions,
 		props.positionExpandColumn === 'first' &&
 			showExpandColumn(props) &&
-			'mrt-row-expand',
-		props.enableRowSelection && 'mrt-row-select',
-		props.enableRowNumbers && 'mrt-row-numbers',
+			utilColumns.expand,
+		props.enableRowSelection && utilColumns.select,
+		props.enableRowNumbers && utilColumns.numbers,
 	].filter(Boolean) as Table_DisplayColumnIds[]
 
 export const getTrailingDisplayColumnIds = <
@@ -189,10 +190,10 @@ export const getTrailingDisplayColumnIds = <
 		(props.enableRowActions ||
 			(props.enableEditing &&
 				['row', 'modal'].includes(props.editingMode ?? ''))) &&
-		'mrt-row-actions',
+		utilColumns.actions,
 	props.positionExpandColumn === 'last' &&
 		showExpandColumn(props) &&
-		'mrt-row-expand',
+		utilColumns.expand,
 ]
 
 export const getDefaultColumnOrderIds = <
@@ -340,11 +341,11 @@ export const getCommonCellStyles = ({
 })
 
 export const Table_DisplayColumnIdsArray = [
-	'mrt-row-actions',
-	'mrt-row-drag',
-	'mrt-row-expand',
-	'mrt-row-numbers',
-	'mrt-row-select',
+	utilColumns.actions,
+	utilColumns.drag,
+	utilColumns.expand,
+	utilColumns.numbers,
+	utilColumns.select,
 ]
 
 export const Table_DefaultColumn = {

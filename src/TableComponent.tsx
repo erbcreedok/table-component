@@ -719,11 +719,11 @@ export type Table_InternalFilterOption = {
 }
 
 export type Table_DisplayColumnIds =
-	| 'mrt-row-actions'
-	| 'mrt-row-drag'
-	| 'mrt-row-expand'
-	| 'mrt-row-numbers'
-	| 'mrt-row-select'
+	| 'table-row-actions'
+	| 'table-row-drag'
+	| 'table-row-expand'
+	| 'table-row-numbers'
+	| 'table-row-select'
 
 export type Table_Actions<TData extends Record<string, any> = {}> =
 	BulkActionButtonProps<TData>

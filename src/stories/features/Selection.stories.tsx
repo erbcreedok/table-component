@@ -3,8 +3,8 @@ import { Meta, Story } from '@storybook/react';
 import TableComponent, {
   TableComponentProps,
   Table_ColumnDef,
-  TableInstance,
-} from '../../';
+  TableInstance, utilColumns,
+} from '../../'
 import { faker } from '@faker-js/faker';
 import { Button } from '@mui/material';
 
@@ -109,7 +109,7 @@ export const SelectAllDisabledCustomHeader: Story<
     columns={columns}
     data={data}
     displayColumnDefOptions={{
-      'mrt-row-select': { header: 'Your Custom Header' },
+      [utilColumns.select]: { header: 'Your Custom Header' },
     }}
     enableRowSelection
     enableSelectAll={false}
