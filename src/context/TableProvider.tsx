@@ -151,6 +151,10 @@ export const TableProvider = <TData extends Record<string, any> = {}>({
 		enableRowSelection = true
 	}
 
+	if (!rest?.bulkActions || !rest?.bulkActions.length) {
+		enableRowSelection = false
+	}
+
 	const props = {
 		aggregationFns: _aggregationFns,
 		autoResetExpanded,
