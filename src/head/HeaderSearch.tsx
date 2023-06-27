@@ -41,7 +41,7 @@ type Props<TData extends TableData> = {
 		value: string
 		path: string
 	}): TableData[]
-	onSearch?(data: TableData): void
+	onSearch?(data: TableData | null): void
 }
 
 const SearchInput = styled(TextField)`
@@ -111,6 +111,10 @@ export const HeaderSearch = <T extends TableData>({
 		setFiltered([])
 		setShowPopper(false)
 		table.showSearchData(null)
+
+		if (onSearch) {
+			onSearch(null)
+		}
 	}
 
 	const toggleSearch = (e) => {
