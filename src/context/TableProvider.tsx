@@ -50,7 +50,7 @@ export const TableProvider = <TData extends Record<string, any> = {}>({
 	enableMultiSort = true,
 	enablePagination = false,
 	enablePinning = false,
-	enableRowSelection = false,
+	enableRowSelection,
 	enableSelectAll = true,
 	enableSorting = true,
 	enableStickyHeader = false,
@@ -147,12 +147,11 @@ export const TableProvider = <TData extends Record<string, any> = {}>({
 		manualSorting = true
 	}
 
-	if (rest?.bulkActions?.length && !enableRowSelection) {
+	if (
+		rest?.bulkActions?.length &&
+		(enableRowSelection === null || enableRowSelection === undefined)
+	) {
 		enableRowSelection = true
-	}
-
-	if (!rest?.bulkActions || !rest?.bulkActions.length) {
-		enableRowSelection = false
 	}
 
 	const props = {
