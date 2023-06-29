@@ -9,7 +9,6 @@ import React, {
 	HTMLProps,
 	memo,
 	MouseEvent,
-	MouseEventHandler,
 	ReactElement,
 	RefObject,
 	useEffect,
@@ -80,6 +79,7 @@ export const TableBodyCell: FC<Props> = ({
 			cellStyleRules,
 			expandByClick,
 			summaryRowCell,
+			notClickableCells,
 			icons: { ExpandMoreIcon },
 		},
 		refs: { editInputRefs },
@@ -201,6 +201,10 @@ export const TableBodyCell: FC<Props> = ({
 	const handleExpand = (
 		event: MouseEvent<HTMLButtonElement> | MouseEvent<HTMLTableCellElement>
 	) => {
+		const isSellNotClickable = notClickableCells?.includes(cell.column.id)
+		if (isSellNotClickable) {
+			return
+		}
 		if (cellAction === 'expand') {
 			const rowId = row.id
 			const openedDetailedPanels = table.getState().openedDetailedPanels
