@@ -4,7 +4,6 @@ import {
 	getFacetedRowModel,
 	getFilteredRowModel,
 	getPaginationRowModel,
-	getSortedRowModel,
 	getFacetedUniqueValues,
 	GroupingState,
 	TableState,
@@ -42,6 +41,7 @@ import {
 	TableInstance,
 } from '../TableComponent'
 import { getGroupedRowModel } from '../utils/getGroupedRowModel'
+import { getSortedRowModel } from '../utils/getSortedRowModel'
 
 export const useTable = <TData extends Record<string, any> = {}>(
 	config: TableComponentProps<TData> & { localization: Table_Localization }

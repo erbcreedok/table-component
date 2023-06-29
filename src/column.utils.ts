@@ -130,6 +130,9 @@ export const prepareColumns = <TData extends Record<string, any> = {}>({
 			}
 		}
 
+		// set sorting empty values to bottom
+		columnDef.sortUndefined = 1
+
 		return columnDef
 	}) as Table_DefinedColumnDef<TData>[]
 
