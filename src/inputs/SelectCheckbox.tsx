@@ -1,28 +1,28 @@
 import { FormGroup } from '@mui/material'
 import FormControlLabel from '@mui/material/FormControlLabel'
-import React, { FC, MouseEvent, ReactNode } from 'react'
+import React, { MouseEvent, ReactNode } from 'react'
 import Checkbox, { CheckboxProps } from '@mui/material/Checkbox'
 import Tooltip from '@mui/material/Tooltip'
 import Radio from '@mui/material/Radio'
 import type { Theme } from '@mui/material/styles'
 
-import type { Table_Row, TableInstance } from '..'
+import type { Table_Row, TableData, TableInstance } from '..'
 
-interface Props {
-	row?: Table_Row
+interface Props<TData extends TableData> {
+	row?: Table_Row | Table_Row<TData>
 	selectAll?: boolean
-	table: TableInstance
-	parentRow?: Table_Row
+	table: TableInstance | TableInstance<TData>
+	parentRow?: Table_Row | Table_Row<TData>
 	label?: ReactNode | ((props: CheckboxProps) => ReactNode)
 }
 
-export const SelectCheckbox: FC<Props> = ({
+export const SelectCheckbox = <TData extends TableData>({
 	row,
 	selectAll,
 	table,
 	parentRow,
 	label,
-}) => {
+}: Props<TData>) => {
 	const {
 		getState,
 		options: {
@@ -38,10 +38,10 @@ export const SelectCheckbox: FC<Props> = ({
 
 	const checkboxProps = !row
 		? muiSelectAllCheckboxProps instanceof Function
-			? muiSelectAllCheckboxProps({ table })
+			? muiSelectAllCheckboxProps({ table } as any)
 			: muiSelectAllCheckboxProps
 		: muiSelectCheckboxProps instanceof Function
-		? muiSelectCheckboxProps({ row, table })
+		? muiSelectCheckboxProps({ row, table } as any)
 		: muiSelectCheckboxProps
 
 	const commonProps: CheckboxProps = {

@@ -5,7 +5,11 @@ import { Typography } from '@mui/material'
 import type { Table_Column, TableInstance } from '../../../../index'
 import { ContentTitle } from '../../../../components/ContentTitle'
 import { ButtonLink } from '../../../../components/ButtonLink'
-import { getColumnId, reorderColumn } from '../../../../column.utils'
+import {
+	getColumnId,
+	reorderColumn,
+	Table_DisplayColumnIdsArray,
+} from '../../../../column.utils'
 import { Sidebar } from '../../../../components/Sidebar'
 import { Text } from '../../../../components/styles'
 
@@ -45,7 +49,13 @@ export const ColumnsMenu = <TData extends Record<string, any> = {}>({
 		) {
 			return [
 				...getLeftLeafColumns(),
-				...Array.from(new Set(columnOrder)).map((colId) =>
+				...Array.from(
+					new Set(
+						columnOrder.filter(
+							(col) => !Table_DisplayColumnIdsArray.includes(col as any)
+						)
+					)
+				).map((colId) =>
 					getCenterLeafColumns().find(
 						(col) => getColumnId(col.columnDef) === colId
 					)

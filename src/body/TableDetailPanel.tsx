@@ -32,7 +32,7 @@ export const TableDetailPanel: FC<Props> = ({
 			detailedRowBackgroundColor,
 		},
 	} = table
-	const { isLoading } = getState()
+	const { isLoading, grouping } = getState()
 
 	const tableRowProps =
 		muiTableBodyRowProps instanceof Function
@@ -66,7 +66,7 @@ export const TableDetailPanel: FC<Props> = ({
 		>
 			<TableCell
 				className="Mui-TableBodyCell-DetailPanel"
-				colSpan={getVisibleLeafColumns().length}
+				colSpan={getVisibleLeafColumns().length - grouping.length}
 				{...tableCellProps}
 				sx={(theme) => ({
 					backgroundColor: virtualRow

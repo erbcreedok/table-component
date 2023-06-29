@@ -70,14 +70,15 @@ export const RowOrderingEnabled: Story<TableComponentProps> = () => {
       enableSorting={false}
       muiTableBodyRowDragHandleProps={({ table }) => ({
         onDragEnd: () => {
-          const { draggingRow, hoveredRow } = table.getState();
-          if (hoveredRow && draggingRow) {
-            data.splice(
-              (hoveredRow as Table_Row<Person>).index,
+          const { draggingRows, hoveredRow } = table.getState();
+          if (hoveredRow && draggingRows.length) {
+            const filteredData = data.filter((data, index) =>  !draggingRows.some((draggingRow) => draggingRow.index === index))
+            filteredData.splice(
+              filteredData.indexOf((hoveredRow as Table_Row<Person>).original) + 1,
               0,
-              data.splice(draggingRow.index, 1)[0],
+              ...draggingRows.map((row) => row.original)
             );
-            setData([...data]);
+            setData(filteredData);
           }
         },
       })}
@@ -87,7 +88,7 @@ export const RowOrderingEnabled: Story<TableComponentProps> = () => {
 
 export const RowOrderingWithSelect: Story<TableComponentProps> = () => {
   const [data, setData] = useState(() => initData);
-  const [draggingRow, setDraggingRow] = useState<Table_Row<Person> | null>(null);
+  const [draggingRows, setDraggingRows] = useState<Table_Row<Person>[]>([]);
   const [hoveredRow, setHoveredRow] = useState<Table_Row<Person> | null>(null);
 
   return (
@@ -101,20 +102,21 @@ export const RowOrderingWithSelect: Story<TableComponentProps> = () => {
       getRowId={(row) => row.email}
       muiTableBodyRowDragHandleProps={{
         onDragEnd: () => {
-          if (hoveredRow && draggingRow) {
-            data.splice(
-              hoveredRow.index,
+          if (hoveredRow && !!draggingRows.length) {
+            const filteredData = data.filter((data, index) =>  !draggingRows.some((draggingRow) => draggingRow.index === index))
+            filteredData.splice(
+              filteredData.indexOf(hoveredRow.original) + 1,
               0,
-              data.splice(draggingRow.index, 1)[0],
+              ...draggingRows.map((row) => row.original)
             );
-            setData([...data]);
+            setData(filteredData);
           }
         },
       }}
-      onDraggingRowChange={setDraggingRow}
+      onDraggingRowsChange={setDraggingRows}
       onHoveredRowChange={setHoveredRow}
       state={{
-        draggingRow,
+        draggingRows,
         hoveredRow,
       }}
     />
@@ -123,7 +125,7 @@ export const RowOrderingWithSelect: Story<TableComponentProps> = () => {
 
 export const RowOrderingWithPinning: Story<TableComponentProps> = () => {
   const [data, setData] = useState(() => initData);
-  const [draggingRow, setDraggingRow] = useState<Table_Row<Person> | null>(null);
+  const [draggingRows, setDraggingRows] = useState<Table_Row<Person>[]>([]);
   const [hoveredRow, setHoveredRow] = useState<Table_Row<Person> | null>(null);
 
   return (
@@ -136,20 +138,21 @@ export const RowOrderingWithPinning: Story<TableComponentProps> = () => {
       enableSorting={false}
       muiTableBodyRowDragHandleProps={{
         onDragEnd: () => {
-          if (hoveredRow && draggingRow) {
-            data.splice(
-              hoveredRow.index,
+          if (hoveredRow && !!draggingRows.length) {
+            const filteredData = data.filter((data, index) =>  !draggingRows.some((draggingRow) => draggingRow.index === index))
+            filteredData.splice(
+              filteredData.indexOf(hoveredRow.original) + 1,
               0,
-              data.splice(draggingRow.index, 1)[0],
+              ...draggingRows.map((row) => row.original)
             );
-            setData([...data]);
+            setData(filteredData);
           }
         },
       }}
-      onDraggingRowChange={setDraggingRow}
+      onDraggingRowsChange={setDraggingRows}
       onHoveredRowChange={setHoveredRow}
       state={{
-        draggingRow,
+        draggingRows,
         hoveredRow,
       }}
     />
@@ -158,7 +161,7 @@ export const RowOrderingWithPinning: Story<TableComponentProps> = () => {
 
 export const RowAndColumnOrdering: Story<TableComponentProps> = () => {
   const [data, setData] = useState(() => initData);
-  const [draggingRow, setDraggingRow] = useState<Table_Row<Person> | null>(null);
+  const [draggingRows, setDraggingRows] = useState<Table_Row<Person>[]>([]);
   const [hoveredRow, setHoveredRow] = useState<Table_Row<Person> | null>(null);
 
   return (
@@ -172,20 +175,21 @@ export const RowAndColumnOrdering: Story<TableComponentProps> = () => {
       enableSorting={false}
       muiTableBodyRowDragHandleProps={{
         onDragEnd: () => {
-          if (hoveredRow && draggingRow) {
-            data.splice(
-              hoveredRow.index,
+          if (hoveredRow && !!draggingRows.length) {
+            const filteredData = data.filter((data, index) =>  !draggingRows.some((draggingRow) => draggingRow.index === index))
+            filteredData.splice(
+              filteredData.indexOf(hoveredRow.original) + 1,
               0,
-              data.splice(draggingRow.index, 1)[0],
+              ...draggingRows.map((row) => row.original)
             );
-            setData([...data]);
+            setData(filteredData);
           }
         },
       }}
-      onDraggingRowChange={setDraggingRow}
+      onDraggingRowsChange={setDraggingRows}
       onHoveredRowChange={setHoveredRow}
       state={{
-        draggingRow,
+        draggingRows,
         hoveredRow,
       }}
     />

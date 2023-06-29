@@ -168,7 +168,10 @@ export const getLeadingDisplayColumnIds = <
 	props: TableComponentProps<TData>
 ) =>
 	[
-		(props.enableRowDragging || props.enableRowOrdering) && utilColumns.drag,
+		(props.enableRowOrdering ||
+			props.enableRowDragging ||
+			props.enableRowSelection) &&
+			utilColumns.column,
 		props.positionActionsColumn === 'first' &&
 			(props.enableRowActions ||
 				(props.enableEditing &&
@@ -177,7 +180,6 @@ export const getLeadingDisplayColumnIds = <
 		props.positionExpandColumn === 'first' &&
 			showExpandColumn(props) &&
 			utilColumns.expand,
-		props.enableRowSelection && utilColumns.select,
 		props.enableRowNumbers && utilColumns.numbers,
 	].filter(Boolean) as Table_DisplayColumnIds[]
 
@@ -341,11 +343,10 @@ export const getCommonCellStyles = ({
 })
 
 export const Table_DisplayColumnIdsArray = [
+	utilColumns.column,
 	utilColumns.actions,
-	utilColumns.drag,
 	utilColumns.expand,
 	utilColumns.numbers,
-	utilColumns.select,
 ]
 
 export const Table_DefaultColumn = {

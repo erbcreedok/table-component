@@ -58,6 +58,7 @@ export const getUnitTreeItems = (maxDepth = 5, length = 10, depth = 0, prefix = 
 	const cLength = depth > 1 ? length : Math.pow(2, depth)
 	for (let i = 0; i < cLength; i += 1) {
 		unitTree.push({
+			getParent: () => null,
 			id: faker.datatype.uuid(),
 			name: `${prefix}${i + 1}. ${faker.company.name()}`,
 			type: faker.company.companySuffix(),
@@ -65,7 +66,10 @@ export const getUnitTreeItems = (maxDepth = 5, length = 10, depth = 0, prefix = 
 			subRows: [
 				...(depth > 1 ? getTeamMembers(Math.round(Math.random() * cLength), `${prefix}${i + 1}.`) : []),
 				...getUnitTreeItems(maxDepth, length, depth + 1, `${prefix}${i + 1}.`),
-			]
+			].map((item) => ({
+				...item,
+				getParent: () => unitTree[i],
+			}))
 		})
 	}
 

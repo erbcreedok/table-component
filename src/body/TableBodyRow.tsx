@@ -1,4 +1,5 @@
 import { tableRowClasses } from '@mui/material'
+import Box from '@mui/material/Box'
 import React, { DragEvent, FC, memo, useMemo, useRef } from 'react'
 import MuiTableRow from '@mui/material/TableRow'
 import { lighten, useTheme } from '@mui/material/styles'
@@ -52,12 +53,13 @@ export const TableBodyRow: FC<TableBodyRowProps> = ({
 			memoMode,
 			muiTableBodyRowProps,
 			renderDetailPanel,
+			validateHoveredRow,
 		},
 		setHoveredRow,
 	} = table
 	const {
 		draggingColumn,
-		draggingRow,
+		draggingRows,
 		editingCell,
 		editingRow,
 		hoveredRow,
@@ -70,21 +72,30 @@ export const TableBodyRow: FC<TableBodyRowProps> = ({
 			: muiTableBodyRowProps
 
 	const handleDragEnter = (_e: DragEvent) => {
-		if (enableRowOrdering && draggingRow) {
+		if (enableRowOrdering && draggingRows.length > 0) {
 			setHoveredRow(row)
 		}
 	}
 
 	const rowRef = useRef<HTMLTableRowElement | null>(null)
 
+	const isDraggingRow = useMemo(
+		() => draggingRows.some((dRow) => dRow?.id === row.id),
+		[draggingRows, row.id]
+	)
+	const isHoveredRow = hoveredRow?.id === row.id
+	const canDragOver = useMemo(() => {
+		return validateHoveredRow?.(row, table) === true
+	}, [isHoveredRow])
+
 	const draggingBorder = useMemo(
 		() =>
-			draggingRow?.id === row.id
+			isDraggingRow
 				? `1px dashed ${theme.palette.text.secondary}`
 				: hoveredRow?.id === row.id
 				? `2px dashed ${theme.palette.primary.main}`
 				: undefined,
-		[draggingRow, hoveredRow]
+		[isDraggingRow, hoveredRow]
 	)
 
 	const draggingBorders = draggingBorder
@@ -135,6 +146,8 @@ export const TableBodyRow: FC<TableBodyRowProps> = ({
 		})
 		.filter(Boolean)
 
+	const cells = virtualColumns ?? row?.getVisibleCells?.()
+
 	return (
 		<>
 			<MuiTableRow
@@ -152,8 +165,7 @@ export const TableBodyRow: FC<TableBodyRowProps> = ({
 				sx={(theme) => ({
 					backgroundColor: lighten(theme.palette.background.default, 0.06),
 					display: layoutMode === 'grid' ? 'flex' : 'table-row',
-					opacity:
-						draggingRow?.id === row.id || hoveredRow?.id === row.id ? 0.5 : 1,
+					opacity: isDraggingRow ? 0.5 : 1,
 					position: virtualRow ? 'absolute' : undefined,
 					top: virtualRow ? 0 : undefined,
 					transform: virtualRow
@@ -180,55 +192,73 @@ export const TableBodyRow: FC<TableBodyRowProps> = ({
 				{virtualPaddingLeft ? (
 					<td style={{ display: 'flex', width: virtualPaddingLeft }} />
 				) : null}
-				{(virtualColumns ?? row?.getVisibleCells?.()).map(
-					(cellOrVirtualCell, colIndex) => {
-						const cell = columnVirtualizer
-							? row?.getVisibleCells?.()?.[
-									(cellOrVirtualCell as VirtualItem).index
-							  ]
-							: (cellOrVirtualCell as Table_Cell)
-						if (cell.getIsPlaceholder() && !isSummaryRow) {
-							return null
-						}
-						const props = {
-							cell,
-							enableHover: tableRowProps?.hover !== false,
-							key: cell.id,
-							measureElement: columnVirtualizer?.measureElement,
-							numRows,
-							rowIndex,
-							rowRef,
-							table,
-							virtualCell: columnVirtualizer
-								? (cellOrVirtualCell as VirtualItem)
-								: undefined,
-							isSummaryRowCell: isSummaryRow,
-							groupBorders: getCellGroupBorders({
-								table,
-								isFirstOfGroup: groupedCells.length > 0,
-								rowIndex: getSubRowIndex({ row, table }) ?? rowIndex,
-								colIndex,
-								isGroupedColumn: false,
-							}),
-						}
-
-						return memoMode === 'cells' &&
-							cell.column.columnDef.columnDefType === 'data' &&
-							!draggingColumn &&
-							!draggingRow &&
-							editingCell?.id !== cell.id &&
-							editingRow?.id !== row.id ? (
-							// eslint-disable-next-line react/jsx-pascal-case
-							<Memo_TableBodyCell {...props} />
-						) : (
-							<TableBodyCell {...props} />
-						)
+				{cells.map((cellOrVirtualCell, colIndex) => {
+					const cell = columnVirtualizer
+						? row?.getVisibleCells?.()?.[
+								(cellOrVirtualCell as VirtualItem).index
+						  ]
+						: (cellOrVirtualCell as Table_Cell)
+					if (cell.getIsPlaceholder() && !isSummaryRow) {
+						return null
 					}
-				)}
+					const props = {
+						cell,
+						enableHover: tableRowProps?.hover !== false,
+						key: cell.id,
+						measureElement: columnVirtualizer?.measureElement,
+						numRows,
+						rowIndex,
+						rowRef,
+						table,
+						virtualCell: columnVirtualizer
+							? (cellOrVirtualCell as VirtualItem)
+							: undefined,
+						isSummaryRowCell: isSummaryRow,
+						groupBorders: getCellGroupBorders({
+							table,
+							isFirstOfGroup: groupedCells.length > 0,
+							rowIndex: getSubRowIndex({ row, table }) ?? rowIndex,
+							colIndex,
+							isGroupedColumn: false,
+						}),
+					}
+
+					return memoMode === 'cells' &&
+						cell.column.columnDef.columnDefType === 'data' &&
+						!draggingColumn &&
+						!draggingRows.length &&
+						editingCell?.id !== cell.id &&
+						editingRow?.id !== row.id ? (
+						// eslint-disable-next-line react/jsx-pascal-case
+						<Memo_TableBodyCell {...props} />
+					) : (
+						<TableBodyCell {...props} />
+					)
+				})}
 				{virtualPaddingRight ? (
 					<td style={{ display: 'flex', width: virtualPaddingRight }} />
 				) : null}
 			</MuiTableRow>
+			{isHoveredRow && (
+				<tr>
+					<td
+						colSpan={cells.length - grouping.length}
+						style={{ position: 'relative' }}
+					>
+						<Box
+							sx={{
+								position: 'absolute',
+								left: '0',
+								right: '0',
+								bottom: '0',
+								zIndex: '1',
+								background: canDragOver ? Colors.LightBlue : Colors.Gray20,
+								height: '1px',
+							}}
+						/>
+					</td>
+				</tr>
+			)}
 			{renderDetailPanel && !row?.getIsGrouped?.() && (
 				<TableDetailPanel
 					parentRowRef={rowRef}

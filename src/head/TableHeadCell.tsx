@@ -72,9 +72,7 @@ export const TableHeadCell: FC<Props> = ({
 	const { columnDefType } = columnDef
 	const { hovered, hoverProps } = useHoverEffects()
 	const [grabHandleVisible, setGrabHandleVisible] = useState(false)
-	const isUtilityColumn = !Object.keys(utilColumns).includes(
-		getColumnId(columnDef)
-	)
+	const isUtilColumn = utilColumns.column === getColumnId(columnDef)
 
 	const mTableHeadCellProps =
 		muiTableHeadCellProps instanceof Function
@@ -147,15 +145,15 @@ export const TableHeadCell: FC<Props> = ({
 	const [isTooShort, setIsTooShort] = useState(false)
 	const onResize = useCallback(
 		(width) => {
-			if (isUtilityColumn) return
+			if (isUtilColumn) return
 
 			setIsTooShort(width < 30)
 		},
-		[isUtilityColumn]
+		[isUtilColumn]
 	)
 	const { ref: headerContentRef } = useResizeDetector({
 		handleHeight: false,
-		handleWidth: !isUtilityColumn,
+		handleWidth: !isUtilColumn,
 		onResize,
 	})
 	const headerText = <HeaderBase column={column} />
@@ -259,7 +257,9 @@ export const TableHeadCell: FC<Props> = ({
 											: 'flex-start',
 									position: 'relative',
 									mx: 'auto',
-									width: `max(calc(100% - 1.4rem), ${Table_DefaultColumn.minSize}px)`,
+									width: isUtilColumn
+										? '100%'
+										: `max(calc(100% - 1.4rem), ${Table_DefaultColumn.minSize}px)`,
 								}}
 							>
 								<Box

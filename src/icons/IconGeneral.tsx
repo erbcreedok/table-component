@@ -3,14 +3,22 @@ import React from 'react'
 
 export type IconGeneralProps = SvgIconProps & {
 	size?: number
+	sxWidth?: number
+	sxHeight?: number
 }
-export const IconGeneral = ({ size = 24, sx, ...props }: IconGeneralProps) => {
+export const IconGeneral = ({
+	size = 24,
+	sx,
+	sxWidth,
+	sxHeight,
+	...props
+}: IconGeneralProps) => {
 	return (
 		<SvgIcon
 			{...props}
 			sx={(theme) => ({
-				width: size,
-				height: size,
+				width: sxWidth ?? size,
+				height: sxHeight ?? size,
 				...(sx instanceof Function ? sx(theme) : (sx as any)),
 			})}
 		/>

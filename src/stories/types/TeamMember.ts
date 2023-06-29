@@ -23,5 +23,6 @@ export type UnitTreeItem = {
 	performance?: number;
 	seniority?: number;
 	keyMembers?: User[];
-	subRows?: (UnitTreeItem | TeamMember)[];
+	getParent(): UnitTreeItem | null;
+	subRows?: ((UnitTreeItem | TeamMember) & { getParent(): UnitTreeItem | null })[];
 }

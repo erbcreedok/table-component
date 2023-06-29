@@ -21,7 +21,7 @@ export type TableComponentState<TData extends Record<string, any> = {}> =
 		}
 		columnOrder: ColumnOrderState | undefined
 		draggingColumn: Table_Column<TData> | null
-		draggingRow: Table_Row<TData> | null
+		draggingRows: Table_Row<TData>[]
 		editingCell: Table_Cell<TData> | null
 		editingRow: Table_Row<TData> | null
 		globalFilterFn: Table_FilterOption

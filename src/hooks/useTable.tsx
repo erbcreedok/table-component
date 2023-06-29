@@ -28,7 +28,6 @@ import {
 	showExpandColumn,
 } from '../column.utils'
 import { TableComponentState } from '../context/TableContext'
-import { SelectCheckbox } from '../inputs/SelectCheckbox'
 import {
 	Table_Cell,
 	Table_Column,
@@ -40,7 +39,7 @@ import {
 	TableComponentProps,
 	TableInstance,
 } from '../TableComponent'
-import { utilColumns } from '../utilColumns'
+import { getUtilColumn, utilColumns } from '../utilColumns'
 import { getGroupedRowModel } from '../utils/getGroupedRowModel'
 import { getSortedRowModel } from '../utils/getSortedRowModel'
 
@@ -95,8 +94,8 @@ export const useTable = <TData extends Record<string, any> = {}>(
 	const [rowSelection, setRowSelection] = React.useState({})
 	const [draggingColumn, setDraggingColumn] =
 		useState<Table_Column<TData> | null>(initialState.draggingColumn ?? null)
-	const [draggingRow, setDraggingRow] = useState<Table_Row<TData> | null>(
-		initialState.draggingRow ?? null
+	const [draggingRows, setDraggingRows] = useState<Table_Row<TData>[]>(
+		initialState.draggingRows ?? []
 	)
 	const [editingCell, setEditingCell] = useState<Table_Cell<TData> | null>(
 		initialState.editingCell ?? null
@@ -147,35 +146,29 @@ export const useTable = <TData extends Record<string, any> = {}>(
 	)
 
 	useEffect(() => {
-		if (config.enableRowNumbers && !columnOrder.includes(utilColumns.numbers)) {
-			setColumnOrder([utilColumns.numbers, ...columnOrder])
-		}
-	}, [columnOrder, config.enableRowNumbers])
-	useEffect(() => {
 		if (
-			config.enableRowSelection &&
-			!columnOrder.includes(utilColumns.select)
+			(config.enableRowDragging ||
+				config.enableRowOrdering ||
+				config.enableRowSelection) &&
+			!columnOrder.includes(utilColumns.column)
 		) {
-			setColumnOrder([utilColumns.select, ...columnOrder])
+			setColumnOrder([utilColumns.column, ...columnOrder])
 		}
-	}, [columnOrder, config.enableRowSelection])
-	useEffect(() => {
-		if (config.enableRowDragging && !columnOrder.includes(utilColumns.drag)) {
-			setColumnOrder([utilColumns.drag, ...columnOrder])
-		}
-	}, [columnOrder, config.enableRowDragging])
+	}, [
+		config.enableRowDragging,
+		config.enableRowOrdering,
+		config.enableRowSelection,
+		columnOrder,
+	])
 
 	const displayColumns = useMemo(
 		() =>
 			(
 				[
-					columnOrder.includes(utilColumns.drag) && {
-						header: config.localization.move,
-						size: 60,
-						...config.defaultDisplayColumn,
-						...config.displayColumnDefOptions?.[utilColumns.drag],
-						id: utilColumns.drag,
-					},
+					(config.enableRowDragging ||
+						config.enableRowOrdering ||
+						config.enableRowSelection) &&
+						getUtilColumn(config),
 					columnOrder.includes(utilColumns.actions) && {
 						Cell: ({ cell, row }) => (
 							<ToggleRowActionMenuButton
@@ -205,26 +198,6 @@ export const useTable = <TData extends Record<string, any> = {}>(
 							...config.displayColumnDefOptions?.[utilColumns.expand],
 							id: utilColumns.expand,
 						},
-					columnOrder.includes(utilColumns.select) && {
-						Cell: ({ row }) => (
-							<SelectCheckbox row={row as any} table={table as any} />
-						),
-						Header:
-							config.enableSelectAll && config.enableMultiRowSelection
-								? ({ parentRow }) => (
-										<SelectCheckbox
-											selectAll={!parentRow}
-											parentRow={parentRow as any}
-											table={table as any}
-										/>
-								  )
-								: null,
-						header: config.localization.select,
-						size: 30,
-						...config.defaultDisplayColumn,
-						...config.displayColumnDefOptions?.[utilColumns.select],
-						id: utilColumns.select,
-					},
 					columnOrder.includes(utilColumns.numbers) && {
 						Cell: ({ row }) => row.index + 1,
 						Header: () => config.localization.rowNumber,
@@ -372,7 +345,7 @@ export const useTable = <TData extends Record<string, any> = {}>(
 		columnOrder,
 		columnVisibility,
 		draggingColumn,
-		draggingRow,
+		draggingRows,
 		editingCell,
 		editingRow,
 		globalFilterFn,
@@ -389,7 +362,7 @@ export const useTable = <TData extends Record<string, any> = {}>(
 		searchId,
 		highlightHeadCellId,
 		...config.state,
-	} as TableComponentState
+	} as TableComponentState<TData>
 
 	// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 	// @ts-ignore
@@ -436,7 +409,7 @@ export const useTable = <TData extends Record<string, any> = {}>(
 		},
 		setColumnFilterFns: config.onColumnFilterFnsChange ?? setColumnFilterFns,
 		setDraggingColumn: config.onDraggingColumnChange ?? setDraggingColumn,
-		setDraggingRow: config.onDraggingRowChange ?? setDraggingRow,
+		setDraggingRows: config.onDraggingRowsChange ?? setDraggingRows,
 		setEditingCell: config.onEditingCellChange ?? setEditingCell,
 		setEditingRow: config.onEditingRowChange ?? setEditingRow,
 		setGlobalFilterFn: config.onGlobalFilterFnChange ?? setGlobalFilterFn,

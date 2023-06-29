@@ -72,6 +72,8 @@ export const TableBodyCell: FC<Props> = ({
 			enableEditing,
 			enableGrouping,
 			enableRowNumbers,
+			enableRowDragging,
+			enableRowOrdering,
 			layoutMode,
 			muiTableBodyCellProps,
 			muiTableBodyCellSkeletonProps,
@@ -278,9 +280,15 @@ export const TableBodyCell: FC<Props> = ({
 		handleExpand(event)
 	}
 
-	const isSelectCell = column.id === utilColumns.select
+	const isUtilColumn = column.id === utilColumns.column
+	const isCurrentRowSelected = row.getIsSelected()
 	const isAnyRowSelected = table.getSelectedRowModel().flatRows.length > 0
-	const hideCheckBoxSpan = isSelectCell && !isAnyRowSelected
+	const hideCheckBoxSpan = isUtilColumn && !isAnyRowSelected
+	const isDraggableCell =
+		enableRowDragging ||
+		(enableRowOrdering instanceof Function
+			? enableRowOrdering(row)
+			: enableRowOrdering)
 
 	const isCurrentCellClicked = openedDetailedPanels[row.id]?.cell.id === cell.id
 	const isDettailedPanelExpanded =
@@ -369,6 +377,8 @@ export const TableBodyCell: FC<Props> = ({
 		<MuiTableCell
 			rowSpan={rowSpan}
 			data-index={virtualCell?.index}
+			data-is-grouped={isGroupedCell}
+			data-is-util={isUtilColumn}
 			ref={(node: HTMLTableCellElement) => {
 				if (node) {
 					measureElement?.(node)
@@ -385,7 +395,9 @@ export const TableBodyCell: FC<Props> = ({
 					display: 'flex',
 					alignItems: 'center',
 					mx: 'auto',
-					width: `max(calc(100% - 1.4rem), ${Table_DefaultColumn.minSize}px)`,
+					width: isUtilColumn
+						? '100%'
+						: `max(calc(100% - 1.4rem), ${Table_DefaultColumn.minSize}px)`,
 				}}
 			>
 				{isGroupedCell ? (
@@ -401,11 +413,26 @@ export const TableBodyCell: FC<Props> = ({
 				  rowNumberMode === 'static' &&
 				  column.id === utilColumns.numbers ? (
 					rowIndex + 1
-				) : column.id === utilColumns.drag ? (
-					<TableBodyRowGrabHandle cell={cell} rowRef={rowRef} table={table} />
-				) : columnDefType === 'display' &&
-				  (column.id === utilColumns.select ||
-						column.id === utilColumns.expand) ? (
+				) : column.id === utilColumns.column ? (
+					<>
+						{isDraggableCell ? (
+							<TableBodyRowGrabHandle
+								cell={cell}
+								rowRef={rowRef}
+								table={table}
+								sx={{
+									visibility: isCurrentRowSelected ? 'visible' : 'hidden',
+									'tr:hover &': {
+										visibility: 'visible',
+									},
+								}}
+							/>
+						) : (
+							<Box sx={{ width: '9px' }} />
+						)}
+						{columnDef.Cell?.({ cell, column, row, table })}
+					</>
+				) : columnDefType === 'display' && column.id === utilColumns.expand ? (
 					columnDef.Cell?.({ cell, column, row, table })
 				) : isEditing ? (
 					<EditCellTextField cell={cell} table={table} />

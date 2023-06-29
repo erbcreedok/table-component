@@ -42,7 +42,6 @@ export const ListItemSort: FC<ListItemSortProps> = (props) => {
 
 		muiTableBodyRowDragHandleProps?.onDragStart?.(event)
 		event.dataTransfer.setDragImage(rowRef.current as HTMLElement, 0, 0)
-		table.setDraggingRow(rowRef as any)
 	}
 
 	const handleDragEnd = (event: DragEvent<any>) => {

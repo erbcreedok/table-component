@@ -28,7 +28,6 @@ export const ListGroupItem: FC<any> = ({
 
 		iconButtonProps?.onDragStart?.(event)
 		event.dataTransfer.setDragImage(rowRef.current as HTMLElement, 0, 0)
-		table.setDraggingRow(rowRef as any)
 	}
 
 	const handleDragEnd = (event: DragEvent<any>) => {

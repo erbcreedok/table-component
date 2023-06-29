@@ -194,6 +194,11 @@ export interface Table_Localization {
 	sorting: string
 }
 
+export type DraggingMessage = {
+	text: string | ReactNode
+	type?: string | 'danger' | 'warning'
+}
+
 export interface Table_RowModel<TData extends Record<string, any> = {}> {
 	flatRows: Table_Row<TData>[]
 	rows: Table_Row<TData>[]
@@ -262,7 +267,7 @@ export type TableInstance<TData extends Record<string, any> = {}> = Omit<
 		SetStateAction<{ [key: string]: Table_FilterOption }>
 	>
 	setDraggingColumn: Dispatch<SetStateAction<Table_Column<TData> | null>>
-	setDraggingRow: Dispatch<SetStateAction<Table_Row<TData> | null>>
+	setDraggingRows: Dispatch<SetStateAction<Table_Row<TData>[]>>
 	setEditingCell: Dispatch<SetStateAction<Table_Cell<TData> | null>>
 	setEditingRow: Dispatch<SetStateAction<Table_Row<TData> | null>>
 	setGlobalFilterFn: Dispatch<SetStateAction<Table_FilterOption>>
@@ -295,7 +300,7 @@ export type Table_TableState<TData extends Record<string, any> = {}> =
 	TableState & {
 		columnFilterFns: Record<string, Table_FilterOption>
 		draggingColumn: Table_Column<TData> | null
-		draggingRow: Table_Row<TData> | null
+		draggingRows: Table_Row<TData>[]
 		editingCell: Table_Cell<TData> | null
 		editingRow: Table_Row<TData> | null
 		globalFilterFn: Table_FilterOption
@@ -720,10 +725,9 @@ export type Table_InternalFilterOption = {
 
 export type Table_DisplayColumnIds =
 	| 'table-row-actions'
-	| 'table-row-drag'
 	| 'table-row-expand'
 	| 'table-row-numbers'
-	| 'table-row-select'
+	| 'table-util-column'
 
 export type Table_Actions<TData extends Record<string, any> = {}> =
 	BulkActionButtonProps<TData>
@@ -809,6 +813,10 @@ export type TableComponentProps<TData extends Record<string, any> = {}> = Omit<
 	notClickableCells?: string[]
 	tablePlugSlot?: React.ReactNode
 	isTablePlugSlotActive?: boolean
+	validateHoveredRow?: (
+		row: Table_Row<TData>,
+		table: TableInstance<TData>
+	) => boolean | DraggingMessage
 	cellStyleRules?: Record<
 		string,
 		{
@@ -829,7 +837,7 @@ export type TableComponentProps<TData extends Record<string, any> = {}> = Omit<
 	enableRowActions?: boolean
 	enableRowDragging?: boolean
 	enableRowNumbers?: boolean
-	enableRowOrdering?: boolean
+	enableRowOrdering?: boolean | ((row: Table_Row<TData>) => boolean)
 	enableRowSelection?: boolean | ((row: Table_Row<TData>) => boolean)
 	enableRowVirtualization?: boolean
 	enableSelectAll?: boolean
@@ -1109,7 +1117,7 @@ export type TableComponentProps<TData extends Record<string, any> = {}> = Omit<
 		| ToolbarProps
 		| (({ table }: { table: TableInstance<TData> }) => ToolbarProps)
 	onDraggingColumnChange?: OnChangeFn<Table_Column<TData> | null>
-	onDraggingRowChange?: OnChangeFn<Table_Row<TData> | null>
+	onDraggingRowsChange?: OnChangeFn<Table_Row<TData>[]>
 	onEditingCellChange?: OnChangeFn<Table_Cell<TData> | null>
 	onEditingRowCancel?: ({
 		row,

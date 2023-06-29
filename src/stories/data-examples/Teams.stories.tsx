@@ -10,9 +10,9 @@ import { LockedIcon } from '../../icons/LockedIcon'
 import { TrashIcon } from '../../icons/TrashIcon'
 import TableComponent, { Table_ColumnDef, Table_Row, TableComponentProps, utilColumns } from '../../index'
 import { TeamMember, UnitTreeItem } from '../types/TeamMember'
+import { getTablePresetProps } from '../utils/getTablePresetProps'
 import {
 	getExpandingTeamMembers,
-	getSeparatedTeamMembers,
 	getTeamMembers,
 	getUnitTreeItems,
 } from '../utils/getTeamMembers'
@@ -21,11 +21,10 @@ import { getDefaultRowActionMenuItems } from '../utils/rowActionMenuItems'
 import { ColumnActionsFiltersMenu } from './components/ColumnActionsFiltersMenu'
 import { UnitRow } from './components/UnitRow'
 
-const data = getSeparatedTeamMembers()
 const dataTree = getExpandingTeamMembers(10)
 const columns = getTeamMembersColumns()
 
-type TeamsTableConfigs = TableComponentProps<TeamMember> & {
+type TeamsTableConfigs = Omit<TableComponentProps<TeamMember>, 'data'> & Partial<TableComponentProps<TeamMember>> & {
 	bulkActions?: object[]
 	disableHidingFor?: string[]
 	disableSortingFor?: string[]
@@ -149,15 +148,49 @@ const SummaryRowExampleCellValue = (props) => {
 }
 
 const TeamsTable: Story<TeamsTableConfigs> = (args) => {
-	const { columns, defaultSorting, defaultColumnOrder, defaultColumnVisibility, initialState = {}, ...rest } = args
+	const { data: propsData, columns, defaultSorting, defaultColumnOrder, defaultColumnVisibility, initialState = {}, ...rest } = args
+	const [data, setData] = useState(propsData || getTeamMembers(100));
 	return (
 		<TableComponent
+			data={data}
 			columns={getPropsHandledColumns(columns, args)}
 			groupBorder={{ left: '12px solid white', top: '20px solid white' }}
 			initialState={{ sorting: defaultSorting, columnOrder: defaultColumnOrder, columnVisibility: defaultColumnVisibility, ...initialState }}
 			renderRowActionMenuItems={getDefaultRowActionMenuItems}
 			ColumnActionsFiltersMenu={ColumnActionsFiltersMenu}
 			summaryRowCell={(props) => <SummaryRowExampleCellValue {...props} />}
+			muiTableBodyRowDragHandleProps={({ table }) => ({
+				onDragEnd: () => {
+					const { draggingRows, hoveredRow } = table.getState();
+					if (hoveredRow && draggingRows.length > 0) {
+						const filteredData = data.filter((data, index) =>  !draggingRows.some((draggingRow) => draggingRow.index === index))
+						filteredData.splice(
+							filteredData.indexOf((hoveredRow as Table_Row<TeamMember>).original) + 1,
+							0,
+							...draggingRows.map((row) => row.original)
+						);
+						setData(filteredData);
+					}
+				},
+			})}
+			validateHoveredRow={(row, table) => {
+				const { draggingRows, grouping } = table.getState()
+				if (grouping.length === 0) return true
+				// prevent dragging over rows that are not in the same group
+				const canDrag = grouping.every(
+					(group) => draggingRows.every(
+						(draggingRow) => draggingRow.getValue(group) === row.getValue(group)
+					)
+				)
+				if (!canDrag) {
+					return {
+						text: 'Cannot reorder rows that are not in same group',
+						type: 'danger',
+					}
+				}
+				return canDrag
+			}}
+			{...getTablePresetProps('teamsDefaultTable')}
 			{...rest}
 		/>
 	)
@@ -166,7 +199,6 @@ const TeamsTable: Story<TeamsTableConfigs> = (args) => {
 export const TeamsTableDefault: Story<TeamsTableExample> = (args) => (
 	<TeamsTable
 		columns={columns}
-		data={data}
 		{...args}
 	/>
 );
@@ -181,42 +213,8 @@ export const TeamsTableSubtree: Story<TeamsTableExample> = (args) => (
 	/>
 );
 
-export const TeamsTableRowOrdering: Story<TeamsTableExample> = (args) => {
-	const [data, setData] = useState(() => getTeamMembers(100));
-	const [draggingRow, setDraggingRow] = useState<Table_Row<TeamMember> | null>(null);
-	const [hoveredRow, setHoveredRow] = useState<Table_Row<TeamMember> | null>(null);
-
-	return (
-		<TeamsTable
-			columns={columns}
-			data={data}
-			enableRowOrdering
-			autoResetPageIndex={false}
-			muiTableBodyRowDragHandleProps={{
-				onDragEnd: () => {
-					if (hoveredRow && draggingRow) {
-						data.splice(
-							hoveredRow.index,
-							0,
-							data.splice(draggingRow.index, 1)[0],
-						);
-						setData([...data]);
-					}
-				},
-			}}
-			onDraggingRowChange={setDraggingRow}
-			onHoveredRowChange={setHoveredRow}
-			state={{
-				draggingRow,
-				hoveredRow,
-			}}
-			{...args}
-		/>
-	);
-}
-
 export const HierarchyGroupTableExample: Story = (args) => {
-	const [data] = useState(getUnitTreeItems(3, 10))
+	const [data, setData] = useState(getUnitTreeItems(3, 10))
 
 	return (
 		<>
@@ -230,6 +228,58 @@ export const HierarchyGroupTableExample: Story = (args) => {
 				hideRowExpandColumn
 				hideTableHead
 				filterFromLeafRows
+				{...getTablePresetProps('teamsDefaultTable')}
+				muiTableBodyRowDragHandleProps={({ table }) => ({
+					onDragEnd: () => {
+						const { draggingRows, hoveredRow } = table.getState();
+						if (hoveredRow && 'original' in hoveredRow && draggingRows.length > 0) {
+							const unit = hoveredRow.original.getParent()
+							if (!unit) return
+							const filteredData = unit.subRows?.filter((data) => !draggingRows.some((draggingRow) => draggingRow.original === data)) ?? []
+							filteredData.splice(
+								filteredData.indexOf((hoveredRow as Table_Row<UnitTreeItem>).original) + 1,
+								0,
+								...draggingRows.map((row) => row.original)
+							);
+							const traverse = (data: UnitTreeItem | TeamMember) => {
+								if (data.id === unit.id) {
+									data.subRows = filteredData
+									return
+								} else {
+									data.subRows?.forEach((subRow) => traverse(subRow))
+								}
+							}
+							const newData = [...data]
+							traverse(newData[0])
+							setData(newData);
+						}
+					},
+				})}
+				validateHoveredRow={(row, table) => {
+					const { draggingRows, grouping } = table.getState()
+					const sameParent = draggingRows.every((draggingRow) => draggingRow.original.getParent() === row.original.getParent())
+					if (!sameParent) {
+						return {
+							text: 'Cannot reorder rows that are not in same unit',
+							type: 'danger',
+						}
+					}
+					if (grouping.length > 0) {
+						const sameGroup = grouping.every(
+							(group) => draggingRows.every(
+								(draggingRow) => draggingRow.getValue(group) === row.getValue(group)
+							)
+						)
+						if (!sameGroup) {
+							return {
+								text: 'Cannot reorder rows that are not in same group',
+								type: 'danger',
+							}
+						}
+					}
+
+					return true
+				}}
 			/>
 		</>
 	)
@@ -328,6 +378,14 @@ const meta: Meta = {
 			control: 'boolean',
 			defaultValue: false,
 		},
+		enableRowDragging: {
+			control: 'boolean',
+			defaultValue: false,
+		},
+		enableRowOrdering: {
+			control: 'boolean',
+			defaultValue: (row) => row.original.successionStatus !== 'Successors identified',
+		},
 		enablePinning: {
 			control: 'boolean',
 			defaultValue: false,
@@ -377,7 +435,7 @@ const meta: Meta = {
 		},
 		defaultColumnOrder: {
 			control: { type: 'object' },
-			defaultValue: [utilColumns.expand, ...columns.map(getColumnId)],
+			defaultValue: [utilColumns.column, utilColumns.expand, ...columns.map(getColumnId)],
 			description: '***THIS IS NOT A PROP***\n' +
 				'Set Default column order for Table. Rerender Table to apply value',
 		},

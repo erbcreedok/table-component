@@ -1,26 +1,32 @@
 import React, { DragEventHandler } from 'react'
 import IconButton from '@mui/material/IconButton'
 import type { IconButtonProps } from '@mui/material/IconButton'
-import Tooltip from '@mui/material/Tooltip'
 
+import { Tooltip } from '../components/Tooltip'
 import type { TableInstance } from '..'
-import { DragIcon } from '../icons/DragIcon'
 
 interface Props<TData extends Record<string, any> = {}> {
 	iconButtonProps?: IconButtonProps
+	onDrag?: DragEventHandler<HTMLButtonElement>
 	onDragStart: DragEventHandler<HTMLButtonElement>
 	onDragEnd: DragEventHandler<HTMLButtonElement>
 	table: TableInstance<TData>
+	Icon?: any
 }
 
 export const GrabHandleButton = <TData extends Record<string, any> = {}>({
 	iconButtonProps,
+	onDrag,
 	onDragEnd,
 	onDragStart,
 	table,
+	Icon,
 }: Props<TData>) => {
 	const {
-		options: { localization },
+		options: {
+			localization,
+			icons: { DragIcon },
+		},
 	} = table
 
 	return (
@@ -42,6 +48,7 @@ export const GrabHandleButton = <TData extends Record<string, any> = {}>({
 				}}
 				onDragStart={onDragStart}
 				onDragEnd={onDragEnd}
+				onDrag={onDrag}
 				sx={(theme) => ({
 					cursor: 'grab',
 					m: '0 -0.1rem',
@@ -61,7 +68,7 @@ export const GrabHandleButton = <TData extends Record<string, any> = {}>({
 				})}
 				title={undefined}
 			>
-				<DragIcon />
+				{Icon ? <Icon /> : <DragIcon />}
 			</IconButton>
 		</Tooltip>
 	)

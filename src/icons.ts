@@ -2,10 +2,6 @@ import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward'
 import ArrowRightIcon from '@mui/icons-material/ArrowRight'
 import CancelIcon from '@mui/icons-material/Cancel'
 import ClearAllIcon from '@mui/icons-material/ClearAll'
-import DensityLargeIcon from '@mui/icons-material/DensityLarge'
-import DensityMediumIcon from '@mui/icons-material/DensityMedium'
-import DensitySmallIcon from '@mui/icons-material/DensitySmall'
-import DragHandleIcon from '@mui/icons-material/DragHandle'
 import DynamicFeedIcon from '@mui/icons-material/DynamicFeed'
 import EditIcon from '@mui/icons-material/Edit'
 import ExpandLessIcon from '@mui/icons-material/ExpandLess'
@@ -38,6 +34,7 @@ import { CloseIcon } from './icons/CloseIcon'
 import { CollapseFilledIcon } from './icons/CollapseFilledIcon'
 import { CollapseIcon } from './icons/CollapseIcon'
 import { DescIcon } from './icons/DescIcon'
+import { DragIcon } from './icons/DragIcon'
 import { GroupIcon } from './icons/GroupIcon'
 import { GroupingIcon } from './icons/GroupingIcon'
 import { ExpandIcon } from './icons/ExpandIcon'
@@ -56,6 +53,7 @@ import { SettingsIcon } from './icons/SettingsIcon'
 import { PencilIcon } from './icons/PencilIcon'
 import { PlusIcon } from './icons/PlusIcon'
 import { PresetIcon } from './icons/PresetIcon'
+import { RowDragIcon } from './icons/RowDragIcon'
 import { ToggleIcon } from './icons/ToggleIcon'
 import { TrashIcon } from './icons/TrashIcon'
 import { AscNumIcon } from './icons/AscNumIcon'
@@ -80,11 +78,8 @@ export interface Table_Icons {
 	CloseIcon: any
 	CollapseIcon: any
 	CollapseFilledIcon: any
-	DensityLargeIcon: any
-	DensityMediumIcon: any
-	DensitySmallIcon: any
 	KeyboardDoubleArrowDownIcon: any
-	DragHandleIcon: any
+	DragIcon: any
 	DynamicFeedIcon: any
 	EditIcon: any
 	ExpandIcon: any
@@ -108,6 +103,7 @@ export interface Table_Icons {
 	PresetIcon: any
 	PushPinIcon: any
 	RestartAltIcon: any
+	RowDragIcon: any
 	SaveIcon: any
 	SearchIcon: any
 	SearchOffIcon: any
@@ -146,10 +142,7 @@ export const Default_Icons: Table_Icons = {
 	CloseIcon,
 	CollapseIcon,
 	CollapseFilledIcon,
-	DensityLargeIcon,
-	DensityMediumIcon,
-	DensitySmallIcon,
-	DragHandleIcon,
+	DragIcon,
 	DynamicFeedIcon,
 	EditIcon,
 	ExpandIcon,
@@ -171,6 +164,7 @@ export const Default_Icons: Table_Icons = {
 	PresetIcon,
 	PushPinIcon,
 	RestartAltIcon,
+	RowDragIcon,
 	SaveIcon,
 	SearchIcon,
 	SearchOffIcon,

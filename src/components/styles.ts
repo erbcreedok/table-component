@@ -19,7 +19,10 @@ export const Colors = {
 	LightestGray: '#FAFAFC',
 	Dark: '#303240',
 	Red: '#FA4B4B',
+	Red2: '#f66c6c',
 	BorderMain: '#E1E3EB',
+	Amber2: '#FFDD96',
+	Amber3: '#FCAA00',
 } as const
 
 export const IconsColor = {
