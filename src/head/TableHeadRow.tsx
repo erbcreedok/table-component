@@ -24,6 +24,7 @@ interface Props {
 	sx?: TableRowProps['sx']
 	cellBackgroundColor?: string
 	cellBackgroundColorHover?: string
+	isScrolled?: boolean
 }
 
 export const TableHeadRow: FC<Props> = ({
@@ -37,6 +38,7 @@ export const TableHeadRow: FC<Props> = ({
 	cellBackgroundColor,
 	cellBackgroundColorHover,
 	stickyHeader,
+	isScrolled,
 }) => {
 	const {
 		options: { layoutMode, muiTableHeadRowProps, enableRowDragging },
@@ -78,6 +80,10 @@ export const TableHeadRow: FC<Props> = ({
 				backgroundColor: Colors.LightestGray,
 				display: layoutMode === 'grid' ? 'flex' : 'table-row',
 				top: 0,
+				boxShadow:
+					stickyHeader && isScrolled
+						? '0px 4px 4px 0px rgba(0, 0, 0, 0.10)'
+						: undefined,
 				...(tableRowProps?.sx instanceof Function
 					? tableRowProps?.sx(theme)
 					: (tableRowProps?.sx as any)),

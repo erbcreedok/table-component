@@ -438,6 +438,10 @@ const meta: Meta = {
 			control: 'boolean',
 			defaultValue: false,
 		},
+		enableStickyHeader: {
+			control: 'boolean',
+			defaultValue: true,
+		},
 		enableRowActions: {
 			control: 'boolean',
 			defaultValue: false,

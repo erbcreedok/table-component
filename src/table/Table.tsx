@@ -165,6 +165,9 @@ export const Table: FC<Props> = ({ table }) => {
 				</thead>
 			)}
 			{enableTableHead && !hideTableHead && <TableHead {...props} />}
+			{enableTableHead && hideTableHead && (
+				<TableHead {...props} emptyTableHead />
+			)}
 			{memoMode === 'table-body' ? (
 				// eslint-disable-next-line react/jsx-pascal-case
 				<Memo_TableBody columnVirtualizer={columnVirtualizer} {...props} />

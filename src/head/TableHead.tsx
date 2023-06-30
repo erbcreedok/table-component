@@ -1,4 +1,4 @@
-import React, { FC } from 'react'
+import React, { FC, useState, useRef, useEffect } from 'react'
 import MuiTableHead from '@mui/material/TableHead'
 import type { VirtualItem } from '@tanstack/react-virtual'
 
@@ -11,6 +11,7 @@ interface Props {
 	virtualColumns?: VirtualItem[]
 	virtualPaddingLeft?: number
 	virtualPaddingRight?: number
+	emptyTableHead?: boolean
 }
 
 export const TableHead: FC<Props> = ({
@@ -18,6 +19,7 @@ export const TableHead: FC<Props> = ({
 	virtualColumns,
 	virtualPaddingLeft,
 	virtualPaddingRight,
+	emptyTableHead,
 }) => {
 	const {
 		getHeaderGroups,
@@ -25,6 +27,8 @@ export const TableHead: FC<Props> = ({
 		options: { enableStickyHeader, layoutMode, muiTableHeadProps },
 	} = table
 	const { isFullScreen } = getState()
+	const [isIntersecting, setIsIntersecting] = useState(true)
+	const intersectorRef = useRef<HTMLTableSectionElement | null>(null)
 
 	const tableHeadProps =
 		muiTableHeadProps instanceof Function
@@ -32,6 +36,22 @@ export const TableHead: FC<Props> = ({
 			: muiTableHeadProps
 
 	const stickyHeader = enableStickyHeader || isFullScreen
+
+	// eslint-disable-next-line consistent-return
+	useEffect(() => {
+		if (stickyHeader && intersectorRef?.current) {
+			const observer = new IntersectionObserver(
+				([entry]) => {
+					setIsIntersecting(entry.isIntersecting)
+				},
+				{ threshold: 0.7 }
+			)
+
+			observer.observe(intersectorRef?.current)
+
+			return () => observer.disconnect()
+		}
+	}, [stickyHeader])
 
 	return (
 		<MuiTableHead
@@ -46,18 +66,35 @@ export const TableHead: FC<Props> = ({
 					? tableHeadProps?.sx(theme)
 					: (tableHeadProps?.sx as any)),
 			})}
+			ref={intersectorRef}
 		>
-			{getHeaderGroups().map((headerGroup) => (
-				<TableHeadRow
-					headerGroup={headerGroup as any}
-					key={headerGroup.id}
-					table={table}
-					virtualColumns={virtualColumns}
-					virtualPaddingLeft={virtualPaddingLeft}
-					virtualPaddingRight={virtualPaddingRight}
-					stickyHeader={stickyHeader}
+			{!emptyTableHead ? (
+				getHeaderGroups().map((headerGroup) => (
+					<TableHeadRow
+						headerGroup={headerGroup as any}
+						key={headerGroup.id}
+						table={table}
+						virtualColumns={virtualColumns}
+						virtualPaddingLeft={virtualPaddingLeft}
+						virtualPaddingRight={virtualPaddingRight}
+						stickyHeader={stickyHeader}
+						isScrolled={!isIntersecting}
+					/>
+				))
+			) : (
+				<tr
+					style={{
+						display: stickyHeader && !isIntersecting ? 'table-row' : 'none',
+						position: stickyHeader ? 'sticky' : 'relative',
+						top: 0,
+						height: '8px',
+						boxShadow:
+							stickyHeader && !isIntersecting
+								? 'inset 0px 4px 4px 0px rgba(0, 0, 0, 0.10)'
+								: undefined,
+					}}
 				/>
-			))}
+			)}
 		</MuiTableHead>
 	)
 }
