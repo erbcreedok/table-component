@@ -396,6 +396,11 @@ const meta: Meta = {
 			defaultValue: false,
 			description: 'Enable aggregation row, when grouping is enabled',
 		},
+		hideRowSelectionColumn: {
+			control: 'boolean',
+			defaultValue: false,
+			description: 'Hides row selection column, but do not disables row selection',
+		},
 		disableHidingFor: {
 			options: columns.map((column) => getColumnId(column)),
 			control: {

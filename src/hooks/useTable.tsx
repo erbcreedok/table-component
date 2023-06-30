@@ -149,7 +149,7 @@ export const useTable = <TData extends Record<string, any> = {}>(
 		if (
 			(config.enableRowDragging ||
 				config.enableRowOrdering ||
-				config.enableRowSelection) &&
+				(!config.hideRowSelectionColumn && config.enableRowSelection)) &&
 			!columnOrder.includes(utilColumns.column)
 		) {
 			setColumnOrder([utilColumns.column, ...columnOrder])
@@ -158,6 +158,7 @@ export const useTable = <TData extends Record<string, any> = {}>(
 		config.enableRowDragging,
 		config.enableRowOrdering,
 		config.enableRowSelection,
+		config.hideRowSelectionColumn,
 		columnOrder,
 	])
 
@@ -167,7 +168,7 @@ export const useTable = <TData extends Record<string, any> = {}>(
 				[
 					(config.enableRowDragging ||
 						config.enableRowOrdering ||
-						config.enableRowSelection) &&
+						(!config.hideRowSelectionColumn && config.enableRowSelection)) &&
 						getUtilColumn(config),
 					columnOrder.includes(utilColumns.actions) && {
 						Cell: ({ cell, row }) => (
@@ -227,6 +228,7 @@ export const useTable = <TData extends Record<string, any> = {}>(
 			config.enableRowOrdering,
 			config.enableRowSelection,
 			config.enableSelectAll,
+			config.hideRowSelectionColumn,
 			config.localization,
 			config.positionActionsColumn,
 			config.renderDetailPanel,

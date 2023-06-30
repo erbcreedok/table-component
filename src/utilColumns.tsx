@@ -25,12 +25,14 @@ const UtilColumnCell = <TData extends TableData>({
 	row,
 }: UtilColumnCellProps<TData>) => {
 	const {
-		options: { enableRowSelection },
+		options: { hideRowSelectionColumn, enableRowSelection },
 	} = table
 
 	return (
 		<>
-			{enableRowSelection ? <SelectCheckbox row={row} table={table} /> : null}
+			{!hideRowSelectionColumn && enableRowSelection ? (
+				<SelectCheckbox row={row} table={table} />
+			) : null}
 		</>
 	)
 }
@@ -44,18 +46,26 @@ const UtilColumnHeader = <TData extends TableData>({
 	parentRow,
 }: UtilColumnHeaderProps<TData>) => {
 	const {
-		options: { enableRowSelection, enableSelectAll, enableMultiRowSelection },
+		options: {
+			hideRowSelectionColumn,
+			enableRowSelection,
+			enableSelectAll,
+			enableMultiRowSelection,
+		},
 	} = table
 
 	return (
 		<Flex sx={{ pl: '9px' }}>
-			{enableRowSelection && enableSelectAll && enableMultiRowSelection && (
-				<SelectCheckbox
-					selectAll={!parentRow}
-					parentRow={parentRow}
-					table={table}
-				/>
-			)}
+			{!hideRowSelectionColumn &&
+				enableRowSelection &&
+				enableSelectAll &&
+				enableMultiRowSelection && (
+					<SelectCheckbox
+						selectAll={!parentRow}
+						parentRow={parentRow}
+						table={table}
+					/>
+				)}
 		</Flex>
 	)
 }

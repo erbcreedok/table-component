@@ -860,6 +860,7 @@ export type TableComponentProps<TData extends Record<string, any> = {}> = Omit<
 	groupsSorting?: any
 	groupBorder?: string | { left: string; top: string }
 	hideRowExpandColumn?: boolean
+	hideRowSelectionColumn?: boolean
 	hideTableHead?: boolean
 	icons?: Partial<Table_Icons>
 	initialState?: Partial<Table_TableState<TData>>

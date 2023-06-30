@@ -170,7 +170,7 @@ export const getLeadingDisplayColumnIds = <
 	[
 		(props.enableRowOrdering ||
 			props.enableRowDragging ||
-			props.enableRowSelection) &&
+			(!props.hideRowSelectionColumn && props.enableRowSelection)) &&
 			utilColumns.column,
 		props.positionActionsColumn === 'first' &&
 			(props.enableRowActions ||

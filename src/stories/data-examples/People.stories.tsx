@@ -154,6 +154,7 @@ export const PeopleTable: Story<TableComponentProps> = () => {
 				// enableSummaryRow
 				detailedRowBackgroundColor={'#fafafc'}
 				enableRowSelection
+				hideRowSelectionColumn
 				expandByClick={ExpandByClick.CellAction}
 				// enableRowVirtualization
 				cellStyleRules={{

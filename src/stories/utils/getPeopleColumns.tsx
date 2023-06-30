@@ -3,9 +3,9 @@ import React from 'react'
 import { Flex } from '../../components/Flex'
 import { Avatar, Typography } from '@mui/material'
 import { faker } from '@faker-js/faker'
+import { SelectCheckbox, RowActionMenuButton, HeaderBase } from '../../'
 import { getRandomFromArray } from './getRandomFromArray'
 import { TextEllipsis } from '../../components/TextEllipsis'
-import { RowActionMenuButton } from '../../buttons/RowActionMenuButton'
 
 const ClickableCell = ({ row, accessorKey }) => {
 	const title = row.original[accessorKey]
@@ -58,6 +58,12 @@ export const getPeopleColumns = () =>
 			enableColumnOrdering: false,
 			enableHiding: false,
 			enableFiltering: true,
+			Header: ({ header, table }) => (
+				<Flex gap="0.75rem" sx={{ padding: '0 0.575rem' }}>
+					<SelectCheckbox table={table} selectAll />
+					<HeaderBase column={header.column} />
+				</Flex>
+			),
 			Cell: ({ row, table }) => {
 				const user = row.original.member
 
@@ -68,6 +74,7 @@ export const getPeopleColumns = () =>
 						style={{ minWidth: '100%', padding: '0 0.575rem' }}
 						title={user.fullName}
 					>
+						<SelectCheckbox table={table} row={row} />
 						<Avatar
 							sx={{ width: 32, height: 32 }}
 							src={user.avatarUrl}
