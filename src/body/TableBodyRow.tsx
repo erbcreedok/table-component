@@ -1,6 +1,6 @@
 import { tableRowClasses } from '@mui/material'
 import Box from '@mui/material/Box'
-import React, { DragEvent, FC, memo, useMemo, useRef } from 'react'
+import React, { FC, memo, useMemo, useRef } from 'react'
 import MuiTableRow from '@mui/material/TableRow'
 import { lighten, useTheme } from '@mui/material/styles'
 import type { VirtualItem, Virtualizer } from '@tanstack/react-virtual'
@@ -48,7 +48,7 @@ export const TableBodyRow: FC<TableBodyRowProps> = ({
 		getIsSomeColumnsPinned,
 		getState,
 		options: {
-			enableRowOrdering,
+			enableRowDragging,
 			layoutMode,
 			memoMode,
 			muiTableBodyRowProps,
@@ -71,9 +71,17 @@ export const TableBodyRow: FC<TableBodyRowProps> = ({
 			? muiTableBodyRowProps({ row, table })
 			: muiTableBodyRowProps
 
-	const handleDragEnter = (_e: DragEvent) => {
-		if (enableRowOrdering && draggingRows.length > 0) {
-			setHoveredRow(row)
+	const currentHoveredRow = useMemo(
+		() => ({
+			row,
+			position: 'bottom' as const,
+		}),
+		[row]
+	)
+
+	const handleDragEnter = () => {
+		if (enableRowDragging && draggingRows.length > 0) {
+			setHoveredRow(currentHoveredRow)
 		}
 	}
 
@@ -83,16 +91,18 @@ export const TableBodyRow: FC<TableBodyRowProps> = ({
 		() => draggingRows.some((dRow) => dRow?.id === row.id),
 		[draggingRows, row.id]
 	)
-	const isHoveredRow = hoveredRow?.id === row.id
+	const isHoveredRow = hoveredRow?.row?.id === row.id
 	const canDragOver = useMemo(() => {
-		return validateHoveredRow?.(row, table) === true
+		if (!hoveredRow) return false
+
+		return validateHoveredRow?.(hoveredRow, table) === true
 	}, [isHoveredRow])
 
 	const draggingBorder = useMemo(
 		() =>
 			isDraggingRow
 				? `1px dashed ${theme.palette.text.secondary}`
-				: hoveredRow?.id === row.id
+				: isHoveredRow
 				? `2px dashed ${theme.palette.primary.main}`
 				: undefined,
 		[isDraggingRow, hoveredRow]
@@ -148,8 +158,34 @@ export const TableBodyRow: FC<TableBodyRowProps> = ({
 
 	const cells = virtualColumns ?? row?.getVisibleCells?.()
 
+	const getHoveredRowDropLine = (isTopLine: boolean) =>
+		isHoveredRow ? (
+			<tr>
+				{isTopLine && grouping.length > 0 ? (
+					<td colSpan={grouping.length} />
+				) : null}
+				<td
+					colSpan={cells.length - grouping.length}
+					style={{ position: 'relative' }}
+				>
+					<Box
+						sx={{
+							position: 'absolute',
+							left: '0',
+							right: '0',
+							bottom: '0',
+							zIndex: '1',
+							background: canDragOver ? Colors.LightBlue : Colors.Gray20,
+							height: '1px',
+						}}
+					/>
+				</td>
+			</tr>
+		) : null
+
 	return (
 		<>
+			{hoveredRow?.position === 'top' && getHoveredRowDropLine(true)}
 			<MuiTableRow
 				data-index={virtualRow?.index}
 				hover
@@ -239,26 +275,7 @@ export const TableBodyRow: FC<TableBodyRowProps> = ({
 					<td style={{ display: 'flex', width: virtualPaddingRight }} />
 				) : null}
 			</MuiTableRow>
-			{isHoveredRow && (
-				<tr>
-					<td
-						colSpan={cells.length - grouping.length}
-						style={{ position: 'relative' }}
-					>
-						<Box
-							sx={{
-								position: 'absolute',
-								left: '0',
-								right: '0',
-								bottom: '0',
-								zIndex: '1',
-								background: canDragOver ? Colors.LightBlue : Colors.Gray20,
-								height: '1px',
-							}}
-						/>
-					</td>
-				</tr>
-			)}
+			{hoveredRow?.position === 'bottom' && getHoveredRowDropLine(false)}
 			{renderDetailPanel && !row?.getIsGrouped?.() && (
 				<TableDetailPanel
 					parentRowRef={rowRef}

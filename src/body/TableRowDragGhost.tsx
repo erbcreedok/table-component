@@ -4,12 +4,7 @@ import Typography from '@mui/material/Typography'
 import React, { forwardRef, ReactNode, RefObject, useMemo } from 'react'
 
 import { Colors, IconsColor, Text } from '../components/styles'
-import {
-	DraggingMessage,
-	Table_Row,
-	TableData,
-	TableInstance,
-} from '../TableComponent'
+import { DraggingMessage, TableData, TableInstance } from '../TableComponent'
 import { getColorAlpha } from '../utils/getColorAlpha'
 
 const renderCells = (
@@ -40,15 +35,17 @@ const renderCells = (
 		}
 		if (isUtil === 'true') {
 			return (
-				<td
+				<div
 					key={index}
 					style={{
+						display: 'table-cell',
+						verticalAlign: 'inherit',
 						paddingLeft: '5px',
 						color: IconsColor.disabled,
 					}}
 				>
 					{icon}
-				</td>
+				</div>
 			)
 		}
 		if (isMulti && firstRowRendered) {
@@ -62,7 +59,10 @@ const renderCells = (
 	return [
 		...renderedCells,
 		isMulti && (
-			<td key="drag-counter">
+			<div
+				key="drag-counter"
+				style={{ display: 'table-cell', verticalAlign: 'inherit' }}
+			>
 				<Typography
 					sx={{
 						m: 'auto 18px',
@@ -74,7 +74,7 @@ const renderCells = (
 				>
 					{draggingRows.length} items dragging...
 				</Typography>
-			</td>
+			</div>
 		),
 	].filter(Boolean)
 }
@@ -142,7 +142,7 @@ const TableRowDragGhostRoot = <TData extends TableData>(
 		if (!hoveredRow) return false
 		if (!validateHoveredRow) return true
 
-		return validateHoveredRow(hoveredRow as Table_Row<TData>, table)
+		return validateHoveredRow(hoveredRow, table)
 	}, [hoveredRow, table])
 
 	const draggingMessage = useMemo<DraggingMessage | null>(() => {
@@ -153,11 +153,12 @@ const TableRowDragGhostRoot = <TData extends TableData>(
 		return null
 	}, [hoveredRow, table])
 
+	if (!isDragging) return null
+
 	return (
 		<Portal>
 			<Box
 				sx={{
-					visibility: 'hidden',
 					position: 'fixed',
 					pointerEvents: 'none',
 					zIndex: '9999',
@@ -166,55 +167,51 @@ const TableRowDragGhostRoot = <TData extends TableData>(
 				}}
 				ref={ref}
 			>
-				{isDragging && (
-					<>
+				<Box
+					sx={{
+						display: 'flex',
+						flexDirection: 'column',
+					}}
+				>
+					<Box
+						className={rowRef.current?.className}
+						style={getShadowRowStyle()}
+					>
+						{renderCells(
+							rowRef.current?.children,
+							draggingRows,
+							<RowDragIcon />
+						)}
+					</Box>
+					{draggingRows.length > 1 && (
 						<Box
-							sx={{
-								display: 'flex',
-								flexDirection: 'column',
-							}}
-						>
-							<Box
-								className={rowRef.current?.className}
-								style={getShadowRowStyle()}
-							>
-								{renderCells(
-									rowRef.current?.children,
-									draggingRows,
-									<RowDragIcon />
-								)}
-							</Box>
-							{draggingRows.length > 1 && (
-								<Box
-									className={rowRef.current?.className}
-									style={{ ...getShadowRowStyle(1), position: 'absolute' }}
-								/>
-							)}
-							{draggingRows.length > 2 && (
-								<Box
-									className={rowRef.current?.className}
-									style={{ ...getShadowRowStyle(2), position: 'absolute' }}
-								/>
-							)}
-						</Box>
+							className={rowRef.current?.className}
+							style={{ ...getShadowRowStyle(1), position: 'absolute' }}
+						/>
+					)}
+					{draggingRows.length > 2 && (
 						<Box
-							sx={{
-								mt: `${draggingRows.length * 6 + 9}px`,
-								display: 'flex',
-								flexDirection: 'column',
-								gap: '9px',
-							}}
-						>
-							{sorting.length > 0 && hoveredRowValidation === true && (
-								<Message
-									text="Sorting will be reset automatically"
-									type="warning"
-								/>
-							)}
-							{draggingMessage && <Message {...draggingMessage} />}
-						</Box>
-					</>
-				)}
+							className={rowRef.current?.className}
+							style={{ ...getShadowRowStyle(2), position: 'absolute' }}
+						/>
+					)}
+				</Box>
+				<Box
+					sx={{
+						mt: `${draggingRows.length * 6 + 9}px`,
+						display: 'flex',
+						flexDirection: 'column',
+						gap: '9px',
+					}}
+				>
+					{sorting.length > 0 && hoveredRowValidation === true && (
+						<Message
+							text="Sorting will be reset automatically"
+							type="warning"
+						/>
+					)}
+					{draggingMessage && <Message {...draggingMessage} />}
+				</Box>
 			</Box>
 		</Portal>
 	)

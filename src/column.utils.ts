@@ -168,8 +168,7 @@ export const getLeadingDisplayColumnIds = <
 	props: TableComponentProps<TData>
 ) =>
 	[
-		(props.enableRowOrdering ||
-			props.enableRowDragging ||
+		(props.enableRowDragging ||
 			(!props.hideRowSelectionColumn && props.enableRowSelection)) &&
 			utilColumns.column,
 		props.positionActionsColumn === 'first' &&

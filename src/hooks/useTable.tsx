@@ -29,6 +29,7 @@ import {
 } from '../column.utils'
 import { TableComponentState } from '../context/TableContext'
 import {
+	HoveredRowState,
 	Table_Cell,
 	Table_Column,
 	Table_ColumnDef,
@@ -112,9 +113,9 @@ export const useTable = <TData extends Record<string, any> = {}>(
 	const [hoveredColumn, setHoveredColumn] = useState<
 		Table_Column<TData> | { id: string } | null
 	>(initialState.hoveredColumn ?? null)
-	const [hoveredRow, setHoveredRow] = useState<
-		Table_Row<TData> | { id: string } | null
-	>(initialState.hoveredRow ?? null)
+	const [hoveredRow, setHoveredRow] = useState<HoveredRowState<TData>>(
+		initialState.hoveredRow ?? null
+	)
 	const [openedDetailedPanels, setOpenedDetailedPanels] = useState<Record<
 		string,
 		{
@@ -148,7 +149,6 @@ export const useTable = <TData extends Record<string, any> = {}>(
 	useEffect(() => {
 		if (
 			(config.enableRowDragging ||
-				config.enableRowOrdering ||
 				(!config.hideRowSelectionColumn && config.enableRowSelection)) &&
 			!columnOrder.includes(utilColumns.column)
 		) {
@@ -156,7 +156,6 @@ export const useTable = <TData extends Record<string, any> = {}>(
 		}
 	}, [
 		config.enableRowDragging,
-		config.enableRowOrdering,
 		config.enableRowSelection,
 		config.hideRowSelectionColumn,
 		columnOrder,
@@ -167,7 +166,6 @@ export const useTable = <TData extends Record<string, any> = {}>(
 			(
 				[
 					(config.enableRowDragging ||
-						config.enableRowOrdering ||
 						(!config.hideRowSelectionColumn && config.enableRowSelection)) &&
 						getUtilColumn(config),
 					columnOrder.includes(utilColumns.actions) && {
@@ -225,7 +223,6 @@ export const useTable = <TData extends Record<string, any> = {}>(
 			config.enableRowActions,
 			config.enableRowDragging,
 			config.enableRowNumbers,
-			config.enableRowOrdering,
 			config.enableRowSelection,
 			config.enableSelectAll,
 			config.hideRowSelectionColumn,

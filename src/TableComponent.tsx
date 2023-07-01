@@ -274,9 +274,7 @@ export type TableInstance<TData extends Record<string, any> = {}> = Omit<
 	setHoveredColumn: Dispatch<
 		SetStateAction<Table_Column<TData> | { id: string } | null>
 	>
-	setHoveredRow: Dispatch<
-		SetStateAction<Table_Row<TData> | { id: string } | null>
-	>
+	setHoveredRow: Dispatch<SetStateAction<HoveredRowState<TData>>>
 	setOpenedDetailedPanels: Dispatch<
 		SetStateAction<
 			Record<
@@ -312,7 +310,7 @@ export type Table_TableState<TData extends Record<string, any> = {}> =
 				row: Table_Row<TData>
 			}
 		> | null
-		hoveredRow: Table_Row<TData> | { id: string } | null
+		hoveredRow: HoveredRowState<TData>
 		isFullScreen: boolean
 		isLoading: boolean
 		showAlertBanner: boolean
@@ -737,6 +735,11 @@ export enum ExpandByClick {
 	CellAction = 'CellAction',
 }
 
+export type HoveredRowState<TData extends TableData> = {
+	row: Table_Row<TData>
+	position: 'bottom' | 'top'
+} | null
+
 /**
  * `columns` and `data` props are the only required props, but there are over 150 other optional props.
  *
@@ -814,7 +817,7 @@ export type TableComponentProps<TData extends Record<string, any> = {}> = Omit<
 	tablePlugSlot?: React.ReactNode
 	isTablePlugSlotActive?: boolean
 	validateHoveredRow?: (
-		row: Table_Row<TData>,
+		row: NonNullable<HoveredRowState<TData>>,
 		table: TableInstance<TData>
 	) => boolean | DraggingMessage
 	cellStyleRules?: Record<
@@ -835,9 +838,8 @@ export type TableComponentProps<TData extends Record<string, any> = {}> = Omit<
 	enableGlobalFilterRankedResults?: boolean
 	enablePagination?: boolean
 	enableRowActions?: boolean
-	enableRowDragging?: boolean
+	enableRowDragging?: boolean | ((row: Table_Row<TData>) => boolean)
 	enableRowNumbers?: boolean
-	enableRowOrdering?: boolean | ((row: Table_Row<TData>) => boolean)
 	enableRowSelection?: boolean | ((row: Table_Row<TData>) => boolean)
 	enableRowVirtualization?: boolean
 	enableSelectAll?: boolean
@@ -1142,7 +1144,7 @@ export type TableComponentProps<TData extends Record<string, any> = {}> = Omit<
 	onColumnFilterFnsChange?: OnChangeFn<{ [key: string]: Table_FilterOption }>
 	onGlobalFilterFnChange?: OnChangeFn<Table_FilterOption>
 	onHoveredColumnChange?: OnChangeFn<Table_Column<TData> | null>
-	onHoveredRowChange?: OnChangeFn<Table_Row<TData> | null>
+	onHoveredRowChange?: OnChangeFn<HoveredRowState<TData> | null>
 	onIsFullScreenChange?: OnChangeFn<boolean>
 	onShowAlertBannerChange?: OnChangeFn<boolean>
 	onShowFiltersChange?: OnChangeFn<boolean>

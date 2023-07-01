@@ -3,8 +3,8 @@ import { Meta, Story } from '@storybook/react';
 import TableComponent, {
   TableComponentProps,
   Table_ColumnDef,
-  Table_Row,
-} from '../../';
+  Table_Row, HoveredRowState,
+} from '../../'
 import { faker } from '@faker-js/faker';
 
 const meta: Meta = {
@@ -66,7 +66,7 @@ export const RowOrderingEnabled: Story<TableComponentProps> = () => {
       autoResetPageIndex={false}
       columns={columns}
       data={data}
-      enableRowOrdering
+      enableRowDragging
       enableSorting={false}
       muiTableBodyRowDragHandleProps={({ table }) => ({
         onDragEnd: () => {
@@ -74,7 +74,7 @@ export const RowOrderingEnabled: Story<TableComponentProps> = () => {
           if (hoveredRow && draggingRows.length) {
             const filteredData = data.filter((data, index) =>  !draggingRows.some((draggingRow) => draggingRow.index === index))
             filteredData.splice(
-              filteredData.indexOf((hoveredRow as Table_Row<Person>).original) + 1,
+              filteredData.indexOf(hoveredRow.row.original) + 1,
               0,
               ...draggingRows.map((row) => row.original)
             );
@@ -89,14 +89,14 @@ export const RowOrderingEnabled: Story<TableComponentProps> = () => {
 export const RowOrderingWithSelect: Story<TableComponentProps> = () => {
   const [data, setData] = useState(() => initData);
   const [draggingRows, setDraggingRows] = useState<Table_Row<Person>[]>([]);
-  const [hoveredRow, setHoveredRow] = useState<Table_Row<Person> | null>(null);
+  const [hoveredRow, setHoveredRow] = useState<HoveredRowState<Person>>(null);
 
   return (
     <TableComponent
       autoResetPageIndex={false}
       columns={columns}
       data={data}
-      enableRowOrdering
+      enableRowDragging
       enableRowSelection
       enableSorting={false}
       getRowId={(row) => row.email}
@@ -105,7 +105,7 @@ export const RowOrderingWithSelect: Story<TableComponentProps> = () => {
           if (hoveredRow && !!draggingRows.length) {
             const filteredData = data.filter((data, index) =>  !draggingRows.some((draggingRow) => draggingRow.index === index))
             filteredData.splice(
-              filteredData.indexOf(hoveredRow.original) + 1,
+              filteredData.indexOf(hoveredRow.row.original) + 1,
               0,
               ...draggingRows.map((row) => row.original)
             );
@@ -126,14 +126,14 @@ export const RowOrderingWithSelect: Story<TableComponentProps> = () => {
 export const RowOrderingWithPinning: Story<TableComponentProps> = () => {
   const [data, setData] = useState(() => initData);
   const [draggingRows, setDraggingRows] = useState<Table_Row<Person>[]>([]);
-  const [hoveredRow, setHoveredRow] = useState<Table_Row<Person> | null>(null);
+  const [hoveredRow, setHoveredRow] = useState<HoveredRowState<Person>>(null);
 
   return (
     <TableComponent
       autoResetPageIndex={false}
       columns={columns}
       data={data}
-      enableRowOrdering
+      enableRowDragging
       enablePinning
       enableSorting={false}
       muiTableBodyRowDragHandleProps={{
@@ -141,7 +141,7 @@ export const RowOrderingWithPinning: Story<TableComponentProps> = () => {
           if (hoveredRow && !!draggingRows.length) {
             const filteredData = data.filter((data, index) =>  !draggingRows.some((draggingRow) => draggingRow.index === index))
             filteredData.splice(
-              filteredData.indexOf(hoveredRow.original) + 1,
+              filteredData.indexOf(hoveredRow.row.original) + 1,
               0,
               ...draggingRows.map((row) => row.original)
             );
@@ -162,7 +162,7 @@ export const RowOrderingWithPinning: Story<TableComponentProps> = () => {
 export const RowAndColumnOrdering: Story<TableComponentProps> = () => {
   const [data, setData] = useState(() => initData);
   const [draggingRows, setDraggingRows] = useState<Table_Row<Person>[]>([]);
-  const [hoveredRow, setHoveredRow] = useState<Table_Row<Person> | null>(null);
+  const [hoveredRow, setHoveredRow] = useState<HoveredRowState<Person>>(null);
 
   return (
     <TableComponent
@@ -171,14 +171,14 @@ export const RowAndColumnOrdering: Story<TableComponentProps> = () => {
       data={data}
       enableColumnOrdering
       enablePinning
-      enableRowOrdering
+      enableRowDragging
       enableSorting={false}
       muiTableBodyRowDragHandleProps={{
         onDragEnd: () => {
           if (hoveredRow && !!draggingRows.length) {
             const filteredData = data.filter((data, index) =>  !draggingRows.some((draggingRow) => draggingRow.index === index))
             filteredData.splice(
-              filteredData.indexOf(hoveredRow.original) + 1,
+              filteredData.indexOf(hoveredRow.row.original) + 1,
               0,
               ...draggingRows.map((row) => row.original)
             );

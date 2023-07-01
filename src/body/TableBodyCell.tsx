@@ -73,7 +73,6 @@ export const TableBodyCell: FC<Props> = ({
 			enableGrouping,
 			enableRowNumbers,
 			enableRowDragging,
-			enableRowOrdering,
 			layoutMode,
 			muiTableBodyCellProps,
 			muiTableBodyCellSkeletonProps,
@@ -285,10 +284,9 @@ export const TableBodyCell: FC<Props> = ({
 	const isAnyRowSelected = table.getSelectedRowModel().flatRows.length > 0
 	const hideCheckBoxSpan = isUtilColumn && !isAnyRowSelected
 	const isDraggableCell =
-		enableRowDragging ||
-		(enableRowOrdering instanceof Function
-			? enableRowOrdering(row)
-			: enableRowOrdering)
+		enableRowDragging instanceof Function
+			? enableRowDragging(row)
+			: enableRowDragging
 
 	const isCurrentCellClicked = openedDetailedPanels[row.id]?.cell.id === cell.id
 	const isDettailedPanelExpanded =

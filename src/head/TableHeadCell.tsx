@@ -1,5 +1,4 @@
 import React, {
-	DragEvent,
 	FC,
 	useCallback,
 	useEffect,
@@ -128,8 +127,7 @@ export const TableHeadCell: FC<Props> = ({
 		  }
 		: undefined
 
-	const handleDragEnter = (_e: DragEvent) => {
-		_e.stopPropagation()
+	const handleDragEnter = () => {
 		if (enableGrouping && hoveredColumn?.id === 'drop-zone') {
 			setHoveredColumn(null)
 		}

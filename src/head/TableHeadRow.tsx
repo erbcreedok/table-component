@@ -39,17 +39,40 @@ export const TableHeadRow: FC<Props> = ({
 	stickyHeader,
 }) => {
 	const {
-		options: { layoutMode, muiTableHeadRowProps },
+		options: { layoutMode, muiTableHeadRowProps, enableRowDragging },
+		setHoveredRow,
+		getState,
 	} = table
+	const { draggingRows } = getState()
 
 	const tableRowProps =
 		muiTableHeadRowProps instanceof Function
 			? muiTableHeadRowProps({ headerGroup, table })
 			: muiTableHeadRowProps
 
+	const handleDragEnter = () => {
+		if (enableRowDragging && draggingRows.length > 0) {
+			let row
+			if (!parentRow) {
+				row = table.getPaginationRowModel().flatRows[0]
+			} else if (parentRow.subRows) {
+				row = parentRow.subRows[0]
+			}
+			if (row) {
+				setHoveredRow({
+					row,
+					position: 'top',
+				})
+			} else {
+				setHoveredRow(null)
+			}
+		}
+	}
+
 	return (
 		<TableRow
 			{...tableRowProps}
+			onDragEnter={handleDragEnter}
 			sx={(theme) => ({
 				position: stickyHeader ? 'sticky' : 'relative',
 				backgroundColor: Colors.LightestGray,

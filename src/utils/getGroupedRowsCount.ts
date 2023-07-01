@@ -25,7 +25,10 @@ export function getGroupedRowsCount({
 		rows[count + rowIndex] &&
 		isSameValue(rows[count + rowIndex], row, columnId)
 	) {
-		if (hoveredRow?.id === rows[count + rowIndex].id) {
+		if (
+			hoveredRow?.position === 'bottom' &&
+			hoveredRow?.row.id === rows[count + rowIndex].id
+		) {
 			hasHoveredRow = true
 		}
 		count += 1

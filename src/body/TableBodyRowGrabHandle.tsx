@@ -1,7 +1,14 @@
 import { IconButtonProps } from '@mui/material/IconButton'
-import React, { DragEvent, FC, RefObject, useRef, useState } from 'react'
+import React, {
+	DragEvent,
+	FC,
+	RefObject,
+	useCallback,
+	useRef,
+	useState,
+} from 'react'
 
-import { Table_Cell, Table_Row, TableInstance } from '..'
+import { Table_Cell, TableInstance } from '..'
 import { GrabHandleButton } from '../buttons/GrabHandleButton'
 
 import { TableRowDragGhost } from './TableRowDragGhost'
@@ -20,11 +27,12 @@ export const TableBodyRowGrabHandle: FC<Props> = ({
 	sx,
 }) => {
 	const dragRef = useRef<HTMLDivElement>(null)
+	const ghostRef = useRef<HTMLImageElement>()
 	const {
 		options: {
 			muiTableBodyRowDragHandleProps,
 			icons: { RowDragIcon },
-			enableRowOrdering,
+			enableRowDragging,
 			validateHoveredRow,
 		},
 	} = table
@@ -37,13 +45,20 @@ export const TableBodyRowGrabHandle: FC<Props> = ({
 			: muiTableBodyRowDragHandleProps),
 	}
 
+	const dragListener = useCallback((event) => {
+		if (dragRef.current) {
+			dragRef.current.style.top = `${event.clientY}px`
+			dragRef.current.style.left = `${event.clientX}px`
+		}
+	}, [])
+
 	const handleDragStart = (event: DragEvent<HTMLButtonElement>) => {
 		iconButtonProps?.onDragStart?.(event)
 		const selectedRows = table.getSelectedRowModel().flatRows
 		const draggableRows =
-			enableRowOrdering instanceof Function
+			enableRowDragging instanceof Function
 				? selectedRows.filter((row) => {
-						const enabled = enableRowOrdering(row)
+						const enabled = enableRowDragging(row)
 						if (!enabled) {
 							row.toggleSelected(false)
 						}
@@ -52,24 +67,23 @@ export const TableBodyRowGrabHandle: FC<Props> = ({
 				  })
 				: selectedRows
 		const draggingRows = draggableRows.length > 0 ? draggableRows : [row]
-		const ghostImage = document.createElement('div')
-		ghostImage.innerHTML = 'ghost'
-		ghostImage.style.opacity = '0'
-		document.body.appendChild(ghostImage)
-		event.dataTransfer.setDragImage(ghostImage, 0, 0)
+		ghostRef.current = document.createElement('img')
+		ghostRef.current.src =
+			'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7'
+		ghostRef.current.style.position = 'absolute'
+		ghostRef.current.style.cursor = 'grabbing'
+		document.body.appendChild(ghostRef.current)
+		event.dataTransfer.setDragImage(ghostRef.current, 0, 0)
 		table.setDraggingRows(draggingRows)
+		window.addEventListener('dragover', dragListener)
 		setIsDragging(true)
-		if (dragRef.current) {
-			dragRef.current.style.visibility = 'visible'
-		}
 	}
 
 	const clearDrag = () => {
 		table.setDraggingRows([])
 		table.setHoveredRow(null)
-		if (dragRef.current) {
-			dragRef.current.style.visibility = 'hidden'
-		}
+		ghostRef.current?.remove()
+		window.removeEventListener('dragover', dragListener)
 		setIsDragging(false)
 	}
 
@@ -78,7 +92,7 @@ export const TableBodyRowGrabHandle: FC<Props> = ({
 		if (
 			hoveredRow &&
 			(validateHoveredRow
-				? validateHoveredRow(hoveredRow as Table_Row, table) !== true
+				? validateHoveredRow(hoveredRow, table) !== true
 				: true)
 		) {
 			clearDrag()
@@ -91,20 +105,11 @@ export const TableBodyRowGrabHandle: FC<Props> = ({
 		clearDrag()
 	}
 
-	const handleDrag = (event: DragEvent<HTMLButtonElement>) => {
-		iconButtonProps?.onDrag?.(event)
-		if (dragRef.current) {
-			dragRef.current.style.top = `${event.nativeEvent.y}px`
-			dragRef.current.style.left = `${event.nativeEvent.x}px`
-		}
-	}
-
 	return (
 		<>
 			<GrabHandleButton
 				onDragStart={handleDragStart}
 				onDragEnd={handleDragEnd}
-				onDrag={handleDrag}
 				table={table}
 				Icon={RowDragIcon}
 				iconButtonProps={{
