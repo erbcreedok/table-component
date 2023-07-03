@@ -579,6 +579,10 @@ const meta: Meta = {
 			description:
 				'***THIS IS NOT A PROP***\n' + 'Set subtitles for Column Headers',
 		},
+		hideTableHead: {
+			control: 'boolean',
+			defaultValue: false,
+		},
 		initialState: {
 			control: { type: 'object' },
 			defaultValue: {},

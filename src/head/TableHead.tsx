@@ -1,8 +1,9 @@
-import React, { FC, useState, useRef, useEffect } from 'react'
+import React, { FC } from 'react'
 import MuiTableHead from '@mui/material/TableHead'
 import type { VirtualItem } from '@tanstack/react-virtual'
 
 import type { TableInstance } from '..'
+import { useIntersectionObserver } from '../hooks/useIntersectionObserver'
 
 import { TableHeadRow } from './TableHeadRow'
 
@@ -27,31 +28,16 @@ export const TableHead: FC<Props> = ({
 		options: { enableStickyHeader, layoutMode, muiTableHeadProps },
 	} = table
 	const { isFullScreen } = getState()
-	const [isIntersecting, setIsIntersecting] = useState(true)
-	const intersectorRef = useRef<HTMLTableSectionElement | null>(null)
+	const stickyHeader = enableStickyHeader || isFullScreen
+	const { isIntersecting, ref: intersectorRef } =
+		useIntersectionObserver<HTMLTableSectionElement>({
+			isEnabled: stickyHeader,
+		})
 
 	const tableHeadProps =
 		muiTableHeadProps instanceof Function
 			? muiTableHeadProps({ table })
 			: muiTableHeadProps
-
-	const stickyHeader = enableStickyHeader || isFullScreen
-
-	// eslint-disable-next-line consistent-return
-	useEffect(() => {
-		if (stickyHeader && intersectorRef?.current) {
-			const observer = new IntersectionObserver(
-				([entry]) => {
-					setIsIntersecting(entry.isIntersecting)
-				},
-				{ threshold: 0.7 }
-			)
-
-			observer.observe(intersectorRef?.current)
-
-			return () => observer.disconnect()
-		}
-	}, [stickyHeader])
 
 	return (
 		<MuiTableHead
