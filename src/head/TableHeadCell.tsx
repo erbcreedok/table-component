@@ -29,6 +29,7 @@ import { TableHeadCellFilterLabel } from './TableHeadCellFilterLabel'
 import { TableHeadCellGrabHandle } from './TableHeadCellGrabHandle'
 import { TableHeadCellResizeHandle } from './TableHeadCellResizeHandle'
 import { TableHeadCellSortLabel } from './TableHeadCellSortLabel'
+import { TableHeadCellUtility } from './TableHeadCellUtility'
 
 interface Props {
 	header: Table_Header
@@ -59,6 +60,7 @@ export const TableHeadCell: FC<Props> = ({
 			layoutMode,
 			muiTableHeadCellProps,
 			uppercaseHeader,
+			enableRowNumbers,
 		},
 		refs: { tableHeadCellRefs },
 		setHoveredColumn,
@@ -287,7 +289,22 @@ export const TableHeadCell: FC<Props> = ({
 											flexGrow: 1,
 										}}
 									>
-										{!isTooShort ? headerElement : isIconsVisible ? '' : '...'}
+										{!isTooShort ? (
+											isUtilColumn ? (
+												<TableHeadCellUtility
+													table={table}
+													enableRowNumbers={enableRowNumbers}
+													hovered={hovered}
+													headerElement={headerElement}
+												/>
+											) : (
+												headerElement
+											)
+										) : isIconsVisible ? (
+											''
+										) : (
+											'...'
+										)}
 									</Box>
 									<Box
 										className="Mui-TableHeadCell-Content-Icons"

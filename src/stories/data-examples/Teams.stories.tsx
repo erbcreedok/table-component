@@ -450,7 +450,7 @@ const meta: Meta = {
 		},
 		enableRowNumbers: {
 			control: 'boolean',
-			defaultValue: false,
+			defaultValue: true,
 		},
 		enableRowDragging: {
 			options: ['enabled', 'disabled', 'Except "Successors identified"'],

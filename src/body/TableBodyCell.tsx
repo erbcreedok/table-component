@@ -31,7 +31,7 @@ import { utilColumns } from '../utilColumns'
 import { GroupBorders } from '../utils/getGroupBorders'
 
 import { TableBodyCellValue } from './TableBodyCellValue'
-import { TableBodyRowGrabHandle } from './TableBodyRowGrabHandle'
+import { TableBodyCellUtility } from './TableBodyCellUtility'
 
 interface Props {
 	cell: Table_Cell
@@ -407,29 +407,16 @@ export const TableBodyCell: FC<Props> = ({
 						width={skeletonWidth}
 						{...skeletonProps}
 					/>
-				) : enableRowNumbers &&
-				  rowNumberMode === 'static' &&
-				  column.id === utilColumns.numbers ? (
-					rowIndex + 1
 				) : column.id === utilColumns.column ? (
-					<>
-						{isDraggableCell ? (
-							<TableBodyRowGrabHandle
-								cell={cell}
-								rowRef={rowRef}
-								table={table}
-								sx={{
-									visibility: isCurrentRowSelected ? 'visible' : 'hidden',
-									'tr:hover &': {
-										visibility: 'visible',
-									},
-								}}
-							/>
-						) : (
-							<Box sx={{ width: '9px' }} />
-						)}
-						{columnDef.Cell?.({ cell, column, row, table })}
-					</>
+					<TableBodyCellUtility
+						table={table}
+						cell={cell}
+						isDraggableCell={isDraggableCell}
+						isCurrentRowSelected={isCurrentRowSelected}
+						rowRef={rowRef}
+						rowIndex={rowIndex}
+						enableRowNumbers={enableRowNumbers}
+					/>
 				) : columnDefType === 'display' && column.id === utilColumns.expand ? (
 					columnDef.Cell?.({ cell, column, row, table })
 				) : isEditing ? (

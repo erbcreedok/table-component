@@ -149,6 +149,7 @@ export const useTable = <TData extends Record<string, any> = {}>(
 	useEffect(() => {
 		if (
 			(config.enableRowDragging ||
+				config.enableRowNumbers ||
 				(!config.hideRowSelectionColumn && config.enableRowSelection)) &&
 			!columnOrder.includes(utilColumns.column)
 		) {
@@ -158,6 +159,7 @@ export const useTable = <TData extends Record<string, any> = {}>(
 		config.enableRowDragging,
 		config.enableRowSelection,
 		config.hideRowSelectionColumn,
+		config.enableRowNumbers,
 		columnOrder,
 	])
 
@@ -166,6 +168,7 @@ export const useTable = <TData extends Record<string, any> = {}>(
 			(
 				[
 					(config.enableRowDragging ||
+						config.enableRowNumbers ||
 						(!config.hideRowSelectionColumn && config.enableRowSelection)) &&
 						getUtilColumn(config),
 					columnOrder.includes(utilColumns.actions) && {
@@ -197,15 +200,6 @@ export const useTable = <TData extends Record<string, any> = {}>(
 							...config.displayColumnDefOptions?.[utilColumns.expand],
 							id: utilColumns.expand,
 						},
-					columnOrder.includes(utilColumns.numbers) && {
-						Cell: ({ row }) => row.index + 1,
-						Header: () => config.localization.rowNumber,
-						header: config.localization.rowNumbers,
-						size: 60,
-						...config.defaultDisplayColumn,
-						...config.displayColumnDefOptions?.[utilColumns.numbers],
-						id: utilColumns.numbers,
-					},
 				] as Array<Table_ColumnDef<TData>>
 			).filter(Boolean),
 		[
