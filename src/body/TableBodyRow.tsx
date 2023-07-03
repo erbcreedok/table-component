@@ -156,7 +156,7 @@ export const TableBodyRow: FC<TableBodyRowProps> = ({
 		})
 		.filter(Boolean)
 
-	const cells = virtualColumns ?? row?.getVisibleCells?.()
+	const cells = virtualColumns ?? row?.getVisibleCells?.() ?? []
 
 	const getHoveredRowDropLine = (isTopLine: boolean) =>
 		isHoveredRow ? (
