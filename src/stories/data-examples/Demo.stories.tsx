@@ -151,7 +151,7 @@ export const TableDemo: Story<TableComponentProps> = () => {
 				enableColumnDragging={false}
 				enablePagination={false}
 				groupsSorting={groupsSorting}
-				groupBorder={{ left: '12px solid white', top: '20px solid white' }}
+				groupBorder={{ left: '12px solid white', top: '20px solid white', divider: '3px solid #E1E3EB' }}
 				// initialState={{ grouping: ['impact', 'performance'], columnSizing: { impact: 1, performance: 1 } }}
 				uppercaseHeader
 				enableRowSelection

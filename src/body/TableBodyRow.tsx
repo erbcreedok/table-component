@@ -138,6 +138,7 @@ export const TableBodyRow: FC<TableBodyRowProps> = ({
 					groupBorders: getCellGroupBorders({
 						table,
 						isFirstOfGroup: true,
+						isLastOfGroup: grouping.length === colIndex + 1,
 						isGroupedColumn: true,
 						rowIndex: getSubRowIndex({ row, table }) ?? rowIndex,
 						colIndex,
@@ -253,6 +254,7 @@ export const TableBodyRow: FC<TableBodyRowProps> = ({
 						groupBorders: getCellGroupBorders({
 							table,
 							isFirstOfGroup: groupedCells.length > 0,
+							isLastOfGroup: false,
 							rowIndex: getSubRowIndex({ row, table }) ?? rowIndex,
 							colIndex,
 							isGroupedColumn: false,

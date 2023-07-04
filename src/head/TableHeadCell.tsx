@@ -44,8 +44,8 @@ export const TableHeadCell: FC<Props> = ({
 	table,
 	parentRow,
 	groupBorders,
-	backgroundColor = Colors.LightestGray,
-	backgroundColorHover = Colors.Gray20,
+	backgroundColor = Colors.Gray20,
+	backgroundColorHover = Colors.Gray,
 }) => {
 	const theme = useTheme()
 	const {

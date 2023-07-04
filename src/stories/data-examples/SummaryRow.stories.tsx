@@ -133,7 +133,7 @@ const SummaryRowTable: Story<TableConfigs> = (args) => {
 		<TableComponent
 			columns={getPropsHandledColumns(columns, args)}
 			groupsSorting={groupsSorting}
-			groupBorder={{ left: '12px solid white', top: '20px solid white' }}
+			groupBorder={{ left: '12px solid white', top: '20px solid white', divider: '3px solid #E1E3EB' }}
 			initialState={{ sorting: defaultSorting, columnOrder: defaultColumnOrder, columnVisibility: defaultColumnVisibility }}
 			renderRowActionMenuItems={getDefaultRowActionMenuItems}
 			{...rest}

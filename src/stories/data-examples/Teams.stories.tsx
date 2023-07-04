@@ -203,7 +203,7 @@ const TeamsTable: Story<TeamsTableConfigs> = (args) => {
 		<TableComponent
 			data={data}
 			columns={getPropsHandledColumns(columns, args)}
-			groupBorder={{ left: '12px solid white', top: '20px solid white' }}
+			groupBorder={{ left: '12px solid white', top: '20px solid white', divider: '3px solid #E1E3EB' }}
 			initialState={{
 				sorting: defaultSorting,
 				columnOrder: defaultColumnOrder,
@@ -262,7 +262,7 @@ export const TeamsTableSubtree: Story<TeamsTableExample> = (args) => (
 	<TeamsTable
 		columns={columns}
 		data={dataTree}
-		groupBorder={{ left: '12px solid white', top: '20px solid white' }}
+		groupBorder={{ left: '12px solid white', top: '20px solid white', divider: '3px solid #E1E3EB' }}
 		{...args}
 		enableExpanding
 	/>
@@ -277,7 +277,7 @@ export const HierarchyGroupTableExample: Story = (args) => {
 				columns={columns as unknown as Table_ColumnDef<UnitTreeItem>[]}
 				data={data}
 				CustomRow={UnitRow}
-				groupBorder={{ left: '12px solid white', top: '20px solid white' }}
+				groupBorder={{ left: '12px solid white', top: '20px solid white', divider: '3px solid #E1E3EB' }}
 				{...args}
 				enableExpanding
 				hideRowExpandColumn
