@@ -34,7 +34,7 @@ export const ColumnsMenu = <TData extends Record<string, any> = {}>({
 		getState,
 		setColumnOrder,
 		setGrouping,
-		options: { localization },
+		options: { localization, innerTable },
 	} = table
 	const { columnOrder, columnPinning, columnVisibility, grouping } = getState()
 	const [isSearchActive, setIsSearchActive] = useState<boolean>(false)
@@ -209,6 +209,7 @@ export const ColumnsMenu = <TData extends Record<string, any> = {}>({
 			}
 			withSearch
 			onSearchChange={handleOnSearchChange}
+			transparentBackdrop={innerTable}
 		>
 			{isSearchActive ? (
 				searchList.length ? (

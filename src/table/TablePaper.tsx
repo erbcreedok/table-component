@@ -26,6 +26,8 @@ export const TablePaper: FC<Props> = ({ table }) => {
 			renderTopToolbar,
 			toolbarProps,
 			bulkActionProps,
+			innerTable,
+			innerTableTitle,
 		},
 		refs: { tablePaperRef },
 	} = table
@@ -75,7 +77,13 @@ export const TablePaper: FC<Props> = ({ table }) => {
 				(renderTopToolbar instanceof Function
 					? renderTopToolbar({ table })
 					: renderTopToolbar ?? (
-							<TableToolbar sx={{ p: '6px' }} table={table} {...toolbarProps} />
+							<TableToolbar
+								sx={{ p: '6px' }}
+								innerTable={!!innerTable}
+								innerTableTitle={innerTableTitle}
+								table={table}
+								{...toolbarProps}
+							/>
 					  ))}
 			{enableStatusBar && <TableStatusBar sx={{ p: '6px' }} table={table} />}
 			<TableContainer table={table} />

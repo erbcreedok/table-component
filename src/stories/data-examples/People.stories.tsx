@@ -116,6 +116,7 @@ const SummaryRowExampleCellValue = (props) => {
 
 const columns = getPeopleColumns()
 const data = getSeparatedPeopleMembers()
+const innerTableData = getSeparatedPeopleMembers(50)
 
 export const PeopleTable: Story<TableComponentProps> = () => {
 	const [isSidebarOpen, setIsSidebarOpen] = useState(false)
@@ -137,7 +138,9 @@ export const PeopleTable: Story<TableComponentProps> = () => {
 				onClose={() => setIsSidebarOpen(false)}
 				withHeader
 				headerTitle="Sidebar title"
-			></Sidebar>
+			>
+				<TableComponent innerTable innerTableTitle="Title" data={innerTableData} columns={columns} />
+			</Sidebar>
 			<TableComponent
 				data={data}
 				isTablePlugSlotActive={false}

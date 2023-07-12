@@ -22,7 +22,12 @@ export const SortingMenu = <TData extends Record<string, any> = {}>({
 	table,
 }: Props<TData>) => {
 	const [isSearchActive, setIsSearchActive] = useState<boolean>(false)
-	const { getAllColumns, getState, resetSorting } = table
+	const {
+		getAllColumns,
+		getState,
+		resetSorting,
+		options: { innerTable },
+	} = table
 	const { columnPinning, columnOrder, columnVisibility, grouping, sorting } =
 		getState()
 	const [searchList, setSearchList] = useState<Array<Table_Column<TData>>>([])
@@ -102,6 +107,7 @@ export const SortingMenu = <TData extends Record<string, any> = {}>({
 			withSearch
 			headerTitle="Sorting"
 			onSearchChange={handleOnSearchChange}
+			transparentBackdrop={innerTable}
 		>
 			<Box sx={{ marginTop: '12px' }}>
 				{isSearchActive &&

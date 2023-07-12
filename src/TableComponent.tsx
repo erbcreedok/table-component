@@ -866,6 +866,8 @@ export type TableComponentProps<TData extends Record<string, any> = {}> = Omit<
 	hideTableHead?: boolean
 	icons?: Partial<Table_Icons>
 	initialState?: Partial<Table_TableState<TData>>
+	innerTable?: boolean
+	innerTableTitle?: string
 	isRowGroupable?: ({
 		row,
 		table,

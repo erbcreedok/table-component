@@ -15,6 +15,7 @@ interface Props {
 	subHeader?: string | ReactElement | null
 	styles?: Record<string, any>
 	children?: ReactNode
+	transparentBackdrop?: boolean
 }
 
 export const Sidebar = ({
@@ -25,7 +26,8 @@ export const Sidebar = ({
 	onSearchChange = () => null,
 	headerTitle = '',
 	subHeader,
-	styles = { minWidth: 400 },
+	styles = { minWidth: 400, maxWidth: '80vw' },
+	transparentBackdrop,
 	children,
 }: Props) => {
 	return (
@@ -34,6 +36,13 @@ export const Sidebar = ({
 			open={open}
 			onClose={onClose}
 			transitionDuration={400}
+			sx={{
+				'& > .MuiBackdrop-root': {
+					backgroundColor: transparentBackdrop
+						? 'transparent'
+						: 'rgba(0, 0, 0, 0.5)',
+				},
+			}}
 		>
 			<Box sx={styles}>
 				<>

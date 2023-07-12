@@ -30,7 +30,7 @@ export const FiltersMenu = <TData extends TableData>({
 		getAllColumns,
 		getState,
 		resetColumnFilters,
-		options: { localization },
+		options: { localization, innerTable },
 	} = table
 	const [searchValue, setSearchValue] = useState<string>('')
 	const [newColumnFilter, setNewColumnFilter] =
@@ -93,6 +93,7 @@ export const FiltersMenu = <TData extends TableData>({
 			styles={{ minWidth: 660 }}
 			withHeader
 			headerTitle="Filters"
+			transparentBackdrop={innerTable}
 		>
 			{!isSearchActive && !!filterAppliedColumns.length ? (
 				<>
