@@ -25,23 +25,27 @@ import { useTableContext } from './context/useTableContext'
 import { HeaderSearch } from './head/HeaderSearch'
 import { HeaderBase } from './head/HeaderBase'
 import { Sidebar } from './components/Sidebar'
-import { TableBodyRow } from './body/TableBodyRow'
+import { TableBodyRow, type TableBodyRowProps } from './body/TableBodyRow'
+import { GroupedCellBase } from './body/GroupedCellBase'
 import { ExpandButton } from './buttons/ExpandButton'
 import { TableHeadRow } from './head/TableHeadRow'
 import { TooltipOverflow } from './components/TooltipOverflow'
 import { SelectCheckbox } from './inputs/SelectCheckbox'
+import { FilterMultiselect } from './components/FilterMultiselect'
 
 export default TableComponent
 export * from './TableComponent'
 export * from './utilColumns'
-export type { Table_Icons }
+export type { Table_Icons, TableBodyRowProps }
 
 export {
 	SelectCheckbox,
 	CopyButton,
 	FilterOptionMenu,
+	FilterMultiselect,
 	FullScreenToggleButton,
 	GlobalFilterTextField,
+	GroupedCellBase,
 	MenuItemBase,
 	RowActionMenuButton,
 	ShowHideColumnsButton,
