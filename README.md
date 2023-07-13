@@ -54,10 +54,12 @@ Component is written in TypeScript.
 
 ### INSTALL
 
-From GitLab
+from Artifactory
+
+*don't forget to add `@core` to your .npmrc file*
 
 ```
-npm i --save git+https://git.epam.com/epm-dce/sag/table-component.git
+npm i --save @core/table-component
 ```
 
 
@@ -66,9 +68,7 @@ npm i --save git+https://git.epam.com/epm-dce/sag/table-component.git
 ### INSTALL LOCALLY
 
 ```
-git clone git@git.epam.com:epm-dce/sag/table-component.git
-or
-git clone https://git.epam.com/epm-dce/sag/table-component.git
+git clone "https://gerrit.delivery.epam.com/table-component" && (cd "table-component" && mkdir -p .git/hooks && curl -Lo `git rev-parse --git-dir`/hooks/commit-msg https://gerrit.delivery.epam.com/tools/hooks/commit-msg; chmod +x `git rev-parse --git-dir`/hooks/commit-msg)
 
 cd table-component
 npm i
