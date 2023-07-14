@@ -873,7 +873,6 @@ export type TableComponentProps<TData extends Record<string, any> = {}> = Omit<
 	globalFilterModeOptions?: Table_FilterOption[] | null
 	groupsSorting?: any
 	groupBorder?: string | { left: string; top: string }
-	groupDivider?: string
 	hideRowExpandColumn?: boolean
 	hideRowSelectionColumn?: boolean
 	hideTableHead?: boolean

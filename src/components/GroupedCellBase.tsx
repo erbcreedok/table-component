@@ -2,7 +2,7 @@ import { styled, Box } from '@mui/material'
 import IconButton from '@mui/material/IconButton'
 import Typography from '@mui/material/Typography'
 import { useResizeDetector } from 'react-resize-detector'
-import React, { ReactNode, useCallback, useState } from 'react'
+import React, { ReactNode, useCallback, useMemo, useState } from 'react'
 
 import { SelectCheckbox } from '../inputs/SelectCheckbox'
 import { getColumnId } from '../column.utils'
@@ -14,14 +14,17 @@ import {
 } from '../TableComponent'
 import { getShouldForwardProps } from '../utils/getShouldForwardProps'
 
-import { Text } from './styles'
+import {
+	Colors,
+	groupDividerBorder,
+	groupDividerHoveredBorder,
+	Text,
+} from './styles'
 import { Tooltip } from './Tooltip'
 
-const Wrapper = styled(Box, getShouldForwardProps('borderColor', 'divider'))<{
+const Wrapper = styled(Box, getShouldForwardProps('borderColor'))<{
 	borderColor?: string
-	divider?: string
 }>`
-	background-color: #fafafc;
 	box-sizing: border-box;
 	position: absolute;
 	top: 1rem;
@@ -31,7 +34,6 @@ const Wrapper = styled(Box, getShouldForwardProps('borderColor', 'divider'))<{
 	margin: -1rem -0.75rem;
 	padding: 1rem 0.75rem;
 	border-left: 2px solid ${({ borderColor }) => borderColor ?? '#E1E3EB'};
-	border-right: ${({ divider }) => divider};
 	font-weight: bold;
 	overflow: hidden;
 	text-overflow: ellipsis;
@@ -68,19 +70,24 @@ export const GroupedCellBase = <TData extends object>({
 	})
 	const {
 		options: {
-			groupDivider,
 			enableRowSelection,
 			icons: { ExpandIcon, CollapseIcon },
 		},
 		setGroupCollapsed,
 	} = table
 	const columnId = getColumnId(column.columnDef)
-	const { grouping, groupCollapsed } = table.getState()
+	const { grouping, groupCollapsed, hoveredRow } = table.getState()
 	const isLastGroupedColumn =
 		grouping.length > 0 && grouping[grouping.length - 1] === columnId
 	const groupId = row.groupIds ? row.groupIds[columnId] : undefined
 	const expanded = groupId ? !groupCollapsed[groupId] : true
 	const groupRow = groupId ? row.groupRows?.[groupId] : undefined
+
+	const isHovered = useMemo(() => {
+		if (!groupRow?.subRows || !hoveredRow?.row) return false
+
+		return groupRow.subRows.includes(hoveredRow.row)
+	}, [groupRow, hoveredRow?.row])
 
 	const toggleExpand = useCallback(() => {
 		if (!groupId) return
@@ -101,7 +108,14 @@ export const GroupedCellBase = <TData extends object>({
 			<Wrapper
 				ref={ref}
 				borderColor={borderColor}
-				divider={isLastGroupedColumn ? groupDivider : 'none'}
+				sx={{
+					backgroundColor: isHovered ? Colors.LightestBlue : Colors.Gray10,
+					borderRight: isLastGroupedColumn
+						? isHovered
+							? groupDividerHoveredBorder
+							: groupDividerBorder
+						: undefined,
+				}}
 			>
 				<Box
 					sx={{

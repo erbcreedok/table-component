@@ -8,6 +8,7 @@ export const Text = {
 
 export const Colors = {
 	LightBlue: '#009ECC',
+	LightestBlue10: '#B9E3EF',
 	LightestBlue: '#E1F4FA',
 	LightGreen: '#67A300',
 	White: '#ffffff',
@@ -30,3 +31,6 @@ export const IconsColor = {
 	disabled: '#ACAFBF',
 	active: '#474A59',
 }
+
+export const groupDividerBorder = `3px solid ${Colors.Gray10}`
+export const groupDividerHoveredBorder = `3px solid ${Colors.LightestBlue10}`

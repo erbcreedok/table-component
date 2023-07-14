@@ -25,7 +25,7 @@ import {
 	Table_DefaultColumn,
 } from '../column.utils'
 import type { Table_Header, Table_Row, TableInstance } from '..'
-import { Colors } from '../components/styles'
+import { Colors, groupDividerBorder } from '../components/styles'
 
 import { TableHeadCellActionsButton } from './TableHeadCellActionsButton'
 import { TableHeadCellFilterLabel } from './TableHeadCellFilterLabel'
@@ -64,7 +64,6 @@ export const TableHeadCell: FC<Props> = ({
 			muiTableHeadCellProps,
 			uppercaseHeader,
 			enableRowNumbers,
-			groupDivider,
 			icons: { ExpandIcon, CollapseIcon },
 		},
 		refs: { tableHeadCellRefs },
@@ -286,7 +285,7 @@ export const TableHeadCell: FC<Props> = ({
 									right: 0,
 									bottom: 0,
 									width: '1px',
-									borderRight: groupDivider,
+									borderRight: groupDividerBorder,
 								}}
 							/>
 						)}
