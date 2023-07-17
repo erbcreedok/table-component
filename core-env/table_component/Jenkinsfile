@@ -19,9 +19,7 @@ try {
                         sh "npm config set userconfig $WORKSPACE/.npmrc"
                         sh "npm run ci_stage1"
                         if(res_branch == 'qa'){
-                            sh "npm version:alpha $super_version --no-git-tag-version"
-                        } else {
-                            env.HELM_VERSION = env.HELM_VERSION + '-' + env.GERRIT_CHANGE_NUMBER
+                            sh "npm version:alpha"
                         }
                         version = sh returnStdout: true, script: 'node -pe "require(\'./package.json\').version"'
                         env.VERSION = version
