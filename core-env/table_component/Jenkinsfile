@@ -24,6 +24,7 @@ try {
                             env.HELM_VERSION = env.HELM_VERSION + '-' + env.GERRIT_CHANGE_NUMBER
                         }
                         version = sh returnStdout: true, script: 'node -pe "require(\'./package.json\').version"'
+                        env.VERSION = version
                     }
                     stage('Build') {
                         sh "npm run ci_stage2"
@@ -34,8 +35,8 @@ try {
             container('docker') {
                 stage('Publish') {
                     sh """
-                        docker build -t harbor.delivery.epam.com/spectrum/table_component:${version} ./core-env/core_nginx && \
-                        docker push harbor.delivery.epam.com/spectrum/table_component:${version}
+                        docker build -t harbor.delivery.epam.com/spectrum/table_component:${VERSION} ./core-env/core_nginx && \
+                        docker push harbor.delivery.epam.com/spectrum/table_component:${VERSION}
                     """
                 }
             }
