@@ -19,9 +19,10 @@ try {
                         sh "npm config set userconfig $WORKSPACE/.npmrc"
                         sh "npm run ci_stage1"
                         if(res_branch == 'qa'){
-                            sh "npm version:alpha"
+                            sh "npm run version:init"
+                            sh "npm run version:alpha"
                         }
-                        version = sh returnStdout: true, script: 'node -pe "require(\'./package.json\').version"'
+                        version = sh returnStdout: true, script: 'node -pe "require(\'./package.json\').version" | tr -d \'\\n\''
                         env.VERSION = version
                     }
                     stage('Build') {
