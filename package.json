@@ -1,6 +1,6 @@
 {
     "name": "@core/table-component",
-    "version": "1.0.0",
+    "version": "1.1.0",
     "description": "React table written with tanstack table v8",
     "scripts": {
         "dev": "start-storybook -p 6006",
@@ -12,7 +12,9 @@
         "storybook:build": "build-storybook -o ./web_build/storybook",
         "test": "",
         "ci_stage1": "npm i && npm run build",
-        "ci_stage2": "npm publish --access=public && npm run storybook:build"
+        "ci_stage2": "npm publish --access=public && npm run storybook:build",
+        "version:init": "npm version $(git describe --tag --abbrev=0 master | sed 's/^.//') --no-git-tag-version --allow-same-version",
+        "version:alpha": "npm version prerelease --preid alpha --no-git-tag-version"
     },
     "repository": {
         "type": "git",

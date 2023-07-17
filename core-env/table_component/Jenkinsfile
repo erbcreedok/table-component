@@ -18,12 +18,12 @@ try {
                     stage('Preparation') {
                         sh "npm config set userconfig $WORKSPACE/.npmrc"
                         sh "npm run ci_stage1"
+                        if(res_branch == 'qa'){
+                            sh "npm version:alpha $super_version --no-git-tag-version"
+                        } else {
+                            env.HELM_VERSION = env.HELM_VERSION + '-' + env.GERRIT_CHANGE_NUMBER
+                        }
                         version = sh returnStdout: true, script: 'node -pe "require(\'./package.json\').version"'
-                        version = version.tokenize('.')[0..1] + "${env.BUILD_ID}"
-                        super_version = version.join(".")
-                        print super_version
-                        env.SUPER_VERSION = super_version
-                        sh "npm version $super_version --no-git-tag-version"
                     }
                     stage('Build') {
                         sh "npm run ci_stage2"
@@ -34,8 +34,8 @@ try {
             container('docker') {
                 stage('Publish') {
                     sh """
-                        docker build -t harbor.delivery.epam.com/spectrum/table_component:${SUPER_VERSION} ./core-env/core_nginx && \
-                        docker push harbor.delivery.epam.com/spectrum/table_component:${SUPER_VERSION}
+                        docker build -t harbor.delivery.epam.com/spectrum/table_component:${version} ./core-env/core_nginx && \
+                        docker push harbor.delivery.epam.com/spectrum/table_component:${version}
                     """
                 }
             }
