@@ -17,6 +17,7 @@ import TableComponent, {
 	TableComponentProps,
 	utilColumns,
 } from '../../index'
+import { CustomNoRecordsToDisplay, CustomNoResultsFound } from '../components/CustomNoResultsFound'
 import { TeamMember, UnitTreeItem } from '../types/TeamMember'
 import { getTablePresetProps } from '../utils/getTablePresetProps'
 import {
@@ -202,7 +203,7 @@ const TeamsTable: Story<TeamsTableConfigs> = (args) => {
 	const [data, setData] = useState(propsData || getTeamMembers(100))
 	return (
 		<TableComponent
-			data={data}
+			data={[]}
 			columns={getPropsHandledColumns(columns, args)}
 			groupBorder={{ left: '6px solid white', top: '6px solid white' }}
 			initialState={{
@@ -592,6 +593,22 @@ const meta: Meta = {
 			defaultValue: {},
 			description:
 				'Set initial state for Table, this property rewrites `defaultSorting`, `defaultColumnVisibility`, `defaultColumnOrder`',
+		},
+		noRecordsToDisplaySlot: {
+			options: ['Not provided', 'Custom component'],
+			mapping: {
+				'Not provided': undefined,
+				'Custom component': <CustomNoRecordsToDisplay />
+			},
+			control: { type: 'select' },
+		},
+		noResultsFoundSlot: {
+			options: ['Not provided', 'Custom component'],
+			mapping: {
+				'Not provided': undefined,
+				'Custom component': <CustomNoResultsFound />
+			},
+			control: { type: 'select' },
 		},
 		toolbarProps: {
 			control: { type: 'object' },

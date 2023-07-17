@@ -826,6 +826,8 @@ export type TableComponentProps<TData extends Record<string, any> = {}> = Omit<
 	expandByClick?: ExpandByClick
 	notClickableCells?: string[]
 	tablePlugSlot?: React.ReactNode
+	noResultsFoundSlot?: React.ReactNode
+	noRecordsToDisplaySlot?: React.ReactNode
 	isTablePlugSlotActive?: boolean
 	validateHoveredRow?: (
 		row: NonNullable<HoveredRowState<TData>>,

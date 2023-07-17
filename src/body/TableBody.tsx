@@ -47,6 +47,8 @@ export const TableBody: FC<Props> = ({
 			manualSorting,
 			memoMode,
 			muiTableBodyProps,
+			noResultsFoundSlot,
+			noRecordsToDisplaySlot,
 			rowVirtualizerInstanceRef,
 			rowVirtualizerProps,
 			tablePlugSlot,
@@ -204,6 +206,21 @@ export const TableBody: FC<Props> = ({
 		return rowsGroupingProps
 	}, [rowProps, table])
 
+	const getNoResultsSlot = (message: string) => (
+		<Typography
+			sx={{
+				color: 'text.secondary',
+				fontStyle: 'italic',
+				maxWidth: `min(100vw, ${tablePaperRef.current?.clientWidth ?? 360}px)`,
+				py: '2rem',
+				textAlign: 'center',
+				width: '100%',
+			}}
+		>
+			{message}
+		</Typography>
+	)
+
 	return (
 		<MuiTableBody
 			{...tableBodyProps}
@@ -243,22 +260,11 @@ export const TableBody: FC<Props> = ({
 										display: layoutMode === 'grid' ? 'grid' : 'table-cell',
 									}}
 								>
-									<Typography
-										sx={{
-											color: 'text.secondary',
-											fontStyle: 'italic',
-											maxWidth: `min(100vw, ${
-												tablePaperRef.current?.clientWidth ?? 360
-											}px)`,
-											py: '2rem',
-											textAlign: 'center',
-											width: '100%',
-										}}
-									>
-										{globalFilter || columnFilters.length
-											? localization.noResultsFound
-											: localization.noRecordsToDisplay}
-									</Typography>
+									{globalFilter || columnFilters.length
+										? noResultsFoundSlot ??
+										  getNoResultsSlot(localization.noResultsFound)
+										: noRecordsToDisplaySlot ??
+										  getNoResultsSlot(localization.noRecordsToDisplay)}
 								</td>
 							</tr>
 						) : (
