@@ -122,3 +122,4 @@ Secondly, in separate terminal start docker container with chrome inside by comm
 -   To create a description or to set "default" value for a prop use JSDoc.<br>
     See examples at https://github.com/strothj/react-docgen-typescript-loader
 -   You can clean cache manually if it needed by removing folder ./.storybook/typescript-docgen-cache-loader/cache
+
