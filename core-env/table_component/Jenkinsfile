@@ -18,12 +18,18 @@ try {
                     stage('Preparation') {
                         sh "npm config set userconfig $WORKSPACE/.npmrc"
                         sh "npm run ci_stage1"
+
                         if(res_branch == 'qa'){
                             sh "npm run version:init"
                             sh "npm run version:alpha"
                         }
                         version = sh returnStdout: true, script: 'node -pe "require(\'./package.json\').version" | tr -d \'\\n\''
                         env.VERSION = version
+
+                        if(res_branch == 'master'){
+                            sh "git tag v${version}"
+                            sh "git push origin v${version}"
+                        }
                     }
                     stage('Build') {
                         sh "npm run ci_stage2"
