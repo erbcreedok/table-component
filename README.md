@@ -7,7 +7,8 @@ Component is written in TypeScript.
 ### Members of teams with merge rights
 
 -   [Yerbol Syzdyk](https://telescope.epam.com/who/Yerbol_Syzdyk)
--   [Siarhei Zanimonets](https://telescope.epam.com/who/Siarhei_Zanimonets)
+-   [Uladzislau Piatrenka](https://telescope.epam.com/who/Uladzislau_Piatrenka)
+-   [Siarhei Belavus](https://telescope.epam.com/who/Siarhei_Belavus)
 
 ### Setup npm repository
 

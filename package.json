@@ -12,8 +12,8 @@
         "storybook:build": "build-storybook -o ./web_build/storybook",
         "test": "",
         "publish": "npm publish --access=public",
-        "version:init": "npm version $(git show master:package.json | grep '\"version\"' | awk -F '\"' '{print $4}') --no-git-tag-version --allow-same-version",
-        "version:alpha": "npm version prerelease --preid alpha --no-git-tag-version"
+        "version:stable": "npm version $(git show master:package.json | grep '\"version\"' | awk -F '\"' '{print $4}') --no-git-tag-version --allow-same-version",
+        "version:alpha": "npm version prerelease --preid=alpha --no-git-tag-version"
     },
     "repository": {
         "type": "git",

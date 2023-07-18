@@ -23,11 +23,12 @@ try {
                     }
                     stage('Version') {
                         if(res_branch == 'qa'){
-                            sh "npm run version:init"
+                            sh "npm run version:stable"
                             sh "npm run version:alpha"
                         }
 
-                        version = sh returnStdout: true, script: 'node -pe "require(\'./package.json\').version" | tr -d \'\\n\''
+                        version = sh returnStdout: true, script: 'node -pe "require(\'./package.json\').version" | tr -d \'\\n\' | sed "s/alpha\\.\\([0-9]*\\)$/alpha.${env.BUILD_ID}/"'
+                        sh "npm version $version --no-git-tag-version"
                         env.VERSION = version
                     }
                     stage('Publish Artifact') {
