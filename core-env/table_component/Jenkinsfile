@@ -7,7 +7,7 @@ try {
         ])
         node('jenkins-node14') {
             container('npm') {
-                env.SUPER_VERSION = ''
+                env.VERSION = ''
                 stage("Checkout") {
                     cleanWs deleteDirs: true, notFailBuild: true
                     res_branch = env.GERRIT_BRANCH ? env.GERRIT_BRANCH : env.BRANCH
@@ -15,30 +15,29 @@ try {
                     git url: 'https://auto_epm-dce_ci@gerrit.delivery.epam.com/a/table-component', branch: res_branch, credentialsId: 'auto-epm-dce-ci-gerrit'
                     }
                 withNPM(npmrcConfig:'npm-dce') {
-                    stage('Preparation') {
+                    stage('Build') {
                         sh "npm config set userconfig $WORKSPACE/.npmrc"
-                        sh "npm run ci_stage1"
-
+                        sh "npm i && npm run build"
+                        sh "npm run storybook:build"
+                        sh "cp -r ./web_build ./core-env/core_nginx/"
+                    }
+                    stage('Version') {
                         if(res_branch == 'qa'){
                             sh "npm run version:init"
                             sh "npm run version:alpha"
                         }
+
                         version = sh returnStdout: true, script: 'node -pe "require(\'./package.json\').version" | tr -d \'\\n\''
                         env.VERSION = version
-
-                        if(res_branch == 'master'){
-                            sh "git tag v${version}"
-                            sh "git push origin v${version}"
-                        }
                     }
-                    stage('Build') {
-                        sh "npm run ci_stage2"
-                        sh "cp -r ./web_build ./core-env/core_nginx/"
+                    stage('Publish Artifact') {
+                        sh "npm run publish"
                     }
                 }
+                currentBuild.description = "Version '${env.VERSION}'"
             }
             container('docker') {
-                stage('Publish') {
+                stage('Publish Docker Image') {
                     sh """
                         docker build -t harbor.delivery.epam.com/spectrum/table_component:${VERSION} ./core-env/core_nginx && \
                         docker push harbor.delivery.epam.com/spectrum/table_component:${VERSION}
