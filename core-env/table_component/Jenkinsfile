@@ -34,7 +34,7 @@ try {
                         sh "npm run publish"
                     }
                 }
-                currentBuild.description = "Version '${env.VERSION}'"
+                currentBuild.description = "Version '${env.VERSION}' Branch '${res_branch}'"
             }
             container('docker') {
                 stage('Publish Docker Image') {
