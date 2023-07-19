@@ -28,7 +28,7 @@ try {
                         }
 
                         version = sh returnStdout: true, script: 'node -pe "require(\'./package.json\').version" | tr -d \'\\n\' | sed "s/alpha\\.\\([0-9]*\\)$/alpha.${BUILD_NUMBER}/"'
-                        sh "npm version $version --no-git-tag-version"
+                        sh "npm version $version --no-git-tag-version --allow-same-version"
                         env.VERSION = version
                     }
                     stage('Publish Artifact') {
