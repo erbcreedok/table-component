@@ -143,7 +143,7 @@ export const useTable = <TData extends Record<string, any> = {}>(
 	const [sorting, setSorting] = useState<SortingState>(
 		initialState.sorting ?? []
 	)
-	const [searchId, setSearchId] = useState<string | null>(null)
+	const [searchId, setSearchId] = useState<string | string[] | null>(null)
 	const [highlightHeadCellId, setHighlightHeadCellId] = useState<string | null>(
 		null
 	)
@@ -268,7 +268,13 @@ export const useTable = <TData extends Record<string, any> = {}>(
 				: config.data
 
 		return searchId
-			? tableData.filter((item) => item.id === searchId)
+			? tableData.filter((item) => {
+					if (Array.isArray(searchId)) {
+						return searchId.includes(item.id)
+					}
+
+					return item.id === searchId
+			  })
 			: tableData
 	}, [
 		config.data,
@@ -322,7 +328,7 @@ export const useTable = <TData extends Record<string, any> = {}>(
 		[]
 	)
 
-	const searchData = (id: string | null) => {
+	const searchData = (id: string | string[] | null) => {
 		setSearchId(id)
 
 		if (config.onSearchData) {

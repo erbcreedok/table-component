@@ -22,7 +22,7 @@ import { TableToolbar } from './TableToolbar'
 import { TableStatusBar } from './TableStatusBar'
 import { TableProvider } from './context/TableProvider'
 import { useTableContext } from './context/useTableContext'
-import { HeaderSearch } from './head/HeaderSearch'
+import { HeaderSearch, type HeaderSearchOptionProps } from './head/HeaderSearch'
 import { HeaderBase } from './head/HeaderBase'
 import { Sidebar } from './components/Sidebar'
 import { TableBodyRow, type TableBodyRowProps } from './body/TableBodyRow'
@@ -37,7 +37,7 @@ export default TableComponent
 export * from '@tanstack/react-table'
 export * from './TableComponent'
 export * from './utilColumns'
-export type { Table_Icons, TableBodyRowProps }
+export type { Table_Icons, TableBodyRowProps, HeaderSearchOptionProps }
 
 export {
 	SelectCheckbox,

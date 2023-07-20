@@ -44,6 +44,7 @@ type TeamsTableConfigs = Omit<TableComponentProps<TeamMember>, 'data'> &
 		defaultColumnVisibility?: VisibilityState
 		defaultColumnFilterFns?: string[]
 		columnSubtitles: Record<string, string>
+		rowsCount: number
 	}
 
 type TeamsTableExample = Omit<TeamsTableConfigs, 'data' | 'columns'>
@@ -198,9 +199,10 @@ const TeamsTable: Story<TeamsTableConfigs> = (args) => {
 		defaultColumnOrder,
 		defaultColumnVisibility,
 		initialState = {},
+		rowsCount = 100,
 		...rest
 	} = args
-	const [data, setData] = useState(propsData || getTeamMembers(100))
+	const [data, setData] = useState(propsData || getTeamMembers(rowsCount))
 	return (
 		<TableComponent
 			data={data}
@@ -609,6 +611,12 @@ const meta: Meta = {
 				'Custom component': <CustomNoResultsFound />
 			},
 			control: { type: 'select' },
+		},
+		rowsCount: {
+			control: { type: 'number' },
+			defaultValue: 100,
+			description: '***THIS IS NOT A PROP***\n' +
+				'Set row count for Table default, does not work with Subtree and Hierarchy Group Tables. Refresh table to after setting new value',
 		},
 		toolbarProps: {
 			control: { type: 'object' },

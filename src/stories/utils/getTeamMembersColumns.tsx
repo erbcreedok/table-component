@@ -4,7 +4,12 @@ import { TableCellProps } from '@mui/material/TableCell'
 import Typography from '@mui/material/Typography'
 import React from 'react'
 import { GroupedCellBase } from '../../components/GroupedCellBase'
-import { HeaderBase, HeaderSearch, RowActionMenuButton } from '../../index'
+import {
+	HeaderBase,
+	HeaderSearch,
+	HeaderSearchOptionProps,
+	RowActionMenuButton,
+} from '../../index'
 import { Flex } from '../../components/Flex'
 import { TextEllipsis } from '../../components/TextEllipsis'
 import {
@@ -57,12 +62,39 @@ const coloredCellProps = <TData extends Record<string, any> = {}>(props: {
 	}
 }
 
-export const teamMemberAccessorFn = (accessorKey: string) => (item: TeamMember) => {
-	if (isTeamMember(item)) {
-		return getNestedProp(item, accessorKey)
+export const teamMemberAccessorFn =
+	(accessorKey: string) => (item: TeamMember) => {
+		if (isTeamMember(item)) {
+			return getNestedProp(item, accessorKey)
+		}
+		return ''
 	}
-	return ''
-}
+const SearchOption = ({
+	item,
+	onClick,
+}: HeaderSearchOptionProps<TeamMember>) => (
+	<Box
+		onClick={onClick}
+		sx={{
+			display: 'flex',
+			alignItems: 'center',
+			p: '9px 12px',
+			gap: '12px',
+			'&:hover': { background: Colors.bg },
+		}}
+	>
+		<Avatar
+			sx={{ width: 24, height: 24 }}
+			src={item.member.avatarUrl}
+			alt={item.member.fullName}
+		/>
+		<Typography>
+			<TextEllipsis style={{ fontSize: '14px' }} title={item.member.fullName}>
+				{item.member.fullName}
+			</TextEllipsis>
+		</Typography>
+	</Box>
+)
 export const getTeamMembersColumns = () => {
 	return [
 		{
@@ -81,12 +113,15 @@ export const getTeamMembersColumns = () => {
 						style={{ minWidth: '100%', padding: '0 0.575rem' }}
 					>
 						<Avatar
-							sx={{ width: 24, height: 24 }}
+							sx={{ width: 36, height: 36 }}
 							src={user.avatarUrl}
 							alt={user.fullName}
 						/>
 						<Flex column style={{ overflow: 'hidden' }}>
-							<TextEllipsis style={{ fontSize: '0.875rem' }} title={user.fullName}>
+							<TextEllipsis
+								style={{ fontSize: '0.875rem' }}
+								title={user.fullName}
+							>
 								{user.fullName}
 							</TextEllipsis>
 							<TextEllipsis
@@ -99,7 +134,7 @@ export const getTeamMembersColumns = () => {
 								{user.role}
 							</TextEllipsis>
 						</Flex>
-						<RowActionMenuButton table={table} row={row} sx={{ ml: 'auto' }}/>
+						<RowActionMenuButton table={table} row={row} sx={{ ml: 'auto' }} />
 					</Flex>
 				)
 			},
@@ -116,18 +151,31 @@ export const getTeamMembersColumns = () => {
 					table={table}
 					searchPath="member.fullName"
 					placeholder="Search for employee"
+					renderOption={SearchOption}
 				/>
 			),
-			FilterField: ({ onChange, value, autoFocus}) => (
+			FilterField: ({ onChange, value, autoFocus }) => (
 				<Box sx={{ px: '12px', width: '100%', boxSizing: 'border-box' }}>
 					<Typography>Custom Filter Field</Typography>
-					<TextField fullWidth variant="outlined" value={value} onChange={(e) => onChange(e.target.value)} autoFocus={autoFocus} />
+					<TextField
+						fullWidth
+						variant="outlined"
+						value={value}
+						onChange={(e) => onChange(e.target.value)}
+						autoFocus={autoFocus}
+					/>
 				</Box>
 			),
 			FilterChipField: ({ onChange, value }) => (
 				<Box sx={{ px: '12px', width: '100%', boxSizing: 'border-box' }}>
 					<Typography>Custom Filter Chip Field</Typography>
-					<TextField size="small" fullWidth variant="outlined" value={value} onChange={(e) => onChange(e.target.value)} />
+					<TextField
+						size="small"
+						fullWidth
+						variant="outlined"
+						value={value}
+						onChange={(e) => onChange(e.target.value)}
+					/>
 				</Box>
 			),
 		},
@@ -149,12 +197,21 @@ export const getTeamMembersColumns = () => {
 			accessorFn: teamMemberAccessorFn('performance'),
 			filterVariant: 'multi-select',
 			GroupedCell: ColoredGroupedCell,
-			headerEndAdornment: <AnalyticsIcon/>,
+			headerEndAdornment: <AnalyticsIcon />,
 			muiTableBodyCellProps: coloredCellProps,
 			enableColumnOrdering: true,
-			filterSelectOptions: ['Often exceeds', 'Sometimes exceeds', 'Meets', { value: null, label: 'N/A' }],
+			filterSelectOptions: [
+				'Often exceeds',
+				'Sometimes exceeds',
+				'Meets',
+				{ value: null, label: 'N/A' },
+			],
 			sortingFn(rowA, rowB) {
-				return sortByArrayOrder(['Often exceeds', 'Sometimes exceeds', 'Meets'])(rowA.getValue('performance'), rowB.getValue('performance'))
+				return sortByArrayOrder([
+					'Often exceeds',
+					'Sometimes exceeds',
+					'Meets',
+				])(rowA.getValue('performance'), rowB.getValue('performance'))
 			},
 		},
 		{
@@ -198,7 +255,11 @@ export const getTeamMembersColumns = () => {
 			GroupedCell: ColoredGroupedCell,
 			Header: HeaderBase,
 			enableColumnOrdering: true,
-			Cell: ({ cell }) => <div onClick={() => console.log(cell.getValue())}>{convertDate(cell.getValue() as Date)}</div>,
+			Cell: ({ cell }) => (
+				<div onClick={() => console.log(cell.getValue())}>
+					{convertDate(cell.getValue() as Date)}
+				</div>
+			),
 			filterSelectOptions: [
 				'Less than 1 months',
 				'Between 1 and 3 months',
@@ -206,6 +267,6 @@ export const getTeamMembersColumns = () => {
 				'N/A',
 			],
 			filterFn: anyOfDateRange,
-		}
+		},
 	] as Array<Table_ColumnDef<TeamMember>>
 }

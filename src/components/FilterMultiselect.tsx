@@ -143,7 +143,7 @@ export const FilterMultiselect = <TData extends TableData>({
 											},
 										}}
 										onClick={() => {
-											onChange(options)
+											onChange(options.map((option) => option.value))
 											setIsOpen(false)
 										}}
 									>

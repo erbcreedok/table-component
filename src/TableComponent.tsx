@@ -246,7 +246,7 @@ export type TableInstance<TData extends Record<string, any> = {}> = Omit<
 	getPresets: () => Preset[]
 	savePresets: (presets: Preset[]) => void
 	getDefaultPresets: () => Preset[]
-	showSearchData: (searchId: string | null) => void
+	showSearchData: (searchId: string | string[] | null) => void
 	setHighlightHeadCellId: (colId: string | null) => void
 	options: TableComponentProps<TData> & {
 		icons: Table_Icons

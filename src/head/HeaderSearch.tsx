@@ -1,5 +1,12 @@
 import Box from '@mui/material/Box'
-import React, { useEffect, useRef, useState } from 'react'
+import React, {
+	FC,
+	KeyboardEvent,
+	MouseEventHandler,
+	useEffect,
+	useRef,
+	useState,
+} from 'react'
 import {
 	IconButton,
 	InputAdornment,
@@ -37,11 +44,11 @@ type Props<TData extends TableData> = {
 	minLengthSearch?: number
 	targetUnitId?: string
 	getFilteredData?(args: {
-		tableData: TableData[]
+		tableData: TData[]
 		value: string
 		path: string
-	}): TableData[]
-	onSearch?(data: TableData | null): void
+	}): TData[]
+	renderOption?: FC<HeaderSearchOptionProps<TData>>
 }
 
 const SearchInput = styled(TextField)`
@@ -71,6 +78,30 @@ const SearchInput = styled(TextField)`
 	}
 `
 
+export type HeaderSearchOptionProps<TData extends TableData> = {
+	item: TData
+	searchPath: string
+	input: string
+	onClick: MouseEventHandler<HTMLElement>
+}
+const typographySx = {
+	fontSize: 14,
+	padding: '9px 12px',
+	cursor: 'pointer',
+	'&:hover': {
+		backgroundColor: Colors.Gray20,
+	},
+}
+export const HeaderSearchOptionDefault = <TData extends TableData>({
+	searchPath,
+	onClick,
+	item,
+}: HeaderSearchOptionProps<TData>) => (
+	<Typography onClick={onClick} sx={typographySx}>
+		{getValueFromObj(item, searchPath, '')}
+	</Typography>
+)
+
 export const HeaderSearch = <T extends TableData>({
 	column,
 	table,
@@ -82,13 +113,13 @@ export const HeaderSearch = <T extends TableData>({
 			getValueFromObj(item, path, '')?.toLowerCase().includes(value)
 		)
 	},
-	onSearch,
+	renderOption: Option = HeaderSearchOptionDefault,
 }: Props<T>) => {
 	const [showPopper, setShowPopper] = useState(false)
 	const anchorElRef = useRef<HTMLDivElement>(null)
 	const [isSearch, setIsSearch] = useState(false)
 	const [input, setInput] = useState('')
-	const [filtered, setFiltered] = useState<TableData>([])
+	const [filtered, setFiltered] = useState<T[]>([])
 	const searchValue = useDelay(input)
 	const {
 		options: {
@@ -111,10 +142,6 @@ export const HeaderSearch = <T extends TableData>({
 		setFiltered([])
 		setShowPopper(false)
 		table.showSearchData(null)
-
-		if (onSearch) {
-			onSearch(null)
-		}
 	}
 
 	const toggleSearch = (e) => {
@@ -128,7 +155,7 @@ export const HeaderSearch = <T extends TableData>({
 
 	const handleInputChange = (e) => {
 		e.preventDefault()
-		setInput(e.target.value.toLowerCase())
+		setInput(e.target.value)
 		setShowPopper(true)
 	}
 
@@ -137,7 +164,7 @@ export const HeaderSearch = <T extends TableData>({
 			setFiltered(
 				getFilteredData({
 					tableData: table.options.data,
-					value: searchValue,
+					value: searchValue.toLowerCase(),
 					path: searchPath,
 				})
 			)
@@ -145,6 +172,18 @@ export const HeaderSearch = <T extends TableData>({
 			setFiltered([])
 		}
 	}, [minLengthSearch, searchPath, searchValue])
+
+	const handleEnterKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
+		if (event.key === 'Enter' && input.length > 0) {
+			event.stopPropagation()
+			table.showSearchData(filtered.map((item) => item.id))
+			setFiltered([])
+			setShowPopper(false)
+		} else {
+			event.stopPropagation()
+			table.showSearchData(null)
+		}
+	}
 
 	return (
 		<Flex
@@ -189,6 +228,7 @@ export const HeaderSearch = <T extends TableData>({
 						}}
 						value={input}
 						onChange={handleInputChange}
+						onKeyDown={handleEnterKeyDown}
 						onClick={(e) => e.stopPropagation()}
 						autoFocus
 					/>
@@ -205,33 +245,25 @@ export const HeaderSearch = <T extends TableData>({
 							overflowY: 'auto',
 							filter:
 								'drop-shadow(0px 2px 10px rgba(29, 30, 38, 0.1)) drop-shadow(0px 1px 2px rgba(29, 30, 38, 0.1))',
-							'& p': {
-								fontSize: 14,
-								padding: '9px 12px',
-								cursor: 'pointer',
-							},
-							'& p:hover': {
-								backgroundColor: Colors.Gray20,
-							},
 						}}
 					>
 						{searchValue.length >= minLengthSearch && !filtered.length && (
-							<Typography>No options</Typography>
+							<Typography sx={typographySx}>No options</Typography>
 						)}
-						{filtered.map((item: TableData) => (
-							<Typography
+						{filtered.map((item) => (
+							<Option
 								key={item.id}
-								onClick={() => {
+								item={item}
+								searchPath={searchPath}
+								input={input}
+								onClick={(event) => {
+									event.stopPropagation()
 									setInput(getValueFromObj<string>(item, searchPath, input))
 									table.showSearchData(item.id)
 									setFiltered([])
 									setShowPopper(false)
-
-									if (onSearch) onSearch(item)
 								}}
-							>
-								{getValueFromObj(item, searchPath, '')}
-							</Typography>
+							/>
 						))}
 					</Popper>
 				</>
