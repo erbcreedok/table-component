@@ -34,6 +34,7 @@ import { SelectCheckbox } from './inputs/SelectCheckbox'
 import { FilterMultiselect } from './components/FilterMultiselect'
 
 export default TableComponent
+export * from '@tanstack/react-table'
 export * from './TableComponent'
 export * from './utilColumns'
 export type { Table_Icons, TableBodyRowProps }

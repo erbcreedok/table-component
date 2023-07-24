@@ -84,7 +84,7 @@ const SummaryRowExampleCellValue = (props) => {
 		return Math.round(100 - (100 * partialCount) / rows.length)
 	}
 
-	if (column.id === utilColumns.select) {
+	if (column.id === utilColumns.column) {
 		return <MuiTableCell sx={{ ...defaultStyles }}></MuiTableCell>
 	}
 
@@ -148,6 +148,7 @@ export const PeopleTable: Story<TableComponentProps> = () => {
 				// enableExpanding
 				// manualExpanding
 				enableDetailedPanel
+				enableGrouping
 				enableColumnFilters
 				enablePinning
 				// enableStickyHeader

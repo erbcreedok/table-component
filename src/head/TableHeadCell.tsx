@@ -108,10 +108,8 @@ export const TableHeadCell: FC<Props> = ({
 	const showDragHandle =
 		enableColumnDragging !== false &&
 		columnDef.enableColumnDragging !== false &&
-		((enableColumnOrdering && columnDef.enableColumnOrdering !== false) ||
-			(enableGrouping &&
-				columnDef.enableGrouping !== false &&
-				!grouping.includes(column.id)))
+		enableColumnOrdering &&
+		columnDef.enableColumnOrdering !== false
 
 	const headerPL = useMemo(() => {
 		let pl = 0

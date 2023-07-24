@@ -372,6 +372,48 @@ export const TableBodyCell = ({
 		}) as ReactElement
 	}
 
+	const cellActionButton =
+		cellAction === 'expand' ? (
+			<IconButton
+				sx={{
+					width: '24px',
+					height: '24px',
+					border: '1px solid #E1E3EB',
+					borderRadius: '4px',
+					backgroundColor: '#F5F6FA',
+					visibility: isDettailedPanelExpanded ? 'visible' : 'hidden',
+				}}
+				onClick={handleExpandByClickOnCellActionButton}
+			>
+				<>
+					{cellActionIcon || (
+						<ExpandMoreIcon
+							sx={{
+								transform: `rotate(${isDettailedPanelExpanded ? -180 : 0}deg)`,
+								transition: 'transform 150ms',
+							}}
+						/>
+					)}
+				</>
+			</IconButton>
+		) : columnDef.cellAction instanceof Function ? (
+			<IconButton
+				sx={{
+					width: '24px',
+					height: '24px',
+					border: '1px solid #E1E3EB',
+					borderRadius: '4px',
+					backgroundColor: '#F5F6FA',
+					visibility: 'hidden',
+				}}
+				onClick={() =>
+					cellAction instanceof Function && cellAction({ row, table })
+				}
+			>
+				{cellActionIcon}
+			</IconButton>
+		) : null
+
 	return (
 		<MuiTableCell
 			rowSpan={rowSpan}
@@ -430,48 +472,7 @@ export const TableBodyCell = ({
 				) : (
 					<TableBodyCellValue cell={cell} table={table} row={row} />
 				)}
-				{cellAction === 'expand' ? (
-					<IconButton
-						sx={{
-							width: '24px',
-							height: '24px',
-							border: '1px solid #E1E3EB',
-							borderRadius: '4px',
-							backgroundColor: '#F5F6FA',
-							visibility: isDettailedPanelExpanded ? 'visible' : 'hidden',
-						}}
-						onClick={handleExpandByClickOnCellActionButton}
-					>
-						<>
-							{cellActionIcon || (
-								<ExpandMoreIcon
-									sx={{
-										transform: `rotate(${
-											isDettailedPanelExpanded ? -180 : 0
-										}deg)`,
-										transition: 'transform 150ms',
-									}}
-								/>
-							)}
-						</>
-					</IconButton>
-				) : columnDef.cellAction instanceof Function ? (
-					<IconButton
-						sx={{
-							width: '24px',
-							height: '24px',
-							border: '1px solid #E1E3EB',
-							borderRadius: '4px',
-							backgroundColor: '#F5F6FA',
-							visibility: 'hidden',
-						}}
-						onClick={() =>
-							cellAction instanceof Function && cellAction({ row, table })
-						}
-					>
-						{cellActionIcon}
-					</IconButton>
-				) : null}
+				{isGroupedCell ? null : cellActionButton}
 			</Box>
 		</MuiTableCell>
 	)

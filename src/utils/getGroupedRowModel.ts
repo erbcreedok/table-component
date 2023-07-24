@@ -2,7 +2,12 @@
 import { Row, Table } from '@tanstack/react-table'
 import { createRow, memo, RowData, RowModel } from '@tanstack/table-core'
 
-import { Table_Row, TableData } from '../TableComponent'
+import {
+	GroupCollapsed,
+	Table_Row,
+	TableData,
+	TableInstance,
+} from '../TableComponent'
 
 function groupBy<TData extends RowData>(rows: Row<TData>[], columnId: string) {
 	const groupMap = new Map<any, Row<TData>[]>()
@@ -28,8 +33,12 @@ export function getGroupedRowModel<
 }): (table: Table<TData>) => () => RowModel<TData> {
 	return (table) =>
 		memo(
-			() => [table.getState().grouping, table.getSortedRowModel()],
-			(grouping, rowModel) => {
+			() => [
+				table.getState().grouping,
+				(table as unknown as TableInstance).getState().groupCollapsed,
+				table.getSortedRowModel(),
+			],
+			(grouping, groupCollapsed, rowModel) => {
 				if (!rowModel.rows.length || !grouping.length) {
 					return rowModel
 				}
@@ -147,11 +156,15 @@ export function getGroupedRowModel<
 					groupedRowsById[subRow.id] = subRow
 				})
 
-				return {
-					rows: groupedRows.flat(),
-					flatRows: groupedFlatRows,
-					rowsById: groupedRowsById,
-				}
+				return collapseGroupedRows(
+					{
+						rows: groupedRows.flat(),
+						flatRows: groupedFlatRows,
+						rowsById: groupedRowsById,
+					},
+					groupCollapsed,
+					grouping
+				)
 			},
 			{
 				key: process.env.NODE_ENV === 'development' && 'getGroupedRowModel',
@@ -164,4 +177,52 @@ export function getGroupedRowModel<
 				},
 			}
 		)
+}
+
+export function collapseGroupedRows<TData extends RowData>(
+	rowModel: RowModel<TData>,
+	groupCollapsed: GroupCollapsed,
+	grouping: string[]
+) {
+	const expandedRows: Row<TData>[] = []
+	const groupFirstRow: Record<string, string> = {}
+
+	const handleRow = (row: Row<TData>) => {
+		const tableRow = row as unknown as Table_Row
+		const tGroupIds = tableRow.groupIds ?? {}
+		const groupIds = Object.keys(tGroupIds)
+			.sort((a, b) => grouping.indexOf(a) - grouping.indexOf(b))
+			.map((key) => tGroupIds[key])
+		const collapsedColumnIndex = groupIds.findIndex((id) => groupCollapsed[id])
+		const collapsedGroup =
+			collapsedColumnIndex > -1 ? groupIds[collapsedColumnIndex] : null
+
+		if (collapsedGroup && !groupFirstRow[collapsedGroup]) {
+			groupFirstRow[collapsedGroup] = row.id
+		}
+		if (
+			!collapsedGroup ||
+			(tableRow.groupRows?.[collapsedGroup].subRows?.length ?? 2) <= 1
+		) {
+			delete (row as unknown as Table_Row).collapsedColumnIndex
+			expandedRows.push(row)
+		} else if (groupFirstRow[collapsedGroup] === row.id) {
+			Object.assign(row, {
+				collapsedColumnIndex,
+			})
+			expandedRows.push(row)
+		}
+
+		if (row.subRows?.length) {
+			row.subRows.forEach(handleRow)
+		}
+	}
+
+	rowModel.rows.forEach(handleRow)
+
+	return {
+		rows: expandedRows,
+		flatRows: rowModel.flatRows,
+		rowsById: rowModel.rowsById,
+	}
 }

@@ -90,11 +90,11 @@ const SummaryRowExampleCellValue = (props) => {
             }
         }, {})
     }
-    
+
     if (Table_DisplayColumnIdsArray.includes(column.id)) {
         return <MuiTableCell sx={{ width: '20px' }}/>
     }
-    
+
     if (column.id === 'teamMember') {
         return (
 			<MuiTableCell>
@@ -102,7 +102,7 @@ const SummaryRowExampleCellValue = (props) => {
 			</MuiTableCell>
 		)
     }
-           
+
     return (
 		<MuiTableCell>
 			<Tooltip
@@ -133,7 +133,7 @@ const SummaryRowTable: Story<TableConfigs> = (args) => {
 		<TableComponent
 			columns={getPropsHandledColumns(columns, args)}
 			groupsSorting={groupsSorting}
-			groupBorder={{ left: '12px solid white', top: '20px solid white', divider: '3px solid #E1E3EB' }}
+			groupBorder={{ left: '12px solid white', top: '20px solid white' }}
 			initialState={{ sorting: defaultSorting, columnOrder: defaultColumnOrder, columnVisibility: defaultColumnVisibility }}
 			renderRowActionMenuItems={getDefaultRowActionMenuItems}
 			{...rest}

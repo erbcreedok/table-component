@@ -96,7 +96,8 @@ export const TableBodyRow: FC<TableBodyRowProps> = ({
 	const { collapsedColumnIndex } = row
 	const groupedCells = (groupingProps ?? [])
 		.map((group, index, arr) => {
-			const rowSpan = group.count
+			// There is an extra row for the detail panel, so multiply rowspan by 2
+			const rowSpan = group.count * (renderDetailPanel ? 2 : 1)
 			const cell = row
 				.getVisibleCells()
 				.find((cell) => getColumnId(cell.column.columnDef) === group.columnId)

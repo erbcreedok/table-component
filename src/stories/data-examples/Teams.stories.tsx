@@ -203,7 +203,7 @@ const TeamsTable: Story<TeamsTableConfigs> = (args) => {
 	const [data, setData] = useState(propsData || getTeamMembers(100))
 	return (
 		<TableComponent
-			data={[]}
+			data={data}
 			columns={getPropsHandledColumns(columns, args)}
 			groupBorder={{ left: '6px solid white', top: '6px solid white' }}
 			initialState={{
