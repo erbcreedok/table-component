@@ -166,7 +166,7 @@ export const PeopleTable: Story<TableComponentProps> = () => {
 						executeStyleCondition: ({ cell, isCurrentCellClicked }) => {
 							if (cell.getValue() === 'Meets') {
 								return {
-									backgroundColor: isCurrentCellClicked ? '#fafafc' : '#FEF8F8',
+									backgroundColor: '#FEF8F8',
 									color: '#B32424',
 									...(isCurrentCellClicked
 										? { borderBottom: 'none' }

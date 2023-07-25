@@ -17,7 +17,6 @@ import { useResizeDetector } from 'react-resize-detector'
 import { HeaderBase, utilColumns } from '..'
 import { Tooltip } from '../components/Tooltip'
 import { useHoverEffects } from '../hooks/useHoverEffects'
-import { getColumnGroupIds } from '../utils/getColumnGroupIds'
 import { GroupBorders } from '../utils/getGroupBorders'
 import {
 	getColumnId,
@@ -34,22 +33,26 @@ import { TableHeadCellResizeHandle } from './TableHeadCellResizeHandle'
 import { TableHeadCellSortLabel } from './TableHeadCellSortLabel'
 import { TableHeadCellUtility } from './TableHeadCellUtility'
 
-interface Props {
+export interface TableHeadCellProps {
 	header: Table_Header
 	table: TableInstance
 	parentRow?: Table_Row
 	groupBorders?: GroupBorders
 	backgroundColor?: string
 	backgroundColorHover?: string
+	groupCollapseIds?: string[]
+	onToggleGroupCollapse?: (expanded?: boolean) => void
 }
 
-export const TableHeadCell: FC<Props> = ({
+export const TableHeadCell: FC<TableHeadCellProps> = ({
 	header,
 	table,
 	parentRow,
 	groupBorders,
 	backgroundColor = Colors.Gray20,
 	backgroundColorHover = Colors.Gray,
+	groupCollapseIds,
+	onToggleGroupCollapse,
 }) => {
 	const theme = useTheme()
 	const {
@@ -68,7 +71,6 @@ export const TableHeadCell: FC<Props> = ({
 		},
 		refs: { tableHeadCellRefs },
 		setHoveredColumn,
-		setGroupCollapsed,
 	} = table
 	const localRef = useRef<HTMLTableCellElement>(null)
 	const {
@@ -186,27 +188,12 @@ export const TableHeadCell: FC<Props> = ({
 
 	const isLastGroupedColumn = grouping[grouping.length - 1] === columnId
 
-	const rows = table.getGroupedRowModel().flatRows as Table_Row[]
-	const collapseIds = useMemo(
-		() => getColumnGroupIds(rows, columnId),
-		[columnId, rows, groupCollapsed]
-	)
 	const expanded = useMemo(() => {
-		return collapseIds.some((id) => !groupCollapsed[id])
-	}, [collapseIds, groupCollapsed])
+		return groupCollapseIds?.some((id) => !groupCollapsed[id])
+	}, [groupCollapseIds, groupCollapsed])
 	const toggleGroupCollapsed: MouseEventHandler = (event) => {
 		event.stopPropagation()
-		const values = collapseIds.reduce(
-			(acc, id) => ({
-				...acc,
-				[id]: expanded,
-			}),
-			{}
-		)
-		setGroupCollapsed((prev) => ({
-			...prev,
-			...values,
-		}))
+		onToggleGroupCollapse?.(expanded)
 	}
 
 	return (

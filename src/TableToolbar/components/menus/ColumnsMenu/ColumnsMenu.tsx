@@ -34,7 +34,7 @@ export const ColumnsMenu = <TData extends Record<string, any> = {}>({
 		getState,
 		setColumnOrder,
 		setGrouping,
-		options: { localization, innerTable },
+		options: { localization, innerTable, multirowHeader },
 	} = table
 	const { columnOrder, columnPinning, columnVisibility, grouping } = getState()
 	const [isSearchActive, setIsSearchActive] = useState<boolean>(false)
@@ -93,10 +93,6 @@ export const ColumnsMenu = <TData extends Record<string, any> = {}>({
 			),
 		[grouping]
 	)
-
-	useEffect(() => {
-		setColumnOrder([...columnIds.shown, ...columnIds.hidden])
-	}, [columnIds])
 
 	const onColumnVisibilityChange = (
 		column: Table_Column<TData>,
@@ -194,6 +190,48 @@ export const ColumnsMenu = <TData extends Record<string, any> = {}>({
 		setGrouping((old) => reorderColumn(draggedColumn, targetColumn, old))
 	}
 
+	const getFilteredColumns = (columns) => {
+		return columns.filter(
+			(col) =>
+				columnIds.shown.includes(getColumnId(col.columnDef)) &&
+				!grouping.includes(getColumnId(col.columnDef))
+		)
+	}
+
+	const getMultirowHeaderGroups = (
+		columns: Table_Column<TData>[]
+	): { text: string; columns: Table_Column<TData>[] }[] | [] => {
+		if (multirowHeader) {
+			const multirowHeaderColumns = [...multirowHeader]
+				.sort((a, b) => a.depth - b.depth)
+				.reduce((multirowColumns, header) => {
+					multirowColumns.push(...header.columns)
+
+					return multirowColumns
+				}, [] as { text: string; columnIds: string[] }[])
+
+			const multirowHeaderGroups = columns.reduce((multirowGroups, column) => {
+				const groupName = multirowHeaderColumns
+					.filter((el) => el.columnIds.includes(column.id))
+					.map((el) => el.text)
+					.join(' - ')
+
+				multirowGroups[groupName] = {
+					text: groupName,
+					columns: multirowGroups[groupName]?.columns
+						? [...multirowGroups[groupName].columns, column]
+						: [column],
+				}
+
+				return multirowGroups
+			}, {})
+
+			return Object.values(multirowHeaderGroups)
+		}
+
+		return []
+	}
+
 	return (
 		<Sidebar
 			open={!!anchorEl}
@@ -287,26 +325,52 @@ export const ColumnsMenu = <TData extends Record<string, any> = {}>({
 							/>
 						))}
 
-						{allColumns
-							.filter(
-								(col) =>
-									columnIds.shown.includes(getColumnId(col.columnDef)) &&
-									!grouping.includes(getColumnId(col.columnDef))
-							)
-							.map((column, index) => (
-								<ColumnsMenuItem
-									allColumns={allColumns}
-									column={column}
-									hoveredColumn={hoveredColumn}
-									isSubMenu={false}
-									key={`${index}-${column.id}`}
-									setHoveredColumn={setHoveredColumn}
-									table={table}
-									onColumnVisibilityChange={onColumnVisibilityChange}
-									enableDrag
-									onColumnOrderChange={onColumnOrderChange}
-								/>
-							))}
+						{multirowHeader
+							? getMultirowHeaderGroups(getFilteredColumns(allColumns)).map(
+									(group) => (
+										<>
+											<Typography
+												sx={{
+													maxWidth: '300px',
+													padding: '6px 24px',
+													color: Text.Primary,
+													fontSize: '14px',
+													fontWeight: 400,
+												}}
+											>
+												{group.text}
+											</Typography>
+											{group.columns.map((column, index) => (
+												<ColumnsMenuItem
+													allColumns={allColumns}
+													column={column}
+													hoveredColumn={hoveredColumn}
+													isSubMenu={false}
+													key={`${index}-${column.id}`}
+													setHoveredColumn={setHoveredColumn}
+													table={table}
+													onColumnVisibilityChange={onColumnVisibilityChange}
+													enableDrag
+													onColumnOrderChange={onColumnOrderChange}
+												/>
+											))}
+										</>
+									)
+							  )
+							: getFilteredColumns(allColumns).map((column, index) => (
+									<ColumnsMenuItem
+										allColumns={allColumns}
+										column={column}
+										hoveredColumn={hoveredColumn}
+										isSubMenu={false}
+										key={`${index}-${column.id}`}
+										setHoveredColumn={setHoveredColumn}
+										table={table}
+										onColumnVisibilityChange={onColumnVisibilityChange}
+										enableDrag
+										onColumnOrderChange={onColumnOrderChange}
+									/>
+							  ))}
 
 						{!!columnIds.hidden.length && (
 							<>

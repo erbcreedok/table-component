@@ -60,6 +60,7 @@ const getSpacing =
 export const Tooltip = styled(TooltipBase)<{
 	color?: string
 	spacing?: Spacing
+	disabled?: boolean
 }>`
 	background: ${({ color }) => color ?? Colors.Gray90};
 	.${tooltipClasses.arrow} {

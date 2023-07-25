@@ -17,6 +17,7 @@ interface Props<TData extends Record<string, any> = {}>
 export const GroupingButton = <TData extends Record<string, any> = {}>({
 	table,
 	enableCaption,
+	disabled,
 	...rest
 }: Props<TData>) => {
 	const {
@@ -25,7 +26,6 @@ export const GroupingButton = <TData extends Record<string, any> = {}>({
 			localization,
 		},
 	} = table
-	const disabled = false
 	const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
 
 	const handleClick = (_event: MouseEvent<HTMLElement>) => {
@@ -34,19 +34,28 @@ export const GroupingButton = <TData extends Record<string, any> = {}>({
 
 	return (
 		<>
-			<Tooltip placement="top" title={rest?.title ?? localization.showGrouping}>
+			<Tooltip
+				placement="top"
+				title={rest?.title ?? localization.showGrouping}
+				disabled={disabled}
+			>
 				<ToolbarIconButton
 					aria-label={localization.showGrouping}
 					onClick={handleClick}
 					disableRipple
 					enableCaption={enableCaption}
+					disabled={disabled}
 					{...rest}
 				>
 					<GroupingIcon
 						htmlColor={disabled ? IconsColor.disabled : IconsColor.default}
 					/>
 					{enableCaption && (
-						<Typography>{localization.showGrouping}</Typography>
+						<Typography
+							color={disabled ? IconsColor.disabled : IconsColor.default}
+						>
+							{localization.showGrouping}
+						</Typography>
 					)}
 				</ToolbarIconButton>
 			</Tooltip>

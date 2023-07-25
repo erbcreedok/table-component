@@ -17,6 +17,7 @@ interface Props<TData extends Record<string, any> = {}>
 export const SortingButton = <TData extends Record<string, any> = {}>({
 	table,
 	enableCaption,
+	disabled,
 	...rest
 }: Props<TData>) => {
 	const {
@@ -26,8 +27,6 @@ export const SortingButton = <TData extends Record<string, any> = {}>({
 		},
 	} = table
 
-	const disabled = false
-
 	const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
 
 	const handleClick = (_event: MouseEvent<HTMLElement>) => {
@@ -36,18 +35,29 @@ export const SortingButton = <TData extends Record<string, any> = {}>({
 
 	return (
 		<>
-			<Tooltip placement="top" title={rest?.title ?? localization.showSorting}>
+			<Tooltip
+				placement="top"
+				title={rest?.title ?? localization.showSorting}
+				disabled={disabled}
+			>
 				<ToolbarIconButton
 					aria-label={localization.showSorting}
 					onClick={handleClick}
 					disableRipple
 					enableCaption={enableCaption}
+					disabled={disabled}
 					{...rest}
 				>
 					<SortIcon
 						htmlColor={disabled ? IconsColor.disabled : IconsColor.default}
 					/>
-					{enableCaption && <Typography>{localization.showSorting}</Typography>}
+					{enableCaption && (
+						<Typography
+							color={disabled ? IconsColor.disabled : IconsColor.default}
+						>
+							{localization.showSorting}
+						</Typography>
+					)}
 				</ToolbarIconButton>
 			</Tooltip>
 			{anchorEl && (

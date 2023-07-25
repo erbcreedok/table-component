@@ -17,9 +17,13 @@ import { SortingButton } from './components/buttons/SortingButton'
 export type TableToolbarProps<TData extends Record<string, any> = {}> = {
 	table: TableInstance<TData>
 	enableGrouping?: boolean
+	disableGroupingButton?: boolean
 	enableSorting?: boolean
+	disableSortingButton?: boolean
 	enableFiltering?: boolean
+	disableFilteringButton?: boolean
 	enableSettings?: boolean
+	disableSettingsButton?: boolean
 	enablePreset?: boolean
 	enableCaptions?: boolean | 'auto'
 	innerProps?: ComponentProps<typeof Box>
@@ -55,6 +59,10 @@ export const TableToolbar = <TData extends Record<string, any> = {}>({
 	enableFiltering = true,
 	enableGrouping = true,
 	enablePreset = true,
+	disableFilteringButton = false,
+	disableSettingsButton = false,
+	disableGroupingButton = false,
+	disableSortingButton = false,
 	enableCaptions = 'auto',
 	innerProps,
 	innerTable,
@@ -101,24 +109,28 @@ export const TableToolbar = <TData extends Record<string, any> = {}>({
 							<GroupingButton
 								enableCaption={computedEnableCaptions}
 								table={table}
+								disabled={disableGroupingButton}
 							/>
 						)}
 						{enableSorting && (
 							<SortingButton
 								enableCaption={computedEnableCaptions}
 								table={table}
+								disabled={disableSortingButton}
 							/>
 						)}
 						{enableFiltering && (
 							<FiltersButton
 								enableCaption={computedEnableCaptions}
 								table={table}
+								disabled={disableFilteringButton}
 							/>
 						)}
 						{enableSettings && (
 							<ColumnsButton
 								enableCaption={computedEnableCaptions}
 								table={table}
+								disabled={disableSettingsButton}
 							/>
 						)}
 						{enablePreset && (

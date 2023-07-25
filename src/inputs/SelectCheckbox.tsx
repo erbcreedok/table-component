@@ -50,19 +50,21 @@ export const SelectCheckbox = <TData extends TableData>({
 		...rest,
 	}
 
+	const indeterminate = parentRow
+		? parentRow.getIsSomeSelected()
+		: selectAll
+		? table.getIsSomeRowsSelected() &&
+		  !(selectAllMode === 'page'
+				? table.getIsAllPageRowsSelected()
+				: table.getIsAllRowsSelected())
+		: row?.getIsSomeSelected()
+
 	const commonProps: CheckboxProps = {
 		disableRipple: true,
 		indeterminateIcon: <CheckboxIndeterminateIcon />,
 		checkedIcon: <CheckboxCheckedIcon />,
 		icon: <CheckboxIcon />,
-		indeterminate: parentRow
-			? parentRow.getIsSomeSelected()
-			: selectAll
-			? table.getIsSomeRowsSelected() &&
-			  !(selectAllMode === 'page'
-					? table.getIsAllPageRowsSelected()
-					: table.getIsAllRowsSelected())
-			: row?.getIsSomeSelected(),
+		indeterminate,
 		checked: parentRow
 			? parentRow.getIsAllSubRowsSelected()
 			: selectAll
@@ -76,12 +78,16 @@ export const SelectCheckbox = <TData extends TableData>({
 				: (row && !row.getCanSelect()) || isLoading,
 		inputProps: {
 			'aria-label': selectAll
-				? localization.toggleSelectAll
+				? localization.selectAll
 				: localization.toggleSelectRow,
 		},
 		onChange: parentRow
 			? (e) =>
-					parentRow.subRows?.map((row) => row.getToggleSelectedHandler()(e))
+					indeterminate
+						? parentRow.subRows?.forEach((row) => {
+								row.toggleSelected(false)
+						  })
+						: parentRow.subRows?.map((row) => row.getToggleSelectedHandler()(e))
 			: row
 			? row.getToggleSelectedHandler()
 			: selectAllMode === 'all'
@@ -118,9 +124,7 @@ export const SelectCheckbox = <TData extends TableData>({
 			enterNextDelay={1000}
 			title={
 				checkboxProps?.title ??
-				(selectAll
-					? localization.toggleSelectAll
-					: localization.toggleSelectRow)
+				(selectAll ? localization.selectAll : localization.toggleSelectRow)
 			}
 		>
 			{label ? (

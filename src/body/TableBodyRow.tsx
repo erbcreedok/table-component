@@ -128,6 +128,7 @@ export const TableBodyRow: FC<TableBodyRowProps> = ({
 				numRows,
 				row,
 				rowIndex,
+				subRowIndex: getSubRowIndex({ row }),
 				rowRef,
 				table,
 				isSummaryRowCell: isSummaryRow,
@@ -211,6 +212,7 @@ export const TableBodyRow: FC<TableBodyRowProps> = ({
 						numRows,
 						row,
 						rowIndex,
+						subRowIndex: getSubRowIndex({ row }),
 						rowRef,
 						table,
 						virtualCell: columnVirtualizer

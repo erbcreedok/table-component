@@ -17,6 +17,7 @@ interface Props<TData extends Record<string, any> = {}>
 export const ColumnsButton = <TData extends Record<string, any> = {}>({
 	table,
 	enableCaption,
+	disabled,
 	...rest
 }: Props<TData>) => {
 	const {
@@ -26,8 +27,6 @@ export const ColumnsButton = <TData extends Record<string, any> = {}>({
 		},
 	} = table
 
-	const disabled = false
-
 	const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
 
 	const handleClick = (event: MouseEvent<HTMLElement>) => {
@@ -36,18 +35,29 @@ export const ColumnsButton = <TData extends Record<string, any> = {}>({
 
 	return (
 		<>
-			<Tooltip placement="top" title={rest?.title ?? localization.showColumns}>
+			<Tooltip
+				placement="top"
+				title={rest?.title ?? localization.showColumns}
+				disabled={disabled}
+			>
 				<ToolbarIconButton
 					aria-label={localization.showColumns}
 					onClick={handleClick}
 					disableRipple
 					enableCaption={enableCaption}
+					disabled={disabled}
 					{...rest}
 				>
 					<ToggleIcon
 						htmlColor={disabled ? IconsColor.disabled : IconsColor.default}
 					/>
-					{enableCaption && <Typography>{localization.showColumns}</Typography>}
+					{enableCaption && (
+						<Typography
+							color={disabled ? IconsColor.disabled : IconsColor.default}
+						>
+							{localization.showColumns}
+						</Typography>
+					)}
 				</ToolbarIconButton>
 			</Tooltip>
 

@@ -4,8 +4,10 @@ import type { VirtualItem } from '@tanstack/react-virtual'
 
 import type { TableInstance } from '..'
 import { useIntersectionObserver } from '../hooks/useIntersectionObserver'
+import { useMultiSticky } from '../hooks/useMultiSticky'
 
 import { TableHeadRow } from './TableHeadRow'
+import { TableHeadMultiRow } from './TableHeadMultiRow'
 
 interface Props {
 	table: TableInstance
@@ -25,7 +27,12 @@ export const TableHead: FC<Props> = ({
 	const {
 		getHeaderGroups,
 		getState,
-		options: { enableStickyHeader, layoutMode, muiTableHeadProps },
+		options: {
+			enableStickyHeader,
+			layoutMode,
+			muiTableHeadProps,
+			multirowHeader,
+		},
 	} = table
 	const { isFullScreen } = getState()
 	const stickyHeader = enableStickyHeader || isFullScreen
@@ -33,6 +40,7 @@ export const TableHead: FC<Props> = ({
 		useIntersectionObserver<HTMLTableSectionElement>({
 			isEnabled: stickyHeader,
 		})
+	const { registerSticky, stickyElements } = useMultiSticky()
 
 	const tableHeadProps =
 		muiTableHeadProps instanceof Function
@@ -54,6 +62,18 @@ export const TableHead: FC<Props> = ({
 			})}
 			ref={intersectorRef}
 		>
+			{!emptyTableHead && multirowHeader && (
+				<TableHeadMultiRow
+					table={table}
+					multirowHeader={multirowHeader}
+					isScrolled={!isIntersecting}
+					virtualColumns={virtualColumns}
+					virtualPaddingLeft={virtualPaddingLeft}
+					virtualPaddingRight={virtualPaddingRight}
+					registerSticky={registerSticky}
+					stickyElements={stickyElements}
+				/>
+			)}
 			{!emptyTableHead ? (
 				getHeaderGroups().map((headerGroup) => (
 					<TableHeadRow
@@ -65,12 +85,14 @@ export const TableHead: FC<Props> = ({
 						virtualPaddingRight={virtualPaddingRight}
 						stickyHeader={stickyHeader}
 						isScrolled={!isIntersecting}
+						registerSticky={registerSticky}
+						stickyElements={stickyElements}
 					/>
 				))
 			) : (
 				<tr
 					style={{
-						display: stickyHeader && !isIntersecting ? 'table-row' : 'none',
+						visibility: stickyHeader && !isIntersecting ? 'visible' : 'hidden',
 						position: stickyHeader ? 'sticky' : 'relative',
 						top: 0,
 						height: '8px',

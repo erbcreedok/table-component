@@ -47,6 +47,7 @@ interface Props {
 	isSummaryRowCell?: boolean
 	isGroupedCell?: boolean
 	groupBorders?: GroupBorders
+	subRowIndex?: number
 }
 
 export const TableBodyCell = ({
@@ -57,6 +58,7 @@ export const TableBodyCell = ({
 	numRows,
 	row,
 	rowIndex,
+	subRowIndex,
 	rowRef,
 	rowSpan,
 	table,
@@ -457,7 +459,7 @@ export const TableBodyCell = ({
 						isDraggableCell={isDraggableCell}
 						isCurrentRowSelected={isCurrentRowSelected}
 						rowRef={rowRef}
-						rowIndex={rowIndex}
+						rowIndex={subRowIndex ?? rowIndex}
 						enableRowNumbers={enableRowNumbers}
 					/>
 				) : columnDefType === 'display' && column.id === utilColumns.expand ? (

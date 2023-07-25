@@ -33,6 +33,32 @@ import { UnitRow } from './components/UnitRow'
 
 const dataTree = getExpandingTeamMembers(10)
 const columns = getTeamMembersColumns()
+const multiHeader = [
+	{
+		depth: 1,
+		pin: true,
+		columns: [
+			{
+				text: 'WORKLOAD',
+				columnIds: ['teamMember', 'impact', 'performance', 'riskOfLeaving', 'successionStatus', 'location', 'hiredAt'],
+			}
+		],
+	},
+	{
+		depth: 2,
+		pin: true,
+		columns: [
+			{
+				text: 'WORKLOAD 1',
+				columnIds: ['teamMember', 'impact', 'performance'],
+			},
+			{
+				text: 'WORKLOAD 2',
+				columnIds: ['riskOfLeaving', 'successionStatus', 'location', 'hiredAt'],
+			}
+		]
+	}
+]
 
 type TeamsTableConfigs = Omit<TableComponentProps<TeamMember>, 'data'> &
 	Partial<TableComponentProps<TeamMember>> & {
@@ -124,6 +150,55 @@ const getPropsHandledColumns = (
 	)
 }
 
+const getMultiHeaderByOption = (option: string) => {
+	switch(option) {
+		case 'pinned':
+			return multiHeader
+		case 'nonPinned':
+			return multiHeader.map((el) => ({...el, pin: false}))
+		case 'partialPinned':
+			return multiHeader.map((el, i) => {
+				if (i === multiHeader.length - 1) {
+					return {
+						...el,
+						pin: false
+					}
+				}
+
+				return el
+			})
+		case 'withAdditionalRows':
+			return multiHeader.map((el, i) => {
+				if (i === 0) {
+					return {
+						...el,
+						additionalRowContent: (table, cellsPropsArray, groupedCellsPropsArray) => {
+							const colSpan = cellsPropsArray.reduce((colSpan, cellProps) => {
+								return colSpan += cellProps.colSpan
+							}, 0)
+							const groupedColSpan = groupedCellsPropsArray && groupedCellsPropsArray.reduce((colSpan, cellProps) => {
+								return colSpan += cellProps.colSpan
+							}, 0)
+				
+							return (
+								<>
+									{groupedCellsPropsArray && (
+										<th colSpan={groupedColSpan} />
+									)}
+									<th colSpan={colSpan} style={{ backgroundColor: 'E1E3EB' }}>Additional Content</th>
+								</>
+							)
+						}
+					}
+				}
+
+				return el
+			})
+		default:
+			return multiHeader
+	}
+}
+
 const SummaryRowExampleCellValue = (props) => {
 	const { column, defaultStyles } = props
 
@@ -200,12 +275,14 @@ const TeamsTable: Story<TeamsTableConfigs> = (args) => {
 		defaultColumnVisibility,
 		initialState = {},
 		rowsCount = 100,
+		multirowHeader,
 		...rest
 	} = args
 	const [data, setData] = useState(propsData || getTeamMembers(rowsCount))
 	return (
 		<TableComponent
 			data={data}
+			multirowHeader={multirowHeader}
 			columns={getPropsHandledColumns(columns, args)}
 			groupBorder={{ left: '6px solid white', top: '6px solid white' }}
 			initialState={{
@@ -393,9 +470,15 @@ const meta: Meta = {
 			],
 		},
 		enableRowSelection: {
-			control: 'boolean',
-			defaultValue: (row) => row.original.impact !== 'Medium',
-			// defaultValue: (row) => true
+			options: ['enabled', 'disabled', 'Except "Impact" is not "Medium"'],
+			mapping: {
+				enabled: true,
+				disabled: false,
+				'Except "Impact" is not "Medium"': (row) =>
+					row.original.impact !== 'Medium',
+			},
+			control: { type: 'select' },
+			defaultValue: 'Except "Impact" is not "Medium"',
 		},
 		uppercaseHeader: {
 			control: 'boolean',
@@ -595,6 +678,24 @@ const meta: Meta = {
 			defaultValue: {},
 			description:
 				'Set initial state for Table, this property rewrites `defaultSorting`, `defaultColumnVisibility`, `defaultColumnOrder`',
+		},
+		multirowHeader: {
+			control: { type: 'select' },
+			defaultValue: 'Not enabled',
+			options: [
+				'Not enabled',
+				'Workload Values Pinned',
+				'Workload Values Non-pinned',
+				'Workload Values Partially pinned',
+				'Workload Values with additional row',
+			],
+			mapping: {
+				'Not enabled': undefined,
+				'Workload Values Pinned': getMultiHeaderByOption('pinned'),
+				'Workload Values Non-pinned': getMultiHeaderByOption('nonPinned'),
+				'Workload Values Partially pinned': getMultiHeaderByOption('partialPinned'),
+				'Workload Values with additional row': getMultiHeaderByOption('withAdditionalRows'),
+			},
 		},
 		noRecordsToDisplaySlot: {
 			options: ['Not provided', 'Custom component'],

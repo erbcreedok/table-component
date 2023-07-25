@@ -164,9 +164,8 @@ export const Table: FC<Props> = ({ table }) => {
 					<TableBodyRow key="summaryRow" isSummaryRow {...summaryRowProps} />
 				</thead>
 			)}
-			{enableTableHead && !hideTableHead && <TableHead {...props} />}
-			{enableTableHead && hideTableHead && (
-				<TableHead {...props} emptyTableHead />
+			{enableTableHead && (
+				<TableHead {...props} emptyTableHead={hideTableHead} />
 			)}
 			{memoMode === 'table-body' ? (
 				// eslint-disable-next-line react/jsx-pascal-case

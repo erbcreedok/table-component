@@ -335,6 +335,20 @@ export type FilterOption = {
 	value: any
 }
 
+export type MultirowHeader = {
+	additionalRowContent?: (
+		table: TableInstance<{}>,
+		cellsPropsArray: { text: string; colSpan: number }[],
+		groupedCellsPropsArray: { text: string; colSpan: number }[]
+	) => React.ReactNode
+	pin?: boolean
+	depth: number
+	columns: {
+		text: string
+		columnIds: string[]
+	}[]
+}[]
+
 export type Table_ColumnDef<TData extends Record<string, any> = {}> = Omit<
 	ColumnDef<TData, unknown>,
 	| 'accessorKey'
@@ -1135,6 +1149,7 @@ export type TableComponentProps<TData extends Record<string, any> = {}> = Omit<
 	muiTopToolbarProps?:
 		| ToolbarProps
 		| (({ table }: { table: TableInstance<TData> }) => ToolbarProps)
+	multirowHeader?: MultirowHeader
 	onDraggingColumnChange?: OnChangeFn<Table_Column<TData> | null>
 	onDraggingRowsChange?: OnChangeFn<Table_Row<TData>[]>
 	onEditingCellChange?: OnChangeFn<Table_Cell<TData> | null>

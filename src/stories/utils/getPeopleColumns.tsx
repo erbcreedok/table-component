@@ -58,6 +58,7 @@ export const getPeopleColumns = () =>
 			enableColumnOrdering: false,
 			enableHiding: false,
 			enableFiltering: true,
+			enableDividerRight: true,
 			Header: ({ header, table }) => (
 				<Flex gap="0.75rem" sx={{ padding: '0 0.575rem' }}>
 					<SelectCheckbox table={table} selectAll />

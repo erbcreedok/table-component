@@ -1,5 +1,6 @@
 import React, { FC, RefObject } from 'react'
 import Box from '@mui/material/Box'
+import Tooltip from '@mui/material/Tooltip'
 
 import { Table_Cell, TableInstance } from '..'
 import { Text } from '../components/styles'
@@ -42,27 +43,41 @@ export const TableBodyCellUtility: FC<Props> = ({
 		!enableSelectAll ||
 		!enableMultiRowSelection
 
+	const trimRowNumber = rowIndex >= 1000
+
 	return (
 		<>
 			{enableRowNumbers && (
-				<Box
-					sx={{
-						position: 'absolute',
-						top: '50%',
-						left: '50%',
-						transform: 'translate(-50%, -50%)',
-						color: Text.Disabled,
-						fontSize: '12px',
-						fontWeight: 600,
-						lineHeight: '18px',
-						visibility: !isCurrentRowSelected ? 'visible' : 'hidden',
-						'tr:hover &': {
-							visibility: isRowNumbersOnly ? 'visible' : 'hidden',
-						},
-					}}
+				<Tooltip
+					arrow
+					enterDelay={1000}
+					enterNextDelay={1000}
+					title={rowIndex + 1}
+					disableHoverListener={!trimRowNumber}
 				>
-					{rowIndex + 1}
-				</Box>
+					<Box
+						sx={{
+							position: 'absolute',
+							top: '50%',
+							left: '50%',
+							transform: 'translate(-50%, -50%)',
+							color: Text.Disabled,
+							fontSize: '12px',
+							fontWeight: 600,
+							lineHeight: '18px',
+							maxWidth: '26px',
+							whiteSpace: 'nowrap',
+							overflow: 'hidden',
+							textOverflow: trimRowNumber ? 'ellipsis' : 'clip',
+							visibility: !isCurrentRowSelected ? 'visible' : 'hidden',
+							'tr:hover &': {
+								visibility: isRowNumbersOnly ? 'visible' : 'hidden',
+							},
+						}}
+					>
+						{rowIndex + 1}
+					</Box>
+				</Tooltip>
 			)}
 			{isDraggableCell ? (
 				<TableBodyRowGrabHandle

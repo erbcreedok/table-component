@@ -12,7 +12,6 @@ interface Props<TData extends Record<string, any> = {}>
 	extends IconButtonProps {
 	table: TableInstance<TData>
 	enableCaption: boolean
-	disabled?: boolean
 }
 
 export const FiltersButton = <TData extends Record<string, any> = {}>({
@@ -34,19 +33,25 @@ export const FiltersButton = <TData extends Record<string, any> = {}>({
 			<Tooltip
 				placement="top"
 				title={rest?.title ?? localization.showFiltering}
+				disabled={disabled}
 			>
 				<ToolbarIconButton
 					aria-label={localization.showFiltering}
 					onClick={() => setOpen(true)}
 					disableRipple
 					enableCaption={enableCaption}
+					disabled={disabled}
 					{...rest}
 				>
 					<FiltersIcon
 						htmlColor={disabled ? IconsColor.disabled : IconsColor.default}
 					/>
 					{enableCaption && (
-						<Typography>{localization.showFiltering}</Typography>
+						<Typography
+							color={disabled ? IconsColor.disabled : IconsColor.default}
+						>
+							{localization.showFiltering}
+						</Typography>
 					)}
 				</ToolbarIconButton>
 			</Tooltip>

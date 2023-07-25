@@ -36,7 +36,9 @@ export function getGroupedRowModel<
 			() => [
 				table.getState().grouping,
 				(table as unknown as TableInstance).getState().groupCollapsed,
-				table.getSortedRowModel(),
+				table.options.manualSorting
+					? table.getPreGroupedRowModel()
+					: table.getSortedRowModel(),
 			],
 			(grouping, groupCollapsed, rowModel) => {
 				if (!rowModel.rows.length || !grouping.length) {
@@ -184,11 +186,11 @@ export function collapseGroupedRows<TData extends RowData>(
 	groupCollapsed: GroupCollapsed,
 	grouping: string[]
 ) {
-	const expandedRows: Row<TData>[] = []
 	const groupFirstRow: Record<string, string> = {}
 
 	const handleRow = (row: Row<TData>) => {
 		const tableRow = row as unknown as Table_Row
+		let newRow: Row<TData> | null = null
 		const tGroupIds = tableRow.groupIds ?? {}
 		const groupIds = Object.keys(tGroupIds)
 			.sort((a, b) => grouping.indexOf(a) - grouping.indexOf(b))
@@ -197,31 +199,36 @@ export function collapseGroupedRows<TData extends RowData>(
 		const collapsedGroup =
 			collapsedColumnIndex > -1 ? groupIds[collapsedColumnIndex] : null
 
+		// set first row of collapsed group
 		if (collapsedGroup && !groupFirstRow[collapsedGroup]) {
 			groupFirstRow[collapsedGroup] = row.id
 		}
+		// if collapsedGroup is false, then we shall keep row
 		if (
 			!collapsedGroup ||
 			(tableRow.groupRows?.[collapsedGroup].subRows?.length ?? 2) <= 1
 		) {
 			delete (row as unknown as Table_Row).collapsedColumnIndex
-			expandedRows.push(row)
+			newRow = row
 		} else if (groupFirstRow[collapsedGroup] === row.id) {
+			// we shall keep this row event if it is collapsed, cause its first row
 			Object.assign(row, {
 				collapsedColumnIndex,
 			})
-			expandedRows.push(row)
+			newRow = row
 		}
 
-		if (row.subRows?.length) {
-			row.subRows.forEach(handleRow)
+		if (newRow && newRow?.subRows?.length) {
+			newRow.subRows = newRow.subRows
+				.map(handleRow)
+				.filter(Boolean) as Row<TData>[]
 		}
+
+		return newRow
 	}
 
-	rowModel.rows.forEach(handleRow)
-
 	return {
-		rows: expandedRows,
+		rows: rowModel.rows.map(handleRow).filter(Boolean) as Row<TData>[],
 		flatRows: rowModel.flatRows,
 		rowsById: rowModel.rowsById,
 	}

@@ -4,6 +4,7 @@ import React from 'react'
 import { TableBodyRow, TableBodyRowProps } from '../../../body/TableBodyRow'
 import { ExpandButton } from '../../../buttons/ExpandButton'
 import { TableHeadRow } from '../../../head/TableHeadRow'
+import { useMultiSticky } from "../../../hooks/useMultiSticky";
 import { isUnitTreeItem } from '../../utils/getTeamMembers'
 
 const Wrapper = styled(Box)`
@@ -36,6 +37,7 @@ export const UnitRow = <TData extends Record<string, any> = {}>(
 		options: { enableStickyHeader },
 	} = table
 	const { isFullScreen } = table.getState()
+	const { registerSticky, stickyElements } = useMultiSticky()
 
 	const unit = isUnitTreeItem(row.original) ? row.original : null
 	const index = getPaginationRowModel().rows.findIndex((r) => r.id === row.id)
@@ -70,6 +72,8 @@ export const UnitRow = <TData extends Record<string, any> = {}>(
 				<>
 					<TableHeadRow
 						parentRow={row}
+						stickyElements={stickyElements}
+						registerSticky={registerSticky}
 						headerGroup={headerGroup as any}
 						key={headerGroup.id}
 						table={table}
