@@ -15,12 +15,6 @@ try {
                     git url: 'https://auto_epm-dce_ci@gerrit.delivery.epam.com/a/table-component', branch: res_branch, credentialsId: 'auto-epm-dce-ci-gerrit'
                     }
                 withNPM(npmrcConfig:'npm-dce') {
-                    stage('Build') {
-                        sh "npm config set userconfig $WORKSPACE/.npmrc"
-                        sh "npm i && npm run build"
-                        sh "npm run storybook:build"
-                        sh "cp -r ./web_build ./core-env/core_nginx/"
-                    }
                     stage('Version') {
                         if(res_branch == 'qa'){
                             sh "npm run version:stable"
@@ -30,6 +24,12 @@ try {
                         version = sh returnStdout: true, script: 'node -pe "require(\'./package.json\').version" | tr -d \'\\n\' | sed "s/alpha\\.\\([0-9]*\\)$/alpha.${BUILD_NUMBER}/"'
                         sh "npm version $version --no-git-tag-version --allow-same-version"
                         env.VERSION = version
+                    }
+                    stage('Build') {
+                        sh "npm config set userconfig $WORKSPACE/.npmrc"
+                        sh "npm i && npm run build"
+                        sh "npm run storybook:build"
+                        sh "cp -r ./web_build ./core-env/core_nginx/"
                     }
                     stage('Publish Artifact') {
                         sh "npm run publish"
