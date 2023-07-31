@@ -1,4 +1,6 @@
-import React, { useState, useMemo } from 'react'
+import { BoxProps } from '@mui/material'
+import { rankings, rankItem } from '@tanstack/match-sorter-utils'
+import React, { useState, useMemo, FC, useRef } from 'react'
 import Autocomplete from '@mui/material/Autocomplete'
 import TextField from '@mui/material/TextField'
 import Box from '@mui/material/Box'
@@ -15,6 +17,31 @@ import {
 } from '../TableComponent'
 import { getColumnFilterOptions } from '../utils/getColumnFilterOptions'
 import { splitFilterOptions } from '../utils/splitFilterOptions'
+
+import { Colors } from './styles'
+
+const Option: FC<BoxProps> = ({ children, sx, ...rest }) => (
+	<Box
+		sx={{
+			color: Colors.Dark,
+			cursor: 'pointer',
+			mx: '9px',
+			px: '16px',
+			py: '9px',
+			fontWeight: 400,
+			fontSize: '14px',
+			width: '100%',
+			boxSizing: 'border-box',
+			'&:hover': {
+				backgroundColor: Colors.Gray10,
+			},
+			...sx,
+		}}
+		{...rest}
+	>
+		<Typography>{children}</Typography>
+	</Box>
+)
 
 export const FilterMultiselect = <TData extends TableData>({
 	column,
@@ -41,9 +68,29 @@ export const FilterMultiselect = <TData extends TableData>({
 		() => splitFilterOptions(options, value),
 		[options, value]
 	)
+	const [inputValue, setInputValue] = useState('')
+	const filteredOptions = useRef(notSelectedOptions)
 
 	const handleChange = (event: any, newValue: FilterOption[]) => {
+		setInputValue('')
 		onChange(newValue.map((option) => option.value))
+	}
+
+	const handleFilterOptions = (options, { inputValue, getOptionLabel }) => {
+		const filtered = options.filter(
+			(option) =>
+				rankItem(getOptionLabel(option), inputValue, {
+					threshold: rankings.MATCHES,
+				}).passed
+		)
+		filteredOptions.current = filtered
+
+		return filtered
+	}
+	const handleSelectAll = (e) => {
+		e.preventDefault()
+		handleChange(e, [...selectedOptions, ...filteredOptions.current])
+		setIsOpen(false)
 	}
 
 	return (
@@ -88,7 +135,14 @@ export const FilterMultiselect = <TData extends TableData>({
 				onChange={handleChange}
 				disableCloseOnSelect
 				options={notSelectedOptions}
+				filterOptions={handleFilterOptions}
+				clearOnBlur={false}
+				inputValue={inputValue}
+				onInputChange={(event, newInputValue) => {
+					setInputValue(newInputValue)
+				}}
 				onOpen={() => setIsOpen(true)}
+				noOptionsText={<Typography>{localization.noOptions}</Typography>}
 				renderInput={(params) => (
 					<TextField
 						{...params}
@@ -101,54 +155,20 @@ export const FilterMultiselect = <TData extends TableData>({
 				)}
 				renderOption={(props, option: FilterOption) => (
 					<li {...props} style={{ padding: 0, margin: 0 }}>
-						<Box
-							sx={{
-								color: '#303240',
-								cursor: 'pointer',
-								mx: '9px',
-								px: '16px',
-								py: '9px',
-								fontWeight: 400,
-								fontSize: '14px',
-								width: '100%',
-								boxSizing: 'border-box',
-								'&:hover': {
-									backgroundColor: '#F5F6FA',
-								},
-							}}
-						>
-							<Typography>{option.label}</Typography>
-						</Box>
+						<Option>{option.label}</Option>
 					</li>
 				)}
 				PaperComponent={({ children }) => (
 					<Paper sx={{ backgroundColor: '#fff' }}>
 						<>
-							{notSelectedOptions.length ? (
+							{filteredOptions.current.length ? (
 								<>
-									<Box
-										sx={{
-											color: '#303240',
-											cursor: 'pointer',
-											mx: 0,
-											my: '9px',
-											px: '25px',
-											py: '9px',
-											fontWeight: 400,
-											fontSize: '14px',
-											width: '100%',
-											boxSizing: 'border-box',
-											'&:hover': {
-												backgroundColor: '#F5F6FA',
-											},
-										}}
-										onClick={() => {
-											onChange(options.map((option) => option.value))
-											setIsOpen(false)
-										}}
+									<Option
+										sx={{ m: '9px 0', px: '25px' }}
+										onClick={handleSelectAll}
 									>
-										<Typography>{localization.selectAll}</Typography>
-									</Box>
+										{localization.selectAll}
+									</Option>
 									<Divider sx={{ width: '100%' }} />
 								</>
 							) : null}

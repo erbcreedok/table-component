@@ -13,6 +13,7 @@ import React, {
 	RefObject,
 	useEffect,
 	useMemo,
+	useRef,
 	useState,
 } from 'react'
 
@@ -70,6 +71,7 @@ export const TableBodyCell = ({
 	const {
 		getState,
 		options: {
+			detailedRowBackgroundColor,
 			editingMode,
 			enableClickToCopy,
 			enableColumnOrdering,
@@ -102,6 +104,7 @@ export const TableBodyCell = ({
 	const { column } = cell
 	const { columnDef } = column
 	const { columnDefType, cellAction, cellActionIcon } = columnDef
+	const cellRef = useRef<HTMLTableCellElement | null>(null)
 
 	const mTableCellBodyProps =
 		muiTableBodyCellProps instanceof Function
@@ -203,11 +206,23 @@ export const TableBodyCell = ({
 		}
 	}
 
+	useEffect(() => {
+		if (isCurrentCellClicked) {
+			const newOpenedDetailedPanels = { ...openedDetailedPanels }
+			newOpenedDetailedPanels[row.id] = {
+				...newOpenedDetailedPanels[row.id],
+				cellRef,
+			}
+			table.setOpenedDetailedPanels(newOpenedDetailedPanels)
+		}
+		// only run on mount
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [])
 	const handleExpand = (
 		event: MouseEvent<HTMLButtonElement> | MouseEvent<HTMLTableCellElement>
 	) => {
-		const isSellNotClickable = notClickableCells?.includes(cell.column.id)
-		if (isSellNotClickable) {
+		const isCellNotClickable = notClickableCells?.includes(cell.column.id)
+		if (isCellNotClickable) {
 			return
 		}
 		if (cellAction === 'expand') {
@@ -220,23 +235,15 @@ export const TableBodyCell = ({
 			const isOpenedPanelClicked = isClicked && isCurrentCellClicked
 
 			if (isOpenedPanelClicked) {
-				const filteredClickedCells = Object.keys(openedDetailedPanels).reduce(
-					(acc, key) => {
-						if (key !== rowId) {
-							acc[key] = openedDetailedPanels[key]
-						}
-
-						return acc
-					},
-					{}
-				)
-
+				const filteredClickedCells = { ...openedDetailedPanels }
+				delete filteredClickedCells[rowId]
 				table.setOpenedDetailedPanels(filteredClickedCells)
 			} else {
 				table.setOpenedDetailedPanels({
 					[rowId]: {
 						cell,
 						row,
+						cellRef,
 					},
 				})
 
@@ -292,9 +299,9 @@ export const TableBodyCell = ({
 			: enableRowDragging
 
 	const isCurrentCellClicked = openedDetailedPanels[row.id]?.cell.id === cell.id
-	const isDettailedPanelExpanded =
+	const isDetailedPanelExpanded =
 		enableDetailedPanel &&
-		Object.keys(openedDetailedPanels).includes(row.id) &&
+		!!openedDetailedPanels[row.id] &&
 		isCurrentCellClicked
 
 	const getTableCellStyles = (theme) => ({
@@ -350,6 +357,12 @@ export const TableBodyCell = ({
 			tableCellProps,
 		}),
 		...draggingBorders,
+		...(isCurrentCellClicked
+			? {
+					borderBottom: '1px solid transparent',
+					backgroundColor: detailedRowBackgroundColor,
+			  }
+			: {}),
 		...(cellStyleRules?.[cell.column.id]?.executeStyleCondition?.({
 			cell,
 			row,
@@ -383,7 +396,7 @@ export const TableBodyCell = ({
 					border: '1px solid #E1E3EB',
 					borderRadius: '4px',
 					backgroundColor: '#F5F6FA',
-					visibility: isDettailedPanelExpanded ? 'visible' : 'hidden',
+					visibility: isDetailedPanelExpanded ? 'visible' : 'hidden',
 				}}
 				onClick={handleExpandByClickOnCellActionButton}
 			>
@@ -391,7 +404,7 @@ export const TableBodyCell = ({
 					{cellActionIcon || (
 						<ExpandMoreIcon
 							sx={{
-								transform: `rotate(${isDettailedPanelExpanded ? -180 : 0}deg)`,
+								transform: `rotate(${isDetailedPanelExpanded ? -180 : 0}deg)`,
 								transition: 'transform 150ms',
 							}}
 						/>
@@ -424,6 +437,7 @@ export const TableBodyCell = ({
 			data-is-util={isUtilColumn}
 			ref={(node: HTMLTableCellElement) => {
 				if (node) {
+					cellRef.current = node
 					measureElement?.(node)
 				}
 			}}

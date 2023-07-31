@@ -1,11 +1,12 @@
-import React, { FC } from 'react'
 import Collapse from '@mui/material/Collapse'
+import { lighten } from '@mui/material/styles'
 import TableCell from '@mui/material/TableCell'
 import TableRow from '@mui/material/TableRow'
-import { lighten } from '@mui/material/styles'
 import type { VirtualItem } from '@tanstack/react-virtual'
+import React, { FC, useRef, useState } from 'react'
 
 import type { Table_Row, TableInstance } from '..'
+import { DetailPanelBorder } from '../components/DetailPanelBorder'
 
 interface Props {
 	parentRowRef: React.RefObject<HTMLTableRowElement>
@@ -31,8 +32,14 @@ export const TableDetailPanel: FC<Props> = ({
 			enableDetailedPanel,
 			detailedRowBackgroundColor,
 		},
+		refs: { tableContainerRef },
 	} = table
-	const { isLoading, grouping } = getState()
+	const { isLoading, grouping, openedDetailedPanels } = getState()
+	const ref = useRef<HTMLTableCellElement>(null)
+	const cellRef = openedDetailedPanels?.[row.id]?.cellRef
+	const [fullyOpened, setFullyOpened] = useState(
+		row?.getIsExpanded?.() ?? false
+	)
 
 	const tableRowProps =
 		muiTableBodyRowProps instanceof Function
@@ -65,6 +72,7 @@ export const TableDetailPanel: FC<Props> = ({
 			})}
 		>
 			<TableCell
+				ref={ref}
 				className="Mui-TableBodyCell-DetailPanel"
 				colSpan={getVisibleLeafColumns().length - grouping.length}
 				{...tableCellProps}
@@ -87,8 +95,21 @@ export const TableDetailPanel: FC<Props> = ({
 				})}
 			>
 				{renderDetailPanel && (
-					<Collapse in={row?.getIsExpanded?.()} mountOnEnter unmountOnExit>
+					<Collapse
+						in={row?.getIsExpanded?.()}
+						onEntered={() => setFullyOpened(true)}
+						onExit={() => setFullyOpened(false)}
+						mountOnEnter
+						unmountOnExit
+					>
 						{!isLoading && renderDetailPanel({ row, table })}
+						{fullyOpened && (
+							<DetailPanelBorder
+								panelRef={ref}
+								cellRef={cellRef}
+								tableContainerRef={tableContainerRef}
+							/>
+						)}
 					</Collapse>
 				)}
 			</TableCell>

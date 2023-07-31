@@ -138,6 +138,7 @@ module.exports = {
 		],
 		'template-curly-spacing': 'off',
 		'no-console': ['error', { allow: ['warn', 'error'] }],
+		'no-shadowed-variable': 'off',
 		'react-hooks/rules-of-hooks': 'error',
 		'react-hooks/exhaustive-deps': 'warn',
 		'react/jsx-filename-extension': [

@@ -238,14 +238,18 @@ export const TableBodyRow: FC<TableBodyRowProps> = ({
 					<td style={{ display: 'flex', width: virtualPaddingRight }} />
 				) : null}
 			</MuiTableRow>
-			{renderDetailPanel && !row?.getIsGrouped?.() && (
-				<TableDetailPanel
-					parentRowRef={rowRef}
-					row={row}
-					table={table}
-					virtualRow={virtualRow}
-				/>
-			)}
+			{renderDetailPanel &&
+				!row?.getIsGrouped?.() &&
+				(collapsedColumnIndex === undefined ? (
+					<TableDetailPanel
+						parentRowRef={rowRef}
+						row={row}
+						table={table}
+						virtualRow={virtualRow}
+					/>
+				) : (
+					<tr />
+				))}
 		</>
 	)
 }

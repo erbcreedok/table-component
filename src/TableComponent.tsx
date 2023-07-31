@@ -207,6 +207,12 @@ export interface Table_RowModel<TData extends Record<string, any> = {}> {
 	rowsById: { [key: string]: Table_Row<TData> }
 }
 
+export type OpenedDetailPanel<TData extends TableData> = {
+	cell: Table_Cell<TData>
+	row: Table_Row<TData>
+	cellRef: MutableRefObject<HTMLTableCellElement | null>
+}
+
 export type TableInstance<TData extends Record<string, any> = {}> = Omit<
 	Table<TData>,
 	| 'getAllColumns'
@@ -282,15 +288,7 @@ export type TableInstance<TData extends Record<string, any> = {}> = Omit<
 	>
 	setHoveredRow: Dispatch<SetStateAction<HoveredRowState<TData>>>
 	setOpenedDetailedPanels: Dispatch<
-		SetStateAction<
-			Record<
-				string,
-				{
-					cell: Table_Cell<TData>
-					row: Table_Row<TData>
-				}
-			>
-		>
+		SetStateAction<Record<string, OpenedDetailPanel<TData>>>
 	>
 	setIsFullScreen: Dispatch<SetStateAction<boolean>>
 	setShowAlertBanner: Dispatch<SetStateAction<boolean>>
@@ -309,13 +307,7 @@ export type Table_TableState<TData extends Record<string, any> = {}> =
 		editingRow: Table_Row<TData> | null
 		globalFilterFn: Table_FilterOption
 		hoveredColumn: Table_Column<TData> | { id: string } | null
-		openedDetailedPanels: Record<
-			string,
-			{
-				cell: Table_Cell<TData>
-				row: Table_Row<TData>
-			}
-		> | null
+		openedDetailedPanels: Record<string, OpenedDetailPanel<TData>> | null
 		hoveredRow: HoveredRowState<TData>
 		isFullScreen: boolean
 		isLoading: boolean
