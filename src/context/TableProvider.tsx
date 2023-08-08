@@ -215,6 +215,7 @@ export const TableProvider = <TData extends Record<string, any> = {}>({
 		selectAllMode,
 		sortingFns: _sortingFns,
 		columns: _columns,
+		theme: theme ?? defaultTheme,
 		...rest,
 	} as TableComponentProps<{}> & { localization: Table_Localization }
 

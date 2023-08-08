@@ -3,10 +3,9 @@ import { lighten } from '@mui/material/styles'
 import TableCell from '@mui/material/TableCell'
 import TableRow from '@mui/material/TableRow'
 import type { VirtualItem } from '@tanstack/react-virtual'
-import React, { FC, useRef, useState } from 'react'
+import React, { FC } from 'react'
 
 import type { Table_Row, TableInstance } from '..'
-import { DetailPanelBorder } from '../components/DetailPanelBorder'
 
 interface Props {
 	parentRowRef: React.RefObject<HTMLTableRowElement>
@@ -31,15 +30,10 @@ export const TableDetailPanel: FC<Props> = ({
 			renderDetailPanel,
 			enableDetailedPanel,
 			detailedRowBackgroundColor,
+			detailPanelBorderColor,
 		},
-		refs: { tableContainerRef },
 	} = table
-	const { isLoading, grouping, openedDetailedPanels } = getState()
-	const ref = useRef<HTMLTableCellElement>(null)
-	const cellRef = openedDetailedPanels?.[row.id]?.cellRef
-	const [fullyOpened, setFullyOpened] = useState(
-		row?.getIsExpanded?.() ?? false
-	)
+	const { isLoading, grouping } = getState()
 
 	const tableRowProps =
 		muiTableBodyRowProps instanceof Function
@@ -72,7 +66,6 @@ export const TableDetailPanel: FC<Props> = ({
 			})}
 		>
 			<TableCell
-				ref={ref}
 				className="Mui-TableBodyCell-DetailPanel"
 				colSpan={getVisibleLeafColumns().length - grouping.length}
 				{...tableCellProps}
@@ -80,8 +73,16 @@ export const TableDetailPanel: FC<Props> = ({
 					backgroundColor: virtualRow
 						? lighten(theme.palette.background.default, 0.06)
 						: undefined,
-					borderBottom: !row?.getIsExpanded?.() ? 'none' : undefined,
 					display: layoutMode === 'grid' ? 'flex' : 'table-cell',
+					borderLeft: !row?.getIsExpanded?.()
+						? 'none'
+						: `1px solid ${detailPanelBorderColor}`,
+					borderRight: !row?.getIsExpanded?.()
+						? 'none'
+						: `1px solid ${detailPanelBorderColor}`,
+					borderBottom: !row?.getIsExpanded?.()
+						? 'none'
+						: `1px solid ${detailPanelBorderColor}`,
 					pb: row?.getIsExpanded?.() ? '1rem' : 0,
 					pt: row?.getIsExpanded?.() ? '1rem' : 0,
 					transition: 'all 150ms ease-in-out',
@@ -95,21 +96,8 @@ export const TableDetailPanel: FC<Props> = ({
 				})}
 			>
 				{renderDetailPanel && (
-					<Collapse
-						in={row?.getIsExpanded?.()}
-						onEntered={() => setFullyOpened(true)}
-						onExit={() => setFullyOpened(false)}
-						mountOnEnter
-						unmountOnExit
-					>
+					<Collapse in={row?.getIsExpanded?.()} mountOnEnter unmountOnExit>
 						{!isLoading && renderDetailPanel({ row, table })}
-						{fullyOpened && (
-							<DetailPanelBorder
-								panelRef={ref}
-								cellRef={cellRef}
-								tableContainerRef={tableContainerRef}
-							/>
-						)}
 					</Collapse>
 				)}
 			</TableCell>

@@ -20,6 +20,7 @@ export default [
       '@tanstack/table-core',
       'react',
       'react-resize-detector',
+      'react-text-truncate',
     ],
     input: './src/index.tsx',
     output: [

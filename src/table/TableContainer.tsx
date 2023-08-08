@@ -60,7 +60,6 @@ export const TableContainer: FC<Props> = ({ table }) => {
 					? `clamp(350px, calc(100vh - ${totalToolbarHeight}px), 9999px)`
 					: undefined,
 				overflow: 'auto',
-				position: 'relative',
 				...(tableContainerProps?.sx instanceof Function
 					? tableContainerProps.sx(theme)
 					: (tableContainerProps?.sx as any)),

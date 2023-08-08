@@ -399,6 +399,8 @@ export const useTable = <TData extends Record<string, any> = {}>(
 			onSortingChange: setSorting,
 			onStateChange: config.onStateChange,
 			...config,
+			detailPanelBorderColor:
+				config.detailPanelBorderColor ?? config.theme?.palette.primary.main,
 			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 			// @ts-ignore
 			columns: columnDefs,

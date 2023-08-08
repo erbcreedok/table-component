@@ -36,7 +36,7 @@ const getBorderColors = createGetColors(getTeamsBorderColorSet(), {
 })
 const getBackgroundColors = createGetColors(getTeamsCellBackgroundSet())
 
-const ColoredGroupedCell: typeof GroupedCellBase = (props) => {
+export const ColoredGroupedCell: typeof GroupedCellBase = (props) => {
 	const columnId = props.cell.column.id
 	const value = props.cell.getValue()
 
@@ -48,7 +48,7 @@ const ColoredGroupedCell: typeof GroupedCellBase = (props) => {
 	)
 }
 
-const coloredCellProps = <TData extends Record<string, any> = {}>(props: {
+export const coloredCellProps = <TData extends Record<string, any> = {}>(props: {
 	cell: Table_Cell<TData>
 	column: Table_Column<TData>
 	row: Table_Row<TData>

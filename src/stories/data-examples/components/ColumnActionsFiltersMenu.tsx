@@ -1,6 +1,6 @@
 import { Box, Button, Checkbox, Typography } from '@mui/material'
 import React, { useEffect } from 'react'
-import { Table_ColumnActionsFiltersMenuProps } from "../../../TableComponent";
+import { Table_ColumnActionsFiltersMenuProps, TableData } from "../../../TableComponent";
 
 interface SubFilterItemProps {
 	value: string
@@ -29,7 +29,7 @@ const SubFilterItem = (props: SubFilterItemProps) => {
 		</Box>
 	)
 }
-export const ColumnActionsFiltersMenu = (props: Table_ColumnActionsFiltersMenuProps) => {
+export const ColumnActionsFiltersMenu = <TData extends TableData>(props: Table_ColumnActionsFiltersMenuProps<TData>) => {
 	const {
 		selectedFilters,
 		filterOptions,

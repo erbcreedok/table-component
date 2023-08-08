@@ -211,7 +211,6 @@ export interface Table_RowModel<TData extends Record<string, any> = {}> {
 export type OpenedDetailPanel<TData extends TableData> = {
 	cell: Table_Cell<TData>
 	row: Table_Row<TData>
-	cellRef: MutableRefObject<HTMLTableCellElement | null>
 }
 
 export type TableInstance<TData extends Record<string, any> = {}> = Omit<
@@ -824,6 +823,7 @@ export type TableComponentProps<TData extends Record<string, any> = {}> = Omit<
 	 * Change the default options for display columns.
 	 */
 	defaultDisplayColumn?: Partial<Table_ColumnDef<TData>>
+	detailPanelBorderColor?: string
 	displayColumnDefOptions?: Partial<{
 		[key in Table_DisplayColumnIds]: Partial<Table_ColumnDef>
 	}>
@@ -862,6 +862,7 @@ export type TableComponentProps<TData extends Record<string, any> = {}> = Omit<
 				column: Table_Column
 				table: TData
 				isCurrentCellClicked?: boolean
+				isCurrentRowDetailOpened?: boolean
 			}) => object | undefined
 		}
 	>

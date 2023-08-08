@@ -26,7 +26,7 @@ import {
 	getUnitTreeItems,
     isUnitTreeItem,
 } from '../utils/getTeamMembers'
-import { getTeamMembersColumns } from '../utils/getTeamMembersColumns'
+import { getTeamMembersColumns, teamMemberAccessorFn, ColoredGroupedCell, coloredCellProps } from '../utils/getTeamMembersColumns'
 import { getDefaultRowActionMenuItems } from '../utils/rowActionMenuItems'
 import { ColumnActionsFiltersMenu } from './components/ColumnActionsFiltersMenu'
 import { UnitRow } from './components/UnitRow'
@@ -69,6 +69,7 @@ type TeamsTableConfigs = Omit<TableComponentProps<TeamMember>, 'data'> &
 		defaultColumnOrder?: ColumnOrderState
 		defaultColumnVisibility?: VisibilityState
 		defaultColumnFilterFns?: string[]
+		enableLoremIpsumColumn?: boolean
 		columnSubtitles: Record<string, string>
 		rowsCount: number
 	}
@@ -137,7 +138,23 @@ const getPropsHandledColumns = (
 		disableHidingFor,
 		defaultColumnFilterFns,
 		columnSubtitles,
+		enableLoremIpsumColumn,
 	} = args
+	if (enableLoremIpsumColumn) {
+		columns.push({
+			header: 'Lorem Ipsum',
+			id: 'lorem',
+			dataType: 'textual',
+			accessorFn: teamMemberAccessorFn('lorem'),
+			filterVariant: 'multi-select',
+			GroupedCell: ColoredGroupedCell,
+			muiTableBodyCellProps: coloredCellProps,
+			enableColumnOrdering: true,
+			enableSorting: false,
+			enableGrouping: false,
+		})
+	}
+
 	return addColumnSubtitle(
 		columnSubtitles,
 		disableHidingForColumns(
@@ -724,6 +741,12 @@ const meta: Meta = {
 			defaultValue: {},
 			description: 'Set props for toolbar component',
 		},
+		enableLoremIpsumColumn: {
+			control: 'boolean',
+			defaultValue: false,
+			description: '***THIS IS NOT A PROP***\n' +
+				'Set the Lorem Ipsum column for checking multirow trim',
+		}
 	},
 }
 

@@ -122,6 +122,7 @@ export const HeaderSearch = <T extends TableData>({
 	const [filtered, setFiltered] = useState<T[]>([])
 	const searchValue = useDelay(input)
 	const {
+		getRowModel,
 		options: {
 			icons: { SearchIcon, CloseIcon },
 		},
@@ -161,9 +162,11 @@ export const HeaderSearch = <T extends TableData>({
 
 	useEffect(() => {
 		if (searchValue.length >= minLengthSearch) {
+			const filteredData = getRowModel().rows.map((row) => row.original)
+
 			setFiltered(
 				getFilteredData({
-					tableData: table.options.data,
+					tableData: filteredData,
 					value: searchValue.toLowerCase(),
 					path: searchPath,
 				})

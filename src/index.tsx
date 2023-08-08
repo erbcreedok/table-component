@@ -32,6 +32,7 @@ import { TableHeadRow } from './head/TableHeadRow'
 import { TooltipOverflow } from './components/TooltipOverflow'
 import { SelectCheckbox } from './inputs/SelectCheckbox'
 import { FilterMultiselect } from './components/FilterMultiselect'
+import { useMultiSticky } from './hooks/useMultiSticky'
 
 export default TableComponent
 export * from '@tanstack/react-table'
@@ -59,6 +60,7 @@ export {
 	ToolbarInternalButtons,
 	ToggleRowActionMenuButton,
 	TopToolbar,
+	useMultiSticky,
 	BottomToolbar,
 	createTheme,
 	TableToolbar,

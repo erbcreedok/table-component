@@ -151,7 +151,7 @@ export const PeopleTable: Story<TableComponentProps> = () => {
 						// @ts-ignore
 						expanded: false,
 						showColumnFilters: true,
-	
+
 					}}
 					{...getTablePresetProps('PeoplePresets')}
 				/>
@@ -178,12 +178,12 @@ export const PeopleTable: Story<TableComponentProps> = () => {
 				// enableRowVirtualization
 				cellStyleRules={{
 					performance: {
-						executeStyleCondition: ({ cell, isCurrentCellClicked }) => {
+						executeStyleCondition: ({ cell, column, isCurrentCellClicked }) => {
 							if (cell.getValue() === 'Meets') {
 								return {
 									backgroundColor: '#FEF8F8',
 									color: '#B32424',
-									...(isCurrentCellClicked
+									...(isCurrentCellClicked || column.getIsGrouped()
 										? { borderBottom: 'none' }
 										: { borderRight: '1px solid #FED7D7' }),
 								}
@@ -191,14 +191,14 @@ export const PeopleTable: Story<TableComponentProps> = () => {
 						},
 					},
 					riskOfLeaving: {
-						executeStyleCondition: ({ cell, isCurrentCellClicked }) => {
+						executeStyleCondition: ({ cell, column, isCurrentCellClicked }) => {
 							const cellValue = cell.getValue()
 
 							if (cellValue === 'High') {
 								return {
 									backgroundColor: '#FEF8F8',
 									color: '#B32424',
-									...(isCurrentCellClicked
+									...(isCurrentCellClicked || column.getIsGrouped()
 										? {}
 										: { borderRight: '1px solid #FED7D7' }),
 								}
@@ -208,7 +208,7 @@ export const PeopleTable: Story<TableComponentProps> = () => {
 								return {
 									backgroundColor: '#FED7D7',
 									color: '#B32424',
-									...(isCurrentCellClicked
+									...(isCurrentCellClicked || column.getIsGrouped()
 										? {}
 										: { borderRight: '1px solid #FFAEAE' }),
 								}
@@ -216,14 +216,14 @@ export const PeopleTable: Story<TableComponentProps> = () => {
 						},
 					},
 					mood: {
-						executeStyleCondition: ({ cell, isCurrentCellClicked }) => {
+						executeStyleCondition: ({ cell, column, isCurrentCellClicked }) => {
 							const cellValue = cell.getValue()
 
 							if (cellValue === 'Netral') {
 								return {
 									backgroundColor: '#FEF8F8',
 									color: '#B32424',
-									...(isCurrentCellClicked
+									...(isCurrentCellClicked || column.getIsGrouped()
 										? {}
 										: { borderRight: '1px solid #FED7D7' }),
 								}
@@ -233,7 +233,7 @@ export const PeopleTable: Story<TableComponentProps> = () => {
 								return {
 									backgroundColor: '#FEF8F8',
 									color: '#B32424',
-									...(isCurrentCellClicked
+									...(isCurrentCellClicked || column.getIsGrouped()
 										? {}
 										: { borderRight: '1px solid #FED7D7' }),
 								}
@@ -241,7 +241,7 @@ export const PeopleTable: Story<TableComponentProps> = () => {
 						},
 					},
 					lastTalk: {
-						executeStyleCondition: ({ cell, isCurrentCellClicked }) => {
+						executeStyleCondition: ({ cell, column, isCurrentCellClicked }) => {
 							const cellValue = cell.getValue()
 
 							const isDateInPastForMonth = (date) => {
@@ -254,7 +254,7 @@ export const PeopleTable: Story<TableComponentProps> = () => {
 								return {
 									backgroundColor: '#FEF8F8',
 									color: '#B32424',
-									...(isCurrentCellClicked
+									...(isCurrentCellClicked || column.getIsGrouped()
 										? {}
 										: { borderRight: '1px solid #FED7D7' }),
 								}
@@ -262,14 +262,14 @@ export const PeopleTable: Story<TableComponentProps> = () => {
 						},
 					},
 					totalWorkload: {
-						executeStyleCondition: ({ cell, isCurrentCellClicked }) => {
+						executeStyleCondition: ({ cell, column, isCurrentCellClicked }) => {
 							const cellValue = cell.getValue()
 
 							if (cellValue === '100%') {
 								return {
 									backgroundColor: '#FEF8F8',
 									color: '#B32424',
-									...(isCurrentCellClicked
+									...(isCurrentCellClicked || column.getIsGrouped()
 										? {}
 										: { borderRight: '1px solid #FED7D7' }),
 								}
@@ -279,7 +279,7 @@ export const PeopleTable: Story<TableComponentProps> = () => {
 								return {
 									backgroundColor: '#FED7D7',
 									color: '#B32424',
-									...(isCurrentCellClicked
+									...(isCurrentCellClicked || column.getIsGrouped()
 										? {}
 										: { borderRight: '1px solid #FFAEAE' }),
 								}

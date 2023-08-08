@@ -13,7 +13,6 @@ import React, {
 	RefObject,
 	useEffect,
 	useMemo,
-	useRef,
 	useState,
 } from 'react'
 
@@ -72,6 +71,7 @@ export const TableBodyCell = ({
 		getState,
 		options: {
 			detailedRowBackgroundColor,
+			detailPanelBorderColor,
 			editingMode,
 			enableClickToCopy,
 			enableColumnOrdering,
@@ -104,7 +104,6 @@ export const TableBodyCell = ({
 	const { column } = cell
 	const { columnDef } = column
 	const { columnDefType, cellAction, cellActionIcon } = columnDef
-	const cellRef = useRef<HTMLTableCellElement | null>(null)
 
 	const mTableCellBodyProps =
 		muiTableBodyCellProps instanceof Function
@@ -206,18 +205,6 @@ export const TableBodyCell = ({
 		}
 	}
 
-	useEffect(() => {
-		if (isCurrentCellClicked) {
-			const newOpenedDetailedPanels = { ...openedDetailedPanels }
-			newOpenedDetailedPanels[row.id] = {
-				...newOpenedDetailedPanels[row.id],
-				cellRef,
-			}
-			table.setOpenedDetailedPanels(newOpenedDetailedPanels)
-		}
-		// only run on mount
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [])
 	const handleExpand = (
 		event: MouseEvent<HTMLButtonElement> | MouseEvent<HTMLTableCellElement>
 	) => {
@@ -243,7 +230,6 @@ export const TableBodyCell = ({
 					[rowId]: {
 						cell,
 						row,
-						cellRef,
 					},
 				})
 
@@ -300,11 +286,13 @@ export const TableBodyCell = ({
 			? enableRowDragging(row)
 			: enableRowDragging
 
-	const isCurrentCellClicked = openedDetailedPanels[row.id]?.cell.id === cell.id
+	const isCurrentRowDetailOpened = !!openedDetailedPanels[row.id]
+	const isCurrentCellDetailOpened =
+		openedDetailedPanels[row.id]?.cell.id === cell.id
 	const isDetailedPanelExpanded =
 		enableDetailedPanel &&
 		!!openedDetailedPanels[row.id] &&
-		isCurrentCellClicked
+		isCurrentCellDetailOpened
 
 	const getTableCellStyles = (theme) => ({
 		alignItems: layoutMode === 'grid' ? 'center' : undefined,
@@ -359,9 +347,17 @@ export const TableBodyCell = ({
 			tableCellProps,
 		}),
 		...draggingBorders,
-		...(isCurrentCellClicked
+		...(isCurrentRowDetailOpened
 			? {
-					borderBottom: '1px solid transparent',
+					borderBottom: `1px solid ${detailPanelBorderColor}`,
+			  }
+			: {}),
+		...(isCurrentCellDetailOpened
+			? {
+					borderTop: `1px solid ${detailPanelBorderColor}`,
+					borderLeft: `1px solid ${detailPanelBorderColor}`,
+					borderRight: `1px solid ${detailPanelBorderColor}`,
+					borderBottom: 'none',
 					backgroundColor: detailedRowBackgroundColor,
 			  }
 			: {}),
@@ -370,14 +366,15 @@ export const TableBodyCell = ({
 			row,
 			column,
 			table,
-			isCurrentCellClicked,
+			isCurrentCellClicked: isCurrentCellDetailOpened,
+			isCurrentRowDetailOpened,
 		}) || {}),
 		...columnDef.getTableCellSx?.({
 			cell,
 			row,
 			column,
 			table,
-			isCurrentCellClicked,
+			isCurrentCellClicked: isCurrentCellDetailOpened,
 		}),
 	})
 
@@ -439,7 +436,6 @@ export const TableBodyCell = ({
 			data-is-util={isUtilColumn}
 			ref={(node: HTMLTableCellElement) => {
 				if (node) {
-					cellRef.current = node
 					measureElement?.(node)
 				}
 			}}

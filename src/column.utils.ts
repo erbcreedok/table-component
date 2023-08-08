@@ -5,6 +5,7 @@ import type { Theme } from '@mui/material/styles'
 
 import { Table_AggregationFns } from './aggregationFns'
 import { GroupedCellBase } from './components/GroupedCellBase'
+import { CellBase } from './components/CellBase'
 import { Table_FilterFns } from './filterFns'
 import { Table_SortingFns } from './sortingFns'
 import { utilColumns } from './utilColumns'
@@ -97,6 +98,10 @@ export const prepareColumns = <TData extends Record<string, any> = {}>({
 
 			if (!columnDef.GroupedCell) {
 				columnDef.GroupedCell = GroupedCellBase
+			}
+
+			if (!columnDef.Cell) {
+				columnDef.Cell = CellBase
 			}
 
 			// assign filterFns
