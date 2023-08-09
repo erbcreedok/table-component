@@ -108,6 +108,7 @@ export const TableHeadCellGrabHandle: FC<Props> = ({
 				},
 			}}
 			sx={{
+				zIndex: 2,
 				borderRadius: '6px',
 				padding: '2px 12px 3px',
 				backgroundColor,

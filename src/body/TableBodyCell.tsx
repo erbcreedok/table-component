@@ -49,7 +49,6 @@ interface Props {
 	isSummaryRowCell?: boolean
 	isGroupedCell?: boolean
 	groupBorders?: GroupBorders
-	subRowIndex?: number
 }
 
 export const TableBodyCell = ({

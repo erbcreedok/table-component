@@ -237,6 +237,7 @@ export const HeaderSearch = <T extends TableData>({
 						anchorEl={anchorElRef.current}
 						placement="bottom-start"
 						sx={{
+							zIndex: 2,
 							borderRadius: '6px',
 							width: anchorElRef.current?.clientWidth,
 							backgroundColor: Colors.White,
