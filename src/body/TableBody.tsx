@@ -59,7 +59,8 @@ export const TableBody: FC<Props> = ({
 		refs: { tableContainerRef, tablePaperRef },
 		CustomRow,
 	} = table
-	const { columnFilters, globalFilter, pagination, sorting } = getState()
+	const { columnFilters, globalFilter, pagination, sorting, groupCollapsed } =
+		getState()
 
 	const tableBodyProps =
 		muiTableBodyProps instanceof Function
@@ -138,10 +139,39 @@ export const TableBody: FC<Props> = ({
 	const rowsOrVirtualRows = virtualRows ?? rows
 
 	const rowProps = useMemo(() => {
+		const increment = rowVirtualizer ? rowsOrVirtualRows[0].index + 1 : 1
+		let domIndex = 0
+		let lastParent: Table_Row | undefined
+
 		return rowsOrVirtualRows.map((rowOrVirtualRow, rowIndex) => {
 			const row = rowVirtualizer
 				? rows[rowOrVirtualRow.index]
 				: (rowOrVirtualRow as Table_Row)
+			if (row.getParent() !== lastParent) {
+				lastParent = row.getParent()
+				domIndex = 0
+			}
+			const rowNumber = increment + domIndex
+			// check if row has collapsed group rows
+			const firstCollapsedGroupRow = Object.entries(row.groupRows ?? {}).reduce(
+				(groupRow, [groupId, row]) => {
+					if (
+						!!groupCollapsed[groupId] &&
+						row.depth < (groupRow?.depth ?? Infinity)
+					) {
+						return row
+					}
+
+					return groupRow
+				},
+				undefined as Table_Row | undefined
+			)
+			if (!firstCollapsedGroupRow) {
+				domIndex += 1
+			} else {
+				// if row is collapsed, add the number of subrows to the domIndex
+				domIndex += firstCollapsedGroupRow.subRows?.length ?? 0
+			}
 
 			return {
 				columnVirtualizer,
@@ -150,6 +180,7 @@ export const TableBody: FC<Props> = ({
 				numRows: rows.length,
 				row,
 				rowIndex: rowVirtualizer ? rowOrVirtualRow.index : rowIndex,
+				rowNumber,
 				domIndex: rowIndex,
 				table,
 				virtualColumns,

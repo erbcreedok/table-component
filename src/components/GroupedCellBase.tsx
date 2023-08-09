@@ -22,8 +22,12 @@ import {
 } from './styles'
 import { Tooltip } from './Tooltip'
 
-const Wrapper = styled(Box, getShouldForwardProps('borderColor'))<{
+const Wrapper = styled(
+	Box,
+	getShouldForwardProps('borderColor', 'innerTable')
+)<{
 	borderColor?: string
+	innerTable?: boolean
 }>`
 	box-sizing: border-box;
 	position: absolute;
@@ -33,7 +37,10 @@ const Wrapper = styled(Box, getShouldForwardProps('borderColor'))<{
 	right: 0.75rem;
 	margin: -1rem -0.75rem;
 	padding: 1rem 0.75rem;
-	border-left: 2px solid ${({ borderColor }) => borderColor ?? '#E1E3EB'};
+	border-left: ${({ borderColor, innerTable }) =>
+		innerTable ? 'none' : `2px solid ${borderColor ?? '#E1E3EB'}`};
+	border-top: ${({ innerTable }) =>
+		innerTable ? '1px solid #E1E3EB' : 'none'};
 	font-weight: bold;
 	overflow: hidden;
 	text-overflow: ellipsis;
@@ -71,6 +78,7 @@ export const GroupedCellBase = <TData extends object>({
 	const {
 		options: {
 			enableRowSelection,
+			innerTable,
 			icons: { ExpandIcon, CollapseIcon },
 		},
 		setGroupCollapsed,
@@ -108,6 +116,7 @@ export const GroupedCellBase = <TData extends object>({
 			<Wrapper
 				ref={ref}
 				borderColor={borderColor}
+				innerTable={innerTable}
 				sx={{
 					backgroundColor: isHovered ? Colors.LightestBlue : Colors.Gray10,
 					borderRight: isLastGroupedColumn

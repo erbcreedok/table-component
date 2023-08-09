@@ -141,7 +141,7 @@ export const PresetMenu = <TData extends Record<string, any> = {}>({
 			<PresetsFooter
 				onSaveAsNew={() => setEditingPresetId('new')}
 				onUpdateCurrent={handleUpdateCurrent}
-				isSaveAsNewEnabled={!editingPresetId}
+				isSaveAsNewEnabled={!editingPresetId && !isStateTheSame}
 				isUpdateCurrentEnabled={
 					!editingPresetId &&
 					!isStateTheSame &&

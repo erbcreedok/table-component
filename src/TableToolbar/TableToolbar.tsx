@@ -87,6 +87,7 @@ export const TableToolbar = <TData extends Record<string, any> = {}>({
 						? 'space-between'
 						: 'flex-end'
 					: 'normal',
+				...(innerTable ? { height: '88px' } : {}),
 				...rest.sx,
 			}}
 		>

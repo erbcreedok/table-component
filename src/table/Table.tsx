@@ -135,6 +135,7 @@ export const Table: FC<Props> = ({ table }) => {
 		columnVirtualizer,
 		numRows: table.getRowModel().rows.length as number,
 		rowIndex: -1,
+		rowNumber: -1,
 		table,
 		row: {
 			getIsSelected: () => false,

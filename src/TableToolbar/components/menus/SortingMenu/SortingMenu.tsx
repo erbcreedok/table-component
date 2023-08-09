@@ -107,7 +107,7 @@ export const SortingMenu = <TData extends Record<string, any> = {}>({
 			withSearch
 			headerTitle="Sorting"
 			onSearchChange={handleOnSearchChange}
-			transparentBackdrop={innerTable}
+			innerTableSidebar={innerTable}
 		>
 			<Box sx={{ marginTop: '12px' }}>
 				{isSearchActive &&

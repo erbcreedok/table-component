@@ -11,7 +11,7 @@ interface Props {
 	cell: Table_Cell
 	table: TableInstance
 	rowRef: RefObject<HTMLTableRowElement>
-	rowIndex: number
+	rowNumber: number
 	isDraggableCell?: boolean
 	isCurrentRowSelected?: boolean
 	enableRowNumbers?: boolean
@@ -23,7 +23,7 @@ export const TableBodyCellUtility: FC<Props> = ({
 	isDraggableCell,
 	isCurrentRowSelected,
 	rowRef,
-	rowIndex,
+	rowNumber,
 	enableRowNumbers,
 }) => {
 	const {
@@ -43,7 +43,7 @@ export const TableBodyCellUtility: FC<Props> = ({
 		!enableSelectAll ||
 		!enableMultiRowSelection
 
-	const trimRowNumber = rowIndex >= 1000
+	const trimRowNumber = rowNumber >= 1000
 
 	return (
 		<>
@@ -52,7 +52,7 @@ export const TableBodyCellUtility: FC<Props> = ({
 					arrow
 					enterDelay={1000}
 					enterNextDelay={1000}
-					title={rowIndex + 1}
+					title={rowNumber}
 					disableHoverListener={!trimRowNumber}
 				>
 					<Box
@@ -75,7 +75,7 @@ export const TableBodyCellUtility: FC<Props> = ({
 							},
 						}}
 					>
-						{rowIndex + 1}
+						{rowNumber}
 					</Box>
 				</Tooltip>
 			)}

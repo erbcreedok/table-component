@@ -32,5 +32,5 @@ export const IconsColor = {
 	active: '#474A59',
 }
 
-export const groupDividerBorder = `3px solid ${Colors.Gray10}`
+export const groupDividerBorder = `3px solid ${Colors.Gray}`
 export const groupDividerHoveredBorder = `3px solid ${Colors.LightestBlue10}`

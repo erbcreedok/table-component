@@ -67,6 +67,7 @@ export const TableHeadCell: FC<TableHeadCellProps> = ({
 			muiTableHeadCellProps,
 			uppercaseHeader,
 			enableRowNumbers,
+			innerTable,
 			icons: { ExpandIcon, CollapseIcon },
 		},
 		refs: { tableHeadCellRefs },
@@ -238,7 +239,9 @@ export const TableHeadCell: FC<TableHeadCellProps> = ({
 									: column.getIsPinned() && columnDefType !== 'group'
 									? 2
 									: 1,
-							borderBottom: `1px solid ${Colors.Gray20}`,
+							borderBottom: `1px solid ${
+								innerTable ? Colors.BorderMain : Colors.Gray20
+							}`,
 							...groupBorders,
 							...getCommonCellStyles({
 								column,
@@ -250,10 +253,14 @@ export const TableHeadCell: FC<TableHeadCellProps> = ({
 							backgroundColor:
 								menuVisible || grabHandleVisible
 									? backgroundColorHover
+									: innerTable
+									? '#FFFFFF'
 									: backgroundColor,
 							'&:hover': {
 								backgroundColor: showColumnActions
 									? backgroundColorHover
+									: innerTable
+									? '#FFFFFF'
 									: backgroundColor,
 							},
 							...draggingBorders,

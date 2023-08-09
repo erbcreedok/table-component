@@ -138,8 +138,23 @@ export const PeopleTable: Story<TableComponentProps> = () => {
 				onClose={() => setIsSidebarOpen(false)}
 				withHeader
 				headerTitle="Sidebar title"
+				innerTable
 			>
-				<TableComponent innerTable innerTableTitle="Title" data={innerTableData} columns={columns} />
+				<TableComponent
+					innerTable
+					innerTableTitle="Title"
+					data={innerTableData}
+					columns={columns}
+					enableRowNumbers={false}
+					enableBottomToolbar={false}
+					initialState={{
+						// @ts-ignore
+						expanded: false,
+						showColumnFilters: true,
+	
+					}}
+					{...getTablePresetProps('PeoplePresets')}
+				/>
 			</Sidebar>
 			<TableComponent
 				data={data}

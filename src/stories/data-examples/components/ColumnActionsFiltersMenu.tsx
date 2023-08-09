@@ -1,5 +1,6 @@
 import { Box, Button, Checkbox, Typography } from '@mui/material'
-import React from 'react'
+import React, { useEffect } from 'react'
+import { Table_ColumnActionsFiltersMenuProps } from "../../../TableComponent";
 
 interface SubFilterItemProps {
 	value: string
@@ -28,15 +29,22 @@ const SubFilterItem = (props: SubFilterItemProps) => {
 		</Box>
 	)
 }
-export const ColumnActionsFiltersMenu = (props) => {
+export const ColumnActionsFiltersMenu = (props: Table_ColumnActionsFiltersMenuProps) => {
 	const {
 		selectedFilters,
-		filterValues,
-
+		filterOptions,
 		onCheckFilter,
 		onCheckAllFilters,
 		onApplyFilters,
+
+		toggleSubMenu,
 	} = props
+
+	useEffect(() => {
+		return () => {
+			toggleSubMenu()
+		}
+	}, [])
 
 	return (
 		<div style={{ minWidth: 245, padding: '0 15px' }}>
@@ -58,17 +66,17 @@ export const ColumnActionsFiltersMenu = (props) => {
 					<SubFilterItem
 						value="Select All"
 						onClick={onCheckAllFilters}
-						isChecked={selectedFilters.length === filterValues.length}
+						isChecked={selectedFilters.length === filterOptions.length}
 					/>
 				</Box>
 
-				{filterValues.map((value) => {
+				{filterOptions.map(({ value, label }) => {
 					return (
 						<SubFilterItem
 							key={value}
 							isChecked={selectedFilters.includes(value)}
 							onClick={() => onCheckFilter(value)}
-							value={value}
+							value={label}
 						/>
 					)
 				})}

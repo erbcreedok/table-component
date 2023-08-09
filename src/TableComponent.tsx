@@ -153,6 +153,7 @@ export interface Table_Localization {
 	search: string
 	select: string
 	selectAll: string
+	selectRow: string
 	selectedCountOfRowCountRowsSelected: string
 	showAll: string
 	showAllColumns: string
@@ -731,6 +732,19 @@ export type Table_FilterFn<TData extends Record<string, any> = {}> =
 	| FilterFn<TData>
 	| Table_FilterOption
 
+export type Table_ColumnActionsFiltersMenuProps<TData extends TableData = {}> =
+	{
+		table: TableInstance<TData>
+		column: Table_Column<TData>
+		selectedFilters: string[]
+		filterValues: string[]
+		filterOptions: FilterOption[]
+		onCheckFilter: (value: string) => void
+		onCheckAllFilters: () => void
+		onApplyFilters: () => void
+		toggleSubMenu: () => void
+	}
+
 export type Table_InternalFilterOption = {
 	option: string
 	symbol: string
@@ -876,7 +890,7 @@ export type TableComponentProps<TData extends Record<string, any> = {}> = Omit<
 		index: number,
 		parentRow: Table_Row<TData>
 	) => string
-	getIsUnitTreeItem?: (row: TData) => boolean
+	getIsUnitTreeItem?: (rowOriginal: TData) => boolean
 	globalFilterFn?: Table_FilterOption
 	globalFilterModeOptions?: Table_FilterOption[] | null
 	groupsSorting?: any
@@ -1268,15 +1282,7 @@ export type TableComponentProps<TData extends Record<string, any> = {}> = Omit<
 		column: Table_ColumnDef<TData>
 		defaultStyles: Record<string, any>
 	}) => React.ReactNode
-	ColumnActionsFiltersMenu?: FC<{
-		table: TableInstance<TData>
-		column: Table_Column<TData>
-		selectedFilters: any[]
-		filterValues: string[]
-		onCheckFilter: (value: string) => void
-		onCheckAllFilters: () => void
-		onApplyFilters: () => void
-	}>
+	ColumnActionsFiltersMenu?: FC<Table_ColumnActionsFiltersMenuProps<TData>>
 	columnVirtualizerInstanceRef?: MutableRefObject<Virtualizer<
 		HTMLDivElement,
 		HTMLTableCellElement

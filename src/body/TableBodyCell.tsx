@@ -41,6 +41,7 @@ interface Props {
 	numRows: number
 	row: Table_Row<{}>
 	rowIndex: number
+	rowNumber: number
 	rowRef: RefObject<HTMLTableRowElement>
 	rowSpan?: HTMLProps<HTMLTableCellElement>['rowSpan']
 	table: TableInstance
@@ -59,7 +60,7 @@ export const TableBodyCell = ({
 	numRows,
 	row,
 	rowIndex,
-	subRowIndex,
+	rowNumber,
 	rowRef,
 	rowSpan,
 	table,
@@ -292,7 +293,9 @@ export const TableBodyCell = ({
 	const isUtilColumn = column.id === utilColumns.column
 	const isCurrentRowSelected = row.getIsSelected()
 	const isAnyRowSelected = table.getSelectedRowModel().flatRows.length > 0
-	const hideCheckBoxSpan = isUtilColumn && !isAnyRowSelected
+	const hideCheckBoxSpan =
+		isUtilColumn &&
+		(enableRowNumbers ? !isCurrentRowSelected : !isAnyRowSelected)
 	const isDraggableCell =
 		enableRowDragging instanceof Function
 			? enableRowDragging(row)
@@ -473,7 +476,7 @@ export const TableBodyCell = ({
 						isDraggableCell={isDraggableCell}
 						isCurrentRowSelected={isCurrentRowSelected}
 						rowRef={rowRef}
-						rowIndex={subRowIndex ?? rowIndex}
+						rowNumber={rowNumber}
 						enableRowNumbers={enableRowNumbers}
 					/>
 				) : columnDefType === 'display' && column.id === utilColumns.expand ? (

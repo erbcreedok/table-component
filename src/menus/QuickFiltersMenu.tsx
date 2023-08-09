@@ -1,7 +1,14 @@
-import React, { ComponentProps, FC, useEffect, useState } from 'react'
+import React, {
+	ComponentProps,
+	FC,
+	useCallback,
+	useMemo,
+	useState,
+} from 'react'
 
 import { Menu } from '../components/Menu'
 import { Table_Column, TableInstance } from '../TableComponent'
+import { getColumnFilterOptions } from '../utils/getColumnFilterOptions'
 
 type Props = ComponentProps<typeof Menu> & {
 	table: TableInstance
@@ -16,60 +23,53 @@ export const QuickFiltersMenu: FC<Props> = ({
 }) => {
 	const {
 		options: { ColumnActionsFiltersMenu },
-		getState,
 	} = table
-	const { columnFilters } = getState()
 
-	const [selectedFilters, setSelectedFilters] = useState<unknown[]>([])
-	const [filterValues, setFilterValues] = useState<string[]>([])
+	const [selectedFilters, setSelectedFilters] = useState<string[]>(
+		(column.getFilterValue() || []) as string[]
+	)
+	const filterOptions = useMemo(
+		() => getColumnFilterOptions(column, table),
+		[column, table]
+	)
+	// DEPRECATED: use filterOptions instead
+	const filterValues = useMemo(
+		() => filterOptions.map(({ value }) => value),
+		[filterOptions]
+	)
 
-	// TODO: fix .length issue in getFacetedUniqueValues
-	useEffect(() => {
-		const { value: appliedValues } =
-			columnFilters.find(({ id }) => id === column.id) || {}
-
-		try {
-			setFilterValues(
-				Array.from(table.getColumn(column.id).getFacetedUniqueValues().keys())
-			)
-		} catch (error) {
-			//
-		}
-
-		if (Array.isArray(appliedValues)) {
-			setSelectedFilters(appliedValues)
-		}
-	}, [columnFilters])
-
-	const handleApplyFilters = () => {
+	const handleApplyFilters = useCallback(() => {
 		column.setFilterValue([...selectedFilters])
 
 		toggleSubMenu()
-	}
+	}, [column, selectedFilters, toggleSubMenu])
 
-	const handleCheckFilter = (value: string) => {
-		if (selectedFilters.includes(value)) {
-			const updatedFilters = selectedFilters.filter(
-				(filter) => filter !== value
-			)
+	const handleCheckFilter = useCallback(
+		(value: string) => {
+			if (selectedFilters.includes(value)) {
+				const updatedFilters = selectedFilters.filter(
+					(filter) => filter !== value
+				)
 
-			setSelectedFilters(updatedFilters)
+				setSelectedFilters(updatedFilters)
 
-			return
-		}
+				return
+			}
 
-		setSelectedFilters([...selectedFilters, value])
-	}
+			setSelectedFilters([...selectedFilters, value])
+		},
+		[selectedFilters]
+	)
 
-	const handleCheckAllFilters = () => {
-		if (selectedFilters.length === filterValues.length) {
+	const handleCheckAllFilters = useCallback(() => {
+		if (selectedFilters.length === filterOptions.length) {
 			setSelectedFilters([])
 
 			return
 		}
 
-		setSelectedFilters([...filterValues])
-	}
+		setSelectedFilters([...filterOptions.map(({ value }) => value)])
+	}, [selectedFilters, filterOptions])
 
 	if (!ColumnActionsFiltersMenu) {
 		return null
@@ -82,9 +82,11 @@ export const QuickFiltersMenu: FC<Props> = ({
 				column={column}
 				selectedFilters={selectedFilters}
 				filterValues={filterValues}
+				filterOptions={filterOptions}
 				onCheckFilter={handleCheckFilter}
 				onCheckAllFilters={handleCheckAllFilters}
 				onApplyFilters={handleApplyFilters}
+				toggleSubMenu={toggleSubMenu}
 			/>
 		</Menu>
 	)

@@ -93,7 +93,7 @@ export const FiltersMenu = <TData extends TableData>({
 			styles={{ minWidth: 660 }}
 			withHeader
 			headerTitle="Filters"
-			transparentBackdrop={innerTable}
+			innerTableSidebar={innerTable}
 		>
 			{!isSearchActive && !!filterAppliedColumns.length ? (
 				<>

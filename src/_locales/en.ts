@@ -87,6 +87,7 @@ export const Table_Localization_EN: Table_Localization = {
 		'{selectedCount} items from {rowCount} selected',
 	select: 'Select',
 	selectAll: 'Select all',
+	selectRow: 'Select row',
 	showAll: 'Show all',
 	showAllColumns: 'Show all columns',
 	showHideColumns: 'Show/Hide columns',

@@ -21,6 +21,7 @@ export interface TableBodyRowProps {
 	numRows: number
 	row: Table_Row
 	rowIndex: number
+	rowNumber: number
 	table: TableInstance
 	virtualColumns?: VirtualItem[]
 	virtualPaddingLeft?: number
@@ -41,6 +42,7 @@ export const TableBodyRow: FC<TableBodyRowProps> = ({
 	numRows,
 	row,
 	rowIndex,
+	rowNumber,
 	table,
 	virtualColumns,
 	virtualPaddingLeft,
@@ -128,7 +130,7 @@ export const TableBodyRow: FC<TableBodyRowProps> = ({
 				numRows,
 				row,
 				rowIndex,
-				subRowIndex: getSubRowIndex({ row }),
+				rowNumber,
 				rowRef,
 				table,
 				isSummaryRowCell: isSummaryRow,
@@ -177,6 +179,9 @@ export const TableBodyRow: FC<TableBodyRowProps> = ({
 								? Colors.Gray10
 								: undefined,
 					},
+					'&:first-child td * *': {
+						borderTop: 'none',
+					},
 					...(tableRowProps?.sx instanceof Function
 						? tableRowProps.sx(theme)
 						: (tableRowProps?.sx as any)),
@@ -212,7 +217,7 @@ export const TableBodyRow: FC<TableBodyRowProps> = ({
 						numRows,
 						row,
 						rowIndex,
-						subRowIndex: getSubRowIndex({ row }),
+						rowNumber,
 						rowRef,
 						table,
 						virtualCell: columnVirtualizer

@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react'
+import React, { useMemo, useState } from 'react'
 import Box from '@mui/material/Box'
 import { Typography } from '@mui/material'
 
@@ -32,7 +32,6 @@ export const ColumnsMenu = <TData extends Record<string, any> = {}>({
 		getLeftLeafColumns,
 		getRightLeafColumns,
 		getState,
-		setColumnOrder,
 		setGrouping,
 		options: { localization, innerTable, multirowHeader },
 	} = table
@@ -247,7 +246,7 @@ export const ColumnsMenu = <TData extends Record<string, any> = {}>({
 			}
 			withSearch
 			onSearchChange={handleOnSearchChange}
-			transparentBackdrop={innerTable}
+			innerTableSidebar={innerTable}
 		>
 			{isSearchActive ? (
 				searchList.length ? (

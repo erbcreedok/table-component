@@ -118,7 +118,7 @@ export const GroupingMenu = <TData extends Record<string, any> = {}>({
 			withSearch
 			headerTitle="Grouping"
 			onSearchChange={handleOnSearchChange}
-			transparentBackdrop={innerTable}
+			innerTableSidebar={innerTable}
 		>
 			<Box sx={{ marginTop: '12px' }}>
 				{isSearchActive &&

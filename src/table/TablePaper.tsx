@@ -71,6 +71,17 @@ export const TablePaper: FC<Props> = ({ table }) => {
 							width: '100vw',
 					  }
 					: {}),
+				...(innerTable
+					? {
+							border: 'none',
+							borderRadius: 0,
+							boxShadow: 'none',
+							padding: '24px',
+							maxHeight: '100%',
+							width: '100%',
+							boxSizing: 'border-box',
+					  }
+					: {}),
 			}}
 		>
 			{enableTopToolbar &&

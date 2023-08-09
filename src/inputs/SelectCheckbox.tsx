@@ -77,9 +77,7 @@ export const SelectCheckbox = <TData extends TableData>({
 				? [...parentRow.subRows].every((row) => !row.getCanSelect())
 				: (row && !row.getCanSelect()) || isLoading,
 		inputProps: {
-			'aria-label': selectAll
-				? localization.selectAll
-				: localization.toggleSelectRow,
+			'aria-label': selectAll ? localization.selectAll : localization.selectRow,
 		},
 		onChange: parentRow
 			? (e) =>
@@ -124,7 +122,7 @@ export const SelectCheckbox = <TData extends TableData>({
 			enterNextDelay={1000}
 			title={
 				checkboxProps?.title ??
-				(selectAll ? localization.selectAll : localization.toggleSelectRow)
+				(selectAll ? localization.selectAll : localization.selectRow)
 			}
 		>
 			{label ? (
