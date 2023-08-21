@@ -15,7 +15,7 @@ import { getSortingText } from '../../../../utils/getSortingInfo'
 import { useTableContext } from '../../../../context/useTableContext'
 import type { Table_Column } from '../../../../'
 import { ButtonLink } from '../../../../components/ButtonLink'
-import { Colors, Text } from '../../../../components/styles'
+import { Colors, TextColor } from '../../../../components/styles'
 import { DeleteIcon } from '../../../../icons/DeleteIcon'
 import { SortingButtons } from '../SortingMenu/SortingButtons'
 import { GrabHandleButton } from '../../buttons/GrabHandleButton'
@@ -146,7 +146,11 @@ export const SimpleMenuItem = <TData extends Record<string, any> = {}>({
 					/>
 				)}
 				<Typography
-					sx={{ alignSelf: 'center', fontSize: '14px', color: Text.Primary }}
+					sx={{
+						alignSelf: 'center',
+						fontSize: '14px',
+						color: TextColor.Primary,
+					}}
 				>
 					{columnDef.header}
 				</Typography>

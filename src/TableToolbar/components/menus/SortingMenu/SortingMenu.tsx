@@ -27,7 +27,7 @@ export const SortingMenu = <TData extends Record<string, any> = {}>({
 		getAllColumns,
 		getState,
 		resetSorting,
-		options: { innerTable },
+		options: { innerTable, localization },
 	} = table
 	const { columnPinning, columnOrder, columnVisibility, grouping, sorting } =
 		getState()
@@ -106,7 +106,7 @@ export const SortingMenu = <TData extends Record<string, any> = {}>({
 			styles={{ minWidth: 600 }}
 			withHeader
 			withSearch
-			headerTitle="Sorting"
+			headerTitle={localization.sort}
 			onSearchChange={withNativeEvent<string, TData>(
 				{ el: 'SortingMenu_Search', type: 'keypress' },
 				table

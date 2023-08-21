@@ -1,5 +1,5 @@
 export const DEFAULT_FONT_FAMILY = 'Source Sans Pro, Arial, sans-serif'
-export const Text = {
+export const TextColor = {
 	Primary: '#6C6F80',
 	Secondary: '#8A8C99',
 	Disabled: '#ACAFBF',
@@ -8,6 +8,7 @@ export const Text = {
 
 export const Colors = {
 	LightBlue: '#009ECC',
+	Blue: '#008ACE',
 	LightestBlue10: '#B9E3EF',
 	LightestBlue: '#E1F4FA',
 	LightGreen: '#67A300',

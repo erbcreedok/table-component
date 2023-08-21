@@ -1,6 +1,6 @@
 import { Box, ButtonBase } from '@mui/material'
 
-import { Colors, Text } from '../../../../../components/styles'
+import { Colors, TextColor } from '../../../../../components/styles'
 import { TableInstance } from '../../../../../TableComponent'
 
 interface PresetsFooterProps<TData extends Record<string, any>> {
@@ -35,7 +35,7 @@ export const PresetsFooter = <TData extends Record<string, any>>({
 					height: '18px',
 					fontSize: '12px',
 					fontWeight: 'bold',
-					color: isSaveAsNewEnabled ? Colors.LightBlue : Text.Disabled,
+					color: isSaveAsNewEnabled ? Colors.LightBlue : TextColor.Disabled,
 				}}
 				disabled={!isSaveAsNewEnabled}
 				onClick={onSaveAsNew}
@@ -48,7 +48,9 @@ export const PresetsFooter = <TData extends Record<string, any>>({
 					height: '18px',
 					fontSize: '12px',
 					fontWeight: 'bold',
-					color: isUpdateCurrentEnabled ? Text.Primary : Text.Disabled,
+					color: isUpdateCurrentEnabled
+						? TextColor.Primary
+						: TextColor.Disabled,
 				}}
 				onClick={onUpdateCurrent}
 			>

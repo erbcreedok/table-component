@@ -64,7 +64,7 @@ export const PresetButton = <TData extends Record<string, any> = {}>({
 	const { state: tableState } = useTableContext()
 	const [isStateTheSame, setIsStateTheSame] = useState<boolean>(true)
 	const [isNotificationShowedOnce, setIsNotificationShowedOnce] =
-		useState<boolean>(false)
+		useState<boolean>(!!localStorage.getItem('presetNotificationShowed'))
 	const [presets, setPresets] = useState<Preset[]>(getDefaultPresets() ?? [])
 	const [checkedPreset, setCheckedPreset] = useState<Preset | undefined>(
 		presets.find(({ checked }) => checked)
@@ -136,6 +136,11 @@ export const PresetButton = <TData extends Record<string, any> = {}>({
 		return `${checkedPreset?.name} ${localization.showPreset}`
 	}, [checkedPreset?.name, localization.showPreset])
 
+	const handleNotificationShowedOnce = () => {
+		localStorage.setItem('presetNotificationShowed', JSON.stringify(true))
+		setIsNotificationShowedOnce(true)
+	}
+
 	return (
 		<ThemeProvider theme={theme}>
 			<Tooltip placement="top" title={capitalize(tooltipTitle)}>
@@ -174,7 +179,7 @@ export const PresetButton = <TData extends Record<string, any> = {}>({
 				!isNotificationShowedOnce && (
 					<PresetNotification
 						anchorEl={toolbarRef.current}
-						setIsNotificationShowedOnce={setIsNotificationShowedOnce}
+						setIsNotificationShowedOnce={handleNotificationShowedOnce}
 					/>
 				)}
 			{toolbarRef.current && (

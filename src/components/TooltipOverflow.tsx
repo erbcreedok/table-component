@@ -28,7 +28,7 @@ const Ellipsis = styled(Box)`
 `
 
 export const TooltipOverflow = forwardRef<HTMLDivElement, Props>(
-	({ text, content, disabled, boxProps, ...rest }, outerRef) => {
+	({ text, className, content, disabled, boxProps, ...rest }, outerRef) => {
 		const innerRef = useRef<HTMLDivElement>(null)
 		const ref = (outerRef ?? innerRef) as RefObject<HTMLDivElement>
 		const [visible, setVisible] = useState(false)
@@ -40,7 +40,7 @@ export const TooltipOverflow = forwardRef<HTMLDivElement, Props>(
 			)
 
 			setVisible(widthContainer < scrollWidth)
-		}, [])
+		}, [ref])
 
 		useResizeDetector({
 			onResize: handleResize,
@@ -61,7 +61,7 @@ export const TooltipOverflow = forwardRef<HTMLDivElement, Props>(
 
 		return (
 			<Tooltip title={visible && !disabled ? text : null} {...rest}>
-				<Ellipsis ref={ref} {...boxProps}>
+				<Ellipsis className={className} ref={ref} {...boxProps}>
 					{computedContent}
 				</Ellipsis>
 			</Tooltip>

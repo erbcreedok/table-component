@@ -1,5 +1,6 @@
 import { styled, Box } from '@mui/material'
 import IconButton from '@mui/material/IconButton'
+import Skeleton from '@mui/material/Skeleton'
 import Typography from '@mui/material/Typography'
 import { useResizeDetector } from 'react-resize-detector'
 import React, { ReactNode, useCallback, useMemo, useState } from 'react'
@@ -18,7 +19,7 @@ import {
 	Colors,
 	groupDividerBorder,
 	groupDividerHoveredBorder,
-	Text,
+	TextColor,
 } from './styles'
 import { Tooltip } from './Tooltip'
 
@@ -79,17 +80,20 @@ export const GroupedCellBase = <TData extends object>({
 		options: {
 			enableRowSelection,
 			innerTable,
+			getGroupRowCount,
 			icons: { ExpandIcon, CollapseIcon },
 		},
 		setGroupCollapsed,
 	} = table
 	const columnId = getColumnId(column.columnDef)
-	const { grouping, groupCollapsed, hoveredRow } = table.getState()
+	const { grouping, groupCollapsed, hoveredRow, isLoading, showSkeletons } =
+		table.getState()
 	const isLastGroupedColumn =
 		grouping.length > 0 && grouping[grouping.length - 1] === columnId
 	const groupId = row.groupIds ? row.groupIds[columnId] : undefined
 	const expanded = groupId ? !groupCollapsed[groupId] : true
 	const groupRow = groupId ? row.groupRows?.[groupId] : undefined
+	const columnSize = column.getSize()
 
 	const isHovered = useMemo(() => {
 		if (!groupRow?.subRows || !hoveredRow?.row) return false
@@ -106,6 +110,12 @@ export const GroupedCellBase = <TData extends object>({
 			}
 		})
 	}, [groupId, setGroupCollapsed])
+
+	const skeletonWidth = useMemo(() => {
+		return Math.round(
+			Math.random() * (columnSize - columnSize / 3) + columnSize / 3
+		)
+	}, [columnSize])
 
 	return (
 		<Tooltip
@@ -126,60 +136,71 @@ export const GroupedCellBase = <TData extends object>({
 						: undefined,
 				}}
 			>
-				<Box
-					sx={{
-						display: 'flex',
-						alignItems: 'center',
-						height: 'fit-content',
-						maxHeight: '100%',
-						flexDirection: !isShort && isLandscape ? 'row' : 'column',
-						gap: isShort ? '2px' : '8px',
-						mt: isShort ? '-0.25rem' : 0,
-					}}
-				>
-					<IconButton
-						disabled={(groupRow?.subRows?.length ?? 0) <= 1}
-						sx={{ p: 0, order: 1 }}
-						onClick={toggleExpand}
+				{isLoading || showSkeletons ? (
+					<Skeleton
+						animation="wave"
+						sx={{ transform: 'none' }}
+						{...(isLandscape
+							? { width: skeletonWidth, height: 20 }
+							: { height: skeletonWidth, width: 20 })}
+					/>
+				) : (
+					<Box
+						sx={{
+							display: 'flex',
+							alignItems: 'center',
+							height: 'fit-content',
+							maxHeight: '100%',
+							flexDirection: !isShort && isLandscape ? 'row' : 'column',
+							gap: isShort ? '2px' : '8px',
+							mt: isShort ? '-0.25rem' : 0,
+						}}
 					>
-						{expanded ? <CollapseIcon /> : <ExpandIcon />}
-					</IconButton>
-					{enableRowSelection && groupId && (
-						<SelectCheckbox
-							table={table}
-							parentRow={row.groupRows?.[groupId]}
-							sx={{ order: !isShort && isLandscape ? 2 : 0 }}
-						/>
-					)}
-					{!isTooShort && (
-						<Box
-							sx={{
-								order: 3,
-								writingMode: isLandscape ? 'none' : 'vertical-rl',
-								transform: !isLandscape ? 'rotate(-180deg)' : '',
-								overflow: 'hidden',
-								textOverflow: 'ellipsis',
-								minHeight: !isLandscape ? '24px' : 0,
-								lineClamp: 2,
-							}}
+						<IconButton
+							disabled={(groupRow?.subRows?.length ?? 0) <= 1}
+							sx={{ p: 0, order: 1 }}
+							onClick={toggleExpand}
 						>
-							{content}
-						</Box>
-					)}
-					{!isTooShort && (
-						<Typography
-							sx={{
-								color: Text.Disabled,
-								fontSize: 12,
-								order: 4,
-								ml: isLandscape ? 'auto' : 0,
-								mt: isLandscape ? 0 : '8px',
-							}}
-						>
-							{groupRow?.subRows?.length}
-						</Typography>
-					)}
-				</Box>
+							{expanded ? <CollapseIcon /> : <ExpandIcon />}
+						</IconButton>
+						{enableRowSelection && groupId && (
+							<SelectCheckbox
+								table={table}
+								parentRow={row.groupRows?.[groupId]}
+								sx={{ order: !isShort && isLandscape ? 2 : 0 }}
+							/>
+						)}
+						{!isTooShort && (
+							<Box
+								sx={{
+									order: 3,
+									writingMode: isLandscape ? 'none' : 'vertical-rl',
+									transform: !isLandscape ? 'rotate(-180deg)' : '',
+									overflow: 'hidden',
+									textOverflow: 'ellipsis',
+									minHeight: !isLandscape ? '24px' : 0,
+									lineClamp: 2,
+								}}
+							>
+								{content}
+							</Box>
+						)}
+						{!isTooShort && (
+							<Typography
+								sx={{
+									color: TextColor.Disabled,
+									fontSize: 12,
+									order: 4,
+									ml: isLandscape ? 'auto' : 0,
+									mt: isLandscape ? 0 : '8px',
+								}}
+							>
+								{getGroupRowCount?.({ groupId, groupRow, table }) ??
+									groupRow?.subRows?.length}
+							</Typography>
+						)}
+					</Box>
+				)}
 			</Wrapper>
 		</Tooltip>
 	)

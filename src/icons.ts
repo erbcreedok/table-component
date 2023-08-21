@@ -6,7 +6,6 @@ import DynamicFeedIcon from '@mui/icons-material/DynamicFeed'
 import EditIcon from '@mui/icons-material/Edit'
 import ExpandLessIcon from '@mui/icons-material/ExpandLess'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
-import FilterAltIcon from '@mui/icons-material/FilterAlt'
 import FilterListIcon from '@mui/icons-material/FilterList'
 import FilterListOffIcon from '@mui/icons-material/FilterListOff'
 import FullscreenExitIcon from '@mui/icons-material/FullscreenExit'
@@ -29,6 +28,8 @@ import { CheckIcon } from './icons/CheckIcon'
 import { CheckboxCheckedIcon } from './icons/CheckboxCheckedIcon'
 import { CheckboxIcon } from './icons/CheckboxIcon'
 import { CheckboxIndeterminateIcon } from './icons/CheckboxIndeterminateIcon'
+import { ChevronDownIcon } from './icons/ChevronDownIcon'
+import { ChevronNumberDownIcon } from './icons/ChevronNumberDownIcon'
 import { ClearIcon } from './icons/ClearIcon'
 import { CloseIcon } from './icons/CloseIcon'
 import { CollapseFilledIcon } from './icons/CollapseFilledIcon'
@@ -39,6 +40,7 @@ import { GroupIcon } from './icons/GroupIcon'
 import { GroupingIcon } from './icons/GroupingIcon'
 import { ExpandIcon } from './icons/ExpandIcon'
 import { EyeIcon } from './icons/EyeIcon'
+import { EyeCrossedIcon } from './icons/EyeCrossedIcon'
 import { FiltersIcon } from './icons/FiltersIcon'
 import { HideIcon } from './icons/HideIcon'
 import { LocationLeft } from './icons/LocationLeft'
@@ -54,7 +56,7 @@ import { PencilIcon } from './icons/PencilIcon'
 import { PlusIcon } from './icons/PlusIcon'
 import { PresetIcon } from './icons/PresetIcon'
 import { RowDragIcon } from './icons/RowDragIcon'
-import { ToggleIcon } from './icons/ToggleIcon'
+import { ColumnsIcon } from './icons/ColumnsIcon'
 import { TrashIcon } from './icons/TrashIcon'
 import { AscNumIcon } from './icons/AscNumIcon'
 import { DescNumIcon } from './icons/DescNumIcon'
@@ -74,6 +76,8 @@ export interface Table_Icons {
 	CheckboxIcon: any
 	CheckboxCheckedIcon: any
 	CheckboxIndeterminateIcon: any
+	ChevronDownIcon: any
+	ChevronNumberDownIcon: any
 	ClearAllIcon: any
 	CloseIcon: any
 	CollapseIcon: any
@@ -86,7 +90,7 @@ export interface Table_Icons {
 	ExpandLessIcon: any
 	ExpandMoreIcon: any
 	EyeIcon: any
-	FilterAltIcon: any
+	EyeCrossedIcon: any
 	FilterListIcon: any
 	FilterListOffIcon: any
 	FullscreenExitIcon: any
@@ -116,7 +120,7 @@ export interface Table_Icons {
 	VisibilityOffIcon: any
 	FiltersIcon: any
 	SettingsIcon: any
-	ToggleIcon: any
+	ColumnsIcon: any
 	PlusIcon: any
 	LockedIcon: any
 	AscNumIcon: any
@@ -138,6 +142,8 @@ export const Default_Icons: Table_Icons = {
 	CheckboxIcon,
 	CheckboxCheckedIcon,
 	CheckboxIndeterminateIcon,
+	ChevronDownIcon,
+	ChevronNumberDownIcon,
 	ClearAllIcon,
 	CloseIcon,
 	CollapseIcon,
@@ -149,7 +155,7 @@ export const Default_Icons: Table_Icons = {
 	ExpandLessIcon,
 	ExpandMoreIcon,
 	EyeIcon,
-	FilterAltIcon,
+	EyeCrossedIcon,
 	FilterListIcon,
 	FilterListOffIcon,
 	FullscreenExitIcon,
@@ -180,7 +186,7 @@ export const Default_Icons: Table_Icons = {
 	FiltersIcon,
 	SettingsIcon,
 	HideIcon,
-	ToggleIcon,
+	ColumnsIcon,
 	PlusIcon,
 	LockedIcon,
 	AscNumIcon,

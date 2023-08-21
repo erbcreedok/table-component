@@ -1,13 +1,13 @@
 import { BoxProps } from '@mui/material'
 import Box from '@mui/material/Box'
 
-import { FilterOption } from '../../TableComponent'
+import { SelectOption } from '../../TableComponent'
 import { NoOptions } from '../../components/NoOptions'
 import { ListFilterItem } from '../../components/ListFilterItem'
 
 type FilterChipListProps = {
-	options: FilterOption[]
-	onOptionClick: (option: FilterOption) => void
+	options: SelectOption[]
+	onOptionClick: (option: SelectOption) => void
 	isCheckedOptions?: boolean
 } & BoxProps
 

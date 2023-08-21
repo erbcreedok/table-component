@@ -4,7 +4,7 @@ import ListItemIcon from '@mui/material/ListItemIcon'
 import MenuItem from '@mui/material/MenuItem'
 
 import type { Table_Row, TableInstance } from '..'
-import { Menu } from '../components/Menu'
+import { Menu, MenuItemBase } from '../components/Menu'
 
 import { commonListItemStyles, commonMenuItemStyles } from './constants'
 
@@ -61,14 +61,9 @@ export const RowActionMenu = <TData extends Record<string, any> = {}>({
 			}}
 		>
 			{enableEditing && (
-				<MenuItem onClick={handleEdit} sx={commonMenuItemStyles}>
-					<Box sx={commonListItemStyles}>
-						<ListItemIcon>
-							<EditIcon />
-						</ListItemIcon>
-						{localization.edit}
-					</Box>
-				</MenuItem>
+				<MenuItemBase size="small" icon={<EditIcon />} onClick={handleEdit}>
+					{localization.edit}
+				</MenuItemBase>
 			)}
 			{renderRowActionMenuItems?.({
 				row,

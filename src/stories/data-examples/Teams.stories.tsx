@@ -169,7 +169,7 @@ const getPropsHandledColumns = (
 			enableColumnOrdering: true,
 			enableSorting: false,
 			enableGrouping: false,
-		})
+		} as Table_ColumnDef<TeamMember>)
 	}
 
 	return addColumnSubtitle(
@@ -322,6 +322,20 @@ const TeamsTable: Story<TeamsTableConfigs> = (args) => {
 		...rest
 	} = args
 	const [data, setData] = useState(propsData || getTeamMembers(rowsCount))
+
+	const handleSaveRow = ({ exitEditingMode, row, values }) => {
+		const newRow = data[row.index]
+		Object.entries(values).forEach(([key, value]) => {
+			if (key === 'teamMember') {
+				newRow.member.fullName = value as string
+			}
+			newRow[key] = value
+		})
+		data[row.index] = newRow
+		setData([...data]);
+		exitEditingMode();
+	};
+
 	return (
 		<TableComponent
 			data={data}
@@ -334,6 +348,7 @@ const TeamsTable: Story<TeamsTableConfigs> = (args) => {
 				columnVisibility: defaultColumnVisibility,
 				...initialState,
 			}}
+			onEditingRowSave={handleSaveRow}
 			renderRowActionMenuItems={getDefaultRowActionMenuItems}
 			ColumnActionsFiltersMenu={ColumnActionsFiltersMenu}
 			summaryRowCell={(props) => <SummaryRowExampleCellValue {...props} />}
@@ -526,6 +541,11 @@ const meta: Meta = {
 			control: 'boolean',
 			defaultValue: true,
 		},
+		editingMode: {
+			options: ['table', 'modal', 'row', 'cell'],
+			control: { type: 'select' },
+			defaultValue: 'row',
+		},
 		enableBottomToolbar: {
 			control: 'boolean',
 			defaultValue: false,
@@ -555,6 +575,10 @@ const meta: Meta = {
 			defaultValue: false,
 		},
 		enableColumnFilters: {
+			control: 'boolean',
+			defaultValue: true,
+		},
+		enableEditing: {
 			control: 'boolean',
 			defaultValue: true,
 		},

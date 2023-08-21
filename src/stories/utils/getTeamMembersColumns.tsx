@@ -208,6 +208,8 @@ export const getTeamMembersColumns = () => {
 			dataType: 'textual',
 			accessorFn: teamMemberAccessorFn('performance'),
 			filterVariant: 'multi-select',
+			editVariant: 'select',
+			editSelectOptions: ['Often exceeds', 'Sometimes exceeds', 'Meets', { label: 'N/A', value: undefined }],
 			GroupedCell: ColoredGroupedCell,
 			headerEndAdornment: <AnalyticsIcon />,
 			muiTableBodyCellProps: coloredCellProps,
@@ -279,6 +281,17 @@ export const getTeamMembersColumns = () => {
 				'N/A',
 			],
 			filterFn: anyOfDateRange,
+			editVariant: 'date'
+		},
+		{
+			header: 'Project completion',
+			id: 'completion',
+			accessorFn: teamMemberAccessorFn('completion'),
+			enableColumnFilter: false,
+			GroupedCell: ColoredGroupedCell,
+			Header: HeaderBase,
+			enableColumnOrdering: true,
+			editVariant: 'number'
 		},
 	] as Array<Table_ColumnDef<TeamMember>>
 }

@@ -1,16 +1,16 @@
 // function takes all options of a filter and returns an object with array of all selected values and not selected values
-import { FilterOption } from '../TableComponent'
+import { SelectOption } from '../TableComponent'
 
 import { sortByStringArray } from './sortByStringArray'
 
 export const splitFilterOptions = (
-	options: FilterOption[],
+	options: SelectOption[],
 	values: string[]
 ) => {
 	if (!values) return { selectedOptions: [], notSelectedOptions: options }
 
-	const selectedOptions: FilterOption[] = []
-	const notSelectedOptions: FilterOption[] = []
+	const selectedOptions: SelectOption[] = []
+	const notSelectedOptions: SelectOption[] = []
 
 	options.forEach((option) => {
 		if (values.includes(option.value)) {

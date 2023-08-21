@@ -1,7 +1,14 @@
 import { styled } from '@mui/material'
 import { Meta, Story } from '@storybook/react'
 import React from 'react'
-import { TableComponentProps, TableMain, TableProvider, TableStatusBar, TableToolbar, useTableContext } from '../../'
+import {
+	TableComponentProps,
+	TableMain,
+	TableProvider,
+	TableStatusBar,
+	TableToolbar,
+	useTableContext,
+} from '../../'
 import { Colors, DEFAULT_TEAMS_PRESETS } from '../utils/constants'
 import { getTablePresetProps } from '../utils/getTablePresetProps'
 import { getSeparatedTeamMembers } from '../utils/getTeamMembers'
@@ -49,10 +56,16 @@ const TableExample = () => {
 	return (
 		<>
 			<ToolbarWrapper>
-				<TableToolbar table={table} sx={{ justifyContent: 'flex-end' }} />
+				<TableToolbar
+					table={table}
+					sx={{ justifyContent: 'flex-end' }}
+				/>
 			</ToolbarWrapper>
 			<Wrapper>
-				<TableStatusBar table={table} lineProps={{ sx: { backgroundColor: Colors.white } }} />
+				<TableStatusBar
+					table={table}
+					lineProps={{ sx: { backgroundColor: Colors.white } }}
+				/>
 			</Wrapper>
 			<Wrapper>
 				<TableMain />
@@ -74,7 +87,10 @@ export const TeamsToolbar: Story<TableComponentProps> = () => (
 		enablePagination={false}
 		enableMultiSort
 		enableMultiRemove
-		groupBorder={{ left: `12px solid ${Colors.bg}`, top: `20px solid ${Colors.bg}` }}
+		groupBorder={{
+			left: `12px solid ${Colors.bg}`,
+			top: `20px solid ${Colors.bg}`,
+		}}
 		uppercaseHeader
 		groupsSorting={groupsSorting}
 		muiTablePaperProps={{ sx: { boxShadow: 'none' } }}

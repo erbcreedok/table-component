@@ -158,7 +158,11 @@ export const useTable = <TData extends Record<string, any> = {}>(
 		) {
 			setColumnOrder([utilColumns.column, ...columnOrder])
 		}
+		if (config.enableRowActions && !columnOrder.includes(utilColumns.actions)) {
+			setColumnOrder([utilColumns.actions, ...columnOrder])
+		}
 	}, [
+		config.enableRowActions,
 		config.enableRowDragging,
 		config.enableRowSelection,
 		config.hideRowSelectionColumn,
@@ -183,7 +187,8 @@ export const useTable = <TData extends Record<string, any> = {}>(
 							/>
 						),
 						header: config.localization.actions,
-						size: 70,
+						size: 40,
+						emptyHeader: true,
 						...config.defaultDisplayColumn,
 						...config.displayColumnDefOptions?.[utilColumns.actions],
 						id: utilColumns.actions,

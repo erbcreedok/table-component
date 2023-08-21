@@ -5,7 +5,7 @@ import { MenuPaper } from '../../../../../components/Menu'
 
 interface PresetNotificationProps {
 	anchorEl: HTMLElement
-	setIsNotificationShowedOnce(value: boolean): void
+	setIsNotificationShowedOnce(): void
 }
 
 export const PresetNotification = ({
@@ -13,7 +13,7 @@ export const PresetNotification = ({
 	setIsNotificationShowedOnce,
 }: PresetNotificationProps) => {
 	const handleClose = () => {
-		setIsNotificationShowedOnce(true)
+		setIsNotificationShowedOnce()
 	}
 
 	return (

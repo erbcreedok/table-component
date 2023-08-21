@@ -3,7 +3,7 @@ import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
 import React, { forwardRef, ReactNode, RefObject, useMemo } from 'react'
 
-import { Colors, IconsColor, Text } from '../components/styles'
+import { Colors, IconsColor, TextColor } from '../components/styles'
 import { DraggingMessage, TableData, TableInstance } from '../TableComponent'
 import { getColorAlpha } from '../utils/getColorAlpha'
 
@@ -69,7 +69,7 @@ const renderCells = (
 						p: '6px 18px 6px 12px',
 						background: Colors.Gray10,
 						borderRadius: 100,
-						color: Text.Primary,
+						color: TextColor.Primary,
 					}}
 				>
 					{draggingRows.length} items dragging...

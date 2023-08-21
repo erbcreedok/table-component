@@ -3,7 +3,7 @@ import React, { ReactElement } from 'react'
 
 import { CloseIcon } from '../icons/CloseIcon'
 
-import { DEFAULT_FONT_FAMILY, Text } from './styles'
+import { DEFAULT_FONT_FAMILY, TextColor } from './styles'
 
 const SidebarHeader = styled(Box)`
 	padding: 12px 24px;
@@ -14,7 +14,7 @@ const SidebarHeader = styled(Box)`
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
-		color: ${Text.Primary};
+		color: ${TextColor.Primary};
 	}
 	& button:hover {
 		background: none;
@@ -23,7 +23,7 @@ const SidebarHeader = styled(Box)`
 		font-size: 14px;
 		line-height: 18px;
 		font-weight: 600;
-		color: ${Text.Disabled};
+		color: ${TextColor.Disabled};
 	}
 `
 

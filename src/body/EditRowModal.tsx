@@ -6,7 +6,7 @@ import DialogTitle from '@mui/material/DialogTitle'
 import Stack from '@mui/material/Stack'
 
 import { EditActionButtons } from '../buttons/EditActionButtons'
-import { EditCellTextField } from '../inputs/EditCellTextField'
+import { EditCellField } from '../inputs/EditCellField'
 import type { Table_Row, TableInstance } from '..'
 
 interface Props<TData extends Record<string, any> = {}> {
@@ -41,7 +41,7 @@ export const EditRowModal = <TData extends Record<string, any> = {}>({
 							.getAllCells()
 							.filter((cell) => cell.column.columnDef.columnDefType === 'data')
 							.map((cell) => (
-								<EditCellTextField
+								<EditCellField
 									cell={cell as any}
 									key={cell.id}
 									showLabel

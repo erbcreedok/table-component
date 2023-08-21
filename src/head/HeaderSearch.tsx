@@ -29,7 +29,7 @@ import {
 	Colors,
 	DEFAULT_FONT_FAMILY,
 	IconsColor,
-	Text,
+	TextColor,
 } from '../components/styles'
 import { useDelay } from '../hooks/useDelay'
 import { getValueFromObj } from '../utils/getValueFromObj'
@@ -77,7 +77,7 @@ const SearchInput = styled(TextField)`
 		font-family: ${DEFAULT_FONT_FAMILY};
 		font-size: 14px;
 		line-height: 18px;
-		color: ${Text.Primary};
+		color: ${TextColor.Primary};
 	}
 `
 

@@ -5,6 +5,7 @@ import TableComponent, {
   Table_ColumnDef,
 } from '../../';
 import { faker } from '@faker-js/faker';
+import { getDefaultRowActionMenuItems } from "../utils/rowActionMenuItems";
 
 const meta: Meta = {
   title: 'Features/Column Action Examples',
@@ -53,7 +54,7 @@ const data: Row[] = [...Array(100)].map(() => ({
 
 export const ColumnActionsEnabledDefault: Story<
   TableComponentProps
-> = () => <TableComponent columns={columns} data={data} />;
+> = () => <TableComponent columns={columns} data={data} renderRowActionMenuItems={getDefaultRowActionMenuItems} enableRowActions />;
 
 export const ColumnActionsDisabled: Story<TableComponentProps> = () => (
   <TableComponent

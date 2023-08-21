@@ -11,7 +11,7 @@ import {
 	Table_DisplayColumnIdsArray,
 } from '../../../../column.utils'
 import { Sidebar } from '../../../../components/Sidebar'
-import { Text } from '../../../../components/styles'
+import { TextColor } from '../../../../components/styles'
 
 import { ColumnsMenuItem } from './ColumnsMenuItem'
 
@@ -239,7 +239,7 @@ export const ColumnsMenu = <TData extends Record<string, any> = {}>({
 			withHeader
 			headerTitle={localization.columns}
 			subHeader={
-				<Typography sx={{ color: Text.Primary }}>
+				<Typography sx={{ color: TextColor.Primary }}>
 					{visibleColumnsCount} columns shown, {hiddenColumnsCount} columns
 					hidden
 				</Typography>
@@ -332,7 +332,7 @@ export const ColumnsMenu = <TData extends Record<string, any> = {}>({
 												sx={{
 													maxWidth: '300px',
 													padding: '6px 24px',
-													color: Text.Primary,
+													color: TextColor.Primary,
 													fontSize: '14px',
 													fontWeight: 400,
 												}}

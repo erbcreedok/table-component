@@ -3,7 +3,7 @@ import { styled, IconButton, css } from '@mui/material'
 import { getColorAlpha } from '../utils/getColorAlpha'
 import { makeShouldForwardProp } from '../utils/makeShouldForwardProp'
 
-import { Text, Colors } from './styles'
+import { TextColor, Colors } from './styles'
 
 export const ToolbarIconButton = styled(
 	IconButton,
@@ -12,7 +12,7 @@ export const ToolbarIconButton = styled(
 	toggled?: boolean
 	enableCaption?: boolean
 }>`
-	color: ${Text.Primary};
+	color: ${TextColor.Primary};
 	padding: ${({ enableCaption }) => (enableCaption ? '6px 9px' : '4.5px')};
 	border-radius: 3px;
 	height: 30px;

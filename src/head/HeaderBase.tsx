@@ -2,7 +2,7 @@ import { styled } from '@mui/material'
 import Box from '@mui/material/Box'
 import React, { ComponentProps } from 'react'
 
-import { Text } from '../components/styles'
+import { TextColor } from '../components/styles'
 import { TooltipOverflow } from '../components/TooltipOverflow'
 import { Table_Column } from '../TableComponent'
 
@@ -15,7 +15,7 @@ type Props<TData extends Record<string, any>> = {
 const Subtitle = styled(Box)`
 	font-size: 12px;
 	line-height: 12px;
-	color: ${Text.Primary};
+	color: ${TextColor.Primary};
 	text-transform: none;
 	font-weight: normal;
 	white-space: nowrap;

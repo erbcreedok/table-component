@@ -93,7 +93,7 @@ export const TableBodyRowGrabHandle: FC<Props> = ({
 			hoveredRow &&
 			(validateHoveredRow
 				? validateHoveredRow(hoveredRow, table) !== true
-				: true)
+				: false)
 		) {
 			clearDrag()
 

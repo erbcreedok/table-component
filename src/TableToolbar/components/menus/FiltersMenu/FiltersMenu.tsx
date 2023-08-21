@@ -92,7 +92,7 @@ export const FiltersMenu = <TData extends TableData>({
 			onClose={onClose}
 			styles={{ minWidth: 660 }}
 			withHeader
-			headerTitle="Filters"
+			headerTitle={localization.showFiltering}
 			innerTableSidebar={innerTable}
 		>
 			{!isSearchActive && !!filterAppliedColumns.length ? (

@@ -83,7 +83,7 @@ export const TableHeadCell: FC<TableHeadCellProps> = ({
 	} = getState()
 	const { column } = header
 	const { columnDef } = column
-	const { columnDefType } = columnDef
+	const { columnDefType, emptyHeader } = columnDef
 	const columnId = getColumnId(columnDef)
 	const { hovered, hoverProps } = useHoverEffects()
 	const [grabHandleVisible, setGrabHandleVisible] = useState(false)
@@ -281,7 +281,7 @@ export const TableHeadCell: FC<TableHeadCellProps> = ({
 								}}
 							/>
 						)}
-						{header.isPlaceholder ? null : (
+						{header.isPlaceholder || emptyHeader ? null : (
 							<Box
 								className="Mui-TableHeadCell-Content"
 								sx={{

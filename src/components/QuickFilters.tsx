@@ -2,7 +2,7 @@ import { useMemo, useState } from 'react'
 import Box from '@mui/material/Box'
 
 import {
-	FilterOption,
+	SelectOption,
 	Table_Column,
 	TableData,
 	TableInstance,
@@ -17,7 +17,7 @@ type Props<TData extends TableData> = {
 	column: Table_Column<TData>
 	table: TableInstance<TData>
 	selectedFilters: string[]
-	filterOptions: FilterOption[]
+	filterOptions: SelectOption[]
 	onCheckFilter: (value: string) => void
 	onClearAll: () => void
 }

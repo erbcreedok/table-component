@@ -14,7 +14,7 @@ interface Props {
 export const TableHeadCellFilterLabel: FC<Props> = ({ header, table }) => {
 	const {
 		options: {
-			icons: { FilterAltIcon },
+			icons: { FiltersIcon },
 			localization,
 		},
 		refs: { filterInputRefs },
@@ -86,7 +86,7 @@ export const TableHeadCellFilterLabel: FC<Props> = ({ header, table }) => {
 							width: '12px',
 						}}
 					>
-						<FilterAltIcon />
+						<FiltersIcon />
 					</IconButton>
 				</Tooltip>
 			</Box>

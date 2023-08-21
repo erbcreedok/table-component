@@ -1,7 +1,7 @@
 import Box from '@mui/material/Box'
 import IconButton from '@mui/material/IconButton'
 import Skeleton from '@mui/material/Skeleton'
-import { darken, lighten, useTheme } from '@mui/material/styles'
+import { lighten, useTheme } from '@mui/material/styles'
 import MuiTableCell from '@mui/material/TableCell'
 import type { VirtualItem } from '@tanstack/react-virtual'
 import React, {
@@ -19,15 +19,15 @@ import React, {
 import {
 	ExpandByClick,
 	type Table_Cell,
-	type Table_ColumnDef,
 	type Table_Row,
 	type TableInstance,
 } from '..'
 import { CopyButton } from '../buttons/CopyButton'
 import { getCommonCellStyles, Table_DefaultColumn } from '../column.utils'
 import { Colors } from '../components/styles'
-import { EditCellTextField } from '../inputs/EditCellTextField'
+import { EditCellField } from '../inputs/EditCellField'
 import { utilColumns } from '../utilColumns'
+import { getColorAlpha } from '../utils/getColorAlpha'
 import { GroupBorders } from '../utils/getGroupBorders'
 
 import { TableBodyCellValue } from './TableBodyCellValue'
@@ -258,6 +258,7 @@ export const TableBodyCell = ({
 	const handleExpandByClickOnCell = (
 		event: MouseEvent<HTMLTableCellElement>
 	) => {
+		tableCellProps.onClick?.(event)
 		if (expandByClick !== ExpandByClick.Cell) {
 			return
 		}
@@ -316,7 +317,7 @@ export const TableBodyCell = ({
 				['table', 'cell'].includes(editingMode ?? '')
 					? theme.palette.mode === 'dark'
 						? `${lighten(theme.palette.background.default, 0.2)} !important`
-						: `${darken(theme.palette.background.default, 0.1)} !important`
+						: `${getColorAlpha(Colors.Gray90, 0.05)} !important`
 					: undefined,
 			'& > div > button': {
 				visibility: 'visible',
@@ -368,6 +369,7 @@ export const TableBodyCell = ({
 			table,
 			isCurrentCellClicked: isCurrentCellDetailOpened,
 			isCurrentRowDetailOpened,
+			isEditing,
 		}) || {}),
 		...columnDef.getTableCellSx?.({
 			cell,
@@ -375,13 +377,15 @@ export const TableBodyCell = ({
 			column,
 			table,
 			isCurrentCellClicked: isCurrentCellDetailOpened,
+			isCurrentRowDetailOpened,
+			isEditing,
 		}),
 	})
 
 	if (isSummaryRowCell && summaryRowCell) {
 		return summaryRowCell({
 			table,
-			column: column as Table_ColumnDef,
+			column,
 			defaultStyles: getTableCellStyles(theme),
 		}) as ReactElement
 	}
@@ -452,7 +456,9 @@ export const TableBodyCell = ({
 					mx: 'auto',
 					width: isUtilColumn
 						? '100%'
-						: `max(calc(100% - 1.4rem), ${Table_DefaultColumn.minSize}px)`,
+						: `max(calc(100% - ${isEditing ? `6px` : `1.4rem`}), ${
+								Table_DefaultColumn.minSize
+						  }px)`,
 				}}
 			>
 				{isGroupedCell ? (
@@ -477,7 +483,7 @@ export const TableBodyCell = ({
 				) : columnDefType === 'display' && column.id === utilColumns.expand ? (
 					columnDef.Cell?.({ cell, column, row, table })
 				) : isEditing ? (
-					<EditCellTextField cell={cell} table={table} />
+					<EditCellField cell={cell} table={table} />
 				) : (enableClickToCopy || columnDef.enableClickToCopy) &&
 				  columnDef.enableClickToCopy !== false ? (
 					<CopyButton cell={cell} table={table}>

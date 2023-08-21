@@ -1,7 +1,7 @@
 import { useCallback, useMemo, useState } from 'react'
 
 import {
-	FilterOption,
+	SelectOption,
 	Table_Column,
 	TableData,
 	TableInstance,
@@ -38,7 +38,7 @@ export const FilterChipSelectField = <TData extends TableData>({
 		column.setFilterValue(undefined)
 	}
 	const handleAppend = useCallback(
-		(option: FilterOption) => {
+		(option: SelectOption) => {
 			setIsSearchActive(false)
 			setSearchValue('')
 			column.setFilterValue((oldValue) => [...oldValue, option.value])
@@ -47,7 +47,7 @@ export const FilterChipSelectField = <TData extends TableData>({
 	)
 
 	const handleRemove = useCallback(
-		(option: FilterOption) => {
+		(option: SelectOption) => {
 			column.setFilterValue((oldValue) =>
 				oldValue.filter((v) => v !== option.value)
 			)

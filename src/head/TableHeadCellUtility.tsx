@@ -2,7 +2,7 @@ import React, { FC } from 'react'
 import Box from '@mui/material/Box'
 
 import { TableInstance } from '..'
-import { Text } from '../components/styles'
+import { TextColor } from '../components/styles'
 
 interface Props {
 	table: TableInstance
@@ -46,7 +46,7 @@ export const TableHeadCellUtility: FC<Props> = ({
 								top: '50%',
 								left: '50%',
 								transform: 'translate(-50%, -50%)',
-								color: Text.Disabled,
+								color: TextColor.Disabled,
 								fontSize: '12px',
 								fontWeight: 600,
 								lineHeight: '18px',

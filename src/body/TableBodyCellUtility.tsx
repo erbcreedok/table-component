@@ -3,7 +3,7 @@ import Box from '@mui/material/Box'
 import Tooltip from '@mui/material/Tooltip'
 
 import { Table_Cell, TableInstance } from '..'
-import { Text } from '../components/styles'
+import { TextColor } from '../components/styles'
 
 import { TableBodyRowGrabHandle } from './TableBodyRowGrabHandle'
 
@@ -61,7 +61,7 @@ export const TableBodyCellUtility: FC<Props> = ({
 							top: '50%',
 							left: '50%',
 							transform: 'translate(-50%, -50%)',
-							color: Text.Disabled,
+							color: TextColor.Disabled,
 							fontSize: '12px',
 							fontWeight: 600,
 							lineHeight: '18px',

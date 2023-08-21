@@ -2,6 +2,7 @@ import { MenuItemBase } from './components/Menu'
 import { createTheme } from './theme/createTheme'
 import TableComponent from './TableComponent'
 import type { Table_Icons } from './icons'
+import { CellBase } from './components/CellBase'
 import { CopyButton } from './buttons/CopyButton'
 import { FilterOptionMenu } from './menus/FilterOptionMenu'
 import { FullScreenToggleButton } from './buttons/FullScreenToggleButton'
@@ -18,7 +19,7 @@ import { ToolbarInternalButtons } from './toolbar/ToolbarInternalButtons'
 import { ToggleRowActionMenuButton } from './buttons/ToggleRowActionMenuButton'
 import { TopToolbar } from './toolbar/TopToolbar'
 import { BottomToolbar } from './toolbar/BottomToolbar'
-import { TableToolbar } from './TableToolbar'
+import { TableToolbar, ToolbarDivider } from './TableToolbar'
 import { TableStatusBar } from './TableStatusBar'
 import { TableProvider } from './context/TableProvider'
 import { useTableContext } from './context/useTableContext'
@@ -44,6 +45,7 @@ export type { Table_Icons, TableBodyRowProps, HeaderSearchOptionProps }
 export {
 	SelectCheckbox,
 	CopyButton,
+	CellBase,
 	FilterOptionMenu,
 	FilterMultiselect,
 	FullScreenToggleButton,
@@ -58,6 +60,7 @@ export {
 	ToggleGlobalFilterButton,
 	ToolbarAlertBanner,
 	ToolbarDropZone,
+	ToolbarDivider,
 	ToolbarInternalButtons,
 	ToggleRowActionMenuButton,
 	TopToolbar,

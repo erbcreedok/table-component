@@ -143,7 +143,7 @@ export const EditingEnabledEditModeCell: Story<
       data={tableData}
       editingMode="cell"
       enableEditing
-      muiTableBodyCellEditTextFieldProps={({ cell }) => ({
+      muiEditInputProps={({ cell }) => ({
         onBlur: (event) => {
           handleSaveCell(cell, event.target.value);
         },
@@ -190,7 +190,7 @@ export const EditingEnabledEditModeTable: Story<
       data={tableData}
       editingMode="table"
       enableEditing
-      muiTableBodyCellEditTextFieldProps={({ cell }) => ({
+      muiEditInputProps={({ cell }) => ({
         onBlur: (event) => {
           handleSaveCell(cell, event.target.value);
         },
@@ -282,7 +282,7 @@ export const EditingCustomizeInput: Story<TableComponentProps> = () => {
         {
           header: 'State',
           accessorKey: 'state',
-          muiTableBodyCellEditTextFieldProps: () => ({
+          muiEditInputProps: () => ({
             children: usStates.map((state) => (
               <MenuItem key={state} value={state}>
                 {state}
@@ -299,7 +299,7 @@ export const EditingCustomizeInput: Story<TableComponentProps> = () => {
       data={tableData}
       enableRowActions
       enableEditing
-      muiTableBodyCellEditTextFieldProps={{ variant: 'outlined' }}
+      muiEditInputProps={{ variant: 'outlined' }}
       onEditingRowSave={handleSaveRow}
     />
   );

@@ -1,4 +1,4 @@
-import React, { MouseEvent, useState } from 'react'
+import { MouseEvent, useState } from 'react'
 import type { IconButtonProps } from '@mui/material/IconButton'
 import { Typography } from '@mui/material'
 
@@ -23,7 +23,7 @@ export const ColumnsButton = <TData extends Record<string, any> = {}>({
 }: Props<TData>) => {
 	const {
 		options: {
-			icons: { ToggleIcon },
+			icons: { ColumnsIcon },
 			localization,
 		},
 	} = table
@@ -52,7 +52,7 @@ export const ColumnsButton = <TData extends Record<string, any> = {}>({
 					disabled={disabled}
 					{...rest}
 				>
-					<ToggleIcon
+					<ColumnsIcon
 						htmlColor={disabled ? IconsColor.disabled : IconsColor.default}
 					/>
 					{enableCaption && (

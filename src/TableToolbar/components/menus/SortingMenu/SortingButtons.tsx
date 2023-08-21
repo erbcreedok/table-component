@@ -5,7 +5,7 @@ import { IconButton, SxProps } from '@mui/material'
 import { getSortingIcon } from '../../../../utils/getSortingInfo'
 import { useTableContext } from '../../../../context/useTableContext'
 import { Table_Column } from '../../../../TableComponent'
-import { Colors, Text } from '../../../../components/styles'
+import { Colors, TextColor } from '../../../../components/styles'
 import { ConditionalBox } from '../../../../components/ConditionalBox'
 
 interface Props<TData extends Record<string, any> = {}> {
@@ -30,7 +30,7 @@ export const SortingButtons = <TData extends Record<string, any> = {}>(
 				boxSizing: 'border-box',
 				'& button': {
 					fontSize: '14px',
-					color: Text.Primary,
+					color: TextColor.Primary,
 					borderRadius: '4px',
 				},
 				'& button:hover': {

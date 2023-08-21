@@ -1,7 +1,7 @@
 import React, { cloneElement, useMemo, useState } from 'react'
 import { Box, Chip, Popover, Typography } from '@mui/material'
 
-import { Text } from '../../components/styles'
+import { TextColor } from '../../components/styles'
 import { Tooltip } from '../../components/Tooltip'
 import { TableInstance } from '../../TableComponent'
 
@@ -62,7 +62,7 @@ export const CommonChipWithPopover = <TData extends Record<string, any>>(
 		<Chip
 			sx={{
 				background: open ? '#303240' : '#F5F6FA',
-				color: open ? '#FAFAFC' : Text.Primary,
+				color: open ? '#FAFAFC' : TextColor.Primary,
 				border: '1px solid #EBEDF5',
 				borderColor: open ? '#303240' : '#EBEDF5',
 				height: 24,
@@ -84,7 +84,7 @@ export const CommonChipWithPopover = <TData extends Record<string, any>>(
 							sx={{
 								fontWeight: 600,
 								fontSize: 12,
-								color: open ? '#FAFAFC' : Text.Primary,
+								color: open ? '#FAFAFC' : TextColor.Primary,
 								marginRight: 1,
 							}}
 						>

@@ -1,35 +1,19 @@
-import { styled } from '@mui/material'
+import { DividerProps, styled } from '@mui/material'
 import Box from '@mui/material/Box'
+import Divider from '@mui/material/Divider'
 import Typography from '@mui/material/Typography'
-import React, { ComponentProps } from 'react'
+import React, { ComponentProps, ReactNode, useCallback, useMemo } from 'react'
 
 import { useComputedEnableCaptions } from '../hooks/useComputedEnableCaptions'
 import { useHoverEffects } from '../hooks/useHoverEffects'
-import type { TableInstance } from '../index'
-import { DEFAULT_FONT_FAMILY, Text } from '../components/styles'
+import type { TableData, TableInstance } from '../index'
+import { DEFAULT_FONT_FAMILY, TextColor } from '../components/styles'
 
 import { ColumnsButton } from './components/buttons/ColumnsButton'
 import { FiltersButton } from './components/buttons/FiltersButton'
 import { GroupingButton } from './components/buttons/GroupingButton'
 import { PresetButton } from './components/buttons/PresetButton'
 import { SortingButton } from './components/buttons/SortingButton'
-
-export type TableToolbarProps<TData extends Record<string, any> = {}> = {
-	table: TableInstance<TData>
-	enableGrouping?: boolean
-	disableGroupingButton?: boolean
-	enableSorting?: boolean
-	disableSortingButton?: boolean
-	enableFiltering?: boolean
-	disableFilteringButton?: boolean
-	enableSettings?: boolean
-	disableSettingsButton?: boolean
-	enablePreset?: boolean
-	enableCaptions?: boolean | 'auto'
-	innerProps?: ComponentProps<typeof Box>
-	innerTable?: boolean
-	innerTableTitle?: string
-} & ComponentProps<typeof Box>
 
 const ToolbarWrapper = styled(Box)`
 	display: flex;
@@ -48,33 +32,160 @@ const ToolbarInnerTableTitle = styled(Typography)`
 	font-size: 18px;
 	font-weight: 600;
 	line-height: 24px;
-	color: ${Text.Dark};
+	color: ${TextColor.Dark};
 	padding-top: 6px;
 `
 
-export const TableToolbar = <TData extends Record<string, any> = {}>({
-	table,
-	enableSettings = true,
-	enableSorting = true,
-	enableFiltering = true,
-	enableGrouping = true,
-	enablePreset = true,
-	disableFilteringButton = false,
-	disableSettingsButton = false,
-	disableGroupingButton = false,
-	disableSortingButton = false,
-	enableCaptions = 'auto',
-	innerProps,
-	innerTable,
-	innerTableTitle,
-	...rest
-}: TableToolbarProps<TData>) => {
+export const ToolbarDivider = styled<typeof Divider>((props) => (
+	<Divider orientation="vertical" {...props} />
+))`
+	height: ${({ orientation = 'vertical' }) =>
+		orientation === 'vertical' && '24px'};
+	width: ${({ orientation }) => orientation === 'horizontal' && '24px'};
+`
+
+type Adornment<TData extends TableData> =
+	| ReactNode
+	| ((
+			config: {
+				dividerElement: ReactNode
+				table: TableInstance<TData>
+				tableToolbarProps: TableToolbarProps<TData>
+				computedEnableCaptions: boolean
+				ToolbarDivider: typeof ToolbarDivider
+			} & ReturnType<typeof useHoverEffects>
+	  ) => ReactNode)
+export type TableToolbarProps<TData extends TableData> = {
+	table: TableInstance<TData>
+	enableGrouping?: boolean
+	disableGroupingButton?: boolean
+	enableSorting?: boolean
+	disableSortingButton?: boolean
+	enableFiltering?: boolean
+	disableFilteringButton?: boolean
+	enableSettings?: boolean
+	disableSettingsButton?: boolean
+	enablePreset?: boolean
+	enableCaptions?: boolean | 'auto'
+	innerProps?: ComponentProps<typeof Box>
+	innerTable?: boolean
+	innerTableTitle?: string
+	startAdornment?: Adornment<TData>
+	endAdornment?: Adornment<TData>
+	disableAdornmentDividers?: boolean
+	dividerProps?: DividerProps
+} & ComponentProps<typeof Box>
+
+export const TableToolbar = <TData extends TableData = {}>(
+	tableToolbarProps: TableToolbarProps<TData>
+) => {
 	const {
-		options: { renderToolbarInternalActions },
+		table,
+		enableSettings = true,
+		enableSorting,
+		enableFiltering,
+		enableGrouping,
+		enablePreset = true,
+		disableFilteringButton = false,
+		disableSettingsButton = false,
+		disableGroupingButton = false,
+		disableSortingButton = false,
+		enableCaptions = 'auto',
+		innerProps,
+		innerTable,
+		innerTableTitle,
+		startAdornment,
+		endAdornment,
+		disableAdornmentDividers,
+		dividerProps,
+		...rest
+	} = tableToolbarProps
+	const {
+		options: {
+			renderToolbarInternalActions,
+			enableGrouping: uEnableGrouping,
+			enableSorting: uEnableSorting,
+			enableFilters: uEnableFilters,
+		},
 	} = table
 	const { innerRef, outerRef, computedEnableCaptions } =
 		useComputedEnableCaptions(enableCaptions)
 	const { hovered, hoverProps } = useHoverEffects()
+	const dividerElement = useMemo(() => {
+		if (disableAdornmentDividers) return null
+
+		return <ToolbarDivider {...dividerProps} />
+	}, [disableAdornmentDividers, dividerProps])
+
+	const getAdornment = useCallback(
+		(adornment: Adornment<TData>) => {
+			if (adornment instanceof Function) {
+				return adornment({
+					computedEnableCaptions,
+					dividerElement,
+					hovered,
+					hoverProps,
+					table,
+					tableToolbarProps,
+					ToolbarDivider,
+				})
+			}
+
+			return adornment
+		},
+		[
+			computedEnableCaptions,
+			dividerElement,
+			hoverProps,
+			hovered,
+			table,
+			tableToolbarProps,
+		]
+	)
+
+	const [cStartAdornment, cEndAdornment] = useMemo(() => {
+		return [getAdornment(startAdornment), getAdornment(endAdornment)]
+	}, [getAdornment, startAdornment, endAdornment])
+
+	const children = (
+		<>
+			{cStartAdornment}
+			{cStartAdornment && dividerElement}
+			{(enableFiltering || uEnableFilters) && (
+				<FiltersButton
+					enableCaption={computedEnableCaptions}
+					table={table}
+					disabled={disableFilteringButton}
+				/>
+			)}
+			{(enableGrouping || uEnableGrouping) && (
+				<GroupingButton
+					enableCaption={computedEnableCaptions}
+					table={table}
+					disabled={disableGroupingButton}
+				/>
+			)}
+			{(enableSorting || uEnableSorting) && (
+				<SortingButton
+					enableCaption={computedEnableCaptions}
+					table={table}
+					disabled={disableSortingButton}
+				/>
+			)}
+			{enableSettings && (
+				<ColumnsButton
+					enableCaption={computedEnableCaptions}
+					table={table}
+					disabled={disableSettingsButton}
+				/>
+			)}
+			{enablePreset && (
+				<PresetButton enableCaption={computedEnableCaptions} table={table} />
+			)}
+			{cEndAdornment && dividerElement}
+			{cEndAdornment}
+		</>
+	)
 
 	return (
 		<ToolbarWrapper
@@ -104,44 +215,8 @@ export const TableToolbar = <TData extends Record<string, any> = {}>({
 			>
 				{renderToolbarInternalActions?.({
 					table,
-				}) ?? (
-					<>
-						{enableGrouping && (
-							<GroupingButton
-								enableCaption={computedEnableCaptions}
-								table={table}
-								disabled={disableGroupingButton}
-							/>
-						)}
-						{enableSorting && (
-							<SortingButton
-								enableCaption={computedEnableCaptions}
-								table={table}
-								disabled={disableSortingButton}
-							/>
-						)}
-						{enableFiltering && (
-							<FiltersButton
-								enableCaption={computedEnableCaptions}
-								table={table}
-								disabled={disableFilteringButton}
-							/>
-						)}
-						{enableSettings && (
-							<ColumnsButton
-								enableCaption={computedEnableCaptions}
-								table={table}
-								disabled={disableSettingsButton}
-							/>
-						)}
-						{enablePreset && (
-							<PresetButton
-								enableCaption={computedEnableCaptions}
-								table={table}
-							/>
-						)}
-					</>
-				)}
+					originalChildren: children,
+				}) ?? children}
 			</ToolbarInner>
 		</ToolbarWrapper>
 	)

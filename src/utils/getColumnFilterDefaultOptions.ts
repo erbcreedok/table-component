@@ -1,9 +1,9 @@
 import { getColumnId } from '../column.utils'
-import { FilterOption, Table_Column, TableInstance } from '../TableComponent'
+import { SelectOption, Table_Column, TableInstance } from '../TableComponent'
 
 import { getColumnUnfilteredFacetedValues } from './getColumnUnfilteredFacetedValues'
 
-const getOption = (value: string): FilterOption => {
+const getOption = (value: string): SelectOption => {
 	const label = value === undefined || value === null ? 'N/A' : value
 
 	return {

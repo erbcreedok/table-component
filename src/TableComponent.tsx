@@ -55,6 +55,9 @@ import {
 import { TableProvider } from './context/TableProvider'
 import { Table_FilterFns } from './filterFns'
 import { Table_Icons } from './icons'
+import { DayPickerInputProps } from './inputs/DayPickerInput'
+import { InputProps } from './inputs/Input'
+import { SelectProps } from './inputs/Select'
 import { Table_SortingFns } from './sortingFns'
 import { TableMain } from './table/TableMain'
 import { TableStatusBarWrapperProps } from './TableStatusBar'
@@ -130,6 +133,7 @@ export interface Table_Localization {
 	goToNextPage: string
 	goToPreviousPage: string
 	grab: string
+	group: string
 	groupBy: string
 	groupByColumn: string
 	groupedBy: string
@@ -170,6 +174,7 @@ export interface Table_Localization {
 	showHideSearch: string
 	showColumns: string
 	showPreset: string
+	sort: string
 	sortAsc: string
 	sortDesc: string
 	ascending: string
@@ -327,11 +332,6 @@ export type Table_TableState<TData extends Record<string, any> = {}> =
 		groupCollapsed: GroupCollapsed
 	}
 
-export type FilterOption = {
-	label: string
-	value: any
-}
-
 export type SelectOption = {
 	label: string
 	value: any
@@ -351,6 +351,48 @@ export type MultirowHeader = {
 	}[]
 }[]
 
+export interface SimpleEventProps<T = string> {
+	target: { value: T }
+}
+export class SimpleEvent<T = string> {
+	target: SimpleEventProps<T>['target']
+
+	// trick for RF
+	stopPropagation = true
+
+	preventDefault = true
+
+	constructor(value: T) {
+		this.target = { value }
+	}
+}
+
+export type TableCellDataProps<TData extends TableData> = {
+	cell: Table_Cell<TData>
+	column: Table_Column<TData>
+	row: Table_Row<TData>
+	table: TableInstance<TData>
+}
+export type TableFunctionalProp<Prop, TData extends TableData> =
+	| Prop
+	| ((args: TableCellDataProps<TData>) => Prop)
+
+export type TableColumnEditProps<TData extends TableData> = {
+	editVariant?:
+		| 'text'
+		| 'number'
+		| 'formula'
+		| 'select'
+		| 'multi-select'
+		| 'date'
+		| 'date-range'
+	editSelectOptions?: (string | SelectOption)[]
+	muiEditDayPickerInputProps?: TableFunctionalProp<DayPickerInputProps, TData>
+	muiEditInputProps?: TableFunctionalProp<InputProps, TData>
+	muiEditSelectProps?: TableFunctionalProp<SelectProps, TData>
+	Edit?: TableFunctionalProp<ReactNode, TData>
+}
+
 export type Table_ColumnDef<TData extends Record<string, any> = {}> = Omit<
 	ColumnDef<TData, unknown>,
 	| 'accessorKey'
@@ -363,314 +405,296 @@ export type Table_ColumnDef<TData extends Record<string, any> = {}> = Omit<
 	| 'header'
 	| 'id'
 	| 'sortingFn'
-> & {
-	AggregatedCell?: ({
-		cell,
-		column,
-		row,
-		table,
-	}: {
-		cell: Table_Cell<TData>
-		column: Table_Column<TData>
-		row: Table_Row<TData>
-		table: TableInstance<TData>
-	}) => ReactNode
-	Cell?: ({
-		cell,
-		column,
-		row,
-		table,
-	}: {
-		cell: Table_Cell<TData>
-		column: Table_Column<TData>
-		row: Table_Row<TData>
-		table: TableInstance<TData>
-	}) => ReactNode
-	Edit?: ({
-		cell,
-		column,
-		row,
-		table,
-	}: {
-		cell: Table_Cell<TData>
-		column: Table_Column<TData>
-		row: Table_Row<TData>
-		table: TableInstance<TData>
-	}) => ReactNode
-	Filter?: ({
-		column,
-		header,
-		rangeFilterIndex,
-		table,
-	}: {
-		column: Table_Column<TData>
-		header: Table_Header<TData>
-		rangeFilterIndex?: number
-		table: TableInstance<TData>
-	}) => ReactNode
-	Footer?:
-		| ReactNode
-		| (({
-				column,
-				footer,
-				table,
-		  }: {
-				column: Table_Column<TData>
-				footer: Table_Header<TData>
-				table: TableInstance<TData>
-		  }) => ReactNode)
-	GroupedCell?: ({
-		cell,
-		column,
-		row,
-		table,
-	}: {
-		cell: Table_Cell<TData>
-		column: Table_Column<TData>
-		row: Table_Row<TData>
-		table: TableInstance<TData>
-	}) => ReactNode
-	Header?:
-		| ReactNode
-		| (({
-				column,
-				header,
-				table,
-				parentRow,
-		  }: {
-				column: Table_Column<TData>
-				header: Table_Header<TData>
-				table: TableInstance<TData>
-				parentRow?: Table_Row<TData>
-		  }) => ReactNode)
-	FilterField?: ({
-		column,
-		table,
-		onChange,
-		value,
-		autoFocus,
-	}: {
-		column: Table_Column<TData>
-		table: TableInstance<TData>
-		onChange: (value: unknown) => void
-		value: unknown
-		autoFocus?: boolean
-	}) => ReactElement
-	FilterChipField?: ({
-		column,
-		table,
-		onChange,
-		value,
-	}: {
-		column: Table_Column<TData>
-		table: TableInstance<TData>
-		onChange: (value: unknown) => void
-		value: unknown
-	}) => ReactElement
-	ColumnActionsFilterField?: ({
-		column,
-		table,
-		value,
-		onChange,
-	}: {
-		column: Table_Column<TData>
-		table: TableInstance<TData>
-		value: unknown
-		onChange: (value: unknown) => void
-	}) => ReactElement
-	headerEndAdornment?: ReactNode
-	/**
-	 * Either an `accessorKey` or a combination of an `accessorFn` and `id` are required for a data column definition.
-	 * Specify a function here to point to the correct property in the data object.
-	 *
-	 * @example accessorFn: (row) => row.username
-	 */
-	accessorFn?: (originalRow: TData) => any
-	/**
-	 * Either an `accessorKey` or a combination of an `accessorFn` and `id` are required for a data column definition.
-	 * Specify which key in the row this column should use to access the correct data.
-	 * Also supports Deep Key Dot Notation.
-	 *
-	 * @example accessorKey: 'username' //simple
-	 * @example accessorKey: 'name.firstName' //deep key dot notation
-	 */
-	accessorKey?: DeepKeys<TData>
-	aggregationFn?: Table_AggregationFn<TData> | Array<Table_AggregationFn<TData>>
-	getTableCellSx?: (options: {
-		cell: Table_Cell<TData>
-		column: Table_Column<TData>
-		isCurrentCellClicked?: boolean
-		row: Table_Row<TData>
-		table: TableInstance<TData>
-	}) => TableCellProps['sx']
-	/**
-	 * Specify what type of column this is. Either `data`, `display`, or `group`. Defaults to `data`.
-	 * Leave this blank if you are just creating a normal data column.
-	 *
-	 * @default 'data'
-	 *
-	 * @example columnDefType: 'display'
-	 */
-	columnDefType?: 'data' | 'display' | 'group'
-	columnFilterModeOptions?: Array<
-		LiteralUnion<string & Table_FilterOption>
-	> | null
-	columns?: Table_ColumnDef<TData>[]
-	dataType?:
-		| 'textual'
-		| 'numeric'
-		| 'date'
-		| 'formula'
-		| 'single-select'
-		| 'multi-select'
-		| 'custom'
-	enableClickToCopy?: boolean
-	enableColumnActions?: boolean
-	enableColumnDragging?: boolean
-	enableColumnFilterModes?: boolean
-	enableColumnOrdering?: boolean
-	enableDividerLeft?: boolean
-	enableDividerRight?: boolean
-	enableEditing?: boolean
-	filterFn?: Table_FilterFn<TData>
-	filterSelectOptions?: (string | FilterOption)[]
-	filterVariant?: 'text' | 'select' | 'multi-select' | 'range' | 'checkbox'
-	/**
-	 * footer must be a string. If you want custom JSX to render the footer, you can also specify a `Footer` option. (Capital F)
-	 */
-	footer?: string
-	/**
-	 * header must be a string. If you want custom JSX to render the header, you can also specify a `Header` option. (Capital H)
-	 */
-	header: string
-	/**
-	 * Either an `accessorKey` or a combination of an `accessorFn` and `id` are required for a data column definition.
-	 *
-	 * If you have also specified an `accessorFn`, Table still needs to have a valid `id` to be able to identify the column uniquely.
-	 *
-	 * `id` defaults to the `accessorKey` or `header` if not specified.
-	 *
-	 * @default gets set to the same value as `accessorKey` by default
-	 */
-	id?: LiteralUnion<string & keyof TData>
-	muiTableBodyCellCopyButtonProps?:
-		| ButtonProps
-		| (({
-				cell,
-				column,
-				row,
-				table,
-		  }: {
-				cell: Table_Cell<TData>
-				column: Table_Column<TData>
-				row: Table_Row<TData>
-				table: TableInstance<TData>
-		  }) => ButtonProps)
-	muiTableBodyCellEditTextFieldProps?:
-		| TextFieldProps
-		| (({
-				cell,
-				column,
-				row,
-				table,
-		  }: {
-				cell: Table_Cell<TData>
-				column: Table_Column<TData>
-				row: Table_Row<TData>
-				table: TableInstance<TData>
-		  }) => TextFieldProps)
-	muiTableBodyCellProps?:
-		| TableCellProps
-		| (({
-				cell,
-				column,
-				row,
-				table,
-		  }: {
-				cell: Table_Cell<TData>
-				column: Table_Column<TData>
-				row: Table_Row<TData>
-				table: TableInstance<TData>
-		  }) => TableCellProps)
-	muiTableFooterCellProps?:
-		| TableCellProps
-		| (({
-				table,
-				column,
-		  }: {
-				table: TableInstance<TData>
-				column: Table_Column<TData>
-		  }) => TableCellProps)
-	muiTableHeadCellColumnActionsButtonProps?:
-		| IconButtonProps
-		| (({
-				table,
-				column,
-		  }: {
-				table: TableInstance<TData>
-				column: Table_Column<TData>
-		  }) => IconButtonProps)
-	muiTableHeadCellDragHandleProps?:
-		| IconButtonProps
-		| (({
-				table,
-				column,
-		  }: {
-				table: TableInstance<TData>
-				column: Table_Column<TData>
-		  }) => IconButtonProps)
-	muiTableHeadCellFilterCheckboxProps?:
-		| CheckboxProps
-		| (({
-				column,
-				table,
-		  }: {
-				column: Table_Column<TData>
-				table: TableInstance<TData>
-		  }) => CheckboxProps)
-	muiTableHeadCellFilterTextFieldProps?:
-		| TextFieldProps
-		| (({
-				table,
-				column,
-				rangeFilterIndex,
-		  }: {
-				table: TableInstance<TData>
-				column: Table_Column<TData>
-				rangeFilterIndex?: number
-		  }) => TextFieldProps)
-	muiTableHeadCellProps?:
-		| TableCellProps
-		| (({
-				table,
-				column,
-		  }: {
-				table: TableInstance<TData>
-				column: Table_Column<TData>
-		  }) => TableCellProps)
-	renderColumnActionsMenuItems?: ({
-		closeMenu,
-		column,
-		table,
-	}: {
-		closeMenu: () => void
-		column: Table_Column<TData>
-		table: TableInstance<TData>
-	}) => ReactNode[]
-	renderColumnFilterModeMenuItems?: ({
-		column,
-		internalFilterOptions,
-		onSelectFilterMode,
-		table,
-	}: {
-		column: Table_Column<TData>
-		internalFilterOptions: Table_InternalFilterOption[]
-		onSelectFilterMode: (filterMode: Table_FilterOption) => void
-		table: TableInstance<TData>
-	}) => ReactNode[]
-	sortingFn?: Table_SortingFn<TData>
-	subtitle?: string
-}
+> &
+	TableColumnEditProps<TData> & {
+		AggregatedCell?: ({
+			cell,
+			column,
+			row,
+			table,
+		}: {
+			cell: Table_Cell<TData>
+			column: Table_Column<TData>
+			row: Table_Row<TData>
+			table: TableInstance<TData>
+		}) => ReactNode
+		Cell?: ({
+			cell,
+			column,
+			row,
+			table,
+		}: {
+			cell: Table_Cell<TData>
+			column: Table_Column<TData>
+			row: Table_Row<TData>
+			table: TableInstance<TData>
+		}) => ReactNode
+		Filter?: ({
+			column,
+			header,
+			rangeFilterIndex,
+			table,
+		}: {
+			column: Table_Column<TData>
+			header: Table_Header<TData>
+			rangeFilterIndex?: number
+			table: TableInstance<TData>
+		}) => ReactNode
+		Footer?:
+			| ReactNode
+			| (({
+					column,
+					footer,
+					table,
+			  }: {
+					column: Table_Column<TData>
+					footer: Table_Header<TData>
+					table: TableInstance<TData>
+			  }) => ReactNode)
+		GroupedCell?: ({
+			cell,
+			column,
+			row,
+			table,
+		}: {
+			cell: Table_Cell<TData>
+			column: Table_Column<TData>
+			row: Table_Row<TData>
+			table: TableInstance<TData>
+		}) => ReactNode
+		Header?:
+			| ReactNode
+			| (({
+					column,
+					header,
+					table,
+					parentRow,
+			  }: {
+					column: Table_Column<TData>
+					header: Table_Header<TData>
+					table: TableInstance<TData>
+					parentRow?: Table_Row<TData>
+			  }) => ReactNode)
+		FilterField?: ({
+			column,
+			table,
+			onChange,
+			value,
+			autoFocus,
+		}: {
+			column: Table_Column<TData>
+			table: TableInstance<TData>
+			onChange: (value: unknown) => void
+			value: unknown
+			autoFocus?: boolean
+		}) => ReactElement
+		FilterChipField?: ({
+			column,
+			table,
+			onChange,
+			value,
+		}: {
+			column: Table_Column<TData>
+			table: TableInstance<TData>
+			onChange: (value: unknown) => void
+			value: unknown
+		}) => ReactElement
+		ColumnActionsFilterField?: ({
+			column,
+			table,
+			value,
+			onChange,
+		}: {
+			column: Table_Column<TData>
+			table: TableInstance<TData>
+			value: unknown
+			onChange: (value: unknown) => void
+		}) => ReactElement
+		headerEndAdornment?: ReactNode
+		/**
+		 * Either an `accessorKey` or a combination of an `accessorFn` and `id` are required for a data column definition.
+		 * Specify a function here to point to the correct property in the data object.
+		 *
+		 * @example accessorFn: (row) => row.username
+		 */
+		accessorFn?: (originalRow: TData) => any
+		/**
+		 * Either an `accessorKey` or a combination of an `accessorFn` and `id` are required for a data column definition.
+		 * Specify which key in the row this column should use to access the correct data.
+		 * Also supports Deep Key Dot Notation.
+		 *
+		 * @example accessorKey: 'username' //simple
+		 * @example accessorKey: 'name.firstName' //deep key dot notation
+		 */
+		accessorKey?: DeepKeys<TData>
+		aggregationFn?:
+			| Table_AggregationFn<TData>
+			| Array<Table_AggregationFn<TData>>
+		getTableCellSx?: (options: {
+			cell: Table_Cell<TData>
+			column: Table_Column<TData>
+			isCurrentCellClicked?: boolean
+			isCurrentRowDetailOpened?: boolean
+			isEditing?: boolean
+			row: Table_Row<TData>
+			table: TableInstance<TData>
+		}) => TableCellProps['sx']
+		/**
+		 * Specify what type of column this is. Either `data`, `display`, or `group`. Defaults to `data`.
+		 * Leave this blank if you are just creating a normal data column.
+		 *
+		 * @default 'data'
+		 *
+		 * @example columnDefType: 'display'
+		 */
+		columnDefType?: 'data' | 'display' | 'group'
+		columnFilterModeOptions?: Array<
+			LiteralUnion<string & Table_FilterOption>
+		> | null
+		columns?: Table_ColumnDef<TData>[]
+		dataType?:
+			| 'textual'
+			| 'numeric'
+			| 'date'
+			| 'formula'
+			| 'single-select'
+			| 'multi-select'
+			| 'custom'
+		emptyHeader?: boolean
+		enableClickToCopy?: boolean
+		enableColumnActions?: boolean
+		enableColumnDragging?: boolean
+		enableColumnFilterModes?: boolean
+		enableColumnOrdering?: boolean
+		enableDividerLeft?: boolean
+		enableDividerRight?: boolean
+		enableEditing?: boolean
+		filterFn?: Table_FilterFn<TData>
+		filterSelectOptions?: (string | SelectOption)[]
+		filterVariant?: 'text' | 'select' | 'multi-select' | 'range' | 'checkbox'
+		/**
+		 * footer must be a string. If you want custom JSX to render the footer, you can also specify a `Footer` option. (Capital F)
+		 */
+		footer?: string
+		/**
+		 * header must be a string. If you want custom JSX to render the header, you can also specify a `Header` option. (Capital H)
+		 */
+		header: string
+		/**
+		 * Either an `accessorKey` or a combination of an `accessorFn` and `id` are required for a data column definition.
+		 *
+		 * If you have also specified an `accessorFn`, Table still needs to have a valid `id` to be able to identify the column uniquely.
+		 *
+		 * `id` defaults to the `accessorKey` or `header` if not specified.
+		 *
+		 * @default gets set to the same value as `accessorKey` by default
+		 */
+		id?: LiteralUnion<string & keyof TData>
+		muiTableBodyCellCopyButtonProps?:
+			| ButtonProps
+			| (({
+					cell,
+					column,
+					row,
+					table,
+			  }: {
+					cell: Table_Cell<TData>
+					column: Table_Column<TData>
+					row: Table_Row<TData>
+					table: TableInstance<TData>
+			  }) => ButtonProps)
+		muiTableBodyCellProps?:
+			| TableCellProps
+			| (({
+					cell,
+					column,
+					row,
+					table,
+			  }: {
+					cell: Table_Cell<TData>
+					column: Table_Column<TData>
+					row: Table_Row<TData>
+					table: TableInstance<TData>
+			  }) => TableCellProps)
+		muiTableFooterCellProps?:
+			| TableCellProps
+			| (({
+					table,
+					column,
+			  }: {
+					table: TableInstance<TData>
+					column: Table_Column<TData>
+			  }) => TableCellProps)
+		muiTableHeadCellColumnActionsButtonProps?:
+			| IconButtonProps
+			| (({
+					table,
+					column,
+			  }: {
+					table: TableInstance<TData>
+					column: Table_Column<TData>
+			  }) => IconButtonProps)
+		muiTableHeadCellDragHandleProps?:
+			| IconButtonProps
+			| (({
+					table,
+					column,
+			  }: {
+					table: TableInstance<TData>
+					column: Table_Column<TData>
+			  }) => IconButtonProps)
+		muiTableHeadCellFilterCheckboxProps?:
+			| CheckboxProps
+			| (({
+					column,
+					table,
+			  }: {
+					column: Table_Column<TData>
+					table: TableInstance<TData>
+			  }) => CheckboxProps)
+		muiTableHeadCellFilterTextFieldProps?:
+			| TextFieldProps
+			| (({
+					table,
+					column,
+					rangeFilterIndex,
+			  }: {
+					table: TableInstance<TData>
+					column: Table_Column<TData>
+					rangeFilterIndex?: number
+			  }) => TextFieldProps)
+		muiTableHeadCellProps?:
+			| TableCellProps
+			| (({
+					table,
+					column,
+			  }: {
+					table: TableInstance<TData>
+					column: Table_Column<TData>
+			  }) => TableCellProps)
+		renderColumnActionsMenuItems?: ({
+			closeMenu,
+			column,
+			table,
+		}: {
+			closeMenu: () => void
+			column: Table_Column<TData>
+			table: TableInstance<TData>
+		}) => ReactNode[]
+		renderColumnFilterModeMenuItems?: ({
+			column,
+			internalFilterOptions,
+			onSelectFilterMode,
+			table,
+		}: {
+			column: Table_Column<TData>
+			internalFilterOptions: Table_InternalFilterOption[]
+			onSelectFilterMode: (filterMode: Table_FilterOption) => void
+			table: TableInstance<TData>
+		}) => ReactNode[]
+		sortingFn?: Table_SortingFn<TData>
+		subtitle?: string
+	}
 
 export type Table_DefinedColumnDef<TData extends Record<string, any> = {}> =
 	Omit<Table_ColumnDef<TData>, 'id' | 'defaultDisplayColumn'> & {
@@ -757,7 +781,7 @@ export type Table_ColumnActionsFiltersMenuProps<TData extends TableData = {}> =
 		table: TableInstance<TData>
 		column: Table_Column<TData>
 		selectedFilters: string[]
-		filterOptions: FilterOption[]
+		filterOptions: SelectOption[]
 		onCheckFilter: (value: string) => void
 	}
 
@@ -892,6 +916,7 @@ export type TableComponentProps<TData extends Record<string, any> = {}> = Omit<
 				table: TData
 				isCurrentCellClicked?: boolean
 				isCurrentRowDetailOpened?: boolean
+				isEditing?: boolean
 			}) => object | undefined
 		}
 	>
@@ -914,6 +939,11 @@ export type TableComponentProps<TData extends Record<string, any> = {}> = Omit<
 	enableToolbarInternalActions?: boolean
 	enableTopToolbar?: boolean
 	expandRowsFn?: (dataRow: TData) => TData[]
+	getGroupRowCount?: (props: {
+		groupId?: string
+		groupRow?: Table_Row<TData>
+		table: TableInstance<TData>
+	}) => ReactNode
 	getRowId?: (
 		originalRow: TData,
 		index: number,
@@ -961,6 +991,9 @@ export type TableComponentProps<TData extends Record<string, any> = {}> = Omit<
 	muiBottomToolbarProps?:
 		| ToolbarProps
 		| (({ table }: { table: TableInstance<TData> }) => ToolbarProps)
+	muiEditInputProps?: TableFunctionalProp<InputProps, TData>
+	muiEditSelectProps?: TableFunctionalProp<SelectProps, TData>
+	muiEditDayPickerInputProps?: TableFunctionalProp<DayPickerInputProps, TData>
 	muiExpandAllButtonProps?:
 		| IconButtonProps
 		| (({ table }: { table: TableInstance<TData> }) => IconButtonProps)
@@ -1010,19 +1043,6 @@ export type TableComponentProps<TData extends Record<string, any> = {}> = Omit<
 				row: Table_Row<TData>
 				table: TableInstance<TData>
 		  }) => ButtonProps)
-	muiTableBodyCellEditTextFieldProps?:
-		| TextFieldProps
-		| (({
-				cell,
-				column,
-				row,
-				table,
-		  }: {
-				cell: Table_Cell<TData>
-				column: Table_Column<TData>
-				row: Table_Row<TData>
-				table: TableInstance<TData>
-		  }) => TextFieldProps)
 	muiTableBodyCellProps?:
 		| TableCellProps
 		| (({
@@ -1311,8 +1331,10 @@ export type TableComponentProps<TData extends Record<string, any> = {}> = Omit<
 	}) => ReactNode
 	renderToolbarInternalActions?: ({
 		table,
+		originalChildren,
 	}: {
 		table: TableInstance<TData>
+		originalChildren?: ReactNode
 	}) => ReactNode
 	renderTopToolbar?:
 		| ReactNode
@@ -1328,7 +1350,7 @@ export type TableComponentProps<TData extends Record<string, any> = {}> = Omit<
 	state?: Partial<Table_TableState<TData>>
 	summaryRowCell?: (args: {
 		table: TableInstance<TData>
-		column: Table_ColumnDef<TData>
+		column: Table_Column<TData>
 		defaultStyles: Record<string, any>
 	}) => React.ReactNode
 	ColumnActionsFiltersMenu?: FC<Table_ColumnActionsFiltersMenuProps<TData>>

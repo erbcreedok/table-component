@@ -1,6 +1,6 @@
 import { styled, Switch, switchClasses } from '@mui/material'
 
-import { Text, Colors } from './styles'
+import { TextColor, Colors } from './styles'
 
 export const TableSwitch = styled(Switch)`
 	padding: 5px;
@@ -8,7 +8,7 @@ export const TableSwitch = styled(Switch)`
 		background-color: unset;
 	}
 	& + .${switchClasses.disabled} {
-		color: ${Text.Primary} !important;
+		color: ${TextColor.Primary} !important;
 	}
 	&
 		.${switchClasses.checked},

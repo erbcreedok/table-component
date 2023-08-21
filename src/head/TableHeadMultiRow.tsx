@@ -5,7 +5,7 @@ import type { VirtualItem } from '@tanstack/react-virtual'
 
 import type { Table_Row, TableInstance, MultirowHeader } from '..'
 import type { StickyElement } from '../hooks/useMultiSticky'
-import { Colors, Text } from '../components/styles'
+import { Colors, TextColor } from '../components/styles'
 import { Table_DisplayColumnIdsArray } from '../column.utils'
 
 type Props = {
@@ -139,7 +139,7 @@ export const TableHeadMultiRow = ({
 		background: Colors.Gray10,
 		height: '36px',
 		padding: '0 12px',
-		color: Text.Dark,
+		color: TextColor.Dark,
 		fontWeight: 600,
 		fontSize: '12px',
 		lineHeight: '18px',

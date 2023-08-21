@@ -1,6 +1,6 @@
 import { createTheme } from '@mui/material'
 
-import { Colors, IconsColor, Text } from '../components/styles'
+import { Colors, IconsColor, TextColor } from '../components/styles'
 
 export const modalTheme = createTheme({
 	palette: {
@@ -21,7 +21,7 @@ export const modalTheme = createTheme({
 				},
 				outlinedSecondary: {
 					borderColor: Colors.BorderMain,
-					color: Text.Primary,
+					color: TextColor.Primary,
 				},
 				contained: {
 					boxShadow: 'none',
@@ -34,7 +34,7 @@ export const modalTheme = createTheme({
 		MuiTypography: {
 			styleOverrides: {
 				root: {
-					color: Text.Dark,
+					color: TextColor.Dark,
 				},
 			},
 		},

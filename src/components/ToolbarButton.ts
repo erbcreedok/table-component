@@ -1,13 +1,13 @@
 import { styled, Button } from '@mui/material'
 
-import { DEFAULT_FONT_FAMILY, Text, Colors } from './styles'
+import { DEFAULT_FONT_FAMILY, TextColor, Colors } from './styles'
 
 export const ToolbarButton = styled(Button)`
 	display: flex;
 	justify-content: space-between;
 	min-width: 63px;
 	max-width: 180px;
-	color: ${Text.Primary};
+	color: ${TextColor.Primary};
 	border-color: #acafbf;
 	border-radius: 3px;
 	position: relative;

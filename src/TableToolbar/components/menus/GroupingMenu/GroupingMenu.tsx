@@ -29,7 +29,7 @@ export const GroupingMenu = <TData extends Record<string, any> = {}>({
 		getCenterLeafColumns,
 		getRightLeafColumns,
 		setGrouping,
-		options: { innerTable },
+		options: { innerTable, localization },
 	} = table
 	const { columnOrder, columnPinning, columnVisibility, grouping } = getState()
 	const [isSearchActive, setIsSearchActive] = useState<boolean>(false)
@@ -116,7 +116,7 @@ export const GroupingMenu = <TData extends Record<string, any> = {}>({
 			styles={{ minWidth: 500 }}
 			withHeader
 			withSearch
-			headerTitle="Grouping"
+			headerTitle={localization.group}
 			onSearchChange={handleOnSearchChange}
 			innerTableSidebar={innerTable}
 		>

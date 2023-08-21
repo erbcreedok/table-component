@@ -18,7 +18,7 @@ import { Tooltip } from '../../../../components/Tooltip'
 import {
 	Colors,
 	DEFAULT_FONT_FAMILY,
-	Text,
+	TextColor,
 	IconsColor,
 } from '../../../../components/styles'
 
@@ -172,7 +172,7 @@ export const ColumnsMenuItem = <TData extends Record<string, any> = {}>({
 										fontSize: 14,
 										lineHeight: '18px',
 										paddingLeft: '12px',
-										color: Text.Primary,
+										color: TextColor.Primary,
 									},
 								},
 							}}

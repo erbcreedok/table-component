@@ -1,4 +1,4 @@
-import { Text } from '../components/styles'
+import { TextColor } from '../components/styles'
 
 export const commonMenuItemStyles = {
 	py: '9px',
@@ -6,7 +6,7 @@ export const commonMenuItemStyles = {
 	my: 0,
 	justifyContent: 'space-between',
 	alignItems: 'center',
-	color: Text.Dark,
+	color: TextColor.Dark,
 }
 
 export const commonListItemStyles = {

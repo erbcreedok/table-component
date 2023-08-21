@@ -10,7 +10,7 @@ import React, { ComponentProps, useEffect, useState, MouseEvent } from 'react'
 import { CloseIcon } from '../icons/CloseIcon'
 import { SearchIcon } from '../icons/SearchIcon'
 
-import { DEFAULT_FONT_FAMILY, Text } from './styles'
+import { DEFAULT_FONT_FAMILY, TextColor } from './styles'
 
 const SidebarSearch = styled(TextField)`
 	font-family: ${DEFAULT_FONT_FAMILY};
@@ -28,7 +28,7 @@ const SidebarSearch = styled(TextField)`
 		font-family: ${DEFAULT_FONT_FAMILY};
 		font-size: 14px;
 		line-height: 18px;
-		color: ${Text.Primary};
+		color: ${TextColor.Primary};
 	}
 `
 

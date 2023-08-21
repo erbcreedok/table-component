@@ -3,7 +3,7 @@ import Box from '@mui/material/Box'
 
 import { Menu } from '../../../../components/Menu'
 import type { TableInstance } from '../../../../index'
-import { Colors, Text } from '../../../../components/styles'
+import { Colors, TextColor } from '../../../../components/styles'
 import { Preset, PresetState } from '../../buttons/PresetButton'
 
 import { CustomPreset } from './components/CustomPreset'
@@ -82,7 +82,7 @@ export const PresetMenu = <TData extends Record<string, any> = {}>({
 					sx={{
 						boxSizing: 'border-box',
 						height: '30px',
-						color: `${Text.Primary}`,
+						color: `${TextColor.Primary}`,
 						padding: '9px 0 3px 12px',
 					}}
 				>
@@ -108,7 +108,7 @@ export const PresetMenu = <TData extends Record<string, any> = {}>({
 						sx={{
 							boxSizing: 'border-box',
 							height: '30px',
-							color: `${Text.Primary}`,
+							color: `${TextColor.Primary}`,
 							padding: '9px 0 3px 12px',
 						}}
 					>

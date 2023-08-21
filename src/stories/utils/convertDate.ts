@@ -1,6 +1,11 @@
-export const convertDate = (date?: Date) =>{
-	if (date === undefined) return ''
+export const convertDate = (date?: Date) => {
+	if (date === undefined || !date) return ''
 
-	const options: any = { year: 'numeric', month: 'short', day: 'numeric' }
-	return new Intl.DateTimeFormat('en-US', options).format(new Date(date))
+	try {
+		const options: any = { year: 'numeric', month: 'short', day: 'numeric' }
+		return new Intl.DateTimeFormat('en-US', options).format(new Date(date))
+	} catch (error) {
+		console.error(error)
+		return ''
+	}
 }

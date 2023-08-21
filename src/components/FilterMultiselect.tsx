@@ -10,7 +10,7 @@ import ClickAwayListener from '@mui/material/ClickAwayListener'
 import Divider from '@mui/material/Divider'
 
 import {
-	FilterOption,
+	SelectOption,
 	Table_Column,
 	TableData,
 	TableInstance,
@@ -52,7 +52,7 @@ export const FilterMultiselect = <TData extends TableData>({
 }: {
 	column: Table_Column<TData>
 	table: TableInstance<TData>
-	onChange: (value: FilterOption[]) => void
+	onChange: (value: SelectOption[]) => void
 	value: string[]
 	autoFocus?: boolean
 }) => {
@@ -71,7 +71,7 @@ export const FilterMultiselect = <TData extends TableData>({
 	const [inputValue, setInputValue] = useState('')
 	const filteredOptions = useRef(notSelectedOptions)
 
-	const handleChange = (event: any, newValue: FilterOption[]) => {
+	const handleChange = (event: any, newValue: SelectOption[]) => {
 		setInputValue('')
 		onChange(newValue.map((option) => option.value))
 	}
@@ -153,7 +153,7 @@ export const FilterMultiselect = <TData extends TableData>({
 						sx={{ border: 'none' }}
 					/>
 				)}
-				renderOption={(props, option: FilterOption) => (
+				renderOption={(props, option: SelectOption) => (
 					<li {...props} style={{ padding: 0, margin: 0 }}>
 						<Option>{option.label}</Option>
 					</li>

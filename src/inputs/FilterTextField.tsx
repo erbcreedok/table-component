@@ -20,7 +20,7 @@ import { debounce } from '@mui/material/utils'
 import type { TextFieldProps } from '@mui/material/TextField'
 
 import { FilterOptionMenu } from '../menus/FilterOptionMenu'
-import type { FilterOption, Table_Header, TableInstance } from '..'
+import type { SelectOption, Table_Header, TableInstance } from '..'
 
 interface Props {
 	header: Table_Header
@@ -359,7 +359,7 @@ export const FilterTextField: FC<Props> = ({
 					</MenuItem>
 				)}
 				{columnDef?.filterSelectOptions?.map(
-					(option: string | FilterOption) => {
+					(option: string | SelectOption) => {
 						let value: string
 						let text: string
 						if (typeof option !== 'object') {

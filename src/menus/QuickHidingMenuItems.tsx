@@ -12,7 +12,7 @@ export const QuickHidingMenuItems = ({ column, table, setVisible }) => {
 	const {
 		options: {
 			enableHiding,
-			icons: { EyeIcon },
+			icons: { EyeCrossedIcon },
 			localization,
 		},
 	} = table
@@ -45,7 +45,7 @@ export const QuickHidingMenuItems = ({ column, table, setVisible }) => {
 		>
 			<Box sx={commonListItemStyles}>
 				<ListItemIcon>
-					<EyeIcon />
+					<EyeCrossedIcon />
 				</ListItemIcon>
 				{localization.hideInView}
 			</Box>
