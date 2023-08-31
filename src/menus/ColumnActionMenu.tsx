@@ -36,12 +36,17 @@ export const ColumnActionMenu: FC<Props> = ({
 		setIsSubMenuOpen(!isSubMenuOpen)
 	}
 
+	const handleClose = () => {
+		setVisible(false)
+		setIsSubMenuOpen(false)
+	}
+
 	if (isSubMenuOpen) {
 		return (
 			<QuickFiltersMenu
 				anchorEl={anchorEl}
 				open={!!anchorEl}
-				onClose={() => setVisible(false)}
+				onClose={() => handleClose()}
 				minWidth={anchorEl?.clientWidth}
 				table={table}
 				column={column}
@@ -54,7 +59,7 @@ export const ColumnActionMenu: FC<Props> = ({
 		<Menu
 			anchorEl={anchorEl}
 			open={!!anchorEl}
-			onClose={() => setVisible(false)}
+			onClose={() => handleClose()}
 			minWidth={anchorEl?.clientWidth}
 			PaperProps={{
 				ref: menuRef,
@@ -64,12 +69,12 @@ export const ColumnActionMenu: FC<Props> = ({
 			}}
 		>
 			{columnDef.renderColumnActionsMenuItems?.({
-				closeMenu: () => setVisible(false),
+				closeMenu: () => handleClose(),
 				column,
 				table,
 			}) ??
 				renderColumnActionsMenuItems?.({
-					closeMenu: () => setVisible(false),
+					closeMenu: () => handleClose(),
 					column,
 					table,
 				}) ?? [

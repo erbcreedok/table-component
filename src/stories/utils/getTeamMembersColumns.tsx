@@ -104,6 +104,7 @@ export const getTeamMembersColumns = () => {
 			id: 'teamMember',
 			dataType: 'textual',
 			filterVariant: 'text',
+			filterFn: 'contains',
 			Cell: ({ row, table }) => {
 				const user = row.original.member
 				return (
@@ -153,6 +154,17 @@ export const getTeamMembersColumns = () => {
 					placeholder="Search for employee"
 					renderOption={SearchOption}
 				/>
+			),
+			ColumnActionsFilterField: ({ value, onChange}) => (
+				<Box sx={{ px: '12px', width: '100%', boxSizing: 'border-box' }}>
+					<Typography>Custom Filter Head Field</Typography>
+					<TextField
+						fullWidth
+						variant="outlined"
+						value={value}
+						onChange={(e) => onChange(e.target.value)}
+					/>
+				</Box>
 			),
 			FilterField: ({ onChange, value, autoFocus }) => (
 				<Box sx={{ px: '12px', width: '100%', boxSizing: 'border-box' }}>

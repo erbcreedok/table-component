@@ -4,9 +4,11 @@ import React, {
 	useCallback,
 	useMemo,
 	useState,
+	useEffect,
 } from 'react'
 
 import { Menu } from '../components/Menu'
+import { QuickFilters } from '../components/QuickFilters'
 import { Table_Column, TableInstance } from '../TableComponent'
 import { getColumnFilterOptions } from '../utils/getColumnFilterOptions'
 
@@ -15,16 +17,7 @@ type Props = ComponentProps<typeof Menu> & {
 	column: Table_Column
 	toggleSubMenu: () => void
 }
-export const QuickFiltersMenu: FC<Props> = ({
-	table,
-	column,
-	toggleSubMenu,
-	...rest
-}) => {
-	const {
-		options: { ColumnActionsFiltersMenu },
-	} = table
-
+export const QuickFiltersMenu: FC<Props> = ({ table, column, ...rest }) => {
 	const [selectedFilters, setSelectedFilters] = useState<string[]>(
 		(column.getFilterValue() || []) as string[]
 	)
@@ -32,17 +25,21 @@ export const QuickFiltersMenu: FC<Props> = ({
 		() => getColumnFilterOptions(column, table),
 		[column, table]
 	)
-	// DEPRECATED: use filterOptions instead
-	const filterValues = useMemo(
-		() => filterOptions.map(({ value }) => value),
-		[filterOptions]
+	const filterValue = column.getFilterValue()
+	const { ColumnActionsFilterField } = column.columnDef
+
+	useEffect(() => {
+		if (Array.isArray(selectedFilters)) {
+			column.setFilterValue([...selectedFilters])
+		}
+	}, [column, selectedFilters])
+
+	const handleChange = useCallback(
+		(value) => {
+			column.setFilterValue(value)
+		},
+		[column]
 	)
-
-	const handleApplyFilters = useCallback(() => {
-		column.setFilterValue([...selectedFilters])
-
-		toggleSubMenu()
-	}, [column, selectedFilters, toggleSubMenu])
 
 	const handleCheckFilter = useCallback(
 		(value: string) => {
@@ -61,32 +58,32 @@ export const QuickFiltersMenu: FC<Props> = ({
 		[selectedFilters]
 	)
 
-	const handleCheckAllFilters = useCallback(() => {
-		if (selectedFilters.length === filterOptions.length) {
-			setSelectedFilters([])
+	const handleClearAll = useCallback(() => {
+		setSelectedFilters([])
+	}, [column])
 
-			return
-		}
-
-		setSelectedFilters([...filterOptions.map(({ value }) => value)])
-	}, [selectedFilters, filterOptions])
-
-	if (!ColumnActionsFiltersMenu) {
-		return null
+	if (ColumnActionsFilterField) {
+		return (
+			<Menu {...rest} PaperProps={{ style: { width: 300 } }}>
+				<ColumnActionsFilterField
+					table={table}
+					column={column}
+					value={filterValue}
+					onChange={handleChange}
+				/>
+			</Menu>
+		)
 	}
 
 	return (
-		<Menu {...rest}>
-			<ColumnActionsFiltersMenu
+		<Menu {...rest} PaperProps={{ style: { width: 300 } }}>
+			<QuickFilters
 				table={table}
 				column={column}
-				selectedFilters={selectedFilters}
-				filterValues={filterValues}
 				filterOptions={filterOptions}
+				selectedFilters={selectedFilters}
 				onCheckFilter={handleCheckFilter}
-				onCheckAllFilters={handleCheckAllFilters}
-				onApplyFilters={handleApplyFilters}
-				toggleSubMenu={toggleSubMenu}
+				onClearAll={handleClearAll}
 			/>
 		</Menu>
 	)

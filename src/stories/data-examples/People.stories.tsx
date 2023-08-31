@@ -175,6 +175,7 @@ export const PeopleTable: Story<TableComponentProps> = () => {
 				enableRowSelection
 				hideRowSelectionColumn
 				expandByClick={ExpandByClick.CellAction}
+				muiTableStatusBarWrapperProps={{ sx: { p: '9px 15px' } }}
 				// enableRowVirtualization
 				cellStyleRules={{
 					performance: {

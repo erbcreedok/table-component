@@ -1,9 +1,8 @@
 import React, { FC } from 'react'
 import { BoxProps, Typography } from '@mui/material'
 
-import { useTableContext } from '../../context/useTableContext'
-
-import { FilterItemBoxStyled } from './FilterChip.styles'
+import { useTableContext } from '../context/useTableContext'
+import { FilterItemBoxStyled } from '../TableStatusBar/FilterChip/FilterChip.styles'
 
 type ListItemProps = {
 	isChecked?: boolean

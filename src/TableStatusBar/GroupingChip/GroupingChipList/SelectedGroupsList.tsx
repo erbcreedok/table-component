@@ -4,7 +4,7 @@ import { Table_Column } from 'src'
 
 import { reorderColumn } from '../../../column.utils'
 import { useGroupingControls } from '../../filter-bar-hooks/useGroupingControls'
-import { NoOptions } from '../../NoOptions/NoOptions'
+import { NoOptions } from '../../../components/NoOptions'
 
 import { ListGroupItem } from './ListGroupItem'
 

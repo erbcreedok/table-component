@@ -1,7 +1,7 @@
 import { FC, useEffect, useState } from 'react'
 
 import { useGroupingControls } from '../../filter-bar-hooks/useGroupingControls'
-import { NoOptions } from '../../NoOptions/NoOptions'
+import { NoOptions } from '../../../components/NoOptions'
 
 import { ListSearchedGroupItem } from './ListSearchedGroupItem'
 

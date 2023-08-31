@@ -4,6 +4,7 @@ import Box from '@mui/material/Box'
 
 import { Colors } from '../components/styles'
 import type { TableInstance } from '../index'
+import { mergeMuiProps } from '../utils/mergeMuiProps'
 
 import { GroupingChip } from './GroupingChip/GroupingChip'
 import { useGroupingControls } from './filter-bar-hooks/useGroupingControls'
@@ -36,17 +37,25 @@ const Wrapper = styled(Box)<{ hidden?: boolean }>`
 		visibility: visible;
 	}
 `
-type Props<TData extends Record<string, any> = {}> = {
-	table: TableInstance<TData>
+
+export type TableStatusBarWrapperProps = {
 	lineProps?: ComponentProps<typeof Line>
 } & ComponentProps<typeof Wrapper>
+export type TableStatusBarProps<TData extends Record<string, any> = {}> = {
+	table: TableInstance<TData>
+} & TableStatusBarWrapperProps
 
 export const TableStatusBar = <TData extends Record<string, any> = {}>({
 	table,
-	lineProps,
+	lineProps: rLineProps,
 	...rest
-}: Props<TData>) => {
-	const { getState, resetSorting, resetColumnFilters } = table
+}: TableStatusBarProps<TData>) => {
+	const {
+		getState,
+		resetSorting,
+		resetColumnFilters,
+		options: { muiTableStatusBarWrapperProps },
+	} = table
 
 	const { grouping, sorting, columnFilters } = getState()
 
@@ -60,6 +69,18 @@ export const TableStatusBar = <TData extends Record<string, any> = {}>({
 		resetColumnFilters()
 	}
 
+	const { lineProps: mLineProps, ...mProps } = {
+		...(typeof muiTableStatusBarWrapperProps === 'function'
+			? muiTableStatusBarWrapperProps({ table })
+			: muiTableStatusBarWrapperProps),
+	}
+	const props = mergeMuiProps<TableStatusBarWrapperProps>(
+		{ sx: { p: '6px' } },
+		mProps,
+		rest
+	)
+	const lineProps = mergeMuiProps(mLineProps, rLineProps)
+
 	const isGroupingExists = Boolean(grouping?.length)
 	const isSortingExists = Boolean(sorting?.length)
 	const isFiltersExists = Boolean(columnFilters?.length)
@@ -71,7 +92,7 @@ export const TableStatusBar = <TData extends Record<string, any> = {}>({
 	})
 
 	return (
-		<Wrapper ref={barRef} hidden={!isAnyChipVisible} {...rest}>
+		<Wrapper ref={barRef} hidden={!isAnyChipVisible} {...props}>
 			<SortingChip table={table} />
 
 			<GroupingChip table={table} />

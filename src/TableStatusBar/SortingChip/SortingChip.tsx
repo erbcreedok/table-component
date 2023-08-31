@@ -4,8 +4,8 @@ import { Box } from '@mui/material'
 import { TableInstance } from 'src'
 
 import { CommonChipWithPopover } from '../CommonChipWithPopover/CommonChipWithPopover'
-import { DropdownContentHeader } from '../DropdownContent/DropdownContentHeader'
-import { DropdownContentSearch } from '../DropdownContent/DropdownContentSearch'
+import { DropdownContentHeader } from '../../components/DropdownContent/DropdownContentHeader'
+import { DropdownContentSearch } from '../../components/DropdownContent/DropdownContentSearch'
 import { useSortingControls } from '../filter-bar-hooks/useSortingControls'
 
 import { SelectedSortsList } from './SortingChipList/SelectedSortsList'

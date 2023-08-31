@@ -1,7 +1,8 @@
 import { Box, Typography } from '@mui/material'
 
-import { Text } from '../../components/styles'
-import { useTableContext } from '../../context/useTableContext'
+import { useTableContext } from '../context/useTableContext'
+
+import { Text } from './styles'
 
 export const NoOptions = () => {
 	const {

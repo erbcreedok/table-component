@@ -2,8 +2,8 @@ import { Box } from '@mui/material'
 import React, { FC, useEffect, useMemo, useState } from 'react'
 
 import { CommonChipWithPopover } from '../CommonChipWithPopover/CommonChipWithPopover'
-import { DropdownContentHeader } from '../DropdownContent/DropdownContentHeader'
-import { DropdownContentSearch } from '../DropdownContent/DropdownContentSearch'
+import { DropdownContentHeader } from '../../components/DropdownContent/DropdownContentHeader'
+import { DropdownContentSearch } from '../../components/DropdownContent/DropdownContentSearch'
 import { useGroupingControls } from '../filter-bar-hooks/useGroupingControls'
 
 import { SelectedGroupsList } from './GroupingChipList/SelectedGroupsList'

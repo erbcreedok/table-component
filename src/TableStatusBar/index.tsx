@@ -1,1 +1,5 @@
-export { TableStatusBar } from './TableStatusBar'
+export {
+	TableStatusBar,
+	type TableStatusBarProps,
+	type TableStatusBarWrapperProps,
+} from './TableStatusBar'

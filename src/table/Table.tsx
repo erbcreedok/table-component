@@ -1,3 +1,5 @@
+import { createCell, createRow } from '@tanstack/table-core'
+import type { Table as TableType } from '@tanstack/react-table'
 import React, { FC, useCallback, useMemo } from 'react'
 import {
 	defaultRangeExtractor,
@@ -7,11 +9,12 @@ import {
 } from '@tanstack/react-virtual'
 import MuiTable from '@mui/material/Table'
 
+import { getColumnId } from '../column.utils'
 import { TableHead } from '../head/TableHead'
 import { Memo_TableBody, TableBody } from '../body/TableBody'
 import { TableBodyRow } from '../body/TableBodyRow'
 import { TableFooter } from '../footer/TableFooter'
-import type { Table_Row, TableInstance } from '..'
+import type { Table_ColumnDef, Table_Row, TableInstance } from '..'
 import { TableHeadInvisible } from '../head/TableHeadInvisible'
 
 interface Props {
@@ -31,6 +34,7 @@ export const Table: FC<Props> = ({ table }) => {
 			enableTableFooter,
 			enableTableHead,
 			hideTableHead,
+			hideSummaryRowInEmptyTable,
 			layoutMode,
 			memoMode,
 			muiTableProps,
@@ -131,17 +135,39 @@ export const Table: FC<Props> = ({ table }) => {
 		virtualPaddingRight,
 	}
 
-	const summaryRowProps = {
-		columnVirtualizer,
-		numRows: table.getRowModel().rows.length as number,
-		rowIndex: -1,
-		rowNumber: -1,
-		table,
-		row: {
-			getIsSelected: () => false,
-			getVisibleCells: table.getRowModel()?.rows[0]?.getVisibleCells,
-		} as Table_Row,
-	}
+	const summaryRow = useMemo(
+		() => createRow(table as TableType<{}>, 'summaryRow', {}, -1, 0, []),
+		[table]
+	)
+	const summaryRowProps = useMemo(
+		() => ({
+			columnVirtualizer,
+			numRows: table.getRowModel().rows.length as number,
+			rowIndex: -1,
+			rowNumber: -1,
+			table,
+			row: {
+				getIsSelected: () => false,
+				getVisibleCells: () =>
+					table
+						.getVisibleLeafColumns()
+						.map((column) =>
+							createCell(
+								table as TableType<{}>,
+								summaryRow,
+								column,
+								getColumnId(column.columnDef as Table_ColumnDef)
+							)
+						),
+			} as Table_Row,
+		}),
+		[columnVirtualizer, summaryRow, table]
+	)
+	const showSummaryRow =
+		enableSummaryRow &&
+		summaryRowCell &&
+		(!hideSummaryRowInEmptyTable ||
+			table.getPaginationRowModel().rows.length > 0)
 
 	return (
 		<MuiTable
@@ -160,7 +186,7 @@ export const Table: FC<Props> = ({ table }) => {
 			})}
 		>
 			{enableTableHead && <TableHeadInvisible table={table} />}
-			{enableSummaryRow && summaryRowCell && (
+			{showSummaryRow && (
 				<thead>
 					<TableBodyRow key="summaryRow" isSummaryRow {...summaryRowProps} />
 				</thead>

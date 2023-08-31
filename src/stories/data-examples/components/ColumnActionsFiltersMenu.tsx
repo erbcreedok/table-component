@@ -34,17 +34,7 @@ export const ColumnActionsFiltersMenu = <TData extends TableData>(props: Table_C
 		selectedFilters,
 		filterOptions,
 		onCheckFilter,
-		onCheckAllFilters,
-		onApplyFilters,
-
-		toggleSubMenu,
 	} = props
-
-	useEffect(() => {
-		return () => {
-			toggleSubMenu()
-		}
-	}, [])
 
 	return (
 		<div style={{ minWidth: 245, padding: '0 15px' }}>
@@ -53,23 +43,10 @@ export const ColumnActionsFiltersMenu = <TData extends TableData>(props: Table_C
 				color="#303240"
 				style={{ fontWeight: 600 }}
 			>
-				Filters
+				Custom Filters
 			</Typography>
 
 			<Box>
-				<Box
-					sx={{
-						borderBottom: '1px solid #E1E3EB',
-						paddingBottom: '15px',
-					}}
-				>
-					<SubFilterItem
-						value="Select All"
-						onClick={onCheckAllFilters}
-						isChecked={selectedFilters.length === filterOptions.length}
-					/>
-				</Box>
-
 				{filterOptions.map(({ value, label }) => {
 					return (
 						<SubFilterItem
@@ -80,26 +57,6 @@ export const ColumnActionsFiltersMenu = <TData extends TableData>(props: Table_C
 						/>
 					)
 				})}
-			</Box>
-
-			<Box
-				sx={{
-					borderTop: '1px solid #E1E3EB',
-					display: 'flex',
-					justifyContent: 'flex-end',
-					paddingTop: '10px',
-					marginTop: '15px',
-				}}
-			>
-				<Button
-					type="button"
-					variant="contained"
-					color="primary"
-					onClick={onApplyFilters}
-					sx={{ backgroundColor: '#009ECC', color: '#FFFFFF' }}
-				>
-					Apply
-				</Button>
 			</Box>
 		</div>
 	)

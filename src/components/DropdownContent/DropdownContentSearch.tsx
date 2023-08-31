@@ -10,7 +10,7 @@ import {
 
 import { CloseIcon } from '../../icons/CloseIcon'
 import { SearchIcon } from '../../icons/SearchIcon'
-import { DEFAULT_FONT_FAMILY, Text } from '../../components/styles'
+import { DEFAULT_FONT_FAMILY, Text } from '../styles'
 
 const SearchInput = styled(TextField)`
 	font-family: ${DEFAULT_FONT_FAMILY};

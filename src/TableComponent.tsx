@@ -56,6 +56,7 @@ import { Table_FilterFns } from './filterFns'
 import { Table_Icons } from './icons'
 import { Table_SortingFns } from './sortingFns'
 import { TableMain } from './table/TableMain'
+import { TableStatusBarWrapperProps } from './TableStatusBar'
 import { Preset } from './TableToolbar/components/buttons/PresetButton'
 import { TableToolbarProps } from './TableToolbar/TableToolbar'
 
@@ -457,6 +458,17 @@ export type Table_ColumnDef<TData extends Record<string, any> = {}> = Omit<
 		onChange: (value: unknown) => void
 		value: unknown
 	}) => ReactElement
+	ColumnActionsFilterField?: ({
+		column,
+		table,
+		value,
+		onChange,
+	}: {
+		column: Table_Column<TData>
+		table: TableInstance<TData>
+		value: unknown
+		onChange: (value: unknown) => void
+	}) => ReactElement
 	headerEndAdornment?: ReactNode
 	/**
 	 * Either an `accessorKey` or a combination of an `accessorFn` and `id` are required for a data column definition.
@@ -736,12 +748,8 @@ export type Table_ColumnActionsFiltersMenuProps<TData extends TableData = {}> =
 		table: TableInstance<TData>
 		column: Table_Column<TData>
 		selectedFilters: string[]
-		filterValues: string[]
 		filterOptions: FilterOption[]
 		onCheckFilter: (value: string) => void
-		onCheckAllFilters: () => void
-		onApplyFilters: () => void
-		toggleSubMenu: () => void
 	}
 
 export type Table_InternalFilterOption = {
@@ -866,7 +874,6 @@ export type TableComponentProps<TData extends Record<string, any> = {}> = Omit<
 			}) => object | undefined
 		}
 	>
-	hideDefaultExpandIcon?: boolean
 	enableFullScreenToggle?: boolean
 	enableGlobalFilterModes?: boolean
 	enableGlobalFilterRankedResults?: boolean
@@ -896,6 +903,8 @@ export type TableComponentProps<TData extends Record<string, any> = {}> = Omit<
 	globalFilterModeOptions?: Table_FilterOption[] | null
 	groupsSorting?: any
 	groupBorder?: string | { left: string; top: string }
+	hideDefaultExpandIcon?: boolean
+	hideSummaryRowInEmptyTable?: boolean
 	hideRowExpandColumn?: boolean
 	hideRowSelectionColumn?: boolean
 	hideTableHead?: boolean
@@ -1147,6 +1156,13 @@ export type TableComponentProps<TData extends Record<string, any> = {}> = Omit<
 	muiTableProps?:
 		| TableProps
 		| (({ table }: { table: TableInstance<TData> }) => TableProps)
+	muiTableStatusBarWrapperProps?:
+		| TableStatusBarWrapperProps
+		| (({
+				table,
+		  }: {
+				table: TableInstance<TData>
+		  }) => TableStatusBarWrapperProps)
 	muiToolbarAlertBannerChipProps?:
 		| ChipProps
 		| (({ table }: { table: TableInstance<TData> }) => ChipProps)

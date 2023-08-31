@@ -3,7 +3,7 @@ import React, { useState } from 'react'
 
 import { Table_Column, TableInstance } from '../../../'
 import { reorderColumn } from '../../../column.utils'
-import { NoOptions } from '../../NoOptions/NoOptions'
+import { NoOptions } from '../../../components/NoOptions'
 
 import { ListItemSort } from './ListItemSort'
 

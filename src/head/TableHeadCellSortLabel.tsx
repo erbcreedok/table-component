@@ -46,6 +46,8 @@ export const TableHeadCellSortLabel: FC<Props> = ({ header, table }) => {
 					flex: '0 0',
 					'& svg': {
 						margin: 0,
+						width: '18px',
+						height: '18px',
 					},
 				}}
 				IconComponent={getSortingIconConstructor({

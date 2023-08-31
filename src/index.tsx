@@ -29,6 +29,7 @@ import { TableBodyRow, type TableBodyRowProps } from './body/TableBodyRow'
 import { GroupedCellBase } from './components/GroupedCellBase'
 import { ExpandButton } from './buttons/ExpandButton'
 import { TableHeadRow } from './head/TableHeadRow'
+import { TableHeadMultiRow } from './head/TableHeadMultiRow'
 import { TooltipOverflow } from './components/TooltipOverflow'
 import { SelectCheckbox } from './inputs/SelectCheckbox'
 import { FilterMultiselect } from './components/FilterMultiselect'
@@ -72,6 +73,7 @@ export {
 	Sidebar,
 	TableBodyRow,
 	TableHeadRow,
+	TableHeadMultiRow,
 	ExpandButton,
 	TooltipOverflow,
 }

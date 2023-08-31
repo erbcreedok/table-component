@@ -15,18 +15,27 @@ import { TrashIcon } from '../../icons/TrashIcon'
 import TableComponent, {
 	Table_ColumnDef,
 	TableComponentProps,
+	TableInstance,
 	utilColumns,
 } from '../../index'
-import { CustomNoRecordsToDisplay, CustomNoResultsFound } from '../components/CustomNoResultsFound'
+import {
+	CustomNoRecordsToDisplay,
+	CustomNoResultsFound,
+} from '../components/CustomNoResultsFound'
 import { TeamMember, UnitTreeItem } from '../types/TeamMember'
 import { getTablePresetProps } from '../utils/getTablePresetProps'
 import {
 	getExpandingTeamMembers,
 	getTeamMembers,
 	getUnitTreeItems,
-    isUnitTreeItem,
+	isUnitTreeItem,
 } from '../utils/getTeamMembers'
-import { getTeamMembersColumns, teamMemberAccessorFn, ColoredGroupedCell, coloredCellProps } from '../utils/getTeamMembersColumns'
+import {
+	getTeamMembersColumns,
+	teamMemberAccessorFn,
+	ColoredGroupedCell,
+	coloredCellProps,
+} from '../utils/getTeamMembersColumns'
 import { getDefaultRowActionMenuItems } from '../utils/rowActionMenuItems'
 import { ColumnActionsFiltersMenu } from './components/ColumnActionsFiltersMenu'
 import { UnitRow } from './components/UnitRow'
@@ -40,8 +49,16 @@ const multiHeader = [
 		columns: [
 			{
 				text: 'WORKLOAD',
-				columnIds: ['teamMember', 'impact', 'performance', 'riskOfLeaving', 'successionStatus', 'location', 'hiredAt'],
-			}
+				columnIds: [
+					'teamMember',
+					'impact',
+					'performance',
+					'riskOfLeaving',
+					'successionStatus',
+					'location',
+					'hiredAt',
+				],
+			},
 		],
 	},
 	{
@@ -55,9 +72,9 @@ const multiHeader = [
 			{
 				text: 'WORKLOAD 2',
 				columnIds: ['riskOfLeaving', 'successionStatus', 'location', 'hiredAt'],
-			}
-		]
-	}
+			},
+		],
+	},
 ]
 
 type TeamsTableConfigs = Omit<TableComponentProps<TeamMember>, 'data'> &
@@ -168,17 +185,17 @@ const getPropsHandledColumns = (
 }
 
 const getMultiHeaderByOption = (option: string) => {
-	switch(option) {
+	switch (option) {
 		case 'pinned':
 			return multiHeader
 		case 'nonPinned':
-			return multiHeader.map((el) => ({...el, pin: false}))
+			return multiHeader.map((el) => ({ ...el, pin: false }))
 		case 'partialPinned':
 			return multiHeader.map((el, i) => {
 				if (i === multiHeader.length - 1) {
 					return {
 						...el,
-						pin: false
+						pin: false,
 					}
 				}
 
@@ -189,23 +206,29 @@ const getMultiHeaderByOption = (option: string) => {
 				if (i === 0) {
 					return {
 						...el,
-						additionalRowContent: (table, cellsPropsArray, groupedCellsPropsArray) => {
+						additionalRowContent: (
+							table,
+							cellsPropsArray,
+							groupedCellsPropsArray
+						) => {
 							const colSpan = cellsPropsArray.reduce((colSpan, cellProps) => {
-								return colSpan += cellProps.colSpan
+								return (colSpan += cellProps.colSpan)
 							}, 0)
-							const groupedColSpan = groupedCellsPropsArray && groupedCellsPropsArray.reduce((colSpan, cellProps) => {
-								return colSpan += cellProps.colSpan
-							}, 0)
-				
+							const groupedColSpan =
+								groupedCellsPropsArray &&
+								groupedCellsPropsArray.reduce((colSpan, cellProps) => {
+									return (colSpan += cellProps.colSpan)
+								}, 0)
+
 							return (
 								<>
-									{groupedCellsPropsArray && (
-										<th colSpan={groupedColSpan} />
-									)}
-									<th colSpan={colSpan} style={{ backgroundColor: 'E1E3EB' }}>Additional Content</th>
+									{groupedCellsPropsArray && <th colSpan={groupedColSpan} />}
+									<th colSpan={colSpan} style={{ backgroundColor: 'E1E3EB' }}>
+										Additional Content
+									</th>
 								</>
 							)
-						}
+						},
 					}
 				}
 
@@ -217,9 +240,9 @@ const getMultiHeaderByOption = (option: string) => {
 }
 
 const SummaryRowExampleCellValue = (props) => {
-	const { column, defaultStyles } = props
+	const { column, table, defaultStyles } = props
 
-	const rows = column.getFacetedRowModel().rows
+	const rows = (table as TableInstance).getPaginationRowModel().rows
 
 	const getColumnValues = (columnId) => {
 		return rows.reduce((result, row) => {
@@ -250,10 +273,11 @@ const SummaryRowExampleCellValue = (props) => {
 			partialCount += colValues['High']
 		}
 
-		return Math.round(100 - (100 * partialCount) / rows.length)
+		const value = Math.round(100 - (100 * partialCount) / rows.length)
+		return isNaN(value) ? 0 : value
 	}
 
-	if (column.id === 'table-row-select') {
+	if (column.id === utilColumns.column) {
 		return <MuiTableCell sx={{ ...defaultStyles }}></MuiTableCell>
 	}
 
@@ -269,11 +293,13 @@ const SummaryRowExampleCellValue = (props) => {
 		<MuiTableCell sx={{ ...defaultStyles }}>
 			<LinearProgress
 				sx={{
-					width: '100%',
+					width: 'calc(100% - 12px)',
+					mx: '6px',
 					height: '12px',
 					backgroundColor: '#FED7D7',
 					'& > span': {
 						backgroundColor: '#93E98C',
+						transition: '300ms',
 					},
 				}}
 				variant="determinate"
@@ -353,9 +379,7 @@ const TeamsTable: Story<TeamsTableConfigs> = (args) => {
 }
 
 export const TeamsTableDefault: Story<TeamsTableExample> = (args) => {
-	return (
-		<TeamsTable columns={columns} {...args} />
-	)
+	return <TeamsTable columns={columns} {...args} />
 }
 
 export const TeamsTableSubtree: Story<TeamsTableExample> = (args) => (
@@ -690,6 +714,10 @@ const meta: Meta = {
 			control: 'boolean',
 			defaultValue: false,
 		},
+		hideSummaryRowInEmptyTable: {
+			control: 'boolean',
+			defaultValue: false,
+		},
 		initialState: {
 			control: { type: 'object' },
 			defaultValue: {},
@@ -710,15 +738,17 @@ const meta: Meta = {
 				'Not enabled': undefined,
 				'Workload Values Pinned': getMultiHeaderByOption('pinned'),
 				'Workload Values Non-pinned': getMultiHeaderByOption('nonPinned'),
-				'Workload Values Partially pinned': getMultiHeaderByOption('partialPinned'),
-				'Workload Values with additional row': getMultiHeaderByOption('withAdditionalRows'),
+				'Workload Values Partially pinned':
+					getMultiHeaderByOption('partialPinned'),
+				'Workload Values with additional row':
+					getMultiHeaderByOption('withAdditionalRows'),
 			},
 		},
 		noRecordsToDisplaySlot: {
 			options: ['Not provided', 'Custom component'],
 			mapping: {
 				'Not provided': undefined,
-				'Custom component': <CustomNoRecordsToDisplay />
+				'Custom component': <CustomNoRecordsToDisplay />,
 			},
 			control: { type: 'select' },
 		},
@@ -726,14 +756,15 @@ const meta: Meta = {
 			options: ['Not provided', 'Custom component'],
 			mapping: {
 				'Not provided': undefined,
-				'Custom component': <CustomNoResultsFound />
+				'Custom component': <CustomNoResultsFound />,
 			},
 			control: { type: 'select' },
 		},
 		rowsCount: {
 			control: { type: 'number' },
 			defaultValue: 100,
-			description: '***THIS IS NOT A PROP***\n' +
+			description:
+				'***THIS IS NOT A PROP***\n' +
 				'Set row count for Table default, does not work with Subtree and Hierarchy Group Tables. Refresh table to after setting new value',
 		},
 		toolbarProps: {
@@ -744,9 +775,10 @@ const meta: Meta = {
 		enableLoremIpsumColumn: {
 			control: 'boolean',
 			defaultValue: false,
-			description: '***THIS IS NOT A PROP***\n' +
+			description:
+				'***THIS IS NOT A PROP***\n' +
 				'Set the Lorem Ipsum column for checking multirow trim',
-		}
+		},
 	},
 }
 

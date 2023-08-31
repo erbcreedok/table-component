@@ -8,8 +8,8 @@ import {
 } from '../../TableComponent'
 import { getColumnFilterOptions } from '../../utils/getColumnFilterOptions'
 import { splitFilterOptions } from '../../utils/splitFilterOptions'
-import { DropdownContentHeader } from '../DropdownContent/DropdownContentHeader'
-import { DropdownContentSearch } from '../DropdownContent/DropdownContentSearch'
+import { DropdownContentHeader } from '../../components/DropdownContent/DropdownContentHeader'
+import { DropdownContentSearch } from '../../components/DropdownContent/DropdownContentSearch'
 
 import { FilterChipList } from './FilterChipList'
 

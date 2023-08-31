@@ -1,6 +1,6 @@
 import { FC, useEffect, useState } from 'react'
 
-import { NoOptions } from '../../NoOptions/NoOptions'
+import { NoOptions } from '../../../components/NoOptions'
 
 import { ListSearchSortingItem } from './ListSearchSortingItem'
 

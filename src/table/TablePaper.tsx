@@ -96,7 +96,7 @@ export const TablePaper: FC<Props> = ({ table }) => {
 								{...toolbarProps}
 							/>
 					  ))}
-			{enableStatusBar && <TableStatusBar sx={{ p: '6px' }} table={table} />}
+			{enableStatusBar && <TableStatusBar table={table} />}
 			<TableContainer table={table} />
 			{enableBottomToolbar &&
 				(renderBottomToolbar instanceof Function
