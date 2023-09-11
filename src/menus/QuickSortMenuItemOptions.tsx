@@ -6,6 +6,8 @@ import React, { FC } from 'react'
 import { Colors } from '../components/styles'
 import { Table_Column, TableInstance } from '../TableComponent'
 import { getSortingIcon, getSortingText } from '../utils/getSortingInfo'
+import { getPascalCase } from '../utils/getPascalCase'
+import { withNativeEvent } from '../utils/withNativeEvent'
 
 import { commonListItemStyles, commonMenuItemStyles } from './constants'
 
@@ -49,7 +51,25 @@ export const QuickSortMenuItemOptions: FC<Props> = ({
 
 	return (
 		<>
-			<MenuItem key={1} onClick={handleSortAsc} sx={commonMenuItemStyles}>
+			<MenuItem
+				key={1}
+				onClick={withNativeEvent(
+					{
+						el: `ColumnHeaderMenu_${getPascalCase(
+							column.columnDef.header
+						)}_${getPascalCase(
+							getSortingText({
+								table,
+								sortingFn: column.getSortingFn(),
+								isAsc: true,
+							})
+						)}`,
+						type: 'click',
+					},
+					table
+				)(handleSortAsc)}
+				sx={commonMenuItemStyles}
+			>
 				<Box sx={commonListItemStyles}>
 					<ListItemIcon>
 						{getSortingIcon({
@@ -70,7 +90,21 @@ export const QuickSortMenuItemOptions: FC<Props> = ({
 			<MenuItem
 				key={2}
 				divider
-				onClick={handleSortDesc}
+				onClick={withNativeEvent(
+					{
+						el: `ColumnHeaderMenu_${getPascalCase(
+							column.columnDef.header
+						)}_${getPascalCase(
+							getSortingText({
+								table,
+								sortingFn: column.getSortingFn(),
+								isAsc: false,
+							})
+						)}`,
+						type: 'click',
+					},
+					table
+				)(handleSortDesc)}
 				sx={commonMenuItemStyles}
 			>
 				<Box sx={commonListItemStyles}>

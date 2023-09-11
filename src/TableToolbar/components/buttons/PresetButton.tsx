@@ -16,6 +16,7 @@ import { NotificationDot } from '../../../components/NotificationDot'
 import { PresetMenu } from '../menus/PresetMenu/PresetMenu'
 import { PresetNotification } from '../menus/PresetMenu/components/PresetNotification'
 import { useTableContext } from '../../../context/useTableContext'
+import { withNativeEvent } from '../../../utils/withNativeEvent'
 
 import { getIsStateTheSame, isPresetStateEmpty } from './helpers/presetHelpers'
 import { PRESET_THEME } from './presetContants'
@@ -87,21 +88,11 @@ export const PresetButton = <TData extends Record<string, any> = {}>({
 		columnFilters,
 		columnVisibility,
 	}: PresetState) => {
-		if (columnOrder) {
-			setColumnOrder(columnOrder)
-		}
-		if (grouping) {
-			setGrouping(() => grouping)
-		}
-		if (sorting) {
-			setSorting(sorting)
-		}
-		if (columnFilters) {
-			setColumnFilters(columnFilters)
-		}
-		if (columnVisibility) {
-			setColumnVisibility(columnVisibility)
-		}
+		setColumnOrder(columnOrder ?? [])
+		setGrouping(() => grouping ?? [])
+		setSorting(sorting ?? [])
+		setColumnFilters(columnFilters ?? [])
+		setColumnVisibility(columnVisibility ?? {})
 	}
 
 	useEffect(() => {
@@ -150,7 +141,13 @@ export const PresetButton = <TData extends Record<string, any> = {}>({
 			<Tooltip placement="top" title={capitalize(tooltipTitle)}>
 				<ToolbarIconButton
 					aria-label={localization.showPreset}
-					onClick={handleClick}
+					onClick={withNativeEvent(
+						{
+							el: 'ActionBar_PresetsButton',
+							type: 'click',
+						},
+						table
+					)(handleClick)}
 					disableRipple
 					ref={toolbarRef}
 					toggled={open}

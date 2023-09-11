@@ -3,6 +3,9 @@ import ListItemIcon from '@mui/material/ListItemIcon'
 import MenuItem from '@mui/material/MenuItem'
 import React from 'react'
 
+import { getPascalCase } from '../utils/getPascalCase'
+import { withNativeEvent } from '../utils/withNativeEvent'
+
 import { commonListItemStyles, commonMenuItemStyles } from './constants'
 
 export const QuickHidingMenuItems = ({ column, table, setVisible }) => {
@@ -29,7 +32,15 @@ export const QuickHidingMenuItems = ({ column, table, setVisible }) => {
 		<MenuItem
 			disabled={!column.getCanHide()}
 			key={0}
-			onClick={handleHideColumn}
+			onClick={withNativeEvent(
+				{
+					el: `ColumnHeaderMenu_${getPascalCase(
+						column.columnDef.header
+					)}_HideInViewButton`,
+					type: 'click',
+				},
+				table
+			)(handleHideColumn)}
 			sx={commonMenuItemStyles}
 		>
 			<Box sx={commonListItemStyles}>

@@ -3,18 +3,18 @@ import type { IconButtonProps } from '@mui/material/IconButton'
 import { Typography } from '@mui/material'
 
 import { Tooltip } from '../../../components/Tooltip'
-import type { TableInstance } from '../../../index'
+import type { TableData, TableInstance } from '../../../index'
 import { ToolbarIconButton } from '../../../components/ToolbarIconButton'
 import { IconsColor } from '../../../components/styles'
 import { SortingMenu } from '../menus/SortingMenu/SortingMenu'
+import { withNativeEvent } from '../../../utils/withNativeEvent'
 
-interface Props<TData extends Record<string, any> = {}>
-	extends IconButtonProps {
+type Props<TData extends TableData> = IconButtonProps & {
 	table: TableInstance<TData>
 	enableCaption: boolean
 }
 
-export const SortingButton = <TData extends Record<string, any> = {}>({
+export const SortingButton = <TData extends TableData = {}>({
 	table,
 	enableCaption,
 	disabled,
@@ -42,7 +42,13 @@ export const SortingButton = <TData extends Record<string, any> = {}>({
 			>
 				<ToolbarIconButton
 					aria-label={localization.showSorting}
-					onClick={handleClick}
+					onClick={withNativeEvent(
+						{
+							el: 'ActionBar_SortButton',
+							type: 'click',
+						},
+						table
+					)(handleClick)}
 					disableRipple
 					enableCaption={enableCaption}
 					disabled={disabled}

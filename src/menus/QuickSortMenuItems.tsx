@@ -8,6 +8,8 @@ import React, { FC, MutableRefObject } from 'react'
 import { MenuPaper } from '../components/Menu'
 import { useHoverEffects } from '../hooks/useHoverEffects'
 import { Table_Column, TableInstance } from '../TableComponent'
+import { getPascalCase } from '../utils/getPascalCase'
+import { withNativeEvent } from '../utils/withNativeEvent'
 
 import { QuickSortMenuItemOptions } from './QuickSortMenuItemOptions'
 import { commonListItemStyles, commonMenuItemStyles } from './constants'
@@ -51,6 +53,15 @@ export const QuickSortMenuItems: FC<Props> = ({
 					background: hovered ? theme.palette.action.hover : undefined,
 				})}
 				{...hoverProps}
+				onMouseEnter={withNativeEvent(
+					{
+						el: `ColumnHeaderMenu_${getPascalCase(
+							column.columnDef.header
+						)}_SortButton`,
+						type: 'hover',
+					},
+					table
+				)(hoverProps.onMouseEnter)}
 			>
 				<Box sx={commonListItemStyles}>
 					<ListItemIcon>

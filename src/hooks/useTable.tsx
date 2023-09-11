@@ -323,10 +323,13 @@ export const useTable = <TData extends Record<string, any> = {}>(
 		localStorage.setItem('tablePresets', JSON.stringify(presets))
 	}, [])
 
-	const getDefaultPresets = useCallback(
-		() => [getDefaultPreset(initialState)],
-		[]
-	)
+	const getDefaultPresets = useCallback(() => {
+		if (config.onGetDefaultPresets) {
+			return config.onGetDefaultPresets(initialState)
+		}
+
+		return [getDefaultPreset(initialState)]
+	}, [])
 
 	const searchData = (id: string | string[] | null) => {
 		setSearchId(id)
@@ -443,7 +446,7 @@ export const useTable = <TData extends Record<string, any> = {}>(
 			config.onShowToolbarDropZoneChange ?? setShowToolbarDropZone,
 		getPresets: config.onGetPresets ?? getPresets,
 		savePresets: config.onSavePresets ?? savePresets,
-		getDefaultPresets: config.onGetDefaultPresets ?? getDefaultPresets,
+		getDefaultPresets,
 		showSearchData: searchData,
 		setHighlightHeadCellId: highlightCellId,
 		CustomRow: config.CustomRow,

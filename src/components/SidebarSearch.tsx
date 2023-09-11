@@ -5,7 +5,7 @@ import {
 	InputAdornment,
 	IconButton,
 } from '@mui/material'
-import React, { ComponentProps, useEffect, useState } from 'react'
+import React, { ComponentProps, useEffect, useState, MouseEvent } from 'react'
 
 import { CloseIcon } from '../icons/CloseIcon'
 import { SearchIcon } from '../icons/SearchIcon'
@@ -34,6 +34,7 @@ const SidebarSearch = styled(TextField)`
 
 type Props = {
 	onChange(value: string): void
+	onClear?(event: MouseEvent<HTMLElement>): void
 	dividerProps?: ComponentProps<typeof Divider>
 	reset?: boolean
 } & Omit<ComponentProps<typeof SidebarSearch>, 'onChange'>
@@ -42,6 +43,7 @@ export const SidebarSearchComponent = ({
 	dividerProps,
 	reset,
 	onChange,
+	onClear,
 	...rest
 }: Props) => {
 	const [input, setInput] = useState<string>('')
@@ -52,9 +54,10 @@ export const SidebarSearchComponent = ({
 		onChange(e.target.value.toLowerCase())
 	}
 
-	const handleClearCLick = () => {
+	const handleClearCLick = (event: MouseEvent<HTMLElement>) => {
 		setInput('')
 		onChange('')
+		onClear?.(event)
 	}
 
 	useEffect(() => {

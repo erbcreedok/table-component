@@ -1,23 +1,20 @@
-import { Preset } from '../../TableToolbar/components/buttons/PresetButton'
+import { Preset, PresetState } from '../../TableToolbar/components/buttons/PresetButton'
+import { DEFAULT_PRESETS } from '../../TableToolbar/components/buttons/presetContants'
 
-const DEFAULT_PRESETS: Preset[] = [
-	{
-		id: 0,
-		name: 'Default',
-		checked: true,
-		suggested: true,
-		state: {
-			columnOrder: undefined,
-			grouping: undefined,
-			sorting: undefined,
-			columnFilters: undefined,
-			columnVisibility: undefined,
-		},
+const getDefaultPreset = (state: Partial<PresetState>, defaultPreset?: Preset[]) => {
+	if (defaultPreset) {
+		return defaultPreset
 	}
-]
+
+	return DEFAULT_PRESETS.map((preset) => ({
+		...preset,
+		state: { ...preset.state, ...state }
+	}))
+}
+
 export const getTablePresetProps = (
 	presetStorageName,
-	defaultPreset: Preset[] = DEFAULT_PRESETS
+	defaultPreset?: Preset[]
 ) => ({
 	onSavePresets: (presets) => {
 		localStorage.setItem(presetStorageName, JSON.stringify(presets))
@@ -26,8 +23,8 @@ export const getTablePresetProps = (
 		try {
 			return JSON.parse(localStorage.getItem(presetStorageName) as string)
 		} catch (e) {
-			return defaultPreset
+			return defaultPreset ?? DEFAULT_PRESETS
 		}
 	},
-	onGetDefaultPresets: () => defaultPreset,
+	onGetDefaultPresets: (state) => getDefaultPreset(state, defaultPreset),
 })

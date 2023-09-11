@@ -55,6 +55,12 @@ export const PresetInput = ({
 	}
 
 	const handleEnterKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
+		event.stopPropagation()
+
+		if (event.key === 'Escape') {
+			handleResetValue()
+		}
+
 		if (event.key === 'Enter' && value.length > 0) {
 			handleSave()
 		}

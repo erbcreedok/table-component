@@ -4,6 +4,7 @@ import React, {
 	cloneElement,
 	ComponentProps,
 	ReactElement,
+	MouseEvent,
 	useCallback,
 } from 'react'
 
@@ -11,6 +12,8 @@ import { useTableContext } from '../../context/useTableContext'
 import { Table_Row, TableInstance } from '../../TableComponent'
 import { Colors } from '../styles'
 import { Tooltip } from '../Tooltip'
+import { getPascalCase } from '../../utils/getPascalCase'
+import { withNativeEvent } from '../../utils/withNativeEvent'
 
 export type BulkActionButtonProps<TData extends Record<string, any> = {}> = {
 	text: string
@@ -40,7 +43,7 @@ export const BulkActionButton = (props: BulkActionButtonProps) => {
 	const { getSelectedRowModel } = table
 
 	const handleClick = useCallback(
-		(event) => {
+		(event: MouseEvent<HTMLElement>) => {
 			onClick({ table, event, selectedRows: getSelectedRowModel().flatRows })
 		},
 		[getSelectedRowModel, onClick, table]
@@ -66,7 +69,13 @@ export const BulkActionButton = (props: BulkActionButtonProps) => {
 					},
 					...(sx instanceof Function ? sx(theme) : (sx as any)),
 				})}
-				onClick={handleClick}
+				onClick={withNativeEvent(
+					{
+						el: `BulkActionsPanel_${getPascalCase(text)}`,
+						type: 'click',
+					},
+					table
+				)(handleClick)}
 			>
 				{icon &&
 					cloneElement(icon as ReactElement, {

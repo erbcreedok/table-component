@@ -329,7 +329,7 @@ const TeamsTable: Story<TeamsTableConfigs> = (args) => {
 			columns={getPropsHandledColumns(columns, args)}
 			groupBorder={{ left: '6px solid white', top: '6px solid white' }}
 			initialState={{
-				sorting: defaultSorting,
+				sorting: defaultSorting ?? [],
 				columnOrder: defaultColumnOrder,
 				columnVisibility: defaultColumnVisibility,
 				...initialState,
@@ -372,6 +372,7 @@ const TeamsTable: Story<TeamsTableConfigs> = (args) => {
 				}
 				return canDrag
 			}}
+			onNativeEvent={(props) => console.log(props)}
 			{...getTablePresetProps('teamsDefaultTable')}
 			{...rest}
 		/>

@@ -10,7 +10,7 @@ type Props<TData extends object> = {
 }
 export const CellBase = <TData extends object>({ cell }: Props<TData>) => {
 	const [isTruncated, setIsTruncated] = useState(false)
-	const cellValue = cell.getValue()
+	const text = `${cell.getValue() ?? ''}`
 
 	const textWithTooltip = ({ children }) => {
 		return (
@@ -18,7 +18,7 @@ export const CellBase = <TData extends object>({ cell }: Props<TData>) => {
 				arrow
 				enterDelay={1000}
 				enterNextDelay={1000}
-				title={(cellValue as string) ?? ''}
+				title={text}
 				disableHoverListener={!isTruncated}
 			>
 				<Box>{children}</Box>
@@ -30,7 +30,7 @@ export const CellBase = <TData extends object>({ cell }: Props<TData>) => {
 		<TextTruncate
 			line={2}
 			truncateText="..."
-			text={cellValue ?? ''}
+			text={text}
 			textElement={textWithTooltip}
 			onTruncated={() => setIsTruncated(true)}
 		/>

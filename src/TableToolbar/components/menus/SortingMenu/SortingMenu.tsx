@@ -8,6 +8,7 @@ import { ButtonLink } from '../../../../components/ButtonLink'
 import { getColumnId, reorderColumn } from '../../../../column.utils'
 import { ListTitle } from '../../../../components/ListTitle'
 import { Sidebar } from '../../../../components/Sidebar'
+import { withNativeEvent } from '../../../../utils/withNativeEvent'
 
 interface Props<TData extends Record<string, any> = {}> {
 	anchorEl: HTMLElement | null
@@ -106,7 +107,14 @@ export const SortingMenu = <TData extends Record<string, any> = {}>({
 			withHeader
 			withSearch
 			headerTitle="Sorting"
-			onSearchChange={handleOnSearchChange}
+			onSearchChange={withNativeEvent<string, TData>(
+				{ el: 'SortingMenu_Search', type: 'keypress' },
+				table
+			)(handleOnSearchChange)}
+			onSearchClear={withNativeEvent(
+				{ el: 'SortingMenu_Search_Clear', type: 'click' },
+				table
+			)(() => null)}
 			innerTableSidebar={innerTable}
 		>
 			<Box sx={{ marginTop: '12px' }}>

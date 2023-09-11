@@ -1,5 +1,6 @@
 import Box from '@mui/material/Box'
 import React, {
+	ChangeEvent,
 	FC,
 	KeyboardEvent,
 	MouseEventHandler,
@@ -32,6 +33,8 @@ import {
 } from '../components/styles'
 import { useDelay } from '../hooks/useDelay'
 import { getValueFromObj } from '../utils/getValueFromObj'
+import { getPascalCase } from '../utils/getPascalCase'
+import { withNativeEvent } from '../utils/withNativeEvent'
 
 import { HeaderBase } from './HeaderBase'
 
@@ -217,7 +220,15 @@ export const HeaderSearch = <T extends TableData>({
 							endAdornment: searchValue.length > 0 && (
 								<InputAdornment position="end">
 									<IconButton
-										onClick={toggleSearch}
+										onClick={withNativeEvent(
+											{
+												el: `ColumnHeader_${getPascalCase(
+													column.columnDef.header
+												)}_Search_${isSearch ? 'Clear' : 'Open'}`,
+												type: 'click',
+											},
+											table
+										)(toggleSearch)}
 										disableRipple
 										sx={{ '&:hover svg': { color: IconsColor.active }, p: 0.5 }}
 									>
@@ -230,7 +241,15 @@ export const HeaderSearch = <T extends TableData>({
 							),
 						}}
 						value={input}
-						onChange={handleInputChange}
+						onChange={withNativeEvent<ChangeEvent<HTMLTextAreaElement>, T>(
+							{
+								el: `ColumnHeader_${getPascalCase(
+									column.columnDef.header
+								)}_Search`,
+								type: 'keypress',
+							},
+							table
+						)(handleInputChange)}
 						onKeyDown={handleEnterKeyDown}
 						onClick={(e) => e.stopPropagation()}
 						autoFocus

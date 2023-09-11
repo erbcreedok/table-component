@@ -87,6 +87,7 @@ export const ColumnActionMenu: FC<Props> = ({
 					/>,
 					<QuickFilterMenuItems
 						key="filter"
+						column={column}
 						toggleSubMenu={toggleSubMenu}
 						table={table}
 					/>,

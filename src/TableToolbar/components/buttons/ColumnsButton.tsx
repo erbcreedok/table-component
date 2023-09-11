@@ -7,6 +7,7 @@ import type { TableInstance } from '../../../index'
 import { ToolbarIconButton } from '../../../components/ToolbarIconButton'
 import { IconsColor } from '../../../components/styles'
 import { ColumnsMenu } from '../menus/ColumnsMenu/ColumnsMenu'
+import { withNativeEvent } from '../../../utils/withNativeEvent'
 
 interface Props<TData extends Record<string, any> = {}>
 	extends IconButtonProps {
@@ -42,7 +43,10 @@ export const ColumnsButton = <TData extends Record<string, any> = {}>({
 			>
 				<ToolbarIconButton
 					aria-label={localization.showColumns}
-					onClick={handleClick}
+					onClick={withNativeEvent(
+						{ el: 'ActionBar_ColumnsButton', type: 'click' },
+						table
+					)(handleClick)}
 					disableRipple
 					enableCaption={enableCaption}
 					disabled={disabled}

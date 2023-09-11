@@ -1,5 +1,5 @@
 import { backdropClasses, paperClasses } from '@mui/material'
-import React, { ReactElement, ReactNode } from 'react'
+import React, { ReactElement, ReactNode, MouseEvent } from 'react'
 import Box from '@mui/material/Box'
 import Drawer from '@mui/material/Drawer'
 
@@ -12,6 +12,7 @@ interface Props {
 	withHeader?: boolean
 	withSearch?: boolean
 	onSearchChange?(value: string): void
+	onSearchClear?(event: MouseEvent<HTMLElement>): void
 	headerTitle?: string
 	subHeader?: string | ReactElement | null
 	styles?: Record<string, any>
@@ -26,6 +27,7 @@ export const Sidebar = ({
 	withHeader = false,
 	withSearch = false,
 	onSearchChange = () => null,
+	onSearchClear,
 	headerTitle = '',
 	subHeader,
 	styles = { minWidth: 400, maxWidth: '80vw' },
@@ -59,7 +61,12 @@ export const Sidebar = ({
 							onClick={onClose}
 						/>
 					)}
-					{withSearch && <SidebarSearchComponent onChange={onSearchChange} />}
+					{withSearch && (
+						<SidebarSearchComponent
+							onChange={onSearchChange}
+							onClear={onSearchClear}
+						/>
+					)}
 					<Box
 						sx={{
 							maxHeight: `calc(100% - ${withSearch ? '116' : '65'}px)`,

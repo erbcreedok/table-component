@@ -3,6 +3,7 @@ import { Theme } from '@mui/material/styles'
 import React, {
 	Dispatch,
 	FC,
+	MouseEventHandler,
 	MutableRefObject,
 	ReactElement,
 	ReactNode,
@@ -57,7 +58,10 @@ import { Table_Icons } from './icons'
 import { Table_SortingFns } from './sortingFns'
 import { TableMain } from './table/TableMain'
 import { TableStatusBarWrapperProps } from './TableStatusBar'
-import { Preset } from './TableToolbar/components/buttons/PresetButton'
+import {
+	Preset,
+	PresetState,
+} from './TableToolbar/components/buttons/PresetButton'
 import { TableToolbarProps } from './TableToolbar/TableToolbar'
 
 /**
@@ -324,6 +328,11 @@ export type Table_TableState<TData extends Record<string, any> = {}> =
 	}
 
 export type FilterOption = {
+	label: string
+	value: any
+}
+
+export type SelectOption = {
 	label: string
 	value: any
 }
@@ -779,6 +788,18 @@ export type HoveredRowState<TData extends TableData> = {
 	rowRef: MutableRefObject<HTMLTableRowElement | null>
 } | null
 
+export type TableInputProps = TextFieldProps & {
+	options?: SelectOption[]
+	onClear?: MouseEventHandler
+}
+
+export type NativeEventArgs = {
+	el: any
+	type: 'click' | 'keypress' | 'hover'
+	event?: any
+	value?: any
+}
+
 /**
  * `columns` and `data` props are the only required props, but there are over 150 other optional props.
  *
@@ -1207,8 +1228,19 @@ export type TableComponentProps<TData extends Record<string, any> = {}> = Omit<
 	onShowToolbarDropZoneChange?: OnChangeFn<boolean>
 	onGetPresets?: () => Preset[]
 	onSavePresets?: (presets: Preset[]) => void
-	onGetDefaultPresets?: () => Preset[]
+	onGetDefaultPresets?: (state?: PresetState) => Preset[]
 	onSearchData?: () => void
+	onNativeEvent?: ({
+		el,
+		type,
+		event,
+		value,
+	}: {
+		el: any
+		type: 'click' | 'keypress' | 'hover'
+		event?: any
+		value?: any
+	}) => void
 	positionActionsColumn?: 'first' | 'last'
 	positionExpandColumn?: 'first' | 'last'
 	positionGlobalFilter?: 'left' | 'right' | 'none'
