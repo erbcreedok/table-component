@@ -177,7 +177,11 @@ const arrIncludesSome = <TData extends Record<string, any> = {}>(
 	return filterValue.some((val) => {
 		const value = row.getValue<unknown[]>(columnId)
 
-		return value?.includes(val) || value === val
+		if (typeof value === 'string' || Array.isArray(value)) {
+			return value.includes(val) || value === val
+		}
+
+		return value === val
 	})
 }
 arrIncludesSome.autoRemove = filterFns.arrIncludesSome.autoRemove

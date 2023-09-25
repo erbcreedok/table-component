@@ -23,7 +23,7 @@ export const PresetNotification = ({
 			anchorEl={anchorEl}
 			placement="bottom-end"
 			sx={(theme) => ({
-				zIndex: theme.zIndex.drawer,
+				zIndex: theme.zIndex.snackbar,
 			})}
 		>
 			<ClickAwayListener onClickAway={handleClose}>

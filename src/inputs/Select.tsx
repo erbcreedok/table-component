@@ -1,5 +1,6 @@
-import { AutocompleteProps } from '@mui/material'
+import { AutocompleteProps, AutocompleteValue } from '@mui/material'
 import Autocomplete from '@mui/material/Autocomplete'
+import { AutocompleteRenderGetTagProps } from '@mui/material/Autocomplete/Autocomplete'
 import { ChipTypeMap } from '@mui/material/Chip'
 import { PartialKeys } from '@tanstack/table-core'
 import React from 'react'
@@ -18,28 +19,32 @@ export type SelectProps<
 	FreeSolo extends boolean | undefined = false,
 	ChipComponent extends React.ElementType = ChipTypeMap['defaultComponent']
 > = PartialKeys<
-	AutocompleteProps<T, Multiple, DisableClearable, FreeSolo, ChipComponent>,
-	'renderInput' | 'value'
+	Omit<
+		AutocompleteProps<T, Multiple, DisableClearable, FreeSolo, ChipComponent>,
+		'value'
+	>,
+	'renderInput' | 'options'
 > & {
-	inputProps: InputProps
-	value:
-		| (SelectOption | string | undefined)
-		| (SelectOption | string | undefined)[]
+	inputProps?: InputProps
+	value?: (T | string | undefined | null) | (T | string | undefined | null)[]
 }
 
-const isOptionEqualToValue = (
-	option: SelectOption,
-	value: string | SelectOption | undefined
+const isOptionEqualToValue = <T extends Record<string, any> = SelectOption>(
+	option: T,
+	value: string | T | undefined
 ) => {
 	return typeof value === 'object' && 'value' in value
 		? option.value === value.value
 		: option.value === value
 }
-const getOptionLabel = (option: SelectOption | string) =>
-	typeof option === 'string' ? option : option.label
-const renderTags: SelectProps['renderTags'] = (
-	options,
-	getTagProps,
+const getOptionLabel = <T extends Record<string, any> = SelectOption>(
+	option: T
+) => {
+	return typeof option === 'object' && 'label' in option ? option.label : option
+}
+const renderTags = <T extends Record<string, any> = SelectOption>(
+	options: T[],
+	getTagProps: AutocompleteRenderGetTagProps,
 	ownerState
 ) => (
 	<Flex gap="3px" flexWrap="wrap" width="100%">
@@ -55,7 +60,15 @@ const renderTags: SelectProps['renderTags'] = (
 	</Flex>
 )
 
-export const Select = ({ inputProps, ...props }: SelectProps) => {
+export const Select = <
+	T extends Record<string, any> = SelectOption,
+	Multiple extends boolean | undefined = boolean
+>({
+	inputProps,
+	options = [],
+	value,
+	...props
+}: SelectProps<T, Multiple>) => {
 	const {
 		table: {
 			options: {
@@ -65,7 +78,7 @@ export const Select = ({ inputProps, ...props }: SelectProps) => {
 	} = useTableContext()
 
 	return (
-		<Autocomplete<SelectOption, boolean, boolean, false>
+		<Autocomplete<T, Multiple, boolean, false>
 			fullWidth
 			size="small"
 			popupIcon={<ChevronDownIcon />}
@@ -74,6 +87,8 @@ export const Select = ({ inputProps, ...props }: SelectProps) => {
 			renderInput={(params) => <Input {...inputProps} {...params} />}
 			isOptionEqualToValue={isOptionEqualToValue}
 			renderTags={renderTags}
+			options={options}
+			value={value as AutocompleteValue<T, Multiple, boolean, false>}
 			{...props}
 		/>
 	)

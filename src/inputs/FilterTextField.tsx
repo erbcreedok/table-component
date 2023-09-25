@@ -308,7 +308,7 @@ export const FilterTextField: FC<Props> = ({
 										{(selected as string[])?.map((value) => {
 											const selectedValue = columnDef.filterSelectOptions?.find(
 												(option) =>
-													option instanceof Object
+													typeof option === 'object'
 														? option.value === value
 														: option === value
 											)
@@ -317,7 +317,7 @@ export const FilterTextField: FC<Props> = ({
 												<Chip
 													key={value}
 													label={
-														selectedValue instanceof Object
+														typeof selectedValue === 'object'
 															? selectedValue.label
 															: selectedValue
 													}

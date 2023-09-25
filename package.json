@@ -1,6 +1,6 @@
 {
 	"name": "@core/table-component",
-	"version": "1.2.8",
+	"version": "1.2.9",
 	"description": "React table written with tanstack table v8",
 	"scripts": {
 		"dev": "start-storybook -p 6006",

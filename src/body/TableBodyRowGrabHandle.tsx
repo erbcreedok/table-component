@@ -34,9 +34,12 @@ export const TableBodyRowGrabHandle: FC<Props> = ({
 			icons: { RowDragIcon },
 			enableRowDragging,
 			validateHoveredRow,
+			handleRowsDrop,
 		},
+		getState,
 	} = table
 	const { row } = cell
+	const { grouping, draggingRows } = getState()
 	const [isDragging, setIsDragging] = useState(false)
 
 	const iconButtonProps = {
@@ -89,6 +92,7 @@ export const TableBodyRowGrabHandle: FC<Props> = ({
 
 	const handleDragEnd = (event: DragEvent<HTMLButtonElement>) => {
 		const { hoveredRow } = table.getState()
+
 		if (
 			hoveredRow &&
 			(validateHoveredRow
@@ -99,6 +103,8 @@ export const TableBodyRowGrabHandle: FC<Props> = ({
 
 			return
 		}
+
+		handleRowsDrop?.({ hoveredRow, draggingRows, grouping, table })
 		iconButtonProps?.onDragEnd?.(event)
 		table.setRowSelection(() => ({}))
 		table.setSorting(() => [])

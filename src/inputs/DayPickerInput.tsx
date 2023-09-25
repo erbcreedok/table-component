@@ -3,7 +3,7 @@ import { PropsWithChildren, RefObject } from 'react'
 import { useTableContext } from '../context/useTableContext'
 
 import { DateInput, DateInputProps } from './DateInput'
-import { DayPicker, DayPickerProps } from './DayPicker/DayPicker'
+import { DayPicker, DayPickerProps } from './DayPicker'
 
 export type DayPickerInputProps = PropsWithChildren<
 	Omit<DayPickerProps, 'children'>

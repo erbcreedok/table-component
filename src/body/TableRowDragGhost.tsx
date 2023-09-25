@@ -6,6 +6,7 @@ import React, { forwardRef, ReactNode, RefObject, useMemo } from 'react'
 import { Colors, IconsColor, TextColor } from '../components/styles'
 import { DraggingMessage, TableData, TableInstance } from '../TableComponent'
 import { getColorAlpha } from '../utils/getColorAlpha'
+import { getTargetGroupingKeysValues } from '../utils/getTargetGroupingKeysValues'
 
 const renderCells = (
 	cells: HTMLCollection | undefined,
@@ -107,6 +108,55 @@ const Message = ({ text, type }: DraggingMessage) => {
 	)
 }
 
+const GroupingChangeMessage = ({ newGroups, columnNames, icon }) => {
+	return (
+		<Box
+			sx={{
+				p: '9px 12px',
+				borderRadius: '6px',
+				border: `2px solid ${Colors.Amber3}`,
+				background: Colors.Amber2,
+				zIndex: 10,
+				width: 'fit-content',
+			}}
+		>
+			{Object.keys(newGroups).map((group) => (
+				<Box
+					key={group}
+					sx={{
+						display: 'flex',
+						flexDirection: 'row',
+						justifyContent: 'space-between',
+						flexWrap: 'nowrap',
+					}}
+				>
+					<Typography
+						sx={{
+							fontWeight: 400,
+							fontSize: '14px',
+							lineHeight: '18px',
+							color: TextColor.Dark,
+						}}
+					>
+						{columnNames[group]}
+					</Typography>
+					{icon}
+					<Typography
+						sx={{
+							fontWeight: 700,
+							fontSize: '14px',
+							lineHeight: '18px',
+							color: TextColor.Dark,
+						}}
+					>
+						{newGroups[group] ?? 'N/A'}
+					</Typography>
+				</Box>
+			))}
+		</Box>
+	)
+}
+
 type TableRowDragGhostProps<TData extends TableData> = {
 	table: TableInstance<TData>
 	rowRef: RefObject<HTMLTableRowElement>
@@ -118,12 +168,13 @@ const TableRowDragGhostRoot = <TData extends TableData>(
 ) => {
 	const {
 		options: {
-			icons: { RowDragIcon },
+			icons: { RowDragIcon, ArrowCircleRightIcon },
 			validateHoveredRow,
 		},
 		getState,
+		getAllColumns,
 	} = table
-	const { draggingRows, hoveredRow, sorting } = getState()
+	const { draggingRows, hoveredRow, sorting, grouping } = getState()
 
 	const getShadowRowStyle = (index = 0) => ({
 		opacity: 1,
@@ -152,6 +203,41 @@ const TableRowDragGhostRoot = <TData extends TableData>(
 
 		return null
 	}, [hoveredRow, table])
+
+	const newGroupingData = useMemo(() => {
+		const draggingRowsNewGroups = getTargetGroupingKeysValues(
+			hoveredRow?.row,
+			grouping
+		)
+		if (draggingRowsNewGroups) {
+			const newGroupings = Object.keys(draggingRowsNewGroups).reduce(
+				(result, current) => {
+					if (
+						draggingRows.some(
+							(row) => row.original[current] !== draggingRowsNewGroups[current]
+						)
+					) {
+						result[current] = draggingRowsNewGroups[current]
+					}
+
+					return result
+				},
+				{}
+			)
+
+			return Object.keys(newGroupings).length ? newGroupings : null
+		}
+
+		return null
+	}, [hoveredRow?.row, grouping, draggingRows])
+
+	const columnNames = useMemo(() => {
+		return getAllColumns().reduce((result, col) => {
+			result[col.id] = col.columnDef.header
+
+			return result
+		}, {})
+	}, [getAllColumns])
 
 	if (!isDragging) return null
 
@@ -211,6 +297,17 @@ const TableRowDragGhostRoot = <TData extends TableData>(
 						/>
 					)}
 					{draggingMessage && <Message {...draggingMessage} />}
+					{newGroupingData && (
+						<GroupingChangeMessage
+							newGroups={newGroupingData}
+							columnNames={columnNames}
+							icon={
+								<ArrowCircleRightIcon
+									sx={{ mx: '14px', color: Colors.Amber4 }}
+								/>
+							}
+						/>
+					)}
 				</Box>
 			</Box>
 		</Portal>

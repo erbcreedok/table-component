@@ -22,8 +22,9 @@ import {
 	CustomNoRecordsToDisplay,
 	CustomNoResultsFound,
 } from '../components/CustomNoResultsFound'
-import { TeamMember, UnitTreeItem } from '../types/TeamMember'
+import { TeamMember, UnitTreeItem, User } from "../types/TeamMember";
 import { getTablePresetProps } from '../utils/getTablePresetProps'
+import { getDndTargetGroupingUpdateValues } from '../utils/getDndTargetGroupingUpdateValues'
 import {
 	getExpandingTeamMembers,
 	getTeamMembers,
@@ -322,19 +323,43 @@ const TeamsTable: Story<TeamsTableConfigs> = (args) => {
 		...rest
 	} = args
 	const [data, setData] = useState(propsData || getTeamMembers(rowsCount))
-
-	const handleSaveRow = ({ exitEditingMode, row, values }) => {
+	
+	const setNewRow = (row, values) => {
 		const newRow = data[row.index]
 		Object.entries(values).forEach(([key, value]) => {
 			if (key === 'teamMember') {
-				newRow.member.fullName = value as string
+				newRow.member = value as User
 			}
 			newRow[key] = value
 		})
 		data[row.index] = newRow
+	}
+
+	const handleSaveRows = ({ exitEditingMode, rows, values }) => {
+		if (Array.isArray(rows)) {
+			rows.forEach((row) => {
+				setNewRow(row, values)
+			})
+		} else {
+			setNewRow(rows, values)
+		}
 		setData([...data]);
 		exitEditingMode();
 	};
+
+	const handleRowsDrop = ({ hoveredRow, draggingRows, grouping, table }) => {
+		const newGroupingData = getDndTargetGroupingUpdateValues(
+			hoveredRow?.row,
+			grouping
+		)
+		const rowsToSave = draggingRows.map((row) => table.getRow(row.id))
+
+		handleSaveRows({
+			exitEditingMode: () => table.setEditingRow(null),
+			rows: rowsToSave,
+			values: newGroupingData ?? {},
+		})
+	}
 
 	return (
 		<TableComponent
@@ -348,7 +373,8 @@ const TeamsTable: Story<TeamsTableConfigs> = (args) => {
 				columnVisibility: defaultColumnVisibility,
 				...initialState,
 			}}
-			onEditingRowSave={handleSaveRow}
+			onEditingRowsSave={handleSaveRows}
+			handleRowsDrop={handleRowsDrop}
 			renderRowActionMenuItems={getDefaultRowActionMenuItems}
 			ColumnActionsFiltersMenu={ColumnActionsFiltersMenu}
 			summaryRowCell={(props) => <SummaryRowExampleCellValue {...props} />}
@@ -370,23 +396,6 @@ const TeamsTable: Story<TeamsTableConfigs> = (args) => {
 					}
 				},
 			})}
-			validateHoveredRow={({ row }, table) => {
-				const { draggingRows, grouping } = table.getState()
-				if (grouping.length === 0) return true
-				// prevent dragging over rows that are not in the same group
-				const canDrag = grouping.every((group) =>
-					draggingRows.every(
-						(draggingRow) => draggingRow.getValue(group) === row.getValue(group)
-					)
-				)
-				if (!canDrag) {
-					return {
-						text: 'Cannot reorder rows that are not in same group',
-						type: 'danger',
-					}
-				}
-				return canDrag
-			}}
 			onNativeEvent={(props) => console.log(props)}
 			{...getTablePresetProps('teamsDefaultTable')}
 			{...rest}

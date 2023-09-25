@@ -58,7 +58,7 @@ export const EditingEnabledEditModeModalDefault: Story<
       ]}
       data={tableData}
       enableEditing
-      onEditingRowSave={handleSaveRow}
+      onEditingRowsSave={handleSaveRow}
     />
   );
 };
@@ -100,7 +100,7 @@ export const EditingEnabledEditModeRow: Story<TableComponentProps> = () => {
       data={tableData}
       enableEditing
       editingMode="row"
-      onEditingRowSave={handleSaveRow}
+      onEditingRowsSave={handleSaveRow}
     />
   );
 };
@@ -300,7 +300,7 @@ export const EditingCustomizeInput: Story<TableComponentProps> = () => {
       enableRowActions
       enableEditing
       muiEditInputProps={{ variant: 'outlined' }}
-      onEditingRowSave={handleSaveRow}
+      onEditingRowsSave={handleSaveRow}
     />
   );
 };
@@ -375,7 +375,7 @@ export const EditingCustomizeInput: Story<TableComponentProps> = () => {
 //       data={tableData}
 //       enableRowActions
 //       enableEditing
-//       onEditingRowSave={handleSaveRow}
+//       onEditingRowsSave={handleSaveRow}
 //     />
 //   );
 // };
@@ -420,7 +420,7 @@ export const EditingEnabledAsync: Story<TableComponentProps> = () => {
       data={tableData}
       enableRowActions
       enableEditing
-      onEditingRowSave={handleSaveRow}
+      onEditingRowsSave={handleSaveRow}
       state={{
         showProgressBars: isSaving,
       }}
@@ -469,7 +469,7 @@ export const EditingNestedData: Story<TableComponentProps> = () => {
       ]}
       data={tableData}
       enableEditing
-      onEditingRowSave={({ row, values }) => {
+      onEditingRowsSave={({ row, values }) => {
         tableData[row.index] = {
           name: {
             firstName: values.firstName,
@@ -525,7 +525,7 @@ export const EditingEnabledEditModeTableWithGroupedRows: Story<
       enableEditing
       enableGrouping
       editingMode="table"
-      onEditingRowSave={handleSaveRow}
+      onEditingRowsSave={handleSaveRow}
     />
   );
 };

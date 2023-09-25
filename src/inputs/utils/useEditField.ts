@@ -1,15 +1,24 @@
 import { useState } from 'react'
 
-import { TableCellDataProps, TableData } from '../../TableComponent'
+import { Table_Row, TableCellDataProps, TableData } from '../../TableComponent'
 
+export type UseEditFieldProps<TData extends TableData> = Omit<
+	TableCellDataProps<TData>,
+	'column' | 'row'
+> & {
+	getValue?: (row: Table_Row<TData>) => any
+}
 export const useEditField = <V = string, TData extends TableData = TableData>({
 	table,
 	cell,
-}: Omit<TableCellDataProps<TData>, 'column' | 'row'>) => {
+	getValue,
+}: UseEditFieldProps<TData>) => {
 	const { getState, setEditingRow } = table
-	const { column } = cell
+	const { column, row } = cell
 	const { editingRow } = getState()
-	const [value, setValue] = useState(() => cell.getValue<V>())
+	const [value, setValue] = useState(() =>
+		getValue ? getValue(row) : cell.getValue<V>()
+	)
 	const saveRow = (newValue: V) => {
 		if (editingRow) {
 			setEditingRow({

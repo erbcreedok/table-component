@@ -1,17 +1,20 @@
-import { Avatar, TextField } from '@mui/material'
+import { Avatar, CircularProgress, TextField } from '@mui/material'
 import Box from '@mui/material/Box'
 import { TableCellProps } from '@mui/material/TableCell'
 import Typography from '@mui/material/Typography'
-import React from 'react'
-import { GroupedCellBase } from '../../components/GroupedCellBase'
+import React, { useCallback, useEffect, useState } from 'react'
 import {
 	HeaderBase,
 	HeaderSearch,
 	HeaderSearchOptionProps,
+	Flex,
+	Input,
 	RowActionMenuButton,
+	Select,
+	TextEllipsis,
+	useEditField,
+	GroupedCellBase,
 } from '../../index'
-import { Flex } from '../../components/Flex'
-import { TextEllipsis } from '../../components/TextEllipsis'
 import {
 	Table_Cell,
 	Table_Column,
@@ -21,7 +24,7 @@ import {
 } from '../../TableComponent'
 import { AnalyticsIcon } from '../../icons/AnalyticsIcon'
 import { getNestedProp } from '../../utils/getNestedProp'
-import { TeamMember } from '../types/TeamMember'
+import { TeamMember, User } from '../types/TeamMember'
 import { Colors } from './constants'
 import { convertDate } from './convertDate'
 import { createGetColors } from './createGetColors'
@@ -29,6 +32,7 @@ import { anyOfDateRange } from './customFilterFns'
 import { isTeamMember } from './getTeamMembers'
 import { getTeamsBorderColorSet } from './getTeamsBorderColorSet'
 import { getTeamsCellBackgroundSet } from './getTeamsCellBackgroundSet'
+import { searchUsers } from './searchUsers'
 import { sortByArrayOrder } from './sortByArrayOrder'
 
 const getBorderColors = createGetColors(getTeamsBorderColorSet(), {
@@ -48,7 +52,9 @@ export const ColoredGroupedCell: typeof GroupedCellBase = (props) => {
 	)
 }
 
-export const coloredCellProps = <TData extends Record<string, any> = {}>(props: {
+export const coloredCellProps = <
+	TData extends Record<string, any> = {}
+>(props: {
 	cell: Table_Cell<TData>
 	column: Table_Column<TData>
 	row: Table_Row<TData>
@@ -155,7 +161,7 @@ export const getTeamMembersColumns = () => {
 					renderOption={SearchOption}
 				/>
 			),
-			ColumnActionsFilterField: ({ value, onChange}) => (
+			ColumnActionsFilterField: ({ value, onChange }) => (
 				<Box sx={{ px: '12px', width: '100%', boxSizing: 'border-box' }}>
 					<Typography>Custom Filter Head Field</Typography>
 					<TextField
@@ -190,6 +196,94 @@ export const getTeamMembersColumns = () => {
 					/>
 				</Box>
 			),
+			Edit: (props) => {
+				const { value, setValue, saveRow } = useEditField<
+					User | null,
+					TeamMember
+				>({ ...props, getValue: (row) => row.original.member })
+				const [loading, setLoading] = useState(false)
+				const [options, setOptions] = useState<User[]>([])
+
+				const handleInputChange = useCallback(async (e, value: string) => {
+					setLoading(true)
+					setOptions(await searchUsers(value))
+					setLoading(false)
+				}, [])
+
+				useEffect(() => {
+					handleInputChange(null, '')
+				}, [handleInputChange])
+
+				return (
+					<Select<User, false>
+						onInputChange={handleInputChange}
+						options={options}
+						value={value}
+						onChange={(e, value) => {
+							setValue(value)
+							saveRow(value)
+						}}
+						loading={loading}
+						filterOptions={(options) => options}
+						getOptionLabel={(option) => option.fullName}
+						renderInput={(params) => (
+							<Input
+								{...params}
+								InputProps={{
+									...params.InputProps,
+									startAdornment: (
+										<Avatar
+											sx={{ width: 24, height: 24 }}
+											src={value?.avatarUrl}
+											alt={value?.fullName}
+										/>
+									),
+									endAdornment: (
+										<>
+											{params.InputProps.endAdornment}
+											{loading && <CircularProgress size={16} />}
+										</>
+									),
+								}}
+							/>
+						)}
+						renderOption={(props, user) => {
+							return (
+								<li {...props}>
+									<Flex
+										center="y"
+										gap="8px"
+										style={{ minWidth: '100%', padding: '0 0' }}
+									>
+										<Avatar
+											sx={{ width: 24, height: 24 }}
+											src={user.avatarUrl}
+											alt={user.fullName}
+										/>
+										<Flex column style={{ overflow: 'hidden' }}>
+											<TextEllipsis
+												style={{ fontSize: '12px' }}
+												title={user.fullName}
+											>
+												{user.fullName}
+											</TextEllipsis>
+											<TextEllipsis
+												style={{
+													color: '#6C6F80',
+													fontSize: '10px',
+													fontWeight: '400',
+												}}
+											>
+												{user.role}
+											</TextEllipsis>
+										</Flex>
+									</Flex>
+								</li>
+							)
+						}}
+					/>
+				)
+			},
 		},
 		{
 			header: 'Impact on the project',
@@ -209,7 +303,12 @@ export const getTeamMembersColumns = () => {
 			accessorFn: teamMemberAccessorFn('performance'),
 			filterVariant: 'multi-select',
 			editVariant: 'select',
-			editSelectOptions: ['Often exceeds', 'Sometimes exceeds', 'Meets', { label: 'N/A', value: undefined }],
+			editSelectOptions: [
+				'Often exceeds',
+				'Sometimes exceeds',
+				'Meets',
+				{ label: 'N/A', value: undefined },
+			],
 			GroupedCell: ColoredGroupedCell,
 			headerEndAdornment: <AnalyticsIcon />,
 			muiTableBodyCellProps: coloredCellProps,
@@ -281,7 +380,7 @@ export const getTeamMembersColumns = () => {
 				'N/A',
 			],
 			filterFn: anyOfDateRange,
-			editVariant: 'date'
+			editVariant: 'date',
 		},
 		{
 			header: 'Project completion',
@@ -291,7 +390,7 @@ export const getTeamMembersColumns = () => {
 			GroupedCell: ColoredGroupedCell,
 			Header: HeaderBase,
 			enableColumnOrdering: true,
-			editVariant: 'number'
+			editVariant: 'number',
 		},
 	] as Array<Table_ColumnDef<TeamMember>>
 }

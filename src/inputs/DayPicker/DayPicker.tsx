@@ -26,7 +26,7 @@ import { createPortal } from 'react-dom'
 import { SimpleEvent } from '../../TableComponent'
 
 import { getRenderCustomHeader } from './getRenderCustomHeader'
-import { dayPickerStyles } from './DayPickerStyles'
+import { dayPickerStyles } from './DayPicker.styles'
 
 const DEFAULT_POSITION = 'bottom'
 

@@ -42,7 +42,7 @@ export const EditingRowActionButtons = <TData extends TableData>({
 		getState,
 		options: {
 			icons: { CloseIcon, CheckIcon },
-			onEditingRowSave,
+			onEditingRowsSave,
 			onEditingRowCancel,
 		},
 		refs: { tableContainerRef },
@@ -56,9 +56,9 @@ export const EditingRowActionButtons = <TData extends TableData>({
 	}
 
 	const handleSave = () => {
-		onEditingRowSave?.({
+		onEditingRowsSave?.({
 			exitEditingMode: () => setEditingRow(null),
-			row: editingRow ?? row,
+			rows: editingRow ?? row,
 			table,
 			values: { ...row.original, ...editingRow?._valuesCache },
 		})

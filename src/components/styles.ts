@@ -25,6 +25,7 @@ export const Colors = {
 	BorderMain: '#E1E3EB',
 	Amber2: '#FFDD96',
 	Amber3: '#FCAA00',
+	Amber4: '#F67E00',
 } as const
 
 export const IconsColor = {

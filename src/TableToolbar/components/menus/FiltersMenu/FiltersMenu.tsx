@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useCallback } from 'react'
+import { useState, useMemo, useCallback, useEffect } from 'react'
 import Box from '@mui/material/Box'
 import Divider from '@mui/material/Divider'
 import { Typography } from '@mui/material'
@@ -40,6 +40,15 @@ export const FiltersMenu = <TData extends TableData>({
 		!columnFilters || !columnFilters.length
 	)
 
+	// these for not removing empty [] filters except when pressed main delete
+	const [myFiltersIds, setMyFiltersIds] = useState(
+		columnFilters.map((col) => col.id)
+	)
+	useEffect(() => {
+		if (newColumnFilter)
+			setMyFiltersIds((myFilters) => [...myFilters, newColumnFilter.id])
+	}, [newColumnFilter])
+
 	// all columns that can be filtered
 	const allColumns = useMemo(() => {
 		const columns = getAllColumns()
@@ -49,8 +58,8 @@ export const FiltersMenu = <TData extends TableData>({
 
 	// all columns that can be filtered, but not already filtered
 	const { filterAppliedColumns, filterNonAppliedColumns } = useMemo(
-		() => splitFilterColumns(allColumns, columnFilters, newColumnFilter),
-		[allColumns, columnFilters, newColumnFilter]
+		() => splitFilterColumns(allColumns, myFiltersIds),
+		[allColumns, myFiltersIds]
 	)
 
 	const handleSetColumnFilter = useCallback((column: Table_Column<TData>) => {
@@ -63,12 +72,16 @@ export const FiltersMenu = <TData extends TableData>({
 	}, [])
 
 	const handleRemoveAllFilter = useCallback(() => {
+		setNewColumnFilter(null)
 		setSearchActive(true)
 		resetColumnFilters()
+		setMyFiltersIds([])
 	}, [resetColumnFilters])
 
 	const handleRemoveFilter = useCallback((column: Table_Column<TData>) => {
+		setNewColumnFilter(null)
 		column.setFilterValue(undefined)
+		setMyFiltersIds((ids) => ids.filter((id) => id !== column.id))
 	}, [])
 
 	// Columns that are non-filtered, and match the search value

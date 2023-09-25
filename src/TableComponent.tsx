@@ -43,6 +43,7 @@ import type {
 	Table,
 	TableOptions,
 	TableState,
+	GroupingState,
 } from '@tanstack/react-table'
 import type { VirtualizerOptions, Virtualizer } from '@tanstack/react-virtual'
 
@@ -1224,16 +1225,27 @@ export type TableComponentProps<TData extends Record<string, any> = {}> = Omit<
 		row: Table_Row<TData>
 		table: TableInstance<TData>
 	}) => void
-	onEditingRowSave?: ({
+	onEditingRowsSave?: ({
 		exitEditingMode,
-		row,
+		rows,
 		table,
 		values,
 	}: {
 		exitEditingMode: () => void
-		row: Table_Row<TData>
+		rows: Table_Row<TData> | Table_Row<TData>[]
 		table: TableInstance<TData>
-		values: Record<LiteralUnion<string & DeepKeys<TData>>, any>
+		values: Record<LiteralUnion<string & DeepKeys<TData>>, any> | {}
+	}) => Promise<void> | void
+	handleRowsDrop?: ({
+		hoveredRow,
+		draggingRows,
+		grouping,
+		table,
+	}: {
+		hoveredRow: HoveredRowState<TData>
+		draggingRows: Table_Row<TData> | Table_Row<TData>[]
+		grouping: GroupingState
+		table: TableInstance<TData>
 	}) => Promise<void> | void
 	onEditingRowChange?: OnChangeFn<Table_Row<TData> | null>
 	onColumnFilterFnsChange?: OnChangeFn<{ [key: string]: Table_FilterOption }>
