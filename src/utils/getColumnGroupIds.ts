@@ -1,6 +1,9 @@
-import { Table_Row } from '../TableComponent'
+import { Table_Row, TableData } from '../TableComponent'
 
-export const getColumnGroupIds = (rows: Table_Row[], columnId: string) => {
+export const getColumnGroupIds = <TData extends TableData = {}>(
+	rows: Table_Row<TData>[],
+	columnId: string
+) => {
 	return Array.from<string>(
 		rows.reduce((acc, row) => {
 			if (row.groupIds?.[columnId]) {

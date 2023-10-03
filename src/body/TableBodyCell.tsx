@@ -1,3 +1,4 @@
+import { BoxProps } from '@mui/material'
 import Box from '@mui/material/Box'
 import IconButton from '@mui/material/IconButton'
 import Skeleton from '@mui/material/Skeleton'
@@ -27,8 +28,11 @@ import { getCommonCellStyles, Table_DefaultColumn } from '../column.utils'
 import { Colors } from '../components/styles'
 import { EditCellField } from '../inputs/EditCellField'
 import { utilColumns } from '../utilColumns'
+import { getFunctionWithArgs } from '../utils/getFunctionWithArgs'
 import { getColorAlpha } from '../utils/getColorAlpha'
 import { GroupBorders } from '../utils/getGroupBorders'
+import { getValueOrFunctionHandler } from '../utils/getValueOrFunctionHandler'
+import { mergeSx } from '../utils/mergeSx'
 
 import { TableBodyCellValue } from './TableBodyCellValue'
 import { TableBodyCellUtility } from './TableBodyCellUtility'
@@ -82,6 +86,7 @@ export const TableBodyCell = ({
 			layoutMode,
 			muiTableBodyCellProps,
 			muiTableBodyCellSkeletonProps,
+			muiTableBodyCellWrapperProps,
 			enableDetailedPanel,
 			cellStyleRules,
 			expandByClick,
@@ -105,25 +110,38 @@ export const TableBodyCell = ({
 	const { columnDef } = column
 	const { columnDefType, cellAction, cellActionIcon } = columnDef
 
-	const mTableCellBodyProps =
-		muiTableBodyCellProps instanceof Function
-			? muiTableBodyCellProps({ cell, column, row, table })
-			: muiTableBodyCellProps
+	const callFunctionWithDefaultArgs = getFunctionWithArgs({
+		cell,
+		column,
+		row,
+		table,
+	})
 
-	const mcTableCellBodyProps =
-		columnDef.muiTableBodyCellProps instanceof Function
-			? columnDef.muiTableBodyCellProps({ cell, column, row, table })
-			: columnDef.muiTableBodyCellProps
+	const mTableCellBodyProps = callFunctionWithDefaultArgs(
+		getValueOrFunctionHandler(muiTableBodyCellProps)
+	)
+	const mcTableCellBodyProps = callFunctionWithDefaultArgs(
+		getValueOrFunctionHandler(muiTableBodyCellProps)
+	)
 
 	const tableCellProps = {
 		...mTableCellBodyProps,
 		...mcTableCellBodyProps,
 	}
 
-	const skeletonProps =
-		muiTableBodyCellSkeletonProps instanceof Function
-			? muiTableBodyCellSkeletonProps({ cell, column, row, table })
-			: muiTableBodyCellSkeletonProps
+	const skeletonProps = callFunctionWithDefaultArgs(
+		getValueOrFunctionHandler(muiTableBodyCellSkeletonProps)
+	)
+	const mWrapperProps = callFunctionWithDefaultArgs(
+		getValueOrFunctionHandler(muiTableBodyCellWrapperProps)
+	)
+	const mcWrapperProps = callFunctionWithDefaultArgs(
+		getValueOrFunctionHandler(columnDef.muiTableBodyCellWrapperProps)
+	)
+	const wrapperProps: BoxProps = {
+		...mWrapperProps,
+		...mcWrapperProps,
+	}
 
 	const [skeletonWidth, setSkeletonWidth] = useState(0)
 	useEffect(
@@ -201,7 +219,12 @@ export const TableBodyCell = ({
 			setHoveredColumn(null)
 		}
 		if (enableColumnOrdering && draggingColumn) {
-			setHoveredColumn(columnDef.enableColumnOrdering !== false ? column : null)
+			setHoveredColumn(
+				columnDef.enableColumnOrdering !== false &&
+					draggingColumn.getIsGrouped() === column.getIsGrouped()
+					? column
+					: null
+			)
 		}
 	}
 
@@ -450,16 +473,21 @@ export const TableBodyCell = ({
 			sx={(theme) => getTableCellStyles(theme)}
 		>
 			<Box
-				sx={{
-					display: 'flex',
-					alignItems: 'center',
-					mx: 'auto',
-					width: isUtilColumn
-						? '100%'
-						: `max(calc(100% - ${isEditing ? `6px` : `1.4rem`}), ${
-								Table_DefaultColumn.minSize
-						  }px)`,
-				}}
+				{...wrapperProps}
+				sx={mergeSx(
+					{
+						display: 'flex',
+						alignItems: 'center',
+						mx: 'auto',
+						justifyContent: '',
+						width: isUtilColumn
+							? '100%'
+							: `max(calc(100% - ${isEditing ? `6px` : `1.4rem`}), ${
+									Table_DefaultColumn.minSize
+							  }px)`,
+					},
+					wrapperProps?.sx
+				)}
 			>
 				{isGroupedCell ? (
 					<TableBodyCellValue cell={cell} row={row} table={table} />

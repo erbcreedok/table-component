@@ -1,7 +1,8 @@
-import React, { useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 import Box from '@mui/material/Box'
 import { Typography } from '@mui/material'
 
+import { TableData } from '../../../../index'
 import type { TableInstance, Table_Column } from '../../../../index'
 import { SimpleMenuItem } from '../components/SimpleMenuItem'
 import { ButtonLink } from '../../../../components/ButtonLink'
@@ -17,6 +18,10 @@ interface Props<TData extends Record<string, any> = {}> {
 	table: TableInstance<TData>
 }
 
+export const defaultOrganizeSortingMenu = <TData extends TableData = {}>(
+	allColumns: Table_Column<TData>[]
+) => allColumns.filter((col) => col.getIsVisible() && col.getCanSort())
+
 export const SortingMenu = <TData extends Record<string, any> = {}>({
 	anchorEl,
 	setAnchorEl,
@@ -24,43 +29,39 @@ export const SortingMenu = <TData extends Record<string, any> = {}>({
 }: Props<TData>) => {
 	const [isSearchActive, setIsSearchActive] = useState<boolean>(false)
 	const {
-		getAllColumns,
+		getAllLeafColumns,
 		getState,
 		resetSorting,
-		options: { innerTable, localization },
+		options: {
+			innerTable,
+			localization,
+			suggestedColumns,
+			organizeSortingMenu = defaultOrganizeSortingMenu,
+		},
 	} = table
-	const { columnPinning, columnOrder, columnVisibility, grouping, sorting } =
-		getState()
+	const { sorting } = getState()
 	const [searchList, setSearchList] = useState<Array<Table_Column<TData>>>([])
 	const [hoveredColumn, setHoveredColumn] =
 		useState<Table_Column<TData> | null>(null)
 	const handleCloseClick = () => setAnchorEl(null)
-
-	const allColumns = useMemo(() => {
-		const columns = getAllColumns()
-
-		return columns.filter((col) => col.getIsVisible() && col.getCanSort())
-	}, [
-		columnOrder,
-		columnPinning,
-		columnVisibility,
-		grouping,
-		sorting,
-		getAllColumns,
-	]) as Array<Table_Column<TData>>
-
-	const sortedList = useMemo(
-		() =>
-			(sorting || []).map((item) =>
-				getAllColumns().find((col) => getColumnId(col.columnDef) === item.id)
-			),
-		[sorting]
+	const allColumns = organizeSortingMenu(getAllLeafColumns())
+	const sortedList = (sorting || []).map((item) =>
+		allColumns.find((col) => getColumnId(col.columnDef) === item.id)
 	)
 
-	const nonSortedList = useMemo(
-		() => allColumns.filter((col) => !col.getIsSorted()),
-		[sorting]
-	)
+	const [unsortedList, areSuggestedShown] = useMemo(() => {
+		const unsorted = allColumns.filter((col) => !col.getIsSorted())
+
+		if (suggestedColumns?.sorting) {
+			const suggested = unsorted.filter(({ id }) =>
+				suggestedColumns.sorting?.includes(id)
+			)
+
+			if (suggested.length) return [suggested, true]
+		}
+
+		return [unsorted, false]
+	}, [allColumns, suggestedColumns])
 
 	const handleOnSearchChange = (value: string) => {
 		if (value) {
@@ -70,7 +71,7 @@ export const SortingMenu = <TData extends Record<string, any> = {}>({
 		}
 		setSearchList(
 			value.length
-				? allColumns.filter((col) =>
+				? unsortedList.filter((col) =>
 						col.columnDef.header.toLowerCase().includes(value)
 				  )
 				: []
@@ -169,17 +170,20 @@ export const SortingMenu = <TData extends Record<string, any> = {}>({
 				)}
 
 				<>
-					{!!sortedList?.length &&
+					{((!!sortedList?.length &&
 						!searchList.length &&
-						!!nonSortedList.length && (
-							<ListTitle sx={{ padding: '0 24px', margin: '20px 0' }}>
-								Columns
-							</ListTitle>
-						)}
+						!!unsortedList.length) ||
+						areSuggestedShown) && (
+						<ListTitle sx={{ padding: '0 24px', margin: '20px 0' }}>
+							{areSuggestedShown
+								? localization.suggested
+								: localization.columns}
+						</ListTitle>
+					)}
 					{Boolean(
-						nonSortedList.length && !searchList.length && !isSearchActive
+						unsortedList.length && !searchList.length && !isSearchActive
 					) &&
-						nonSortedList.map((column) => (
+						unsortedList.map((column) => (
 							<SimpleMenuItem
 								column={column}
 								key={column.id}

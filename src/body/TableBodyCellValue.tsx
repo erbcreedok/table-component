@@ -30,6 +30,9 @@ export const TableBodyCellValue: FC<Props> = ({ cell, table, row }) => {
 						column,
 						row,
 						table,
+						children:
+							columnDef?.Cell?.({ cell, column, row, table }) ??
+							cell.renderValue(),
 				  })
 				: columnDef?.Cell?.({ cell, column, row, table }) ?? cell.renderValue()}
 		</>

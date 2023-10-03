@@ -19,10 +19,14 @@ export const useEditField = <V = string, TData extends TableData = TableData>({
 	const [value, setValue] = useState(() =>
 		getValue ? getValue(row) : cell.getValue<V>()
 	)
+	const [editingRowErrors, setEditingRowErrors] = useState({})
 	const saveRow = (newValue: V) => {
 		if (editingRow) {
 			setEditingRow({
 				...editingRow,
+				isError: Object.values(editingRowErrors).some(
+					(value) => value === true
+				),
 				_valuesCache: { ...editingRow._valuesCache, [column.id]: newValue },
 			})
 		}
@@ -32,5 +36,7 @@ export const useEditField = <V = string, TData extends TableData = TableData>({
 		value,
 		setValue,
 		saveRow,
+		editingRowErrors,
+		setEditingRowErrors,
 	}
 }

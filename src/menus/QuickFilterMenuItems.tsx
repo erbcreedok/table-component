@@ -5,11 +5,19 @@ import React from 'react'
 
 import { getPascalCase } from '../utils/getPascalCase'
 import { withNativeEvent } from '../utils/withNativeEvent'
-import { TableInstance } from '../TableComponent'
+import { Table_Column, TableInstance } from '../TableComponent'
 
 import { commonListItemStyles, commonMenuItemStyles } from './constants'
 
-export const QuickFilterMenuItems = ({ table, toggleSubMenu, column }) => {
+export const QuickFilterMenuItems = ({
+	table,
+	toggleSubMenu,
+	column,
+}: {
+	column: Table_Column
+	table: TableInstance
+	toggleSubMenu(): void
+}) => {
 	const {
 		options: {
 			enableColumnFilters,
@@ -17,8 +25,9 @@ export const QuickFilterMenuItems = ({ table, toggleSubMenu, column }) => {
 			localization,
 		},
 	} = table as TableInstance
+	const enableFiltering = column.getCanFilter()
 
-	if (!enableColumnFilters) {
+	if (!enableFiltering || !enableColumnFilters) {
 		return null
 	}
 

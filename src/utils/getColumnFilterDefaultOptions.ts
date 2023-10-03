@@ -3,8 +3,12 @@ import { SelectOption, Table_Column, TableInstance } from '../TableComponent'
 
 import { getColumnUnfilteredFacetedValues } from './getColumnUnfilteredFacetedValues'
 
-const getOption = (value: string): SelectOption => {
-	const label = value === undefined || value === null ? 'N/A' : value
+const getOption = (
+	value: string,
+	formatter: (value: unknown) => string = (value) =>
+		value === undefined || value === null ? 'N/A' : `${value}`
+): SelectOption => {
+	const label = formatter(value) || 'N/A'
 
 	return {
 		label,
@@ -18,6 +22,7 @@ export const getColumnFilterDefaultOptions = <
 	table: TableInstance<TData>
 ) => {
 	const { columnFilters } = table.getState()
+	const { formatCellValue } = column.columnDef
 	const columnFilter = columnFilters.find(
 		(c) => c.id === getColumnId(column.columnDef)
 	)
@@ -35,5 +40,7 @@ export const getColumnFilterDefaultOptions = <
 		})
 	}
 
-	return Array.from(facetedUniqueValues.keys()).sort().map(getOption)
+	return Array.from(facetedUniqueValues.keys())
+		.sort()
+		.map((value) => getOption(value, formatCellValue))
 }

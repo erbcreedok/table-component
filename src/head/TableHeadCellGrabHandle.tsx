@@ -36,11 +36,12 @@ export const TableHeadCellGrabHandle: FC<Props> = ({
 		getState,
 		options: { enableColumnOrdering, muiTableHeadCellDragHandleProps },
 		setColumnOrder,
+		setGrouping,
 		setDraggingColumn,
 		setHoveredColumn,
 	} = table
 	const { columnDef } = column
-	const { hoveredColumn, draggingColumn, columnOrder } = getState()
+	const { hoveredColumn, draggingColumn } = getState()
 	const { hovered, hoverProps } = useHoverEffects()
 
 	const mIconButtonProps =
@@ -82,11 +83,20 @@ export const TableHeadCellGrabHandle: FC<Props> = ({
 		} else if (
 			enableColumnOrdering &&
 			hoveredColumn &&
-			hoveredColumn?.id !== draggingColumn?.id
+			hoveredColumn.id !== draggingColumn?.id
 		) {
-			setColumnOrder(
-				reorderColumn(column, hoveredColumn as Table_Column, columnOrder)
-			)
+			if (!column.getIsGrouped()) {
+				setColumnOrder((columnOrder) =>
+					reorderColumn(column, hoveredColumn as Table_Column, columnOrder)
+				)
+			} else if (
+				'getIsGrouped' in hoveredColumn &&
+				hoveredColumn.getIsGrouped()
+			) {
+				setGrouping((grouping) =>
+					reorderColumn(column, hoveredColumn as Table_Column, grouping)
+				)
+			}
 		}
 		setDraggingColumn(null)
 		setHoveredColumn(null)

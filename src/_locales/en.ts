@@ -130,4 +130,5 @@ export const Table_Localization_EN: Table_Localization = {
 	locked: 'Locked',
 	grouping: 'Grouping',
 	sorting: 'Sorting',
+	suggested: 'Suggested',
 }

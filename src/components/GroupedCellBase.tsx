@@ -1,19 +1,21 @@
-import { styled, Box } from '@mui/material'
+import { Box, styled } from '@mui/material'
 import IconButton from '@mui/material/IconButton'
 import Skeleton from '@mui/material/Skeleton'
 import Typography from '@mui/material/Typography'
+import React, { PropsWithChildren, useCallback, useMemo, useState } from 'react'
 import { useResizeDetector } from 'react-resize-detector'
-import React, { ReactNode, useCallback, useMemo, useState } from 'react'
 
-import { SelectCheckbox } from '../inputs/SelectCheckbox'
 import { getColumnId } from '../column.utils'
+import { SelectCheckbox } from '../inputs/SelectCheckbox'
 import {
 	Table_Cell,
 	Table_Column,
 	Table_Row,
 	TableInstance,
 } from '../TableComponent'
+import { getIsGroupCollapsedDefault } from '../utils/getIsGroupCollapsed'
 import { getShouldForwardProps } from '../utils/getShouldForwardProps'
+import { onGroupCollapsedToggleDefault } from '../utils/onGroupCollapsedToggle'
 
 import {
 	Colors,
@@ -48,27 +50,25 @@ const Wrapper = styled(
 	line-clamp: 2;
 `
 
-type Props<TData extends object> = {
+type Props<TData extends object> = PropsWithChildren<{
 	cell: Table_Cell<TData>
 	column: Table_Column<TData>
 	row: Table_Row<TData>
 	table: TableInstance<TData>
 	borderColor?: string
-}
+}>
 export const GroupedCellBase = <TData extends object>({
 	cell,
 	row,
 	column,
 	table,
 	borderColor,
+	children,
 }: Props<TData>) => {
 	const [isLandscape, setIsLandscape] = useState(true)
 	const [isShort, setIsShort] = useState(false)
 	const [isTooShort, setIsTooShort] = useState(false)
-	const content =
-		(column.columnDef.Cell
-			? column.columnDef.Cell({ cell, column, row, table })
-			: (cell.getValue() as ReactNode)) || 'N/A'
+
 	const { ref } = useResizeDetector({
 		onResize: useCallback((width, height) => {
 			setIsLandscape(width > 100 || height < width)
@@ -82,16 +82,24 @@ export const GroupedCellBase = <TData extends object>({
 			innerTable,
 			getGroupRowCount,
 			icons: { ExpandIcon, CollapseIcon },
+			onGroupCollapsedToggle,
+			getIsGroupCollapsed,
 		},
-		setGroupCollapsed,
 	} = table
 	const columnId = getColumnId(column.columnDef)
-	const { grouping, groupCollapsed, hoveredRow, isLoading, showSkeletons } =
-		table.getState()
+	const { grouping, hoveredRow, isLoading, showSkeletons } = table.getState()
 	const isLastGroupedColumn =
 		grouping.length > 0 && grouping[grouping.length - 1] === columnId
 	const groupId = row.groupIds ? row.groupIds[columnId] : undefined
-	const expanded = groupId ? !groupCollapsed[groupId] : true
+	const expanded = groupId
+		? (getIsGroupCollapsed ?? getIsGroupCollapsedDefault)({
+				table,
+				row,
+				cell,
+				column,
+				groupId,
+		  })
+		: true
 	const groupRow = groupId ? row.groupRows?.[groupId] : undefined
 	const columnSize = column.getSize()
 
@@ -103,13 +111,16 @@ export const GroupedCellBase = <TData extends object>({
 
 	const toggleExpand = useCallback(() => {
 		if (!groupId) return
-		setGroupCollapsed((prev) => {
-			return {
-				...prev,
-				[groupId]: !prev[groupId],
-			}
+		const toggle = onGroupCollapsedToggle ?? onGroupCollapsedToggleDefault
+		toggle({
+			cell,
+			row,
+			column,
+			table,
+			collapsed: expanded,
+			groupId,
 		})
-	}, [groupId, setGroupCollapsed])
+	}, [cell, column, expanded, groupId, onGroupCollapsedToggle, row, table])
 
 	const skeletonWidth = useMemo(() => {
 		return Math.round(
@@ -182,7 +193,7 @@ export const GroupedCellBase = <TData extends object>({
 									lineClamp: 2,
 								}}
 							>
-								{content}
+								{children}
 							</Box>
 						)}
 						{!isTooShort && (

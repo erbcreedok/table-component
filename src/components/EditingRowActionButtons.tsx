@@ -56,12 +56,14 @@ export const EditingRowActionButtons = <TData extends TableData>({
 	}
 
 	const handleSave = () => {
-		onEditingRowsSave?.({
-			exitEditingMode: () => setEditingRow(null),
-			rows: editingRow ?? row,
-			table,
-			values: { ...row.original, ...editingRow?._valuesCache },
-		})
+		if (editingRow && !editingRow.isError) {
+			onEditingRowsSave?.({
+				exitEditingMode: () => setEditingRow(null),
+				rows: editingRow ?? row,
+				table,
+				values: { ...row.original, ...editingRow?._valuesCache },
+			})
+		}
 	}
 	const defaultContainerRef = useRef(document.body)
 	const { x, y, floating, reference, strategy } = useFloating({

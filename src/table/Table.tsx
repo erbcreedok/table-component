@@ -1,5 +1,5 @@
 import { createCell, createRow } from '@tanstack/table-core'
-import type { Table as TableType } from '@tanstack/react-table'
+import type { Column, Table as TableType } from '@tanstack/react-table'
 import React, { FC, useCallback, useMemo } from 'react'
 import {
 	defaultRangeExtractor,
@@ -155,7 +155,7 @@ export const Table: FC<Props> = ({ table }) => {
 							createCell(
 								table as TableType<{}>,
 								summaryRow,
-								column,
+								column as Column<{}>,
 								getColumnId(column.columnDef as Table_ColumnDef)
 							)
 						),

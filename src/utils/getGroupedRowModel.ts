@@ -13,7 +13,7 @@ function groupBy<TData extends RowData>(rows: Row<TData>[], columnId: string) {
 	const groupMap = new Map<any, Row<TData>[]>()
 
 	return rows.reduce((map, row) => {
-		const resKey = `${row.getValue(columnId)}`
+		const resKey = row.getValue(columnId)
 		const previous = map.get(resKey)
 		if (!previous) {
 			map.set(resKey, [row])
@@ -57,7 +57,10 @@ export function getGroupedRowModel<
 				const groupUpRecursively = (
 					rows: Row<TData>[],
 					depth = 0,
-					parentId?: string
+					// string - for not grouped parent rows
+					// [string, unknown] - for grouped parent rows
+					// first value is columnId, second is groupedValue
+					parentPath: (string | [string, unknown])[] = []
 				) => {
 					let groupableRows: Row<TData>[] = []
 					let notGroupableRows: Row<TData>[] = []
@@ -76,7 +79,10 @@ export function getGroupedRowModel<
 						if (row.subRows && row.getIsExpanded() && row.subRows.length > 0) {
 							return {
 								...row,
-								subRows: groupUpRecursively(row.subRows, depth, row.id),
+								subRows: groupUpRecursively(row.subRows, depth, [
+									...parentPath,
+									row.id,
+								]),
 							}
 						}
 
@@ -113,16 +119,19 @@ export function getGroupedRowModel<
 					// Peform aggregations for each group
 					const aggregatedGroupedRows = Array.from(rowGroupsMap.entries()).map(
 						([groupingValue, groupedRows], index) => {
-							let id = `${columnId}:${groupingValue}`
-							id = parentId ? `${parentId}>${id}` : id
+							const path = [
+								...parentPath,
+								[columnId, groupingValue] as [string, unknown],
+							]
+							const id = JSON.stringify(path)
 
 							groupedRows.forEach((row) => {
 								if (row.subRows) {
-									row.subRows = groupUpRecursively(row.subRows, depth, row.id)
+									row.subRows = groupUpRecursively(row.subRows, depth, path)
 								}
 							})
 
-							const localRows = groupUpRecursively(groupedRows, depth + 1, id)
+							const localRows = groupUpRecursively(groupedRows, depth + 1, path)
 
 							const groupRow = createRow(
 								table,
@@ -152,7 +161,7 @@ export function getGroupedRowModel<
 					return [...aggregatedGroupedRows.flat(), ...notGroupableRows]
 				}
 
-				const groupedRows = groupUpRecursively(rowModel.rows, 0, '')
+				const groupedRows = groupUpRecursively(rowModel.rows)
 
 				groupedRows.forEach((subRow) => {
 					groupedRowsById[subRow.id] = subRow

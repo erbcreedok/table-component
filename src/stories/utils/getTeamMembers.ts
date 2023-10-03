@@ -2,24 +2,35 @@ import { faker } from '@faker-js/faker'
 import { TeamMember, UnitTreeItem, User } from '../types/TeamMember'
 import { getRandomFromArray } from './getRandomFromArray'
 
-const impacts = ['Critical', 'High', 'Medium', 'Low', null];
-const performances = ['Often exceeds', 'Sometimes exceeds', 'Meets', undefined];
-const risksOfLeaving = ['Leaver', 'High', 'Medium', 'Low', undefined];
-const successionStatuses = ['No successors', 'Successors identified', 'Successors in place', null];
+const impacts = ['Critical', 'High', 'Medium', 'Low', null]
+const performances = ['Often exceeds', 'Sometimes exceeds', 'Meets', undefined]
+const risksOfLeaving = ['Leaver', 'High', 'Medium', 'Low', undefined]
+const successionStatuses = [
+	'No successors',
+	'Successors identified',
+	'Successors in place',
+	null,
+]
 
-export const getUsers = (length = 200, prefix = '') => [...Array(length)].map((_, index) => ({
-	id: faker.datatype.uuid(),
-	fullName: `${prefix}${index + 1}. ${faker.name.fullName()}`,
-	avatarUrl: faker.image.avatar(),
-	role: faker.name.jobTitle(),
-}));
+export const getUsers = (length = 200, prefix = '') =>
+	[...Array(length)].map((_, index) => ({
+		id: faker.datatype.uuid(),
+		fullName: `${prefix}${index + 1}. ${faker.name.fullName()}`,
+		avatarUrl: faker.image.avatar(),
+		role: faker.name.jobTitle(),
+	}))
 
-const savedUsers = getUsers();
+const savedUsers = getUsers()
 
-const getDateOrEmpty = (emptinessRarity = 6) => Math.round(Math.random() * emptinessRarity) % emptinessRarity ? faker.date.between(
-	'2023-01-01T00:00:00.000Z',
-	'2023-06-01T00:00:00.000Z'
-) : undefined
+const getDateOrEmpty = (emptinessRarity = 6) =>
+	Math.round(Math.random() * emptinessRarity) % emptinessRarity
+		? faker.date.between('2023-01-01T00:00:00.000Z', '2023-06-01T00:00:00.000Z')
+		: undefined
+
+const getNumberOrEmpty = (emptinessRarity = 6) =>
+	Math.round(Math.random() * emptinessRarity) % emptinessRarity
+		? Number(faker.random.numeric(5))
+		: undefined
 
 export const getTeamMember = (user?: User) => ({
 	id: faker.datatype.uuid(),
@@ -30,21 +41,28 @@ export const getTeamMember = (user?: User) => ({
 	successionStatus: getRandomFromArray(successionStatuses),
 	location: faker.address.city(),
 	hiredAt: getDateOrEmpty()?.toString(),
+	completion: getNumberOrEmpty(),
+	lorem: faker.lorem.lines(3),
 })
 
-export const getTeamMembers = (length = 200, prefix = ''): TeamMember[] => getUsers(length, prefix).map((user) => ({
-	id: faker.datatype.uuid(),
-	member: user,
-	impact: getRandomFromArray(impacts),
-	performance: getRandomFromArray(performances),
-	riskOfLeaving: getRandomFromArray(risksOfLeaving),
-	successionStatus: getRandomFromArray(successionStatuses),
-	location: faker.address.city(),
-	hiredAt: getDateOrEmpty(),
-	lorem: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.'
-}));
+export const getTeamMembers = (length = 200, prefix = ''): TeamMember[] =>
+	getUsers(length, prefix).map((user) => ({
+		id: faker.datatype.uuid(),
+		member: user,
+		impact: getRandomFromArray(impacts),
+		performance: getRandomFromArray(performances),
+		riskOfLeaving: getRandomFromArray(risksOfLeaving),
+		successionStatus: getRandomFromArray(successionStatuses),
+		location: faker.address.city(),
+		hiredAt: getDateOrEmpty(),
+		completion: getNumberOrEmpty(),
+		lorem: faker.lorem.lines(3),
+	}))
 
-export const getExpandingTeamMembers = (length = 200, prefix = ''): TeamMember[] => {
+export const getExpandingTeamMembers = (
+	length = 200,
+	prefix = ''
+): TeamMember[] => {
 	const members = getTeamMembers(length)
 	for (let i = 0; i < length; i++) {
 		members[i].subRows = getTeamMembers(3, `${prefix}${i + 1}.`)
@@ -52,8 +70,12 @@ export const getExpandingTeamMembers = (length = 200, prefix = ''): TeamMember[]
 	return members
 }
 
-
-export const getUnitTreeItems = (maxDepth = 5, length = 10, depth = 0, prefix = ''): UnitTreeItem[] => {
+export const getUnitTreeItems = (
+	maxDepth = 5,
+	length = 10,
+	depth = 0,
+	prefix = ''
+): UnitTreeItem[] => {
 	if (depth >= maxDepth) return []
 	const unitTree: UnitTreeItem[] = []
 	const cLength = depth > 1 ? length : Math.pow(2, depth)
@@ -63,14 +85,22 @@ export const getUnitTreeItems = (maxDepth = 5, length = 10, depth = 0, prefix = 
 			id: faker.datatype.uuid(),
 			name: `${prefix}${i + 1}. ${faker.company.name()}`,
 			type: faker.company.companySuffix(),
-			keyMembers: getUsers(Math.round(Math.random() * 3 + 2), `${prefix}${i + 1}.`),
+			keyMembers: getUsers(
+				Math.round(Math.random() * 3 + 2),
+				`${prefix}${i + 1}.`
+			),
 			subRows: [
-				...(depth > 1 ? getTeamMembers(Math.round(Math.random() * cLength), `${prefix}${i + 1}.`) : []),
+				...(depth > 1
+					? getTeamMembers(
+							Math.round(Math.random() * cLength),
+							`${prefix}${i + 1}.`
+					  )
+					: []),
 				...getUnitTreeItems(maxDepth, length, depth + 1, `${prefix}${i + 1}.`),
 			].map((item) => ({
 				...item,
 				getParent: () => unitTree[i],
-			}))
+			})),
 		})
 	}
 
@@ -84,4 +114,5 @@ export const isTeamMember = (item: unknown): item is TeamMember => {
 	return item?.hasOwnProperty('member') ?? false
 }
 
-export const getSeparatedTeamMembers = (length = 200): TeamMember[] => [...Array(length)].map(() => getTeamMember(getRandomFromArray(savedUsers)));
+export const getSeparatedTeamMembers = (length = 200): TeamMember[] =>
+	[...Array(length)].map(() => getTeamMember(getRandomFromArray(savedUsers)))

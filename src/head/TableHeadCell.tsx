@@ -40,7 +40,8 @@ export interface TableHeadCellProps {
 	groupBorders?: GroupBorders
 	backgroundColor?: string
 	backgroundColorHover?: string
-	groupCollapseIds?: string[]
+	disableToggleGroupCollapse?: boolean
+	groupsExpanded?: boolean
 	onToggleGroupCollapse?: (expanded?: boolean) => void
 }
 
@@ -51,7 +52,8 @@ export const TableHeadCell: FC<TableHeadCellProps> = ({
 	groupBorders,
 	backgroundColor = Colors.Gray20,
 	backgroundColorHover = Colors.Gray,
-	groupCollapseIds,
+	disableToggleGroupCollapse,
+	groupsExpanded,
 	onToggleGroupCollapse,
 }) => {
 	const theme = useTheme()
@@ -74,13 +76,8 @@ export const TableHeadCell: FC<TableHeadCellProps> = ({
 		setHoveredColumn,
 	} = table
 	const localRef = useRef<HTMLTableCellElement>(null)
-	const {
-		draggingColumn,
-		grouping,
-		groupCollapsed,
-		hoveredColumn,
-		highlightHeadCellId,
-	} = getState()
+	const { draggingColumn, grouping, hoveredColumn, highlightHeadCellId } =
+		getState()
 	const { column } = header
 	const { columnDef } = column
 	const { columnDefType, emptyHeader } = columnDef
@@ -112,7 +109,8 @@ export const TableHeadCell: FC<TableHeadCellProps> = ({
 		enableColumnDragging !== false &&
 		columnDef.enableColumnDragging !== false &&
 		enableColumnOrdering &&
-		columnDef.enableColumnOrdering !== false
+		columnDef.enableColumnOrdering !== false &&
+		(!column.getIsGrouped() || grouping.length > 1)
 
 	const headerPL = useMemo(() => {
 		let pl = 0
@@ -146,7 +144,12 @@ export const TableHeadCell: FC<TableHeadCellProps> = ({
 			setHoveredColumn(null)
 		}
 		if (enableColumnOrdering && draggingColumn && columnDefType !== 'group') {
-			setHoveredColumn(columnDef.enableColumnOrdering !== false ? column : null)
+			setHoveredColumn(
+				columnDef.enableColumnOrdering !== false &&
+					draggingColumn.getIsGrouped() === column.getIsGrouped()
+					? column
+					: null
+			)
 		}
 	}
 
@@ -189,12 +192,9 @@ export const TableHeadCell: FC<TableHeadCellProps> = ({
 
 	const isLastGroupedColumn = grouping[grouping.length - 1] === columnId
 
-	const expanded = useMemo(() => {
-		return groupCollapseIds?.some((id) => !groupCollapsed[id])
-	}, [groupCollapseIds, groupCollapsed])
 	const toggleGroupCollapsed: MouseEventHandler = (event) => {
 		event.stopPropagation()
-		onToggleGroupCollapse?.(expanded)
+		onToggleGroupCollapse?.(!groupsExpanded)
 	}
 
 	return (
@@ -326,8 +326,9 @@ export const TableHeadCell: FC<TableHeadCellProps> = ({
 										<IconButton
 											sx={{ p: 0, mr: `min(0.5rem, 10%)` }}
 											onClick={toggleGroupCollapsed}
+											disabled={disableToggleGroupCollapse}
 										>
-											{expanded ? <CollapseIcon /> : <ExpandIcon />}
+											{groupsExpanded ? <CollapseIcon /> : <ExpandIcon />}
 										</IconButton>
 									)}
 									<Box

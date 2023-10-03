@@ -78,6 +78,14 @@ export const FilteringDisabled: Story<TableComponentProps> = () => (
 	<TableComponent columns={columns} data={data} enableFilters={false} />
 )
 
+export const SuggestedFiltering: Story<TableComponentProps> = () => (
+	<TableComponent
+		columns={columns}
+		data={data}
+		suggestedColumns={{ filtering: ['firstName', 'lastName', 'age'] }}
+	/>
+)
+
 export const FilterFnAndFilterVariants: Story<TableComponentProps> = () => (
 	<TableComponent
 		columns={[

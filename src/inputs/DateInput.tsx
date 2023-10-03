@@ -37,6 +37,7 @@ export type DateInputProps = Omit<
 export const DateInput: FC<DateInputProps> = forwardRef(
 	({ value, onChange, formatMask = 'dd.MM.yyyy', ...props }, ref) => {
 		const [internalValue, setInternalValue] = useState<string>('')
+		const [isError, setIsError] = useState<boolean>(false)
 
 		useEffect(() => {
 			setInternalValue(value ? formatDate(value, formatMask) : '')
@@ -48,20 +49,30 @@ export const DateInput: FC<DateInputProps> = forwardRef(
 				if (isValid(parsedDate) && getYear(parsedDate) > 999) {
 					onChange?.(parsedDate, false)
 				}
+				if (!isValid(parsedDate)) {
+					setIsError(true)
+				}
 				setInternalValue(value)
 			},
 			[formatMask, onChange]
 		)
 
+		const handleFocus = useCallback((event) => {
+			props?.onFocus?.(event)
+			setIsError(false)
+		}, [])
+
 		return (
 			<Input
 				autoComplete="off"
+				error={isError}
 				{...props}
 				InputProps={{
 					ref,
 				}}
 				value={internalValue}
 				onChange={handleChange}
+				onFocus={handleFocus}
 			/>
 		)
 	}

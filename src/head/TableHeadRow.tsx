@@ -1,18 +1,19 @@
-import React, { useCallback, useMemo, useRef, useEffect } from 'react'
+import React, { useCallback, useRef, useEffect } from 'react'
 import TableRow, { TableRowProps } from '@mui/material/TableRow'
 import type { VirtualItem } from '@tanstack/react-virtual'
 
 import type {
+	Table_Column,
 	Table_Header,
 	Table_HeaderGroup,
 	Table_Row,
 	TableInstance,
 } from '..'
 import type { StickyElement } from '../hooks/useMultiSticky'
-import { getColumnId } from '../column.utils'
 import { Colors } from '../components/styles'
-import { getColumnGroupIds } from '../utils/getColumnGroupIds'
 import { getHeaderGroupBorders } from '../utils/getGroupBorders'
+import { getIsColumnAllGroupsCollapsedDefault } from '../utils/getIsColumnAllGroupsCollapsed'
+import { onGroupCollapsedToggleAllDefault } from '../utils/onGroupCollapseToggleAll'
 
 import { TableHeadCell, TableHeadCellProps } from './TableHeadCell'
 
@@ -58,12 +59,13 @@ export const TableHeadRow = ({
 			muiTableHeadRowProps,
 			enableRowDragging,
 			multirowHeader,
+			onGroupCollapsedToggleAll,
+			getIsColumnAllGroupsCollapsed,
 		},
 		setHoveredRow,
 		getState,
-		setGroupCollapsed,
 	} = table
-	const { draggingRows, grouping } = getState()
+	const { draggingRows } = getState()
 
 	useEffect(() => {
 		if (ref.current) {
@@ -96,72 +98,52 @@ export const TableHeadRow = ({
 		}
 	}
 
-	const groupedRows = table.getGroupedRowModel().flatRows as Table_Row[]
-	const groupCollapseIds = useMemo(() => {
-		const groupCollapseIds = {}
-		grouping.forEach((columnId) => {
-			groupCollapseIds[columnId] = getColumnGroupIds(groupedRows, columnId)
-		})
-
-		return groupCollapseIds
-	}, [groupedRows, grouping])
-
-	const getGroupCollapseValues = useCallback(
-		(columnId: string, expanded?: boolean) => {
-			return groupCollapseIds[columnId].reduce(
-				(acc, id) => ({
-					...acc,
-					[id]: expanded,
-				}),
-				{}
-			)
+	const getOnToggleGroupCollapse = useCallback(
+		(column: Table_Column) => {
+			return (expanded?: boolean) => {
+				return (onGroupCollapsedToggleAll ?? onGroupCollapsedToggleAllDefault)({
+					column,
+					table,
+					collapsed: !expanded,
+				})
+			}
 		},
-		[groupCollapseIds]
-	)
-	const getToggleGroupCollapse = useCallback(
-		(columnId: string) => (expanded?: boolean) => {
-			// we shall get all the columns that are grouped after the current column
-			const collapsingColumns = grouping.reduceRight((acc, id) => {
-				if (acc.includes(columnId)) {
-					return acc
-				}
-
-				return [id, ...acc]
-			}, [] as string[])
-			const values = collapsingColumns.reduce(
-				(acc, columnId) => ({
-					...acc,
-					...getGroupCollapseValues(columnId, expanded),
-				}),
-				{}
-			)
-			setGroupCollapsed((prev) => ({
-				...prev,
-				...values,
-			}))
-		},
-		[getGroupCollapseValues, grouping, setGroupCollapsed]
+		[onGroupCollapsedToggleAll, table]
 	)
 
 	const getHeaderCellProps = (): TableHeadCellProps[] => {
+		let isPrevColumnAllGroupsCollapsed = false
+
 		return (virtualColumns ?? headerGroup.headers).map(
 			(headerOrVirtualHeader) => {
 				const header = virtualColumns
 					? headerGroup.headers[headerOrVirtualHeader.index]
 					: (headerOrVirtualHeader as Table_Header)
 				const groupBorders = getHeaderGroupBorders({ header, table })
-				const columnId = getColumnId(header.column.columnDef)
+				const isAllGroupsCollapsed =
+					isPrevColumnAllGroupsCollapsed ||
+					(
+						getIsColumnAllGroupsCollapsed ??
+						getIsColumnAllGroupsCollapsedDefault
+					)({
+						table,
+						column: header.column,
+					})
 
-				return {
+				const props = {
 					parentRow,
 					header,
 					table,
 					groupBorders,
 					backgroundColor: cellBackgroundColor,
 					backgroundColorHover: cellBackgroundColorHover,
-					groupCollapseIds: groupCollapseIds[columnId],
-					onToggleGroupCollapse: getToggleGroupCollapse(columnId),
+					groupsExpanded: !isAllGroupsCollapsed,
+					disableToggleGroupCollapse: isPrevColumnAllGroupsCollapsed,
+					onToggleGroupCollapse: getOnToggleGroupCollapse(header.column),
 				}
+				isPrevColumnAllGroupsCollapsed = isAllGroupsCollapsed
+
+				return props
 			}
 		)
 	}

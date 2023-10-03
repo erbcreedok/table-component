@@ -63,6 +63,7 @@ import { DescNumIcon } from './icons/DescNumIcon'
 import { AscTextIcon } from './icons/AscTextIcon'
 import { DescTextIcon } from './icons/DescTextIcon'
 import { ArrowCircleRightIcon } from './icons/ArrowCircleRightIcon'
+import { WarningOutlineIcon } from './icons/WarningOutlineIcon'
 
 export interface Table_Icons {
 	AnalyticsIcon: any
@@ -129,6 +130,7 @@ export interface Table_Icons {
 	AscTextIcon: any
 	DescTextIcon: any
 	ArrowCircleRightIcon: any
+	WarningOutlineIcon: any
 }
 
 export const Default_Icons: Table_Icons = {
@@ -196,4 +198,5 @@ export const Default_Icons: Table_Icons = {
 	AscTextIcon,
 	DescTextIcon,
 	ArrowCircleRightIcon,
+	WarningOutlineIcon,
 }

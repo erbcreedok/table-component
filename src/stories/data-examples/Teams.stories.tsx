@@ -22,7 +22,7 @@ import {
 	CustomNoRecordsToDisplay,
 	CustomNoResultsFound,
 } from '../components/CustomNoResultsFound'
-import { TeamMember, UnitTreeItem, User } from "../types/TeamMember";
+import { TeamMember, UnitTreeItem, User } from '../types/TeamMember'
 import { getTablePresetProps } from '../utils/getTablePresetProps'
 import { getDndTargetGroupingUpdateValues } from '../utils/getDndTargetGroupingUpdateValues'
 import {
@@ -31,12 +31,7 @@ import {
 	getUnitTreeItems,
 	isUnitTreeItem,
 } from '../utils/getTeamMembers'
-import {
-	getTeamMembersColumns,
-	teamMemberAccessorFn,
-	ColoredGroupedCell,
-	coloredCellProps,
-} from '../utils/getTeamMembersColumns'
+import { getTeamMembersColumns } from '../utils/getTeamMembersColumns'
 import { getDefaultRowActionMenuItems } from '../utils/rowActionMenuItems'
 import { ColumnActionsFiltersMenu } from './components/ColumnActionsFiltersMenu'
 import { UnitRow } from './components/UnitRow'
@@ -156,22 +151,7 @@ const getPropsHandledColumns = (
 		disableHidingFor,
 		defaultColumnFilterFns,
 		columnSubtitles,
-		enableLoremIpsumColumn,
 	} = args
-	if (enableLoremIpsumColumn) {
-		columns.push({
-			header: 'Lorem Ipsum',
-			id: 'lorem',
-			dataType: 'textual',
-			accessorFn: teamMemberAccessorFn('lorem'),
-			filterVariant: 'multi-select',
-			GroupedCell: ColoredGroupedCell,
-			muiTableBodyCellProps: coloredCellProps,
-			enableColumnOrdering: true,
-			enableSorting: false,
-			enableGrouping: false,
-		} as Table_ColumnDef<TeamMember>)
-	}
 
 	return addColumnSubtitle(
 		columnSubtitles,
@@ -323,14 +303,17 @@ const TeamsTable: Story<TeamsTableConfigs> = (args) => {
 		...rest
 	} = args
 	const [data, setData] = useState(propsData || getTeamMembers(rowsCount))
-	
+
 	const setNewRow = (row, values) => {
 		const newRow = data[row.index]
 		Object.entries(values).forEach(([key, value]) => {
 			if (key === 'teamMember') {
 				newRow.member = value as User
 			}
-			newRow[key] = value
+			if (key === 'completion') {
+				console.log(value)
+				newRow.completion = Number(value)
+			}
 		})
 		data[row.index] = newRow
 	}
@@ -343,9 +326,9 @@ const TeamsTable: Story<TeamsTableConfigs> = (args) => {
 		} else {
 			setNewRow(rows, values)
 		}
-		setData([...data]);
-		exitEditingMode();
-	};
+		setData([...data])
+		exitEditingMode()
+	}
 
 	const handleRowsDrop = ({ hoveredRow, draggingRows, grouping, table }) => {
 		const newGroupingData = getDndTargetGroupingUpdateValues(
@@ -405,6 +388,20 @@ const TeamsTable: Story<TeamsTableConfigs> = (args) => {
 
 export const TeamsTableDefault: Story<TeamsTableExample> = (args) => {
 	return <TeamsTable columns={columns} {...args} />
+}
+
+export const SuggestedColumns: Story<TeamsTableExample> = (args) => {
+	return (
+		<TeamsTable
+			columns={columns}
+			suggestedColumns={{
+				filtering: ['impact', 'performance'],
+				grouping: ['performance', 'riskOfLeaving'],
+				sorting: ['riskOfLeaving', 'impact'],
+			}}
+			{...args}
+		/>
+	)
 }
 
 export const TeamsTableSubtree: Story<TeamsTableExample> = (args) => (
@@ -534,6 +531,9 @@ const meta: Meta = {
 					sx: { color: '#FA4B4B' },
 				},
 			],
+		},
+		enableBulkActionsSelect: {
+			control: 'boolean',
 		},
 		enableRowSelection: {
 			options: ['enabled', 'disabled', 'Except "Impact" is not "Medium"'],
@@ -758,6 +758,10 @@ const meta: Meta = {
 			description:
 				'Set initial state for Table, this property rewrites `defaultSorting`, `defaultColumnVisibility`, `defaultColumnOrder`',
 		},
+		localization: {
+			control: { type: 'object' },
+			description: 'Redefine default translation phrases.',
+		},
 		multirowHeader: {
 			control: { type: 'select' },
 			defaultValue: 'Not enabled',
@@ -794,6 +798,15 @@ const meta: Meta = {
 			},
 			control: { type: 'select' },
 		},
+		cellGroupedPlaceholderText: {
+			control: { type: 'text' },
+			description: 'Set placeholder text for grouped cell with no data',
+			defaultValue: 'N/A',
+		},
+		cellPlaceholderText: {
+			control: { type: 'text' },
+			description: 'Set placeholder text for cell with no data',
+		},
 		rowsCount: {
 			control: { type: 'number' },
 			defaultValue: 100,
@@ -801,17 +814,17 @@ const meta: Meta = {
 				'***THIS IS NOT A PROP***\n' +
 				'Set row count for Table default, does not work with Subtree and Hierarchy Group Tables. Refresh table to after setting new value',
 		},
+		suggestedColumns: {
+			options: columns.map((column) => getColumnId(column)),
+			control: { type: 'object' },
+			description: `Example: { "filtering": null, "grouping": null, "sorting": ["${columns
+				.map((col) => getColumnId(col))
+				.join('", "')}"] }`,
+		},
 		toolbarProps: {
 			control: { type: 'object' },
 			defaultValue: {},
 			description: 'Set props for toolbar component',
-		},
-		enableLoremIpsumColumn: {
-			control: 'boolean',
-			defaultValue: false,
-			description:
-				'***THIS IS NOT A PROP***\n' +
-				'Set the Lorem Ipsum column for checking multirow trim',
 		},
 	},
 }

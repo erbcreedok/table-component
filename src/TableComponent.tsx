@@ -1,10 +1,12 @@
 /* eslint-disable no-param-reassign */
+import { BoxProps } from '@mui/material'
 import { Theme } from '@mui/material/styles'
 import React, {
 	Dispatch,
 	FC,
 	MouseEventHandler,
 	MutableRefObject,
+	PropsWithChildren,
 	ReactElement,
 	ReactNode,
 	SetStateAction,
@@ -66,7 +68,11 @@ import {
 	Preset,
 	PresetState,
 } from './TableToolbar/components/buttons/PresetButton'
-import { TableToolbarProps } from './TableToolbar/TableToolbar'
+import type { TableToolbarProps } from './TableToolbar/TableToolbar'
+import type { GetIsColumnAllGroupsCollapsedProps } from './utils/getIsColumnAllGroupsCollapsed'
+import type { GetIsGroupCollapsedProps } from './utils/getIsGroupCollapsed'
+import type { OnGroupCollapsedToggleProps } from './utils/onGroupCollapsedToggle'
+import type { OnGroupCollapsedToggleAllProps } from './utils/onGroupCollapseToggleAll'
 
 /**
  * Most of this file is just TypeScript types
@@ -77,6 +83,13 @@ type LiteralUnion<T extends U, U = string> = T | (U & Record<never, never>)
 export type TableData = Record<string, any>
 
 export type GroupCollapsed = Record<string, boolean | undefined>
+export type {
+	TableToolbarProps,
+	GetIsColumnAllGroupsCollapsedProps,
+	GetIsGroupCollapsedProps,
+	OnGroupCollapsedToggleProps,
+	OnGroupCollapsedToggleAllProps,
+}
 
 export interface Table_Localization {
 	actions: string
@@ -178,6 +191,7 @@ export interface Table_Localization {
 	sort: string
 	sortAsc: string
 	sortDesc: string
+	suggested: string
 	ascending: string
 	descending: string
 	AZ: string
@@ -237,6 +251,7 @@ export type TableInstance<TData extends Record<string, any> = {}> = Omit<
 	| 'getPaginationRowModel'
 	| 'getPreFilteredRowModel'
 	| 'getPrePaginationRowModel'
+	| 'getVisibleLeafColumns'
 	| 'getRightLeafColumns'
 	| 'getRowModel'
 	| 'getRow'
@@ -260,6 +275,7 @@ export type TableInstance<TData extends Record<string, any> = {}> = Omit<
 	getRowModel: () => Table_RowModel<TData>
 	getSelectedRowModel: () => Table_RowModel<TData>
 	getState: () => Table_TableState<TData>
+	getVisibleLeafColumns: () => Table_Column<TData>[]
 	getPresets: () => Preset[]
 	savePresets: (presets: Preset[]) => void
 	getDefaultPresets: () => Preset[]
@@ -291,7 +307,9 @@ export type TableInstance<TData extends Record<string, any> = {}> = Omit<
 	setDraggingColumn: Dispatch<SetStateAction<Table_Column<TData> | null>>
 	setDraggingRows: Dispatch<SetStateAction<Table_Row<TData>[]>>
 	setEditingCell: Dispatch<SetStateAction<Table_Cell<TData> | null>>
-	setEditingRow: Dispatch<SetStateAction<Table_Row<TData> | null>>
+	setEditingRow: Dispatch<
+		SetStateAction<(Table_Row<TData> & { isError?: boolean }) | null>
+	>
 	setGlobalFilterFn: Dispatch<SetStateAction<Table_FilterOption>>
 	setGroupCollapsed: Dispatch<SetStateAction<GroupCollapsed>>
 	setHoveredColumn: Dispatch<
@@ -315,7 +333,8 @@ export type Table_TableState<TData extends Record<string, any> = {}> =
 		draggingColumn: Table_Column<TData> | null
 		draggingRows: Table_Row<TData>[]
 		editingCell: Table_Cell<TData> | null
-		editingRow: Table_Row<TData> | null
+		editingRow: (Table_Row<TData> & { isError: boolean }) | null
+		isEditingRowError: boolean
 		globalFilterFn: Table_FilterOption
 		hoveredColumn: Table_Column<TData> | { id: string } | null
 		openedDetailedPanels: Record<string, OpenedDetailPanel<TData>> | null
@@ -457,12 +476,12 @@ export type Table_ColumnDef<TData extends Record<string, any> = {}> = Omit<
 			column,
 			row,
 			table,
-		}: {
+		}: PropsWithChildren<{
 			cell: Table_Cell<TData>
 			column: Table_Column<TData>
 			row: Table_Row<TData>
 			table: TableInstance<TData>
-		}) => ReactNode
+		}>) => ReactNode
 		Header?:
 			| ReactNode
 			| (({
@@ -561,7 +580,9 @@ export type Table_ColumnDef<TData extends Record<string, any> = {}> = Omit<
 			| 'single-select'
 			| 'multi-select'
 			| 'custom'
+		formatCellValue?: (value: unknown) => string
 		emptyHeader?: boolean
+		errorText?: string
 		enableClickToCopy?: boolean
 		enableColumnActions?: boolean
 		enableColumnDragging?: boolean
@@ -591,6 +612,8 @@ export type Table_ColumnDef<TData extends Record<string, any> = {}> = Omit<
 		 * @default gets set to the same value as `accessorKey` by default
 		 */
 		id?: LiteralUnion<string & keyof TData>
+		minValue?: number
+		maxValue?: number
 		muiTableBodyCellCopyButtonProps?:
 			| ButtonProps
 			| (({
@@ -617,6 +640,19 @@ export type Table_ColumnDef<TData extends Record<string, any> = {}> = Omit<
 					row: Table_Row<TData>
 					table: TableInstance<TData>
 			  }) => TableCellProps)
+		muiTableBodyCellWrapperProps?:
+			| BoxProps
+			| (({
+					cell,
+					column,
+					row,
+					table,
+			  }: {
+					cell: Table_Cell<TData>
+					column: Table_Column<TData>
+					row: Table_Row<TData>
+					table: TableInstance<TData>
+			  }) => BoxProps)
 		muiTableFooterCellProps?:
 			| TableCellProps
 			| (({
@@ -695,6 +731,20 @@ export type Table_ColumnDef<TData extends Record<string, any> = {}> = Omit<
 		}) => ReactNode[]
 		sortingFn?: Table_SortingFn<TData>
 		subtitle?: string
+		validator?: ({
+			value,
+			table,
+			row,
+			cell,
+		}: {
+			value: any
+			table: TableInstance<TData>
+			row: Table_Row<TData>
+			cell: Table_Cell<TData>
+		}) => boolean | string
+		errorExplanation?: string
+		cellGroupedPlaceholderText?: string
+		cellPlaceholderText?: string
 	}
 
 export type Table_DefinedColumnDef<TData extends Record<string, any> = {}> =
@@ -861,6 +911,15 @@ export type TableComponentProps<TData extends Record<string, any> = {}> = Omit<
 	 */
 	columns: Table_ColumnDef<TData>[]
 	/**
+	 * The columns to be suggested in sidebars.
+	 * Contains list of column accessorKey.
+	 */
+	suggestedColumns?: {
+		filtering?: string[]
+		grouping?: string[]
+		sorting?: string[]
+	}
+	/**
 	 * Pass your data as an array of objects. Objects can theoretically be any shape, but it's best to keep them consistent.
 	 *
 	 * See the usage guide for more info on creating columns and data:
@@ -869,6 +928,8 @@ export type TableComponentProps<TData extends Record<string, any> = {}> = Omit<
 	data: TData[]
 	bulkActions?: Table_Actions<TData>[]
 	bulkActionProps?: TableBulkActionsProps<TData>
+	cellGroupedPlaceholderText?: string
+	cellPlaceholderText?: string
 	/**
 	 * Instead of specifying a bunch of the same options for each column, you can just change an option in the `defaultColumn` prop to change a default option for all columns.
 	 */
@@ -885,6 +946,7 @@ export type TableComponentProps<TData extends Record<string, any> = {}> = Omit<
 	enableAggregationRow?: boolean
 	enableBulkActions?: boolean
 	enableBulkActionsCaptions?: boolean | 'auto'
+	enableBulkActionsSelect?: boolean
 	enableMergedGrouping?: boolean
 	enableBottomToolbar?: boolean
 	enableClickToCopy?: boolean
@@ -951,10 +1013,24 @@ export type TableComponentProps<TData extends Record<string, any> = {}> = Omit<
 		parentRow: Table_Row<TData>
 	) => string
 	getIsUnitTreeItem?: (rowOriginal: TData) => boolean
+	getIsColumnAllGroupsCollapsed?: (
+		props: GetIsColumnAllGroupsCollapsedProps<TData>
+	) => boolean
+	getIsGroupCollapsed?: (props: GetIsGroupCollapsedProps<TData>) => boolean
 	globalFilterFn?: Table_FilterOption
 	globalFilterModeOptions?: Table_FilterOption[] | null
-	groupsSorting?: any
 	groupBorder?: string | { left: string; top: string }
+	handleRowsDrop?: ({
+		hoveredRow,
+		draggingRows,
+		grouping,
+		table,
+	}: {
+		hoveredRow: HoveredRowState<TData>
+		draggingRows: Table_Row<TData> | Table_Row<TData>[]
+		grouping: GroupingState
+		table: TableInstance<TData>
+	}) => Promise<void> | void
 	hideDefaultExpandIcon?: boolean
 	hideSummaryRowInEmptyTable?: boolean
 	hideRowExpandColumn?: boolean
@@ -1057,6 +1133,19 @@ export type TableComponentProps<TData extends Record<string, any> = {}> = Omit<
 				row: Table_Row<TData>
 				table: TableInstance<TData>
 		  }) => TableCellProps)
+	muiTableBodyCellWrapperProps?:
+		| BoxProps
+		| (({
+				cell,
+				column,
+				row,
+				table,
+		  }: {
+				cell: Table_Cell<TData>
+				column: Table_Column<TData>
+				row: Table_Row<TData>
+				table: TableInstance<TData>
+		  }) => BoxProps)
 	muiTableBodyCellSkeletonProps?:
 		| SkeletonProps
 		| (({
@@ -1236,23 +1325,16 @@ export type TableComponentProps<TData extends Record<string, any> = {}> = Omit<
 		table: TableInstance<TData>
 		values: Record<LiteralUnion<string & DeepKeys<TData>>, any> | {}
 	}) => Promise<void> | void
-	handleRowsDrop?: ({
-		hoveredRow,
-		draggingRows,
-		grouping,
-		table,
-	}: {
-		hoveredRow: HoveredRowState<TData>
-		draggingRows: Table_Row<TData> | Table_Row<TData>[]
-		grouping: GroupingState
-		table: TableInstance<TData>
-	}) => Promise<void> | void
 	onEditingRowChange?: OnChangeFn<Table_Row<TData> | null>
 	onColumnFilterFnsChange?: OnChangeFn<{ [key: string]: Table_FilterOption }>
 	onGlobalFilterFnChange?: OnChangeFn<Table_FilterOption>
 	onHoveredColumnChange?: OnChangeFn<Table_Column<TData> | null>
 	onHoveredRowChange?: OnChangeFn<HoveredRowState<TData> | null>
 	onGroupCollapsedChange?: OnChangeFn<GroupCollapsed>
+	onGroupCollapsedToggle?: (props: OnGroupCollapsedToggleProps<TData>) => void
+	onGroupCollapsedToggleAll?: (
+		props: OnGroupCollapsedToggleAllProps<TData>
+	) => void
 	onIsFullScreenChange?: OnChangeFn<boolean>
 	onShowAlertBannerChange?: OnChangeFn<boolean>
 	onShowFiltersChange?: OnChangeFn<boolean>
@@ -1273,6 +1355,8 @@ export type TableComponentProps<TData extends Record<string, any> = {}> = Omit<
 		event?: any
 		value?: any
 	}) => void
+	organizeColumnsMenu?(columns: Table_Column<TData>[]): Table_Column<TData>[]
+	organizeSortingMenu?(columns: Table_Column<TData>[]): Table_Column<TData>[]
 	positionActionsColumn?: 'first' | 'last'
 	positionExpandColumn?: 'first' | 'last'
 	positionGlobalFilter?: 'left' | 'right' | 'none'

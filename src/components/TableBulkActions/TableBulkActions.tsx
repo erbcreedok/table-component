@@ -39,6 +39,7 @@ export const TableBulkActions = ({
 			enableBulkActionsCaptions: enableCaptions,
 			localization,
 			bulkActions,
+			enableBulkActionsSelect,
 			icons: { CloseIcon },
 		},
 		refs: { bulkActionsRef },
@@ -111,16 +112,22 @@ export const TableBulkActions = ({
 						alignItems: 'center',
 					}}
 				>
-					<SelectCheckbox
-						table={table}
-						selectAll
-						label={({ checked }) => (
-							<Label sx={{ ml: '6px' }}>
-								{checked ? localization.deselectAll : localization.selectAll}
-							</Label>
-						)}
-					/>
-					<Line orientation="vertical" height={14} sx={{ mx: '12px' }} />
+					{enableBulkActionsSelect && (
+						<>
+							<SelectCheckbox
+								table={table}
+								selectAll
+								label={({ checked }) => (
+									<Label sx={{ ml: '6px' }}>
+										{checked
+											? localization.deselectAll
+											: localization.selectAll}
+									</Label>
+								)}
+							/>
+							<Line orientation="vertical" height={14} sx={{ mx: '12px' }} />
+						</>
+					)}
 					<Label>{selectMessage}</Label>
 				</Box>
 				<Box

@@ -14,6 +14,7 @@ import {
 	TextEllipsis,
 	useEditField,
 	GroupedCellBase,
+	CellBase,
 } from '../../index'
 import {
 	Table_Cell,
@@ -338,6 +339,15 @@ export const getTeamMembersColumns = () => {
 			muiTableBodyCellProps: coloredCellProps,
 			enableColumnOrdering: true,
 			sortDescFirst: false,
+			editVariant: 'text',
+			validator: ({ value }) => {
+				const validationResult = /^(?:Leaver|High|Medium|Low)*$/i.test(value)
+
+				if (validationResult === false) {
+					return 'Possible one of values: Leaver, High, Medium, Low'
+				}
+				return validationResult
+			},
 		},
 		{
 			header: 'Succession status',
@@ -365,7 +375,16 @@ export const getTeamMembersColumns = () => {
 			id: 'hiredAt',
 			accessorFn: teamMemberAccessorFn('hiredAt'),
 			filterVariant: 'multi-select',
-			GroupedCell: ColoredGroupedCell,
+			GroupedCell: ({ children, ...props }) => (
+				<ColoredGroupedCell {...props}>
+					<CellBase
+						{...props}
+						text={convertDate(props.cell.getValue() as Date, {
+							weekday: 'short',
+						})}
+					/>
+				</ColoredGroupedCell>
+			),
 			Header: HeaderBase,
 			enableColumnOrdering: true,
 			Cell: ({ cell }) => (
@@ -386,11 +405,36 @@ export const getTeamMembersColumns = () => {
 			header: 'Project completion',
 			id: 'completion',
 			accessorFn: teamMemberAccessorFn('completion'),
-			enableColumnFilter: false,
 			GroupedCell: ColoredGroupedCell,
 			Header: HeaderBase,
 			enableColumnOrdering: true,
 			editVariant: 'number',
+			minValue: 0,
+			maxValue: Infinity,
+			cellPlaceholderText: '-',
+			muiTableBodyCellWrapperProps: {
+				sx: { justifyContent: 'flex-end' },
+			},
+			formatCellValue: (value: unknown) => {
+				if (value == null) return value
+
+				const number = Number(value)
+				return `${
+					!isNaN(number) ? Math.trunc(number * 100) / 100 : value
+				}`.replace(/\B(?=(\d{3})+(?!\d))/g, ' ')
+			},
+		},
+		{
+			header: 'Lorem Ipsum',
+			id: 'lorem',
+			dataType: 'textual',
+			accessorFn: teamMemberAccessorFn('lorem'),
+			filterVariant: 'multi-select',
+			GroupedCell: ColoredGroupedCell,
+			muiTableBodyCellProps: coloredCellProps,
+			enableColumnOrdering: true,
+			enableSorting: false,
+			enableGrouping: false,
 		},
 	] as Array<Table_ColumnDef<TeamMember>>
 }

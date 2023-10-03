@@ -1,38 +1,109 @@
-import React, { useState } from 'react'
-import TextTruncate from 'react-text-truncate'
-import Tooltip from '@mui/material/Tooltip'
-import Box from '@mui/material/Box'
+import { BoxProps } from '@mui/material'
+import { PropsWithChildren, useMemo } from 'react'
 
-import { Table_Cell } from '../TableComponent'
+import {
+	Table_Cell,
+	Table_Column,
+	Table_Row,
+	TableData,
+	TableInstance,
+} from '../TableComponent'
+import { mergeSx } from '../utils/mergeSx'
 
-type Props<TData extends object> = {
-	cell: Table_Cell<TData>
-}
-export const CellBase = <TData extends object>({ cell }: Props<TData>) => {
-	const [isTruncated, setIsTruncated] = useState(false)
-	const text = `${cell.getValue() ?? ''}`
+import { TooltipProps } from './Tooltip'
+import { TooltipOverflow } from './TooltipOverflow'
 
-	const textWithTooltip = ({ children }) => {
-		return (
-			<Tooltip
-				arrow
-				enterDelay={1000}
-				enterNextDelay={1000}
-				title={text}
-				disableHoverListener={!isTruncated}
-			>
-				<Box>{children}</Box>
-			</Tooltip>
-		)
-	}
+export type CellBaseProps<TData extends TableData = {}> = PropsWithChildren<
+	{
+		cell: Table_Cell<TData>
+		table: TableInstance<TData>
+		column: Table_Column<TData>
+		row: Table_Row<TData>
+		text?: string
+		tooltipProps?: Omit<TooltipProps, 'ref'>
+		clamp?: boolean | number
+	} & BoxProps
+>
+export const CellBase = <TData extends TableData = {}>({
+	cell,
+	column,
+	// spread `row` out of `rest`, because it's not a valid Box prop
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
+	row,
+	children,
+	table,
+	text: uText,
+	tooltipProps,
+	clamp = true,
+	...rest
+}: CellBaseProps<TData>) => {
+	const {
+		options: { cellGroupedPlaceholderText = 'N/A', cellPlaceholderText },
+	} = table
+	const { formatCellValue = (value) => value } = column.columnDef
+	const isGrouped = column.getIsGrouped()
+	const value = cell.getValue()
+	const text = useMemo(() => {
+		if (uText) return uText
+		const formatted = `${formatCellValue(value) ?? ''}`
+		if (formatted) return formatted
+		const { columnDef } = column
+		const placeholder =
+			columnDef.cellPlaceholderText ?? cellPlaceholderText ?? ''
+		if (isGrouped)
+			return (
+				columnDef.cellGroupedPlaceholderText ??
+				cellGroupedPlaceholderText ??
+				placeholder
+			)
+
+		return placeholder
+	}, [
+		cellGroupedPlaceholderText,
+		cellPlaceholderText,
+		column,
+		formatCellValue,
+		isGrouped,
+		uText,
+		value,
+	])
+
+	const content = <>{children ?? text}</>
+	const computedClamp = clamp === true ? 2 : !clamp ? 1 : clamp
+	const isParagraph =
+		typeof content.props.children === 'string'
+			? content.props.children.split(' ').length > computedClamp
+			: false
+
+	// Webkit-Box can't truncate paragraph, if count of words is less than line-clamp
+	const canClamp = isParagraph && computedClamp > 1
 
 	return (
-		<TextTruncate
-			line={2}
-			truncateText="..."
+		<TooltipOverflow
+			content={content}
 			text={text}
-			textElement={textWithTooltip}
-			onTruncated={() => setIsTruncated(true)}
+			placement="top"
+			handleHeight
+			arrow
+			enterDelay={1000}
+			enterNextDelay={1000}
+			{...tooltipProps}
+			boxProps={{
+				...rest,
+				sx: mergeSx(
+					{
+						overflow: 'hidden',
+						textOverflow: 'ellipsis',
+						...(canClamp && {
+							display: '-webkit-box',
+							WebkitLineClamp: computedClamp,
+							WebkitBoxOrient: 'vertical',
+							whiteSpace: 'normal',
+						}),
+					},
+					rest.sx
+				),
+			}}
 		/>
 	)
 }

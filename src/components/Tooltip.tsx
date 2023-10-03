@@ -1,5 +1,6 @@
 import { styled, tooltipClasses } from '@mui/material'
 import MuiTooltip from '@mui/material/Tooltip'
+import { ComponentProps } from 'react'
 
 import { Colors } from './styles'
 
@@ -79,3 +80,5 @@ export const Tooltip = styled(TooltipBase)<{
 		margin-left: ${getSpacing('bottom')}px;
 	}
 `
+
+export type TooltipProps = ComponentProps<typeof Tooltip>

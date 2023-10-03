@@ -2,12 +2,15 @@ import {
 	inputBaseClasses,
 	outlinedInputClasses,
 	TextField,
+	InputAdornment,
 } from '@mui/material'
 import IconButton from '@mui/material/IconButton'
 import { TextFieldProps } from '@mui/material/TextField'
+import Box from '@mui/material/Box'
 import { PartialKeys } from '@tanstack/table-core'
 import React, { MouseEventHandler, useRef } from 'react'
 
+import { Tooltip } from '../components/Tooltip'
 import { NumberStepButtons } from '../components/NumberStepButtons'
 import { Colors, IconsColor, TextColor } from '../components/styles'
 import { useTableContext } from '../context/useTableContext'
@@ -22,17 +25,24 @@ export type InputProps = Omit<
 	onClear?: MouseEventHandler
 	isNumeric?: boolean
 	step?: number
+	minValue?: number
+	maxValue?: number
+	errorExplanation?: string
 }
 export const Input = ({
 	onClear,
 	isNumeric,
 	step = 1,
+	minValue = 0,
+	maxValue = Infinity,
+	error,
+	errorExplanation,
 	...props
 }: InputProps) => {
 	const {
 		table: {
 			options: {
-				icons: { CloseIcon },
+				icons: { CloseIcon, WarningOutlineIcon },
 			},
 		},
 	} = useTableContext()
@@ -51,6 +61,7 @@ export const Input = ({
 			margin="none"
 			fullWidth
 			{...props}
+			error={error}
 			InputProps={{
 				inputRef: (node) => {
 					if (node) {
@@ -62,7 +73,18 @@ export const Input = ({
 						props.inputRef?.(node)
 					}
 				},
-				endAdornment: isNumeric ? (
+				endAdornment: error ? (
+					<Tooltip
+						placement="top"
+						arrow
+						disabled={!errorExplanation}
+						title={errorExplanation}
+					>
+						<Box sx={{ display: 'flex', mr: '9px' }}>
+							<WarningOutlineIcon sx={{ color: Colors.Red, m: 'auto' }} />
+						</Box>
+					</Tooltip>
+				) : isNumeric ? (
 					<NumberStepButtons
 						sx={{ mr: '6px' }}
 						onClickUp={handleStepClick(step)}
@@ -94,6 +116,8 @@ export const Input = ({
 								type: 'number',
 								inputMode: 'numeric',
 								pattern: '[0-9]*',
+								min: minValue,
+								max: maxValue,
 						  }
 						: {}),
 					...props.inputProps,

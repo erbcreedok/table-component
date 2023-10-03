@@ -1,10 +1,4 @@
-import React, {
-	Dispatch,
-	DragEvent,
-	SetStateAction,
-	useRef,
-	useState,
-} from 'react'
+import React, { Dispatch, DragEvent, SetStateAction, useRef } from 'react'
 import Box from '@mui/material/Box'
 import FormControlLabel from '@mui/material/FormControlLabel'
 import MenuItem from '@mui/material/MenuItem'
@@ -12,7 +6,7 @@ import Typography from '@mui/material/Typography'
 
 import { ColumnPinningButtons } from '../../../../buttons/ColumnPinningButtons'
 import { GrabHandleButton } from '../../buttons/GrabHandleButton'
-import type { Table_Column, TableInstance } from '../../../../index'
+import type { Table_Column, TableData, TableInstance } from '../../../../index'
 import { TableSwitch } from '../../../../components/TableSwitch'
 import { Tooltip } from '../../../../components/Tooltip'
 import {
@@ -22,33 +16,33 @@ import {
 	IconsColor,
 } from '../../../../components/styles'
 
-interface Props<TData extends Record<string, any> = {}> {
-	allColumns: Array<Table_Column<TData>>
+interface Props<TData extends TableData> {
 	column: Table_Column<TData>
 	hoveredColumn: Table_Column<TData> | null
-	isSubMenu?: boolean
+	draggingColumn: Table_Column<TData> | null
 	setHoveredColumn: Dispatch<SetStateAction<Table_Column<TData> | null>>
+	setDraggingColumn: Dispatch<SetStateAction<Table_Column<TData> | null>>
 	table: TableInstance<TData>
 	enableDrag?: boolean
-	onColumnVisibilityChange(id: Table_Column<TData>, checked: boolean): void
-	onColumnOrderChange(
+	onColumnOrderChange?(
 		draggedColumn: Table_Column<TData>,
 		targetColumn: Table_Column<TData>
 	): void
 }
 
-export const ColumnsMenuItem = <TData extends Record<string, any> = {}>({
+export const ColumnsMenuItem = <TData extends TableData = {}>({
 	hoveredColumn,
+	draggingColumn,
 	setHoveredColumn,
+	setDraggingColumn,
 	column,
-	isSubMenu,
 	table,
-	onColumnVisibilityChange,
 	enableDrag,
 	onColumnOrderChange,
 }: Props<TData>) => {
 	const {
 		options: {
+			enableColumnOrdering,
 			enableHiding,
 			enablePinning,
 			localization,
@@ -68,7 +62,6 @@ export const ColumnsMenuItem = <TData extends Record<string, any> = {}>({
 		if (columnDefType === 'group') {
 			col?.columns?.forEach?.((childColumn: Table_Column<TData>) => {
 				childColumn.toggleVisibility(!switchChecked)
-				onColumnVisibilityChange(col, !switchChecked)
 			})
 		} else {
 			if (col.getIsGrouped()) {
@@ -76,29 +69,35 @@ export const ColumnsMenuItem = <TData extends Record<string, any> = {}>({
 			}
 			col.clearSorting()
 			col.toggleVisibility()
-			onColumnVisibilityChange(col, !switchChecked)
 		}
 	}
 
 	const menuItemRef = useRef<HTMLElement>(null)
 
-	const [isDragging, setIsDragging] = useState(false)
+	const isDragging = draggingColumn === column
+
+	const columnOrderingEnabled =
+		columnDef.enableColumnOrdering ?? enableColumnOrdering
 
 	const handleDragStart = (e: DragEvent<HTMLButtonElement>) => {
-		setIsDragging(true)
+		setDraggingColumn(column)
 		e.dataTransfer.setDragImage(menuItemRef.current as HTMLElement, 0, 0)
 	}
 
-	const handleDragEnd = (_e: DragEvent<HTMLButtonElement>) => {
-		setIsDragging(false)
+	const handleDragEnd = () => {
+		setDraggingColumn(null)
 		setHoveredColumn(null)
 		if (hoveredColumn) {
-			onColumnOrderChange(column, hoveredColumn)
+			onColumnOrderChange?.(column, hoveredColumn)
 		}
 	}
 
-	const handleDragEnter = (_e: DragEvent) => {
-		if (!isDragging && columnDef.enableColumnOrdering) {
+	const handleDragEnter = () => {
+		if (
+			!isDragging &&
+			columnOrderingEnabled &&
+			column.getIsGrouped() === draggingColumn?.getIsGrouped()
+		) {
 			setHoveredColumn(column)
 		}
 	}
@@ -144,7 +143,7 @@ export const ColumnsMenuItem = <TData extends Record<string, any> = {}>({
 						minWidth: 300,
 					}}
 				>
-					{columnDef.enableColumnOrdering && switchChecked && enableDrag ? (
+					{columnOrderingEnabled && switchChecked && enableDrag ? (
 						<GrabHandleButton
 							onDragEnd={handleDragEnd}
 							onDragStart={handleDragStart}
@@ -187,7 +186,7 @@ export const ColumnsMenuItem = <TData extends Record<string, any> = {}>({
 									<TableSwitch size="small" disableRipple />
 								</Tooltip>
 							}
-							disabled={(isSubMenu && switchChecked) || !column.getCanHide()}
+							disabled={!column.getCanHide()}
 							label={columnDef.header}
 							onChange={() => handleToggleColumnHidden(column)}
 						/>

@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 import Box from '@mui/material/Box'
 import { Typography } from '@mui/material'
 
@@ -29,7 +29,7 @@ export const GroupingMenu = <TData extends Record<string, any> = {}>({
 		getCenterLeafColumns,
 		getRightLeafColumns,
 		setGrouping,
-		options: { innerTable, localization },
+		options: { innerTable, localization, suggestedColumns },
 	} = table
 	const { columnOrder, columnPinning, columnVisibility, grouping } = getState()
 	const [isSearchActive, setIsSearchActive] = useState<boolean>(false)
@@ -70,13 +70,22 @@ export const GroupingMenu = <TData extends Record<string, any> = {}>({
 			grouping.map((colId) =>
 				getCenterLeafColumns().find((col) => col?.id === colId)
 			),
-		[grouping]
+		[getCenterLeafColumns, grouping]
 	)
 
-	const nonGroupedList = useMemo(
-		() => allColumns.filter((col) => !col.getIsGrouped()),
-		[allColumns, grouping, columnVisibility]
-	)
+	const [ungroupedList, areSuggestedShown] = useMemo(() => {
+		const ungrouped = allColumns.filter((col) => !col.getIsGrouped())
+
+		if (suggestedColumns?.grouping) {
+			const suggested = ungrouped.filter(({ id }) =>
+				suggestedColumns.grouping?.includes(id)
+			)
+
+			if (suggested.length) return [suggested, true]
+		}
+
+		return [ungrouped, false]
+	}, [allColumns, grouping, columnVisibility, suggestedColumns])
 
 	const handleCloseClick = () => setAnchorEl(null)
 	const handleOnSearchChange = (value: string) => {
@@ -150,7 +159,7 @@ export const GroupingMenu = <TData extends Record<string, any> = {}>({
 						<Box
 							sx={{
 								padding: '0 24px',
-								margin: '12px 0 20px 0',
+								margin: '20px 0 20px 0',
 								display: 'flex',
 								justifyContent: 'space-between',
 								alignItems: 'center',
@@ -175,18 +184,21 @@ export const GroupingMenu = <TData extends Record<string, any> = {}>({
 				)}
 
 				<>
-					{!!groupedList.length &&
+					{((!!groupedList.length &&
 						!searchList.length &&
 						!isSearchActive &&
-						!!nonGroupedList.length && (
-							<ListTitle sx={{ padding: '0 24px', margin: '20px 0' }}>
-								Columns
-							</ListTitle>
-						)}
+						!!ungroupedList.length) ||
+						areSuggestedShown) && (
+						<ListTitle sx={{ padding: '0 24px', margin: '20px 0 ' }}>
+							{areSuggestedShown
+								? localization.suggested
+								: localization.columns}
+						</ListTitle>
+					)}
 					{Boolean(
-						nonGroupedList.length && !searchList.length && !isSearchActive
+						ungroupedList.length && !searchList.length && !isSearchActive
 					) &&
-						nonGroupedList.map((column) => (
+						ungroupedList.map((column) => (
 							<SimpleMenuItem
 								column={column}
 								key={column.id}

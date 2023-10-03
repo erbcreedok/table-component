@@ -21,7 +21,6 @@ export default [
 			'react',
 			'react-datepicker',
 			'react-resize-detector',
-			'react-text-truncate',
 		],
 		input: './src/index.tsx',
 		output: [

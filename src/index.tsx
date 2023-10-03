@@ -12,7 +12,7 @@ import { Select } from './inputs/Select'
 import { createTheme } from './theme/createTheme'
 import TableComponent from './TableComponent'
 import type { Table_Icons } from './icons'
-import { CellBase } from './components/CellBase'
+import { CellBase, type CellBaseProps } from './components/CellBase'
 import { CopyButton } from './buttons/CopyButton'
 import { FilterOptionMenu } from './menus/FilterOptionMenu'
 import { FilterMultiselect } from './components/FilterMultiselect'
@@ -43,7 +43,11 @@ import { ExpandButton } from './buttons/ExpandButton'
 import { TableHeadRow } from './head/TableHeadRow'
 import { TableHeadMultiRow } from './head/TableHeadMultiRow'
 import { TextEllipsis } from './components/TextEllipsis'
-import { TooltipOverflow } from './components/TooltipOverflow'
+import { Tooltip, type TooltipProps } from './components/Tooltip'
+import {
+	TooltipOverflow,
+	type TooltipOverflowProps,
+} from './components/TooltipOverflow'
 import { SelectCheckbox } from './inputs/SelectCheckbox'
 import { useEditField, UseEditFieldProps } from './inputs/utils/useEditField'
 import { useMultiSticky } from './hooks/useMultiSticky'
@@ -63,6 +67,7 @@ export type {
 export {
 	BottomToolbar,
 	CellBase,
+	type CellBaseProps,
 	CopyButton,
 	createTheme,
 	DateInput,
@@ -101,7 +106,10 @@ export {
 	ToolbarDropZone,
 	ToolbarDivider,
 	ToolbarInternalButtons,
+	Tooltip,
+	type TooltipProps,
 	TooltipOverflow,
+	type TooltipOverflowProps,
 	TopToolbar,
 	useMultiSticky,
 	useTableContext,
