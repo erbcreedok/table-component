@@ -1,3 +1,4 @@
+import { PartialKeys } from '@tanstack/table-core'
 import { PropsWithChildren, RefObject } from 'react'
 
 import { useTableContext } from '../context/useTableContext'
@@ -8,7 +9,8 @@ import { DayPicker, DayPickerProps } from './DayPicker'
 export type DayPickerInputProps = PropsWithChildren<
 	Omit<DayPickerProps, 'children'>
 > & {
-	inputProps?: DateInputProps
+	inputRef?: RefObject<HTMLInputElement>
+	inputProps?: PartialKeys<DateInputProps, 'value' | 'onChange'>
 }
 export const DayPickerInput = ({
 	inputProps,
@@ -28,6 +30,10 @@ export const DayPickerInput = ({
 					value={value}
 					{...inputProps}
 					{...bind}
+					onKeyDown={(e) => {
+						bind?.onKeyDown?.(e)
+						inputProps?.onKeyDown?.(e)
+					}}
 				/>
 			)}
 		</DayPicker>

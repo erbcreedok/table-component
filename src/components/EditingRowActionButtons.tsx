@@ -56,7 +56,10 @@ export const EditingRowActionButtons = <TData extends TableData>({
 	}
 
 	const handleSave = () => {
-		if (editingRow && !editingRow.isError) {
+		const hasErrors = Object.values(editingRow?.errors ?? {}).some(
+			(error) => error !== null
+		)
+		if (editingRow && !hasErrors) {
 			onEditingRowsSave?.({
 				exitEditingMode: () => setEditingRow(null),
 				rows: editingRow ?? row,

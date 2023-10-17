@@ -28,14 +28,17 @@ export type DateInputProps = Omit<
 	InputProps,
 	'value' | 'step' | 'onChange' | 'onSubmit'
 > & {
-	value: Date | null | undefined
+	value?: Value
 	onChange?: (day: Value, close: boolean) => void
 	formatMask?: string
 	onClear?: MouseEventHandler
 }
 
 export const DateInput: FC<DateInputProps> = forwardRef(
-	({ value, onChange, formatMask = 'dd.MM.yyyy', ...props }, ref) => {
+	(
+		{ value, onBlur, onChange, onFocus, formatMask = 'dd.MM.yyyy', ...props },
+		ref
+	) => {
 		const [internalValue, setInternalValue] = useState<string>('')
 		const [isError, setIsError] = useState<boolean>(false)
 
@@ -57,10 +60,27 @@ export const DateInput: FC<DateInputProps> = forwardRef(
 			[formatMask, onChange]
 		)
 
-		const handleFocus = useCallback((event) => {
-			props?.onFocus?.(event)
-			setIsError(false)
-		}, [])
+		// clear value if it is invalid
+		const handleBlur = useCallback(
+			(event) => {
+				onBlur?.(event)
+				if (event.isPropagationStopped()) return
+				const parsedDate = parse(event.target.value, formatMask, new Date())
+				if (!isValid(parsedDate) || getYear(parsedDate) <= 999) {
+					setInternalValue('')
+					onChange?.(null, true)
+				}
+			},
+			[formatMask, onBlur, onChange]
+		)
+
+		const handleFocus = useCallback(
+			(event) => {
+				onFocus?.(event)
+				setIsError(false)
+			},
+			[onFocus]
+		)
 
 		return (
 			<Input
@@ -73,6 +93,7 @@ export const DateInput: FC<DateInputProps> = forwardRef(
 				value={internalValue}
 				onChange={handleChange}
 				onFocus={handleFocus}
+				onBlur={handleBlur}
 			/>
 		)
 	}

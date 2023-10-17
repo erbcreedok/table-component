@@ -33,8 +33,8 @@ export const TableBodyRowGrabHandle: FC<Props> = ({
 			muiTableBodyRowDragHandleProps,
 			icons: { RowDragIcon },
 			enableRowDragging,
-			validateHoveredRow,
 			handleRowsDrop,
+			validateHoveredRow,
 		},
 		getState,
 	} = table
@@ -92,7 +92,6 @@ export const TableBodyRowGrabHandle: FC<Props> = ({
 
 	const handleDragEnd = (event: DragEvent<HTMLButtonElement>) => {
 		const { hoveredRow } = table.getState()
-
 		if (
 			hoveredRow &&
 			(validateHoveredRow
@@ -129,12 +128,9 @@ export const TableBodyRowGrabHandle: FC<Props> = ({
 					...iconButtonProps,
 				}}
 			/>
-			<TableRowDragGhost
-				table={table}
-				rowRef={rowRef}
-				ref={dragRef}
-				isDragging={isDragging}
-			/>
+			{isDragging && (
+				<TableRowDragGhost table={table} rowRef={rowRef} ref={dragRef} />
+			)}
 		</>
 	)
 }

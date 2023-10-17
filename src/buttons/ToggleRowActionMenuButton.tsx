@@ -4,7 +4,6 @@ import Tooltip from '@mui/material/Tooltip'
 
 import type { Table_Cell, Table_Row, TableInstance } from '..'
 
-import { EditActionButtons } from './EditActionButtons'
 import { RowActionMenuButton } from './RowActionMenuButton'
 
 const commonIconButtonStyles = {
@@ -32,10 +31,9 @@ export const ToggleRowActionMenuButton = <
 	table,
 }: Props<TData>) => {
 	const {
-		getState,
 		options: {
-			editingMode,
 			enableEditing,
+			editingMode,
 			icons: { EditIcon },
 			localization,
 			renderRowActionMenuItems,
@@ -43,8 +41,6 @@ export const ToggleRowActionMenuButton = <
 		},
 		setEditingRow,
 	} = table
-
-	const { editingRow } = getState()
 
 	const handleStartEditMode = (event: MouseEvent) => {
 		event.stopPropagation()
@@ -55,9 +51,9 @@ export const ToggleRowActionMenuButton = <
 		<>
 			{renderRowActions ? (
 				<>{renderRowActions({ cell, row, table })}</>
-			) : row.id === editingRow?.id && editingMode === 'row' ? (
-				<EditActionButtons row={row} table={table} />
-			) : enableEditing ? (
+			) : renderRowActionMenuItems ? (
+				<RowActionMenuButton table={table} row={row} />
+			) : enableEditing && editingMode === 'row' ? (
 				<Tooltip placement="right" arrow title={localization.edit}>
 					<IconButton
 						aria-label={localization.edit}
@@ -67,8 +63,6 @@ export const ToggleRowActionMenuButton = <
 						<EditIcon />
 					</IconButton>
 				</Tooltip>
-			) : renderRowActionMenuItems ? (
-				<RowActionMenuButton table={table} row={row} />
 			) : null}
 		</>
 	)

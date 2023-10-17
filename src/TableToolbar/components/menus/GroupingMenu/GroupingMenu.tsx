@@ -1,14 +1,20 @@
 import { useMemo, useState } from 'react'
 import Box from '@mui/material/Box'
-import { Typography } from '@mui/material'
+import { Divider, IconButton, Typography } from '@mui/material'
 
 import type { TableInstance } from '../../../../index'
-import { Table_Column } from '../../../../index'
-import { SimpleMenuItem } from '../components/SimpleMenuItem'
+import { Table_Column, TableData } from '../../../../index'
+import { splitArrayItems } from '../../../../utils/splitArrayItems'
+import {
+	SimpleMenuItem,
+	SimpleMenuItemProps,
+} from '../components/SimpleMenuItem'
 import { ButtonLink } from '../../../../components/ButtonLink'
 import { reorderColumn } from '../../../../column.utils'
 import { ListTitle } from '../../../../components/ListTitle'
 import { Sidebar } from '../../../../components/Sidebar'
+import { DeleteIcon } from '../../../../icons/DeleteIcon'
+import { SidebarSearch } from '../../../../components/SidebarSearch'
 
 interface Props<TData extends Record<string, any> = {}> {
 	anchorEl: HTMLElement | null
@@ -17,98 +23,59 @@ interface Props<TData extends Record<string, any> = {}> {
 	table: TableInstance<TData>
 }
 
+export const defaultOrganizeGroupingMenu = <TData extends TableData = {}>(
+	allColumns: Table_Column<TData>[]
+) => allColumns.filter((col) => col.getIsVisible() && col.getCanGroup())
+
 export const GroupingMenu = <TData extends Record<string, any> = {}>({
 	anchorEl,
 	setAnchorEl,
 	table,
 }: Props<TData>) => {
 	const {
-		getState,
 		getAllColumns,
-		getLeftLeafColumns,
-		getCenterLeafColumns,
-		getRightLeafColumns,
 		setGrouping,
-		options: { innerTable, localization, suggestedColumns },
+		options: {
+			innerTable,
+			localization,
+			suggestedColumns,
+			organizeGroupingMenu = defaultOrganizeGroupingMenu,
+		},
 	} = table
-	const { columnOrder, columnPinning, columnVisibility, grouping } = getState()
-	const [isSearchActive, setIsSearchActive] = useState<boolean>(false)
-	const [searchList, setSearchList] = useState<Array<Table_Column<TData>>>([])
+	const [searchValue, setSearchValue] = useState('')
 	const [hoveredColumn, setHoveredColumn] =
 		useState<Table_Column<TData> | null>(null)
+	const allColumns = organizeGroupingMenu(getAllColumns())
 
-	const allColumns = useMemo(() => {
-		const columns = getAllColumns()
-
-		if (columnOrder.length > 0) {
-			return Array.from(new Set(columnOrder))
-				.map((colId) => getCenterLeafColumns().find((col) => col?.id === colId))
-				.filter(
-					(col) =>
-						col?.id !== 'teamMember' &&
-						col?.getIsVisible() &&
-						col?.getCanGroup()
-				)
-		}
-
-		return columns
-			.filter((col) => col.id !== 'teamMember')
-			.filter((col) => col.getIsVisible())
-	}, [
-		columnOrder,
-		columnPinning,
-		columnVisibility,
-		grouping,
-		getAllColumns,
-		getCenterLeafColumns,
-		getLeftLeafColumns,
-		getRightLeafColumns,
-	]) as Array<Table_Column<TData>>
-
-	const groupedList = useMemo(
-		() =>
-			grouping.map((colId) =>
-				getCenterLeafColumns().find((col) => col?.id === colId)
-			),
-		[getCenterLeafColumns, grouping]
+	const [groupedList, ungroupedList] = splitArrayItems(allColumns, (col) =>
+		col.getIsGrouped()
 	)
 
-	const [ungroupedList, areSuggestedShown] = useMemo(() => {
-		const ungrouped = allColumns.filter((col) => !col.getIsGrouped())
+	const [suggestedList, areSuggestedShown] = useMemo(() => {
+		if (searchValue) {
+			return [
+				ungroupedList.filter((col) =>
+					col.columnDef.header.toLowerCase().includes(searchValue)
+				),
+				false,
+			]
+		}
 
 		if (suggestedColumns?.grouping) {
-			const suggested = ungrouped.filter(({ id }) =>
+			const suggested = ungroupedList.filter(({ id }) =>
 				suggestedColumns.grouping?.includes(id)
 			)
 
 			if (suggested.length) return [suggested, true]
 		}
 
-		return [ungrouped, false]
-	}, [allColumns, grouping, columnVisibility, suggestedColumns])
+		return [ungroupedList, false]
+	}, [searchValue, suggestedColumns?.grouping, ungroupedList])
 
 	const handleCloseClick = () => setAnchorEl(null)
-	const handleOnSearchChange = (value: string) => {
-		if (value) {
-			setIsSearchActive(true)
-		} else {
-			setIsSearchActive(false)
-		}
-		setSearchList(
-			value.length
-				? allColumns.filter((col) =>
-						col.columnDef.header.toLowerCase().includes(value)
-				  )
-				: []
-		)
-	}
 
 	const removeAllGroup = () => {
-		allColumns.forEach((col) => {
-			if (col.getIsGrouped()) {
-				col.toggleGrouping()
-			}
-		})
+		setGrouping([])
 	}
 
 	const onColumnOrderChanged = (
@@ -124,92 +91,126 @@ export const GroupingMenu = <TData extends Record<string, any> = {}>({
 			onClose={handleCloseClick}
 			styles={{ minWidth: 500 }}
 			withHeader
-			withSearch
 			headerTitle={localization.group}
-			onSearchChange={handleOnSearchChange}
+			topPanel={
+				<>
+					<SidebarSearch value={searchValue} onValueChange={setSearchValue} />
+					<Divider />
+				</>
+			}
 			innerTableSidebar={innerTable}
 		>
 			<Box sx={{ marginTop: '12px' }}>
-				{isSearchActive &&
-					(searchList.length ? (
-						searchList
-							.filter((column) => !column.getIsGrouped())
-							.map((column) => (
-								<SimpleMenuItem
-									column={column}
-									key={column.id}
-									hoveredColumn={hoveredColumn}
-									onColumnOrderChange={onColumnOrderChanged}
-									setHoveredColumn={setHoveredColumn}
-									onItemClick={column.getToggleGroupingHandler()}
-								/>
-							))
+				{searchValue ? (
+					suggestedList.length ? (
+						suggestedList.map((column) => (
+							<MenuItem
+								column={column}
+								key={column.id}
+								hoveredColumn={hoveredColumn}
+								onColumnOrderChange={onColumnOrderChanged}
+								setHoveredColumn={setHoveredColumn}
+								onClick={(e) => {
+									setSearchValue('')
+									column.toggleGrouping()
+									e.stopPropagation()
+								}}
+							/>
+						))
 					) : (
 						<Typography
 							sx={{ display: 'flex', justifyContent: 'center', mt: '20px' }}
 						>
 							No options
 						</Typography>
-					))}
-
-				{Boolean(
-					groupedList.length && !searchList.length && !isSearchActive
-				) && (
+					)
+				) : (
 					<>
-						<Box
-							sx={{
-								padding: '0 24px',
-								margin: '20px 0 20px 0',
-								display: 'flex',
-								justifyContent: 'space-between',
-								alignItems: 'center',
-							}}
-						>
-							<ListTitle>Grouped</ListTitle>
-							<ButtonLink onClick={removeAllGroup}>Remove all</ButtonLink>
-						</Box>
+						{Boolean(groupedList.length) && (
+							<>
+								<Box
+									sx={{
+										padding: '0 24px',
+										margin: '20px 0 20px 0',
+										display: 'flex',
+										justifyContent: 'space-between',
+										alignItems: 'center',
+									}}
+								>
+									<ListTitle>Grouped</ListTitle>
+									<ButtonLink onClick={removeAllGroup}>Remove all</ButtonLink>
+								</Box>
 
-						{groupedList.map((column) => (
-							<SimpleMenuItem
-								column={column as Table_Column<TData>}
-								key={(column as Table_Column<TData>).id}
-								enableDrag={groupedList.length > 1}
-								hoveredColumn={hoveredColumn}
-								onColumnOrderChange={onColumnOrderChanged}
-								setHoveredColumn={setHoveredColumn}
-								isCompact
-							/>
-						))}
+								{groupedList.map((column) => (
+									<MenuItem
+										column={column as Table_Column<TData>}
+										key={(column as Table_Column<TData>).id}
+										enableDrag={groupedList.length > 1}
+										hoveredColumn={hoveredColumn}
+										onColumnOrderChange={onColumnOrderChanged}
+										setHoveredColumn={setHoveredColumn}
+										isCompact
+										disableRipple
+									/>
+								))}
+							</>
+						)}
+
+						{Boolean(suggestedList.length) && (
+							<>
+								{(Boolean(groupedList.length) || areSuggestedShown) && (
+									<ListTitle sx={{ padding: '0 24px', margin: '20px 0 ' }}>
+										{areSuggestedShown
+											? localization.suggested
+											: localization.columns}
+									</ListTitle>
+								)}
+
+								{suggestedList.map((column) => (
+									<MenuItem
+										column={column}
+										key={column.id}
+										hoveredColumn={hoveredColumn}
+										onColumnOrderChange={onColumnOrderChanged}
+										setHoveredColumn={setHoveredColumn}
+										onClick={(e) => {
+											column.toggleGrouping()
+											e.stopPropagation()
+										}}
+									/>
+								))}
+							</>
+						)}
 					</>
 				)}
-
-				<>
-					{((!!groupedList.length &&
-						!searchList.length &&
-						!isSearchActive &&
-						!!ungroupedList.length) ||
-						areSuggestedShown) && (
-						<ListTitle sx={{ padding: '0 24px', margin: '20px 0 ' }}>
-							{areSuggestedShown
-								? localization.suggested
-								: localization.columns}
-						</ListTitle>
-					)}
-					{Boolean(
-						ungroupedList.length && !searchList.length && !isSearchActive
-					) &&
-						ungroupedList.map((column) => (
-							<SimpleMenuItem
-								column={column}
-								key={column.id}
-								hoveredColumn={hoveredColumn}
-								onColumnOrderChange={onColumnOrderChanged}
-								setHoveredColumn={setHoveredColumn}
-								onItemClick={column.getToggleGroupingHandler()}
-							/>
-						))}
-				</>
 			</Box>
 		</Sidebar>
+	)
+}
+
+const MenuItem = <TData extends Record<string, any> = {}>({
+	column,
+	isCompact,
+	onClick,
+	...rest
+}: SimpleMenuItemProps<TData>) => {
+	return (
+		<SimpleMenuItem
+			column={column}
+			key={column.id}
+			isCompact={isCompact}
+			onClick={onClick}
+			{...rest}
+		>
+			{isCompact ? (
+				<IconButton disableRipple onClick={column.toggleGrouping} size="small">
+					<DeleteIcon />
+				</IconButton>
+			) : (
+				<ButtonLink onClick={onClick} style={{ fontWeight: 600 }}>
+					Add Item +
+				</ButtonLink>
+			)}
+		</SimpleMenuItem>
 	)
 }

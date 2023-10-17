@@ -2,6 +2,7 @@ import { Avatar, CircularProgress, TextField } from '@mui/material'
 import Box from '@mui/material/Box'
 import { TableCellProps } from '@mui/material/TableCell'
 import Typography from '@mui/material/Typography'
+import { isWeekend } from 'date-fns'
 import React, { useCallback, useEffect, useState } from 'react'
 import {
 	HeaderBase,
@@ -198,9 +199,9 @@ export const getTeamMembersColumns = () => {
 				</Box>
 			),
 			Edit: (props) => {
-				const { value, setValue, saveRow } = useEditField<
-					User | null,
-					TeamMember
+				const { value, setValue, saveData } = useEditField<
+					TeamMember,
+					User | null
 				>({ ...props, getValue: (row) => row.original.member })
 				const [loading, setLoading] = useState(false)
 				const [options, setOptions] = useState<User[]>([])
@@ -220,9 +221,10 @@ export const getTeamMembersColumns = () => {
 						onInputChange={handleInputChange}
 						options={options}
 						value={value}
+						clearIcon={null}
 						onChange={(e, value) => {
 							setValue(value)
-							saveRow(value)
+							saveData(value)
 						}}
 						loading={loading}
 						filterOptions={(options) => options}
@@ -258,15 +260,15 @@ export const getTeamMembersColumns = () => {
 									>
 										<Avatar
 											sx={{ width: 24, height: 24 }}
-											src={user.avatarUrl}
-											alt={user.fullName}
+											src={user?.avatarUrl}
+											alt={user?.fullName}
 										/>
 										<Flex column style={{ overflow: 'hidden' }}>
 											<TextEllipsis
 												style={{ fontSize: '12px' }}
-												title={user.fullName}
+												title={user?.fullName ?? 'N/A'}
 											>
-												{user.fullName}
+												{user?.fullName}
 											</TextEllipsis>
 											<TextEllipsis
 												style={{
@@ -275,7 +277,7 @@ export const getTeamMembersColumns = () => {
 													fontWeight: '400',
 												}}
 											>
-												{user.role}
+												{user?.role}
 											</TextEllipsis>
 										</Flex>
 									</Flex>
@@ -310,6 +312,17 @@ export const getTeamMembersColumns = () => {
 				'Meets',
 				{ label: 'N/A', value: undefined },
 			],
+			validator: ({ value, table, row }) => {
+				const { editingRow } = table.getState()
+				const successorValue =
+					editingRow?._valuesCache['successionStatus'] ??
+					row.getValue('successionStatus')
+				if (value === 'Often exceeds' && successorValue === 'No successors') {
+					return "Cannot be 'Often exceeds' if Succession status is 'No successors'"
+				}
+
+				return true
+			},
 			GroupedCell: ColoredGroupedCell,
 			headerEndAdornment: <AnalyticsIcon />,
 			muiTableBodyCellProps: coloredCellProps,
@@ -400,6 +413,13 @@ export const getTeamMembersColumns = () => {
 			],
 			filterFn: anyOfDateRange,
 			editVariant: 'date',
+			validator: ({ value }) => {
+				if (isWeekend(new Date(value))) {
+					return 'Weekend is not allowed'
+				}
+
+				return true
+			},
 		},
 		{
 			header: 'Project completion',
@@ -409,8 +429,15 @@ export const getTeamMembersColumns = () => {
 			Header: HeaderBase,
 			enableColumnOrdering: true,
 			editVariant: 'number',
-			minValue: 0,
-			maxValue: Infinity,
+			minValue: -100,
+			maxValue: 100000,
+			validator: ({ value }) => {
+				if (Number(value) % 5 !== 0) {
+					return 'Only multiples of 5 are allowed'
+				}
+
+				return true
+			},
 			cellPlaceholderText: '-',
 			muiTableBodyCellWrapperProps: {
 				sx: { justifyContent: 'flex-end' },
@@ -424,17 +451,17 @@ export const getTeamMembersColumns = () => {
 				}`.replace(/\B(?=(\d{3})+(?!\d))/g, ' ')
 			},
 		},
-		{
-			header: 'Lorem Ipsum',
-			id: 'lorem',
-			dataType: 'textual',
-			accessorFn: teamMemberAccessorFn('lorem'),
-			filterVariant: 'multi-select',
-			GroupedCell: ColoredGroupedCell,
-			muiTableBodyCellProps: coloredCellProps,
-			enableColumnOrdering: true,
-			enableSorting: false,
-			enableGrouping: false,
-		},
+		// {
+		// 	header: 'Lorem Ipsum',
+		// 	id: 'lorem',
+		// 	dataType: 'textual',
+		// 	accessorFn: teamMemberAccessorFn('lorem'),
+		// 	filterVariant: 'multi-select',
+		// 	GroupedCell: ColoredGroupedCell,
+		// 	muiTableBodyCellProps: coloredCellProps,
+		// 	enableColumnOrdering: true,
+		// 	enableSorting: false,
+		// 	enableGrouping: false,
+		// },
 	] as Array<Table_ColumnDef<TeamMember>>
 }

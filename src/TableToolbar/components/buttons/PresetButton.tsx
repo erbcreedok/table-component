@@ -66,9 +66,7 @@ export const PresetButton = <TData extends Record<string, any> = {}>({
 	const [isNotificationShowedOnce, setIsNotificationShowedOnce] =
 		useState<boolean>(!!localStorage.getItem('presetNotificationShowed'))
 	const [presets, setPresets] = useState<Preset[]>(getDefaultPresets() ?? [])
-	const [checkedPreset, setCheckedPreset] = useState<Preset | undefined>(
-		presets.find(({ checked }) => checked)
-	)
+	const [checkedPreset, setCheckedPreset] = useState<Preset | undefined>()
 	const toolbarRef = useRef<HTMLButtonElement>(null)
 
 	const [open, setOpen] = useState(false)

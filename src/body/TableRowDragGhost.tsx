@@ -1,7 +1,7 @@
-import { BoxProps, Portal } from '@mui/material'
+import { BoxProps, Popper, Portal } from '@mui/material'
 import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
-import React, { forwardRef, ReactNode, RefObject, useMemo } from 'react'
+import { forwardRef, ReactNode, RefObject, useMemo } from 'react'
 
 import { Colors, IconsColor, TextColor } from '../components/styles'
 import { DraggingMessage, TableData, TableInstance } from '../TableComponent'
@@ -108,7 +108,13 @@ const Message = ({ text, type }: DraggingMessage) => {
 	)
 }
 
-const GroupingChangeMessage = ({ newGroups, columnNames, icon }) => {
+const ValuesChangeMessages = ({
+	valuesChangeMessages,
+	icon,
+}: {
+	valuesChangeMessages: { label: string; value: string }[]
+	icon: ReactNode
+}) => {
 	return (
 		<Box
 			sx={{
@@ -120,9 +126,9 @@ const GroupingChangeMessage = ({ newGroups, columnNames, icon }) => {
 				width: 'fit-content',
 			}}
 		>
-			{Object.keys(newGroups).map((group) => (
+			{valuesChangeMessages.map(({ label, value }) => (
 				<Box
-					key={group}
+					key={label}
 					sx={{
 						display: 'flex',
 						flexDirection: 'row',
@@ -138,7 +144,7 @@ const GroupingChangeMessage = ({ newGroups, columnNames, icon }) => {
 							color: TextColor.Dark,
 						}}
 					>
-						{columnNames[group]}
+						{label}
 					</Typography>
 					{icon}
 					<Typography
@@ -149,7 +155,7 @@ const GroupingChangeMessage = ({ newGroups, columnNames, icon }) => {
 							color: TextColor.Dark,
 						}}
 					>
-						{newGroups[group] ?? 'N/A'}
+						{value ?? 'N/A'}
 					</Typography>
 				</Box>
 			))}
@@ -160,15 +166,15 @@ const GroupingChangeMessage = ({ newGroups, columnNames, icon }) => {
 type TableRowDragGhostProps<TData extends TableData> = {
 	table: TableInstance<TData>
 	rowRef: RefObject<HTMLTableRowElement>
-	isDragging?: boolean
 }
 const TableRowDragGhostRoot = <TData extends TableData>(
-	{ table, rowRef, isDragging }: TableRowDragGhostProps<TData>,
+	{ table, rowRef }: TableRowDragGhostProps<TData>,
 	ref
 ) => {
 	const {
 		options: {
 			icons: { RowDragIcon, ArrowCircleRightIcon },
+			getRowDragValuesChangeMessage,
 			validateHoveredRow,
 		},
 		getState,
@@ -194,7 +200,7 @@ const TableRowDragGhostRoot = <TData extends TableData>(
 		if (!validateHoveredRow) return true
 
 		return validateHoveredRow(hoveredRow, table)
-	}, [hoveredRow, table])
+	}, [hoveredRow, table, validateHoveredRow])
 
 	const draggingMessage = useMemo<DraggingMessage | null>(() => {
 		if (hoveredRowValidation !== false && hoveredRowValidation !== true) {
@@ -202,44 +208,38 @@ const TableRowDragGhostRoot = <TData extends TableData>(
 		}
 
 		return null
-	}, [hoveredRow, table])
+	}, [hoveredRowValidation])
 
-	const newGroupingData = useMemo(() => {
-		const draggingRowsNewGroups = getTargetGroupingKeysValues(
-			hoveredRow?.row,
-			grouping
+	const valuesChangeMessages = useMemo(() => {
+		const draggingRowsNewGroups =
+			getTargetGroupingKeysValues(hoveredRow?.row, grouping) ?? {}
+		const draggingRowsNewValues: { label: string; value: string }[] = []
+		Object.entries(draggingRowsNewGroups ?? {}).forEach(([columnId, value]) => {
+			if (draggingRows.some((row) => row.getValue(columnId) !== value)) {
+				const column = getAllColumns().find((col) => col.id === columnId)
+				draggingRowsNewValues.push({
+					label: column?.columnDef.header ?? columnId,
+					value: `${value ?? 'N/A'}`,
+				})
+			}
+		})
+
+		return (
+			getRowDragValuesChangeMessage?.({
+				table,
+				hoveredRow,
+				draggingRows,
+				current: draggingRowsNewValues,
+			}) ?? draggingRowsNewValues
 		)
-		if (draggingRowsNewGroups) {
-			const newGroupings = Object.keys(draggingRowsNewGroups).reduce(
-				(result, current) => {
-					if (
-						draggingRows.some(
-							(row) => row.original[current] !== draggingRowsNewGroups[current]
-						)
-					) {
-						result[current] = draggingRowsNewGroups[current]
-					}
-
-					return result
-				},
-				{}
-			)
-
-			return Object.keys(newGroupings).length ? newGroupings : null
-		}
-
-		return null
-	}, [hoveredRow?.row, grouping, draggingRows])
-
-	const columnNames = useMemo(() => {
-		return getAllColumns().reduce((result, col) => {
-			result[col.id] = col.columnDef.header
-
-			return result
-		}, {})
-	}, [getAllColumns])
-
-	if (!isDragging) return null
+	}, [
+		hoveredRow,
+		grouping,
+		getRowDragValuesChangeMessage,
+		table,
+		draggingRows,
+		getAllColumns,
+	])
 
 	return (
 		<Portal>
@@ -282,33 +282,72 @@ const TableRowDragGhostRoot = <TData extends TableData>(
 						/>
 					)}
 				</Box>
-				<Box
-					sx={{
-						mt: `${draggingRows.length * 6 + 9}px`,
-						display: 'flex',
-						flexDirection: 'column',
-						gap: '9px',
-					}}
-				>
-					{sorting.length > 0 && hoveredRowValidation === true && (
-						<Message
-							text="Sorting will be reset automatically"
-							type="warning"
-						/>
-					)}
-					{draggingMessage && <Message {...draggingMessage} />}
-					{newGroupingData && (
-						<GroupingChangeMessage
-							newGroups={newGroupingData}
-							columnNames={columnNames}
-							icon={
-								<ArrowCircleRightIcon
-									sx={{ mx: '14px', color: Colors.Amber4 }}
+				{ref.current && (
+					<Popper
+						open
+						anchorEl={ref.current}
+						placement="bottom-start"
+						disablePortal
+						container={table.refs.tableContainerRef.current}
+						popperOptions={{ strategy: 'fixed' }}
+						modifiers={[
+							{
+								name: 'update-on-drag',
+								enabled: true,
+								phase: 'main',
+								fn() {}, // required
+								effect({ instance }) {
+									const listener = [
+										'drag',
+										() => {
+											instance.update()
+										},
+									] as const
+
+									table.refs.tableContainerRef.current.addEventListener(
+										...listener
+									)
+
+									return () => {
+										table.refs.tableContainerRef.current?.removeEventListener(
+											...listener
+										)
+									}
+								},
+							},
+							{
+								name: 'offset',
+								options: {
+									offset: [0, draggingRows.length * 6 + 9],
+								},
+							},
+						]}
+						sx={{
+							display: 'flex',
+							flexDirection: 'column',
+							gap: '9px',
+						}}
+					>
+						{sorting.length > 0 && hoveredRowValidation === true && (
+							<Message
+								text="Sorting will be reset automatically"
+								type="warning"
+							/>
+						)}
+						{draggingMessage && <Message {...draggingMessage} />}
+						{(!draggingMessage || draggingMessage.type !== 'danger') &&
+							valuesChangeMessages.length > 0 && (
+								<ValuesChangeMessages
+									valuesChangeMessages={valuesChangeMessages}
+									icon={
+										<ArrowCircleRightIcon
+											sx={{ mx: '14px', color: Colors.Amber4 }}
+										/>
+									}
 								/>
-							}
-						/>
-					)}
-				</Box>
+							)}
+					</Popper>
+				)}
 			</Box>
 		</Portal>
 	)

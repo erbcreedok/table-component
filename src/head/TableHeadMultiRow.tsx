@@ -72,7 +72,7 @@ export const TableHeadMultiRow = ({
 		const columnIdsText = multiHeaderRow.columns.reduce((result, current) => {
 			const obj = result
 			current.columnIds.forEach((id) => {
-				obj[id] = current.text
+				obj[id] = current.shorthandText ?? current.text
 			})
 
 			return obj

@@ -1,17 +1,20 @@
-import React, { FocusEvent } from 'react'
+import React, { useRef } from 'react'
 
+import { useOnClickOutside } from '../hooks/useOnClickOutside'
 import { SimpleEvent, TableData } from '../TableComponent'
+import { getValueOrFunctionHandler } from '../utils/getValueOrFunctionHandler'
+import { useEditField } from '../hooks/useEditField'
 
 import { DayPickerInput, DayPickerInputProps } from './DayPickerInput'
 import { EditCellFieldProps } from './EditCellField'
-import { callOrReturnProps } from './utils/callOrReturnProps'
-import { useEditField } from './utils/useEditField'
 
 export const EditDateField = <TData extends TableData>({
 	table,
 	cell,
 	showLabel,
 }: EditCellFieldProps<TData>) => {
+	const cellRef = useRef<HTMLInputElement | null>(null)
+	const dayPickerRef = useRef<HTMLInputElement | null>(null)
 	const { row, column } = cell
 	const cellDataProps = {
 		cell,
@@ -21,22 +24,20 @@ export const EditDateField = <TData extends TableData>({
 	}
 	const {
 		options: { muiEditDayPickerInputProps },
-		setEditingCell,
 		refs: { editInputRefs },
+		setEditingCell,
 	} = table
 	const { columnDef } = column
 	const { editVariant } = columnDef
-	const { setValue, saveRow, value } = useEditField<Date | null, TData>(
+	const { setValue, saveData, value, error } = useEditField<TData, Date | null>(
 		cellDataProps
 	)
-	const mDayPickerInputProps = callOrReturnProps(
-		muiEditDayPickerInputProps,
-		cellDataProps
-	)
-	const mcDayPickerInputProps = callOrReturnProps(
-		columnDef.muiEditDayPickerInputProps,
-		cellDataProps
-	)
+	const mDayPickerInputProps = getValueOrFunctionHandler(
+		muiEditDayPickerInputProps
+	)(cellDataProps)
+	const mcDayPickerInputProps = getValueOrFunctionHandler(
+		columnDef.muiEditDayPickerInputProps
+	)(cellDataProps)
 	const muiDayPickerInputProps = {
 		...mDayPickerInputProps,
 		...mcDayPickerInputProps,
@@ -45,43 +46,61 @@ export const EditDateField = <TData extends TableData>({
 	const handleChange = (event: SimpleEvent<Date>) => {
 		muiDayPickerInputProps.onChange?.(event)
 		setValue(event.target.value)
-		saveRow(event.target.value)
 	}
 
-	const handleBlur = (event: FocusEvent<HTMLInputElement>) => {
-		muiDayPickerInputProps.inputProps?.onBlur?.(event)
-		setEditingCell(null)
+	const handleDayPickerBlur = () => {
+		muiDayPickerInputProps.onBlur?.()
+		saveData(value)
 	}
+
+	const handleClickOutside = (event) => {
+		event.stopPropagation()
+		if (error) {
+			setEditingCell(null)
+		}
+	}
+	useOnClickOutside([cellRef, dayPickerRef], handleClickOutside)
 
 	const dayPickerInputProps: DayPickerInputProps = {
 		disabled: columnDef.enableEditing === false,
 		inputProps: {
+			placeholder: columnDef.header,
+			label: showLabel ? column.columnDef.header : undefined,
+			error,
+			hideErrorOnFocus: true,
+			...muiDayPickerInputProps.inputProps,
 			inputRef: (inputRef) => {
 				if (inputRef) {
+					cellRef.current = inputRef
 					editInputRefs.current[column.id] = inputRef
 					if (muiDayPickerInputProps.inputRef) {
 						muiDayPickerInputProps.inputRef = inputRef
 					}
 				}
 			},
-			placeholder: columnDef.header,
-			label: showLabel ? column.columnDef.header : undefined,
 			onClear: (e) => {
 				muiDayPickerInputProps.inputProps?.onClear?.(e)
 				setValue(null)
-				saveRow(null)
+				saveData(null)
 			},
 			onClick: (e) => {
 				e.stopPropagation()
 				muiDayPickerInputProps?.inputProps?.onClick?.(e)
 			},
-			onBlur: handleBlur,
+			onKeyDown: (e) => {
+				muiDayPickerInputProps?.inputProps?.onKeyDown?.(e)
+				if (!e.isPropagationStopped() && e.key === 'Escape') {
+					setEditingCell(null)
+				}
+			},
 		},
 		isDateRange,
 		name: column.id,
 		value,
 		...muiDayPickerInputProps,
 		onChange: handleChange,
+		onBlur: handleDayPickerBlur,
+		floatingRef: dayPickerRef,
 	}
 
 	return <DayPickerInput {...dayPickerInputProps} />

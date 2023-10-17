@@ -2,41 +2,52 @@ import {
 	inputBaseClasses,
 	outlinedInputClasses,
 	TextField,
-	InputAdornment,
 } from '@mui/material'
 import IconButton from '@mui/material/IconButton'
 import { TextFieldProps } from '@mui/material/TextField'
 import Box from '@mui/material/Box'
 import { PartialKeys } from '@tanstack/table-core'
-import React, { MouseEventHandler, useRef } from 'react'
+import React, {
+	ChangeEventHandler,
+	MouseEventHandler,
+	useCallback,
+	useRef,
+} from 'react'
 
 import { Tooltip } from '../components/Tooltip'
 import { NumberStepButtons } from '../components/NumberStepButtons'
 import { Colors, IconsColor, TextColor } from '../components/styles'
 import { useTableContext } from '../context/useTableContext'
+import { useFocusEvents } from '../hooks/useFocusEvents'
+import { isGreaterThan } from '../stories/utils/isGreaterThan'
+import { isLessThan } from '../stories/utils/isLessThan'
+import { sumAnyTwoValues } from '../stories/utils/sumAnyTwoValues'
 import { createNativeChangeEvent } from '../utils/createNativeChangeEvent'
+import { getValidNumber } from '../utils/getValidNumber'
 import { mergeSx } from '../utils/mergeSx'
 import { withStopPropagation } from '../utils/withStopPropagation'
 
 export type InputProps = Omit<
 	PartialKeys<TextFieldProps, 'variant'>,
-	'color'
+	'color' | 'error'
 > & {
 	onClear?: MouseEventHandler
 	isNumeric?: boolean
 	step?: number
 	minValue?: number
 	maxValue?: number
-	errorExplanation?: string
+	error?: string | null | boolean
+	hideErrorOnFocus?: boolean
 }
 export const Input = ({
 	onClear,
 	isNumeric,
 	step = 1,
-	minValue = 0,
-	maxValue = Infinity,
+	minValue,
+	maxValue,
+	hideErrorOnFocus,
 	error,
-	errorExplanation,
+	onChange,
 	...props
 }: InputProps) => {
 	const {
@@ -47,10 +58,31 @@ export const Input = ({
 		},
 	} = useTableContext()
 	const inputRef = useRef<HTMLInputElement>(null)
+	const {
+		focused,
+		focusProps: { handleFocus, handleBlur },
+	} = useFocusEvents<HTMLInputElement>(props)
+
+	const handleChange = useCallback<ChangeEventHandler<HTMLInputElement>>(
+		(event) => {
+			if (isNumeric) {
+				Object.assign(event.target, {
+					value: getValidNumber(minValue, maxValue)(event.target.value),
+				})
+			}
+			onChange?.(event)
+		},
+		[isNumeric, maxValue, minValue, onChange]
+	)
+
+	const isError = typeof error === 'string' || error === true
+	const showError = hideErrorOnFocus && focused ? false : isError
 
 	const handleStepClick = (step: number) => () => {
 		if (inputRef.current) {
 			createNativeChangeEvent(inputRef.current, Number(props.value || 0) + step)
+			// our validation works only after blur event, so we need to focus again
+			inputRef.current.focus()
 		}
 	}
 
@@ -61,7 +93,10 @@ export const Input = ({
 			margin="none"
 			fullWidth
 			{...props}
-			error={error}
+			onChange={handleChange}
+			onFocus={handleFocus}
+			onBlur={handleBlur}
+			error={showError}
 			InputProps={{
 				inputRef: (node) => {
 					if (node) {
@@ -73,43 +108,67 @@ export const Input = ({
 						props.inputRef?.(node)
 					}
 				},
-				endAdornment: error ? (
-					<Tooltip
-						placement="top"
-						arrow
-						disabled={!errorExplanation}
-						title={errorExplanation}
-					>
-						<Box sx={{ display: 'flex', mr: '9px' }}>
-							<WarningOutlineIcon sx={{ color: Colors.Red, m: 'auto' }} />
-						</Box>
-					</Tooltip>
-				) : isNumeric ? (
-					<NumberStepButtons
-						sx={{ mr: '6px' }}
-						onClickUp={handleStepClick(step)}
-						onClickDown={handleStepClick(-step)}
-					/>
-				) : props.value && onClear ? (
-					<IconButton
-						onClick={withStopPropagation(onClear)}
-						sx={{
-							visibility: 'hidden',
-							right: 0,
-							background: 'white',
-							position: 'absolute',
-							[`&:hover`]: {
-								background: Colors.White,
-							},
-							[`.${outlinedInputClasses.root}:hover &`]: {
-								visibility: 'visible',
-							},
-						}}
-					>
-						<CloseIcon style={{ width: '18px', height: '18px' }} />
-					</IconButton>
-				) : null,
 				...props.InputProps,
+				endAdornment: (
+					<>
+						{showError && (
+							<Tooltip
+								placement="top"
+								arrow
+								disabled={typeof error !== 'string'}
+								title={error}
+							>
+								<Box sx={{ display: 'flex', mr: '9px' }}>
+									<WarningOutlineIcon sx={{ color: Colors.Red, m: 'auto' }} />
+								</Box>
+							</Tooltip>
+						)}
+						{!!props.value && onClear && (
+							<IconButton
+								onClick={withStopPropagation(onClear)}
+								sx={{
+									visibility: 'hidden',
+									right: 0,
+									background: 'white',
+									display: 'none',
+									height: 18,
+									p: 0,
+									mr: 1,
+									[`&:hover`]: {
+										background: Colors.White,
+									},
+									[`.${outlinedInputClasses.root}:hover &`]: {
+										display: 'flex',
+										alignItems: 'center',
+										visibility: 'visible',
+									},
+								}}
+							>
+								<CloseIcon style={{ width: '18px', height: '18px' }} />
+							</IconButton>
+						)}
+						{isNumeric && (
+							<NumberStepButtons
+								sx={{ mr: '6px' }}
+								onClickUp={handleStepClick(step)}
+								onClickDown={handleStepClick(-step)}
+								iconButtonUpProps={{
+									disabled: isGreaterThan(
+										sumAnyTwoValues(props.value, step),
+										maxValue
+									),
+								}}
+								iconButtonDownProps={{
+									disabled: isLessThan(
+										sumAnyTwoValues(props.value, -step),
+										minValue
+									),
+								}}
+							/>
+						)}
+						{props.InputProps?.endAdornment}
+					</>
+				),
 				inputProps: {
 					...(isNumeric
 						? {

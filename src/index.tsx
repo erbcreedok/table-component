@@ -49,9 +49,9 @@ import {
 	type TooltipOverflowProps,
 } from './components/TooltipOverflow'
 import { SelectCheckbox } from './inputs/SelectCheckbox'
-import { useEditField, UseEditFieldProps } from './inputs/utils/useEditField'
 import { useMultiSticky } from './hooks/useMultiSticky'
 
+export * from './hooks/useEditField'
 export default TableComponent
 export * from '@tanstack/react-table'
 export * from './TableComponent'
@@ -61,7 +61,6 @@ export type {
 	TableBodyRowProps,
 	HeaderSearchOptionProps,
 	DayPickerProps,
-	UseEditFieldProps,
 }
 
 export {
@@ -113,5 +112,4 @@ export {
 	TopToolbar,
 	useMultiSticky,
 	useTableContext,
-	useEditField,
 }

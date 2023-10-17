@@ -7,13 +7,16 @@ import {
 	VisibilityState,
 	SortingState,
 } from '@tanstack/react-table'
-import React, { useState } from 'react'
+import React, { useCallback, useState } from 'react'
 import { getColumnId } from '../../column.utils'
 import { LocationRight } from '../../icons/LocationRight'
 import { LockedIcon } from '../../icons/LockedIcon'
 import { TrashIcon } from '../../icons/TrashIcon'
 import TableComponent, {
+	GetRowDragValuesChangeMessageProp,
+	MuiTableBodyRowDragHandleFnProps,
 	Table_ColumnDef,
+	Table_Row,
 	TableComponentProps,
 	TableInstance,
 	utilColumns,
@@ -32,6 +35,7 @@ import {
 	isUnitTreeItem,
 } from '../utils/getTeamMembers'
 import { getTeamMembersColumns } from '../utils/getTeamMembersColumns'
+import { reorderMembersInUnits } from '../utils/reorderMembersInUnits'
 import { getDefaultRowActionMenuItems } from '../utils/rowActionMenuItems'
 import { ColumnActionsFiltersMenu } from './components/ColumnActionsFiltersMenu'
 import { UnitRow } from './components/UnitRow'
@@ -46,7 +50,6 @@ const multiHeader = [
 			{
 				text: 'WORKLOAD',
 				columnIds: [
-					'teamMember',
 					'impact',
 					'performance',
 					'riskOfLeaving',
@@ -63,11 +66,31 @@ const multiHeader = [
 		columns: [
 			{
 				text: 'WORKLOAD 1',
-				columnIds: ['teamMember', 'impact', 'performance'],
+				shorthandText: 'WL1',
+				columnIds: ['impact', 'performance'],
 			},
 			{
 				text: 'WORKLOAD 2',
 				columnIds: ['riskOfLeaving', 'successionStatus', 'location', 'hiredAt'],
+			},
+		],
+	},
+	{
+		depth: 3,
+		pin: true,
+		columns: [
+			{
+				text: 'WORKLOAD 1_2',
+				columnIds: ['impact', 'performance'],
+			},
+			{
+				text: 'WORKLOAD 2_1',
+				shorthandText: 'WL2.1',
+				columnIds: ['riskOfLeaving', 'successionStatus'],
+			},
+			{
+				text: 'WORKLOAD 2_2',
+				columnIds: ['location', 'hiredAt'],
 			},
 		],
 	},
@@ -305,17 +328,20 @@ const TeamsTable: Story<TeamsTableConfigs> = (args) => {
 	const [data, setData] = useState(propsData || getTeamMembers(rowsCount))
 
 	const setNewRow = (row, values) => {
-		const newRow = data[row.index]
+		const newData = [...data]
+		const newRow = newData[row.index]
 		Object.entries(values).forEach(([key, value]) => {
 			if (key === 'teamMember') {
 				newRow.member = value as User
-			}
-			if (key === 'completion') {
-				console.log(value)
-				newRow.completion = Number(value)
+			} else if (key === 'completion') {
+				newRow.completion =
+					value !== null && value !== undefined ? Number(value) : value
+			} else {
+				newRow[key] = value
 			}
 		})
-		data[row.index] = newRow
+		newData[row.index] = newRow
+		setData(newData)
 	}
 
 	const handleSaveRows = ({ exitEditingMode, rows, values }) => {
@@ -326,7 +352,6 @@ const TeamsTable: Story<TeamsTableConfigs> = (args) => {
 		} else {
 			setNewRow(rows, values)
 		}
-		setData([...data])
 		exitEditingMode()
 	}
 
@@ -335,6 +360,7 @@ const TeamsTable: Story<TeamsTableConfigs> = (args) => {
 			hoveredRow?.row,
 			grouping
 		)
+
 		const rowsToSave = draggingRows.map((row) => table.getRow(row.id))
 
 		handleSaveRows({
@@ -357,6 +383,12 @@ const TeamsTable: Story<TeamsTableConfigs> = (args) => {
 				...initialState,
 			}}
 			onEditingRowsSave={handleSaveRows}
+			onEditingCellSave={({ cell, value, error, exitEditingMode }) => {
+				console.log(value, error, cell)
+				if (error) return
+				setNewRow(cell.row, { [cell.column.id]: value })
+				exitEditingMode()
+			}}
 			handleRowsDrop={handleRowsDrop}
 			renderRowActionMenuItems={getDefaultRowActionMenuItems}
 			ColumnActionsFiltersMenu={ColumnActionsFiltersMenu}
@@ -379,6 +411,18 @@ const TeamsTable: Story<TeamsTableConfigs> = (args) => {
 					}
 				},
 			})}
+			validateHoveredRow={({ row }, table) => {
+				const { grouping } = table.getState()
+				if (grouping.length === 0) return true
+				if (row?.original.impact === 'Medium') {
+					return {
+						text: 'Rows group cannot be changed to "Impact: Medium"',
+						type: 'danger',
+					}
+				}
+
+				return true
+			}}
 			onNativeEvent={(props) => console.log(props)}
 			{...getTablePresetProps('teamsDefaultTable')}
 			{...rest}
@@ -388,20 +432,6 @@ const TeamsTable: Story<TeamsTableConfigs> = (args) => {
 
 export const TeamsTableDefault: Story<TeamsTableExample> = (args) => {
 	return <TeamsTable columns={columns} {...args} />
-}
-
-export const SuggestedColumns: Story<TeamsTableExample> = (args) => {
-	return (
-		<TeamsTable
-			columns={columns}
-			suggestedColumns={{
-				filtering: ['impact', 'performance'],
-				grouping: ['performance', 'riskOfLeaving'],
-				sorting: ['riskOfLeaving', 'impact'],
-			}}
-			{...args}
-		/>
-	)
 }
 
 export const TeamsTableSubtree: Story<TeamsTableExample> = (args) => (
@@ -416,6 +446,61 @@ export const TeamsTableSubtree: Story<TeamsTableExample> = (args) => (
 
 export const HierarchyGroupTableExample: Story = (args) => {
 	const [data, setData] = useState(getUnitTreeItems(3, 10))
+	const getRowDragValuesChangeMessage = useCallback<
+		GetRowDragValuesChangeMessageProp<UnitTreeItem>
+	>(({ current, hoveredRow, draggingRows }) => {
+		if (!hoveredRow) return current
+		const getIsSameUnit = (
+			rowA: Table_Row<UnitTreeItem>,
+			rowB: Table_Row<UnitTreeItem>
+		) => rowA.original.getParent() === rowB.original.getParent()
+		const isSameUnit = draggingRows.every((row) =>
+			getIsSameUnit(row, hoveredRow.row)
+		)
+
+		if (!isSameUnit) {
+			return [
+				{
+					label: 'Unit',
+					value: hoveredRow.row.original.getParent()?.name ?? 'N/A',
+				},
+				...current,
+			]
+		}
+		return current
+	}, [])
+	const muiTableBodyRowDragHandleProps = useCallback<
+		MuiTableBodyRowDragHandleFnProps<UnitTreeItem>
+	>(
+		({ table }) => ({
+			onDragEnd: () => {
+				const { draggingRows, hoveredRow, grouping } = table.getState()
+				if (
+					hoveredRow?.row &&
+					'original' in hoveredRow.row &&
+					draggingRows.length > 0
+				) {
+					// Modify draggingRows original values to take values from the grouped columns of hoveredRow
+					const targetValues = hoveredRow.row.original
+					draggingRows.forEach((draggingRow) => {
+						for (const columnId of grouping) {
+							draggingRow.original[columnId] = targetValues[columnId]
+						}
+					})
+
+					setData(
+						reorderMembersInUnits(
+							draggingRows.map((row) => row.original),
+							hoveredRow.row.original,
+							data,
+							hoveredRow.position
+						)
+					)
+				}
+			},
+		}),
+		[]
+	)
 
 	return (
 		<>
@@ -431,72 +516,8 @@ export const HierarchyGroupTableExample: Story = (args) => {
 				filterFromLeafRows
 				getIsUnitTreeItem={isUnitTreeItem}
 				{...getTablePresetProps('teamsDefaultTable')}
-				muiTableBodyRowDragHandleProps={({ table }) => ({
-					onDragEnd: () => {
-						const { draggingRows, hoveredRow } = table.getState()
-						if (
-							hoveredRow?.row &&
-							'original' in hoveredRow.row &&
-							draggingRows.length > 0
-						) {
-							const unit = hoveredRow.row.original.getParent()
-							if (!unit) return
-							const filteredData =
-								unit.subRows?.filter(
-									(data) =>
-										!draggingRows.some(
-											(draggingRow) => draggingRow.original === data
-										)
-								) ?? []
-							filteredData.splice(
-								filteredData.indexOf(hoveredRow.row.original) +
-									(hoveredRow.position === 'bottom' ? 1 : 0),
-								0,
-								...draggingRows.map((row) => row.original)
-							)
-							const traverse = (data: UnitTreeItem | TeamMember) => {
-								if (data.id === unit.id) {
-									data.subRows = filteredData
-									return
-								} else {
-									data.subRows?.forEach((subRow) => traverse(subRow))
-								}
-							}
-							const newData = [...data]
-							traverse(newData[0])
-							setData(newData)
-						}
-					},
-				})}
-				validateHoveredRow={({ row }, table) => {
-					const { draggingRows, grouping } = table.getState()
-					const sameParent = draggingRows.every(
-						(draggingRow) =>
-							draggingRow.original.getParent() === row.original.getParent()
-					)
-					if (!sameParent) {
-						return {
-							text: 'Cannot reorder rows that are not in same unit',
-							type: 'danger',
-						}
-					}
-					if (grouping.length > 0) {
-						const sameGroup = grouping.every((group) =>
-							draggingRows.every(
-								(draggingRow) =>
-									draggingRow.getValue(group) === row.getValue(group)
-							)
-						)
-						if (!sameGroup) {
-							return {
-								text: 'Cannot reorder rows that are not in same group',
-								type: 'danger',
-							}
-						}
-					}
-
-					return true
-				}}
+				muiTableBodyRowDragHandleProps={muiTableBodyRowDragHandleProps}
+				getRowDragValuesChangeMessage={getRowDragValuesChangeMessage}
 			/>
 		</>
 	)
@@ -780,6 +801,16 @@ const meta: Meta = {
 					getMultiHeaderByOption('partialPinned'),
 				'Workload Values with additional row':
 					getMultiHeaderByOption('withAdditionalRows'),
+			},
+		},
+		multirowColumnsDisplayDepth: {
+			control: { type: 'select' },
+			defaultValue: '1',
+			options: ['1', '2', '3'],
+			mapping: {
+				'1': 1,
+				'2': 2,
+				'3': 3,
 			},
 		},
 		noRecordsToDisplaySlot: {

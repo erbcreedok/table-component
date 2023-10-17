@@ -9,6 +9,7 @@ import { GrabHandleButton } from '../../buttons/GrabHandleButton'
 import type { Table_Column, TableData, TableInstance } from '../../../../index'
 import { TableSwitch } from '../../../../components/TableSwitch'
 import { Tooltip } from '../../../../components/Tooltip'
+import { TreeAngle } from '../../../..//components/TreeAngle'
 import {
 	Colors,
 	DEFAULT_FONT_FAMILY,
@@ -28,6 +29,8 @@ interface Props<TData extends TableData> {
 		draggedColumn: Table_Column<TData>,
 		targetColumn: Table_Column<TData>
 	): void
+	isLastInList?: boolean
+	renderTreeAngle?: boolean
 }
 
 export const ColumnsMenuItem = <TData extends TableData = {}>({
@@ -39,6 +42,8 @@ export const ColumnsMenuItem = <TData extends TableData = {}>({
 	table,
 	enableDrag,
 	onColumnOrderChange,
+	isLastInList,
+	renderTreeAngle,
 }: Props<TData>) => {
 	const {
 		options: {
@@ -154,6 +159,7 @@ export const ColumnsMenuItem = <TData extends TableData = {}>({
 					) : (
 						<Box sx={{ width: '9px' }} />
 					)}
+					{renderTreeAngle && <TreeAngle lastInList={isLastInList} />}
 					{enablePinning &&
 						(column.getCanPin() ? (
 							<ColumnPinningButtons column={column} table={table} />

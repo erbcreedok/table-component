@@ -1,25 +1,18 @@
-import { debounce } from '@mui/material/utils'
-import React, {
-	ChangeEvent,
-	FocusEvent,
-	KeyboardEvent,
-	useMemo,
-	useState,
-} from 'react'
+import React, { useRef } from 'react'
 
+import { useEditField } from '../hooks/useEditField'
+import { useOnClickOutside } from '../hooks/useOnClickOutside'
 import { TableData } from '../TableComponent'
+import { getValueOrFunctionHandler } from '../utils/getValueOrFunctionHandler'
 
 import { EditCellFieldProps } from './EditCellField'
 import { Input, InputProps } from './Input'
-import { callOrReturnProps } from './utils/callOrReturnProps'
-import { useEditField } from './utils/useEditField'
 
 export const EditTextField = <TData extends TableData>({
 	table,
 	cell,
 	showLabel,
 }: EditCellFieldProps<TData>) => {
-	const [isAfteredit, setAfteredit] = useState(false)
 	const { row, column } = cell
 	const cellDataProps = {
 		cell,
@@ -29,90 +22,60 @@ export const EditTextField = <TData extends TableData>({
 	}
 	const {
 		options: { muiEditInputProps },
-		setEditingCell,
 		refs: { editInputRefs },
-		getState,
+		setEditingCell,
 	} = table
-	const { editingRow } = getState()
 	const { columnDef } = column
-	const { editVariant, minValue, maxValue, validator } = columnDef
-	const { setValue, saveRow, value, setEditingRowErrors, editingRowErrors } =
-		useEditField(cellDataProps)
-	const mInputProps = callOrReturnProps(muiEditInputProps, cellDataProps)
-	const mcInputProps = callOrReturnProps(
-		columnDef.muiEditInputProps,
+	const { editVariant, minValue, maxValue } = columnDef
+	const { setValue, saveData, value, error } = useEditField(cellDataProps)
+
+	const mInputProps =
+		getValueOrFunctionHandler(muiEditInputProps)(cellDataProps)
+	const mcInputProps = getValueOrFunctionHandler(columnDef.muiEditInputProps)(
 		cellDataProps
 	)
 	const muiInputProps = { ...mInputProps, ...mcInputProps }
 	const isNumeric = editVariant === 'number'
 	const isReadOnly = editVariant === 'formula'
-	const setRowValue = useMemo(
-		() =>
-			debounce((value) => {
-				saveRow(value)
-			}, 500),
-		[saveRow]
-	)
-	const isValueValid = (value) => {
-		return validator?.({ value, cell, row, table }) === true
-	}
 
-	const getErrorExplanation = (value) => {
-		const validationResult = validator?.({ value, cell, row, table })
-
-		return typeof validationResult === 'string' ? validationResult : null
-	}
-
-	const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
+	const handleChange: InputProps['onChange'] = (event) => {
 		muiInputProps.onChange?.(event)
+		if (event.isPropagationStopped()) return
 		if (!isReadOnly) {
-			if (
-				(isNumeric && minValue && Number(event.target.value) < minValue) ||
-				Number(event.target.value) < 0
-			) {
-				setValue(String(minValue ?? 0))
-			} else {
-				setValue(event.target.value)
-			}
-			setRowValue(event.target.value)
-			if (editingRow && validator) {
-				setEditingRowErrors({
-					...editingRowErrors,
-					[column.id]: isValueValid(value),
-				})
-			}
+			setValue(event.target.value)
 		}
 	}
 
-	const handleBlur = (event: FocusEvent<HTMLInputElement>) => {
+	const handleBlur: InputProps['onBlur'] = (event) => {
 		muiInputProps.onBlur?.(event)
-		if (validator && !isValueValid(value)) {
-			setAfteredit(true)
-		} else {
-			setAfteredit(false)
-			saveRow(value)
-			setEditingCell(null)
-		}
+		if (event.isPropagationStopped()) return
+		saveData(value)
 	}
 
-	const handleFocus = () => {
-		if (editingRow) {
-			setEditingRowErrors({ ...editingRowErrors, [column.id]: false })
-		}
-		setAfteredit(false)
-	}
-
-	const handleEnterKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
+	const handleEnterKeyDown: InputProps['onKeyDown'] = (event) => {
 		muiInputProps.onKeyDown?.(event)
 		if (event.key === 'Enter') {
 			editInputRefs.current[column.id]?.blur()
 		}
+		if (event.key === 'Escape') {
+			setEditingCell(null)
+		}
 	}
+
+	const cellRef = useRef<HTMLInputElement | null>(null)
+	const handleClickOutside = (event) => {
+		event.stopPropagation()
+		if (error) {
+			setEditingCell(null)
+		}
+	}
+	useOnClickOutside(cellRef, handleClickOutside)
 
 	const inputProps: InputProps = {
 		disabled: columnDef.enableEditing === false,
 		inputRef: (inputRef) => {
 			if (inputRef) {
+				cellRef.current = inputRef
 				editInputRefs.current[column.id] = inputRef
 				if (muiInputProps.inputRef) {
 					muiInputProps.inputRef = inputRef
@@ -134,17 +97,13 @@ export const EditTextField = <TData extends TableData>({
 		onClear: (e) => {
 			muiInputProps.onClear?.(e)
 			setValue('')
-			if (muiInputProps?.select) {
-				saveRow('')
-			}
+			saveData(undefined)
 		},
-		error:
-			isAfteredit && validator && value ? isValueValid(value) === false : false,
-		errorExplanation: getErrorExplanation(value),
+		error,
+		hideErrorOnFocus: true,
 		onBlur: handleBlur,
 		onChange: handleChange,
 		onKeyDown: handleEnterKeyDown,
-		onFocus: handleFocus,
 	}
 
 	return <Input {...inputProps} />

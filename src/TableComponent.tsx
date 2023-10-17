@@ -327,13 +327,17 @@ export type TableInstance<TData extends Record<string, any> = {}> = Omit<
 	CustomRow?: FC<TableBodyRowProps>
 }
 
+export type FieldError = string | null
+
 export type Table_TableState<TData extends Record<string, any> = {}> =
 	TableState & {
 		columnFilterFns: Record<string, Table_FilterOption>
 		draggingColumn: Table_Column<TData> | null
 		draggingRows: Table_Row<TData>[]
 		editingCell: Table_Cell<TData> | null
-		editingRow: (Table_Row<TData> & { isError: boolean }) | null
+		editingRow:
+			| (Table_Row<TData> & { errors: Record<string, FieldError> })
+			| null
 		isEditingRowError: boolean
 		globalFilterFn: Table_FilterOption
 		hoveredColumn: Table_Column<TData> | { id: string } | null
@@ -371,6 +375,14 @@ export type MultirowHeader = {
 	}[]
 }[]
 
+export type MultirowColumnsGroup<TData extends Record<string, any> = {}> = {
+	columns: Table_Column<TData>[]
+	text: string
+	depth?: number
+	isFinalGroup?: boolean
+	subGroups?: MultirowColumnsGroup[]
+}
+
 export interface SimpleEventProps<T = string> {
 	target: { value: T }
 }
@@ -394,8 +406,8 @@ export type TableCellDataProps<TData extends TableData> = {
 	table: TableInstance<TData>
 }
 export type TableFunctionalProp<Prop, TData extends TableData> =
-	| Prop
-	| ((args: TableCellDataProps<TData>) => Prop)
+	| Partial<Prop>
+	| ((args: TableCellDataProps<TData>) => Partial<Prop>)
 
 export type TableColumnEditProps<TData extends TableData> = {
 	editVariant?:
@@ -875,6 +887,25 @@ export type NativeEventArgs = {
 	value?: any
 }
 
+export type ValidateHoveredRowProp<TData extends TableData = {}> = (
+	row: NonNullable<HoveredRowState<TData>>,
+	table: TableInstance<TData>
+) => boolean | DraggingMessage
+export type GetRowDragValuesChangeMessageProp<TData extends TableData = {}> =
+	(args: {
+		table: TableInstance<TData>
+		hoveredRow: HoveredRowState<TData>
+		draggingRows: Table_Row<TData>[]
+		current: { label: string; value: string }[]
+	}) => { label: string; value: string }[]
+export type MuiTableBodyRowDragHandleFnProps<TData extends TableData = {}> = ({
+	table,
+	row,
+}: {
+	table: TableInstance<TData>
+	row: Table_Row<TData>
+}) => IconButtonProps
+
 /**
  * `columns` and `data` props are the only required props, but there are over 150 other optional props.
  *
@@ -965,10 +996,8 @@ export type TableComponentProps<TData extends Record<string, any> = {}> = Omit<
 	noResultsFoundSlot?: React.ReactNode
 	noRecordsToDisplaySlot?: React.ReactNode
 	isTablePlugSlotActive?: boolean
-	validateHoveredRow?: (
-		row: NonNullable<HoveredRowState<TData>>,
-		table: TableInstance<TData>
-	) => boolean | DraggingMessage
+	validateHoveredRow?: ValidateHoveredRowProp<TData>
+	getRowDragValuesChangeMessage?: GetRowDragValuesChangeMessageProp<TData>
 	cellStyleRules?: Record<
 		string,
 		{
@@ -1027,7 +1056,7 @@ export type TableComponentProps<TData extends Record<string, any> = {}> = Omit<
 		table,
 	}: {
 		hoveredRow: HoveredRowState<TData>
-		draggingRows: Table_Row<TData> | Table_Row<TData>[]
+		draggingRows: Table_Row<TData>[]
 		grouping: GroupingState
 		table: TableInstance<TData>
 	}) => Promise<void> | void
@@ -1164,13 +1193,7 @@ export type TableComponentProps<TData extends Record<string, any> = {}> = Omit<
 		| (({ table }: { table: TableInstance<TData> }) => TableBodyProps)
 	muiTableBodyRowDragHandleProps?:
 		| IconButtonProps
-		| (({
-				table,
-				row,
-		  }: {
-				table: TableInstance<TData>
-				row: Table_Row<TData>
-		  }) => IconButtonProps)
+		| MuiTableBodyRowDragHandleFnProps<TData>
 	muiTableBodyRowProps?:
 		| TableRowProps
 		| (({
@@ -1304,9 +1327,23 @@ export type TableComponentProps<TData extends Record<string, any> = {}> = Omit<
 		| ToolbarProps
 		| (({ table }: { table: TableInstance<TData> }) => ToolbarProps)
 	multirowHeader?: MultirowHeader
+	multirowColumnsDisplayDepth?: number
 	onDraggingColumnChange?: OnChangeFn<Table_Column<TData> | null>
 	onDraggingRowsChange?: OnChangeFn<Table_Row<TData>[]>
 	onEditingCellChange?: OnChangeFn<Table_Cell<TData> | null>
+	onEditingCellSave?: ({
+		exitEditingMode,
+		cell,
+		table,
+		value,
+		error,
+	}: {
+		exitEditingMode: () => void
+		cell: Table_Cell<TData>
+		table: TableInstance<TData>
+		value: any
+		error: FieldError
+	}) => Promise<void> | void
 	onEditingRowCancel?: ({
 		row,
 		table,
@@ -1356,6 +1393,7 @@ export type TableComponentProps<TData extends Record<string, any> = {}> = Omit<
 		value?: any
 	}) => void
 	organizeColumnsMenu?(columns: Table_Column<TData>[]): Table_Column<TData>[]
+	organizeGroupingMenu?(columns: Table_Column<TData>[]): Table_Column<TData>[]
 	organizeSortingMenu?(columns: Table_Column<TData>[]): Table_Column<TData>[]
 	positionActionsColumn?: 'first' | 'last'
 	positionExpandColumn?: 'first' | 'last'

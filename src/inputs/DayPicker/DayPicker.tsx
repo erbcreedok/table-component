@@ -14,6 +14,7 @@ import {
 	ComponentProps,
 	FC,
 	HTMLProps,
+	MutableRefObject,
 	ReactElement,
 	useCallback,
 	useEffect,
@@ -53,6 +54,7 @@ export type DayPickerProps = {
 	onBlur?(): void
 	isDateRange?: boolean
 	container?: HTMLElement
+	floatingRef?: MutableRefObject<HTMLElement | null>
 } & Omit<
 	ComponentProps<typeof ReactDayPicker>,
 	'value' | 'onFocus' | 'onBlur' | 'onChange'
@@ -64,6 +66,7 @@ export const DayPicker: FC<DayPickerProps> = ({
 	onChange,
 	isDateRange,
 	container,
+	floatingRef: uFloatingRef,
 	...props
 }) => {
 	const [mode, setMode] = useState<'month' | 'year'>()
@@ -74,16 +77,22 @@ export const DayPicker: FC<DayPickerProps> = ({
 		(value: boolean) => {
 			if (value) {
 				onFocus?.()
-			} else {
-				onBlur?.()
 			}
 
 			setOpen(value)
 		},
-		[onBlur, onFocus]
+		[onFocus]
 	)
 
-	const { x, y, reference, floating, strategy, context } = useFloating({
+	const {
+		x,
+		y,
+		reference,
+		floating,
+		strategy,
+		context,
+		refs: { floating: floatingRef },
+	} = useFloating({
 		open,
 		onOpenChange: handleOpenChange,
 		whileElementsMounted: autoUpdate,
@@ -142,6 +151,25 @@ export const DayPicker: FC<DayPickerProps> = ({
 		[handleSelect]
 	)
 
+	const handleReferenceBlur = useCallback(
+		(event) => {
+			// prevent blur when clicking on the floating element
+			if (
+				floatingRef.current &&
+				floatingRef.current.contains(event.relatedTarget)
+			) {
+				setTimeout(() => {
+					event.target.focus()
+				})
+				event.stopPropagation()
+
+				return
+			}
+			onBlur?.()
+		},
+		[floatingRef, onBlur]
+	)
+
 	const defaultContainer = useMemo(() => document.body, [])
 
 	return (
@@ -149,14 +177,22 @@ export const DayPicker: FC<DayPickerProps> = ({
 			{children({
 				value,
 				handleSelect,
-				bind: getReferenceProps({ ref: reference }),
+				bind: {
+					...getReferenceProps({ ref: reference }),
+					onBlur: handleReferenceBlur,
+				},
 				handleClear: () => handleSelect(undefined, true),
 			})}
 			{createPortal(
 				open && (
 					<DayPickerWrapper
 						{...getFloatingProps({
-							ref: floating,
+							ref: (node) => {
+								floating(node)
+								if (node && uFloatingRef) {
+									uFloatingRef.current = node
+								}
+							},
 							style: {
 								position: strategy,
 								left: x ?? '',

@@ -5,14 +5,20 @@ import {
 	InputAdornment,
 	IconButton,
 } from '@mui/material'
-import React, { ComponentProps, useEffect, useState, MouseEvent } from 'react'
+import {
+	ComponentProps,
+	useEffect,
+	useState,
+	MouseEvent,
+	SyntheticEvent,
+} from 'react'
 
 import { CloseIcon } from '../icons/CloseIcon'
 import { SearchIcon } from '../icons/SearchIcon'
 
 import { DEFAULT_FONT_FAMILY, TextColor } from './styles'
 
-const SidebarSearch = styled(TextField)`
+const StyledSearch = styled(TextField)`
 	font-family: ${DEFAULT_FONT_FAMILY};
 	padding: 15px 22px;
 	width: 100%;
@@ -32,26 +38,27 @@ const SidebarSearch = styled(TextField)`
 	}
 `
 
-type Props = {
+type DeprecatedProps = {
 	onChange(value: string): void
 	onClear?(event: MouseEvent<HTMLElement>): void
 	dividerProps?: ComponentProps<typeof Divider>
 	reset?: boolean
-} & Omit<ComponentProps<typeof SidebarSearch>, 'onChange'>
+} & Omit<ComponentProps<typeof StyledSearch>, 'onChange'>
 
+/** @deprecated use SidebarSearch */
 export const SidebarSearchComponent = ({
 	dividerProps,
 	reset,
 	onChange,
 	onClear,
 	...rest
-}: Props) => {
+}: DeprecatedProps) => {
 	const [input, setInput] = useState<string>('')
 
-	const handleInputChange = (e) => {
-		e.preventDefault()
-		setInput(e.target.value.toLowerCase())
-		onChange(e.target.value.toLowerCase())
+	const handleInputChange: OnChange = (event, value) => {
+		event.preventDefault()
+		setInput(value.toLowerCase())
+		onChange(value.toLowerCase())
 	}
 
 	const handleClearCLick = (event: MouseEvent<HTMLElement>) => {
@@ -69,28 +76,64 @@ export const SidebarSearchComponent = ({
 	return (
 		<>
 			<SidebarSearch
-				placeholder="Search"
-				InputProps={{
-					startAdornment: (
-						<InputAdornment position="start">
-							<SearchIcon />
-						</InputAdornment>
-					),
-					endAdornment: (
-						<InputAdornment position="end">
-							{input.length > 0 && (
-								<IconButton onClick={handleClearCLick} disableRipple>
-									<CloseIcon style={{ width: 18, height: 18 }} />
-								</IconButton>
-							)}
-						</InputAdornment>
-					),
-				}}
 				value={input}
 				onChange={handleInputChange}
+				onClear={handleClearCLick}
 				{...rest}
 			/>
 			<Divider {...dividerProps} />
 		</>
+	)
+}
+
+type OnChange = (event: SyntheticEvent, value: string) => void
+
+type Props = {
+	onChange?: OnChange
+	onValueChange?: (value: string) => void
+	/** @deprecated */
+	onClear?: (event: MouseEvent<HTMLElement>) => void
+} & Omit<ComponentProps<typeof StyledSearch>, 'onChange'>
+
+export const SidebarSearch = ({
+	value,
+	onValueChange,
+	onChange,
+	onClear,
+	...rest
+}: Props) => {
+	return (
+		<StyledSearch
+			placeholder="Search"
+			InputProps={{
+				startAdornment: (
+					<InputAdornment position="start">
+						<SearchIcon />
+					</InputAdornment>
+				),
+				endAdornment: (
+					<InputAdornment position="end">
+						{value && (
+							<IconButton
+								onClick={(e) => {
+									onChange?.(e, '')
+									onValueChange?.('')
+									onClear?.(e)
+								}}
+								disableRipple
+							>
+								<CloseIcon style={{ width: 18, height: 18 }} />
+							</IconButton>
+						)}
+					</InputAdornment>
+				),
+			}}
+			value={value}
+			onChange={(e) => {
+				onChange?.(e, e.target.value)
+				onValueChange?.(e.target.value)
+			}}
+			{...rest}
+		/>
 	)
 }

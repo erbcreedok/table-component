@@ -11,6 +11,7 @@ import type { Table_Cell, Table_Row, TableInstance } from '..'
 import { getColumnId } from '../column.utils'
 import { Colors } from '../components/styles'
 import { getSubRowIndex } from '../utils/getSubRowIndex'
+import { setHoveredRow } from '../utils/setHoveredRow'
 
 import { Memo_TableBodyCell, TableBodyCell } from './TableBodyCell'
 import { TableDetailPanel } from './TableDetailPanel'
@@ -63,7 +64,6 @@ export const TableBodyRow: FC<TableBodyRowProps> = ({
 			renderDetailPanel,
 		},
 		refs: { rowDragEnterTimeoutRef },
-		setHoveredRow,
 	} = table
 	const { draggingColumn, draggingRows, editingCell, editingRow } = getState()
 	const isEditingRow = !!editingRow && editingRow?.id === row.id
@@ -85,9 +85,9 @@ export const TableBodyRow: FC<TableBodyRowProps> = ({
 		clearTimeout(rowDragEnterTimeoutRef.current)
 		rowDragEnterTimeoutRef.current = setTimeout(() => {
 			if (enableRowDragging && draggingRows.length > 0) {
-				setHoveredRow({ ...currentHoveredRow, rowRef })
+				setHoveredRow(table)({ ...currentHoveredRow, rowRef })
 			}
-		}, 250)
+		}, 500)
 	}
 
 	const rowRef = useRef<HTMLTableRowElement | null>(null)
@@ -184,9 +184,6 @@ export const TableBodyRow: FC<TableBodyRowProps> = ({
 									tableRowProps?.hover !== false && getIsSomeColumnsPinned()
 										? Colors.Gray10
 										: undefined,
-							},
-							'&:first-child td > * > *': {
-								borderTop: 'none',
 							},
 							...(tableRowProps?.sx instanceof Function
 								? tableRowProps.sx(theme)

@@ -1,7 +1,6 @@
 import React, {
 	Dispatch,
 	DragEvent,
-	MouseEvent,
 	SetStateAction,
 	useRef,
 	useState,
@@ -9,18 +8,12 @@ import React, {
 import Box from '@mui/material/Box'
 import MenuItem from '@mui/material/MenuItem'
 import Typography from '@mui/material/Typography'
-import IconButton from '@mui/material/IconButton'
 
-import { getSortingText } from '../../../../utils/getSortingInfo'
-import { useTableContext } from '../../../../context/useTableContext'
 import type { Table_Column } from '../../../../'
-import { ButtonLink } from '../../../../components/ButtonLink'
 import { Colors, TextColor } from '../../../../components/styles'
-import { DeleteIcon } from '../../../../icons/DeleteIcon'
-import { SortingButtons } from '../SortingMenu/SortingButtons'
 import { GrabHandleButton } from '../../buttons/GrabHandleButton'
 
-interface Props<TData extends Record<string, any> = {}> {
+export interface SimpleMenuItemProps<TData extends Record<string, any> = {}> {
 	column: Table_Column<TData>
 	isSorting?: boolean
 	isCompact?: boolean
@@ -31,31 +24,26 @@ interface Props<TData extends Record<string, any> = {}> {
 		draggedColumn: Table_Column<TData>,
 		targetColumn: Table_Column<TData>
 	): void
-	onItemClick?(): void
+	children?: React.ReactNode
+	disableRipple?: boolean
+	onClick?: React.MouseEventHandler<HTMLElement>
 }
 
 export const SimpleMenuItem = <TData extends Record<string, any> = {}>({
 	isSorting = false,
 	isCompact = false,
 	enableDrag = false,
-	onItemClick,
 	column,
 	hoveredColumn,
 	setHoveredColumn,
 	onColumnOrderChange,
-}: Props<TData>) => {
-	const { table } = useTableContext()
+	children,
+	disableRipple,
+	onClick,
+}: SimpleMenuItemProps<TData>) => {
 	const { columnDef } = column
 	const menuItemRef = useRef<HTMLElement>(null)
 	const [isDragging, setIsDragging] = useState(false)
-
-	const handleItemClick = (e: MouseEvent<HTMLElement | HTMLButtonElement>) => {
-		if (onItemClick) {
-			onItemClick()
-		}
-
-		e.stopPropagation()
-	}
 
 	const handleDragStart = (e: DragEvent<HTMLButtonElement>) => {
 		setIsDragging(true)
@@ -82,7 +70,7 @@ export const SimpleMenuItem = <TData extends Record<string, any> = {}>({
 
 	return (
 		<MenuItem
-			disableRipple={!onItemClick}
+			disableRipple={enableDrag || disableRipple}
 			onDragEnter={handleDragEnter}
 			ref={menuItemRef as any}
 			sx={() => ({
@@ -119,7 +107,7 @@ export const SimpleMenuItem = <TData extends Record<string, any> = {}>({
 					backgroundColor: Colors.Gray,
 				},
 			})}
-			onClick={handleItemClick}
+			onClick={onClick}
 		>
 			<Box
 				sx={{
@@ -154,57 +142,7 @@ export const SimpleMenuItem = <TData extends Record<string, any> = {}>({
 				>
 					{columnDef.header}
 				</Typography>
-				<Box sx={{ display: 'flex', alignItems: 'center' }}>
-					{isSorting ? (
-						<>
-							{isCompact ? (
-								<SortingButtons column={column} sx={{ marginRight: '20px' }} />
-							) : (
-								<>
-									<ButtonLink
-										style={{ marginRight: '18px', fontWeight: 600 }}
-										onClick={() => column.toggleSorting(false, true)}
-									>
-										{getSortingText({
-											table,
-											sortingFn: column.getSortingFn(),
-											isAsc: true,
-											withSortWord: false,
-										})}{' '}
-										+
-									</ButtonLink>
-									<ButtonLink
-										onClick={() => column.toggleSorting(true, true)}
-										style={{ fontWeight: 600 }}
-									>
-										{getSortingText({
-											table,
-											sortingFn: column.getSortingFn(),
-											isAsc: false,
-											withSortWord: false,
-										})}{' '}
-										+
-									</ButtonLink>
-								</>
-							)}
-						</>
-					) : (
-						!isCompact && (
-							<ButtonLink onClick={handleItemClick} style={{ fontWeight: 600 }}>
-								Add Item +
-							</ButtonLink>
-						)
-					)}
-					{isCompact && (
-						<IconButton
-							disableRipple
-							onClick={isSorting ? column.clearSorting : column.toggleGrouping}
-							size="small"
-						>
-							<DeleteIcon />
-						</IconButton>
-					)}
-				</Box>
+				<Box sx={{ display: 'flex', alignItems: 'center' }}>{children}</Box>
 			</Box>
 		</MenuItem>
 	)

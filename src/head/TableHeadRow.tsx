@@ -14,6 +14,7 @@ import { Colors } from '../components/styles'
 import { getHeaderGroupBorders } from '../utils/getGroupBorders'
 import { getIsColumnAllGroupsCollapsedDefault } from '../utils/getIsColumnAllGroupsCollapsed'
 import { onGroupCollapsedToggleAllDefault } from '../utils/onGroupCollapseToggleAll'
+import { setHoveredRow } from '../utils/setHoveredRow'
 
 import { TableHeadCell, TableHeadCellProps } from './TableHeadCell'
 
@@ -62,7 +63,6 @@ export const TableHeadRow = ({
 			onGroupCollapsedToggleAll,
 			getIsColumnAllGroupsCollapsed,
 		},
-		setHoveredRow,
 		getState,
 	} = table
 	const { draggingRows } = getState()
@@ -87,13 +87,13 @@ export const TableHeadRow = ({
 				row = parentRow.subRows[0]
 			}
 			if (row) {
-				setHoveredRow({
+				setHoveredRow(table)({
 					row,
 					position: 'top',
 					rowRef: ref,
 				})
 			} else {
-				setHoveredRow(null)
+				setHoveredRow(table)(null)
 			}
 		}
 	}

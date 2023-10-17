@@ -1,5 +1,5 @@
 import { backdropClasses, paperClasses } from '@mui/material'
-import React, { ReactElement, ReactNode, MouseEvent } from 'react'
+import { ReactElement, ReactNode, MouseEvent } from 'react'
 import Box from '@mui/material/Box'
 import Drawer from '@mui/material/Drawer'
 
@@ -9,11 +9,18 @@ import { SidebarSearchComponent } from './SidebarSearch'
 interface Props {
 	open: boolean
 	onClose(): void
+	topPanel?: ReactNode
+	/** @deprecated use topPanel */
 	withHeader?: boolean
+	/** @deprecated use topPanel */
 	withSearch?: boolean
+	/** @deprecated use topPanel */
 	onSearchChange?(value: string): void
+	/** @deprecated use topPanel */
 	onSearchClear?(event: MouseEvent<HTMLElement>): void
+	/** @deprecated use topPanel */
 	headerTitle?: string
+	/** @deprecated use topPanel */
 	subHeader?: string | ReactElement | null
 	styles?: Record<string, any>
 	children?: ReactNode
@@ -24,6 +31,7 @@ interface Props {
 export const Sidebar = ({
 	open,
 	onClose,
+	topPanel,
 	withHeader = false,
 	withSearch = false,
 	onSearchChange = () => null,
@@ -53,33 +61,32 @@ export const Sidebar = ({
 			sx={innerTableSidebar ? innerTableDrawerStyles : null}
 		>
 			<Box sx={{ ...styles, ...(innerTable ? { maxHeight: '100%' } : {}) }}>
-				<>
-					{withHeader && (
-						<SidebarHeaderComponent
-							title={headerTitle}
-							subHeader={subHeader}
-							onClick={onClose}
-						/>
-					)}
-					{withSearch && (
-						<SidebarSearchComponent
-							onChange={onSearchChange}
-							onClear={onSearchClear}
-						/>
-					)}
-					<Box
-						sx={{
-							maxHeight: `calc(100% - ${withSearch ? '116' : '65'}px)`,
-							boxSizing: 'border-box',
-							display: innerTable ? 'flex' : 'block',
-							width: '100%',
-							overflow: 'hidden',
-							position: 'relative',
-						}}
-					>
-						{children}
-					</Box>
-				</>
+				{withHeader && (
+					<SidebarHeaderComponent
+						title={headerTitle}
+						subHeader={subHeader}
+						onClick={onClose}
+					/>
+				)}
+				{withSearch && (
+					<SidebarSearchComponent
+						onChange={onSearchChange}
+						onClear={onSearchClear}
+					/>
+				)}
+				{topPanel}
+				<Box
+					sx={{
+						maxHeight: `calc(100% - ${withSearch ? '116' : '65'}px)`,
+						boxSizing: 'border-box',
+						display: innerTable ? 'flex' : 'block',
+						width: '100%',
+						overflow: 'hidden',
+						position: 'relative',
+					}}
+				>
+					{children}
+				</Box>
 			</Box>
 		</Drawer>
 	)

@@ -2,7 +2,12 @@ import React, { useCallback, useMemo, useState } from 'react'
 import Box from '@mui/material/Box'
 import { Typography } from '@mui/material'
 
-import type { Table_Column, TableData, TableInstance } from '../../../../index'
+import type {
+	Table_Column,
+	TableData,
+	TableInstance,
+	MultirowColumnsGroup,
+} from '../../../../index'
 import { ContentTitle } from '../../../../components/ContentTitle'
 import { ButtonLink } from '../../../../components/ButtonLink'
 import {
@@ -10,10 +15,13 @@ import {
 	Table_DisplayColumnIdsArray,
 } from '../../../../column.utils'
 import { Sidebar } from '../../../../components/Sidebar'
+import { TreeAngle } from '../../../../components/TreeAngle'
+import { ConditionalBox } from '../../../../components/ConditionalBox'
 import { Colors, TextColor } from '../../../../components/styles'
 import { splitArrayItems } from '../../../../utils/splitArrayItems'
 
 import { ColumnsMenuItem } from './ColumnsMenuItem'
+import { ColumnsMenuGroupItem } from './ColumnsMenuGroupItem'
 
 interface Props<TData extends Record<string, any> = {}> {
 	anchorEl: HTMLElement | null
@@ -41,6 +49,7 @@ export const ColumnsMenu = <TData extends TableData = {}>({
 			localization,
 			innerTable,
 			multirowHeader,
+			multirowColumnsDisplayDepth,
 			organizeColumnsMenu = defaultOrganizeColumnsMenu,
 		},
 	} = table
@@ -111,10 +120,118 @@ export const ColumnsMenu = <TData extends TableData = {}>({
 			columns: Table_Column<TData>[]
 		): { text: string; columns: Table_Column<TData>[] }[] | [] => {
 			if (multirowHeader) {
+				let multirowDepthMatchingColumns
+				const allMultirowColumns: string[] = []
+
+				if (multirowColumnsDisplayDepth) {
+					multirowDepthMatchingColumns = [...multirowHeader].filter(
+						(el) => el.depth <= multirowColumnsDisplayDepth
+					)
+
+					const headerGroups = multirowDepthMatchingColumns
+						.sort((a, b) => a.depth - b.depth)
+						.reduce((acc, curr, index) => {
+							curr.columns.forEach((el) => {
+								const subGroups: string[] = []
+								if (curr.depth < multirowColumnsDisplayDepth) {
+									multirowDepthMatchingColumns
+										.filter(
+											(multiCols) =>
+												multiCols.depth <= multirowColumnsDisplayDepth &&
+												multiCols.depth === curr.depth + 1
+										)
+										.forEach((multiCols) => {
+											multiCols.columns.forEach((cols) => {
+												if (
+													cols.columnIds.filter((colId) =>
+														el.columnIds.includes(colId)
+													).length === cols.columnIds.length
+												) {
+													subGroups.push(cols.text)
+												}
+											})
+										})
+								}
+
+								acc[el.text] = {
+									text: el.text,
+									columns: el.columnIds?.map((colId) => {
+										if (!allMultirowColumns.includes(colId)) {
+											allMultirowColumns.push(colId)
+										}
+
+										return columns.find((col) => col.id === colId)
+									}),
+									isFinalGroup: multirowColumnsDisplayDepth === curr.depth,
+									depth: index,
+									subGroups,
+								}
+
+								return el
+							})
+
+							return acc
+						}, {})
+
+					const subGroupsKeys: string[] = []
+					for (const key in headerGroups) {
+						if (headerGroups[key].subGroups.length) {
+							headerGroups[key].subGroups.forEach((subGroup: string) => {
+								subGroupsKeys.push(subGroup)
+							})
+						}
+					}
+
+					const nonMultiheaderGroup = {
+						text: '',
+						columns: columns.filter(
+							(column) => !allMultirowColumns.includes(column.id)
+						),
+					}
+
+					const getSubGroups = (subGroupsKeys) => {
+						return subGroupsKeys.map((key) => headerGroups[key])
+					}
+
+					const getHeaderGroupsWithSubgroups = (groups) => {
+						const groupsArray = Array.isArray(groups)
+							? groups
+							: Object.values(groups)
+						const result = groupsArray.reduce((acc, curr) => {
+							if (curr.subGroups.length) {
+								const formedSubGroups = getHeaderGroupsWithSubgroups(
+									getSubGroups(curr.subGroups)
+								)
+								acc.push({
+									...curr,
+									subGroups: formedSubGroups,
+								})
+							} else {
+								acc.push(curr)
+							}
+
+							return acc
+						}, [])
+
+						return result
+					}
+
+					return [
+						...getHeaderGroupsWithSubgroups(headerGroups).filter(
+							(group) => !subGroupsKeys.includes(group.text)
+						),
+						nonMultiheaderGroup,
+					]
+				}
+
 				const multirowHeaderColumns = [...multirowHeader]
 					.sort((a, b) => a.depth - b.depth)
 					.reduce((multirowColumns, header) => {
-						multirowColumns.push(...header.columns)
+						const columnsWithDepth = header.columns.map((col) => ({
+							...col,
+							depth: header.depth,
+						}))
+						multirowColumns.push(...columnsWithDepth)
 
 						return multirowColumns
 					}, [] as { text: string; columnIds: string[] }[])
@@ -143,8 +260,110 @@ export const ColumnsMenu = <TData extends TableData = {}>({
 
 			return []
 		},
-		[multirowHeader]
+		[multirowColumnsDisplayDepth, multirowHeader]
 	)
+
+	const getMultirowHeaderTree = ({ multirowGroups, targetColumnIds }) => {
+		if (multirowGroups) {
+			return multirowGroups.reduce((acc, curr) => {
+				if (curr.columns.some((col) => targetColumnIds.includes(col.id))) {
+					if (!curr.isFinalGroup) {
+						curr.subGroups = getMultirowHeaderTree({
+							multirowGroups: curr.subGroups,
+							targetColumnIds,
+						})
+					}
+					acc.push(curr)
+				}
+
+				return acc
+			}, [])
+		}
+
+		return multirowGroups
+	}
+
+	const renderMultirowTree = ({
+		multirowGroups,
+		drawVerticalLine = false,
+		showHidden = false,
+	}) => {
+		return multirowGroups.map((group, index) => (
+			<Box
+				key={`${index}-${group.text}`}
+				sx={{
+					ml: `${(group?.depth ?? 0) * 10}px`,
+					borderLeft:
+						group.depth > 1 && drawVerticalLine
+							? `solid 1px ${Colors.Gray}`
+							: 'none',
+				}}
+			>
+				{!group.isFinalGroup && (
+					<ConditionalBox
+						condition={group?.subGroups?.length && group.depth !== 0}
+						sx={{ display: 'flex' }}
+					>
+						{group?.subGroups?.length && group.depth !== 0 && (
+							<TreeAngle
+								lastInList={multirowGroups.length === index + 1}
+								sx={{ pl: '20px' }}
+							/>
+						)}
+						<Typography
+							key={group.text}
+							sx={{
+								maxWidth: '300px',
+								padding: `6px ${
+									group?.subGroups?.length && group.depth !== 0 ? '0px' : '24px'
+								}`,
+								color: TextColor.Primary,
+								fontSize: '14px',
+								fontWeight: 400,
+							}}
+						>
+							{group.text}
+						</Typography>
+					</ConditionalBox>
+				)}
+				{group.isFinalGroup ? (
+					<ColumnsMenuGroupItem
+						key={group.text}
+						columnsGroup={group.columns}
+						columnsGroupText={group.text}
+						table={table}
+						renderTreeAngle={group.depth > 0}
+						isLastInList={multirowGroups.length === index + 1}
+					/>
+				) : group?.subGroups?.length ? (
+					renderMultirowTree({
+						multirowGroups: group.subGroups,
+						drawVerticalLine: index + 1 < multirowGroups.length,
+					})
+				) : (
+					group.columns
+						.filter((col) =>
+							showHidden ? !col.getIsVisible() : col.getIsVisible()
+						)
+						.map((column, i) => (
+							<ColumnsMenuItem
+								key={column.id}
+								column={column}
+								table={table}
+								hoveredColumn={hoveredColumn}
+								draggingColumn={draggingColumn}
+								setHoveredColumn={setHoveredColumn}
+								setDraggingColumn={setDraggingColumn}
+								onColumnOrderChange={onColumnOrderChange}
+								isLastInList={group.columns.length === i + 1}
+								renderTreeAngle={group.text}
+								enableDrag
+							/>
+						))
+				)}
+			</Box>
+		))
+	}
 
 	return (
 		<Sidebar
@@ -237,35 +456,12 @@ export const ColumnsMenu = <TData extends TableData = {}>({
 						))}
 
 						{multirowHeader
-							? getMultirowHeaderGroups(ungroupedColumns).map((group) => (
-									<>
-										<Typography
-											key={group.text}
-											sx={{
-												maxWidth: '300px',
-												padding: '6px 24px',
-												color: TextColor.Primary,
-												fontSize: '14px',
-												fontWeight: 400,
-											}}
-										>
-											{group.text}
-										</Typography>
-										{group.columns.map((column) => (
-											<ColumnsMenuItem
-												key={column.id}
-												column={column}
-												table={table}
-												hoveredColumn={hoveredColumn}
-												draggingColumn={draggingColumn}
-												setHoveredColumn={setHoveredColumn}
-												setDraggingColumn={setDraggingColumn}
-												onColumnOrderChange={onColumnOrderChange}
-												enableDrag
-											/>
-										))}
-									</>
-							  ))
+							? renderMultirowTree({
+									multirowGroups: getMultirowHeaderTree({
+										multirowGroups: getMultirowHeaderGroups(allColumns),
+										targetColumnIds: visibleColumns.map(({ id }) => id),
+									}),
+							  })
 							: ungroupedColumns.map((column) => (
 									<ColumnsMenuItem
 										key={column.id}
@@ -291,18 +487,26 @@ export const ColumnsMenu = <TData extends TableData = {}>({
 								>
 									Hidden Columns
 								</ContentTitle>
-								{hiddenColumns.map((column) => (
-									<ColumnsMenuItem
-										key={column.id}
-										column={column}
-										table={table}
-										hoveredColumn={hoveredColumn}
-										draggingColumn={draggingColumn}
-										setHoveredColumn={setHoveredColumn}
-										setDraggingColumn={setDraggingColumn}
-										onColumnOrderChange={onColumnOrderChange}
-									/>
-								))}
+								{multirowHeader
+									? renderMultirowTree({
+											multirowGroups: getMultirowHeaderTree({
+												multirowGroups: getMultirowHeaderGroups(allColumns),
+												targetColumnIds: hiddenColumns.map(({ id }) => id),
+											}),
+											showHidden: true,
+									  })
+									: hiddenColumns.map((column) => (
+											<ColumnsMenuItem
+												key={column.id}
+												column={column}
+												table={table}
+												hoveredColumn={hoveredColumn}
+												draggingColumn={draggingColumn}
+												setHoveredColumn={setHoveredColumn}
+												setDraggingColumn={setDraggingColumn}
+												onColumnOrderChange={onColumnOrderChange}
+											/>
+									  ))}
 							</>
 						)}
 					</Box>
