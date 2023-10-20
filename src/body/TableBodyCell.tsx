@@ -121,7 +121,7 @@ export const TableBodyCell = ({
 		getValueOrFunctionHandler(muiTableBodyCellProps)
 	)
 	const mcTableCellBodyProps = callFunctionWithDefaultArgs(
-		getValueOrFunctionHandler(muiTableBodyCellProps)
+		getValueOrFunctionHandler(columnDef.muiTableBodyCellProps)
 	)
 
 	const tableCellProps = {

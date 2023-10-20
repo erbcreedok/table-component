@@ -1,8 +1,10 @@
 import React, { FC } from 'react'
-import { BoxProps, Typography } from '@mui/material'
+import { BoxProps, CircularProgress, Typography } from '@mui/material'
 
 import { useTableContext } from '../context/useTableContext'
 import { FilterItemBoxStyled } from '../TableStatusBar/FilterChip/FilterChip.styles'
+
+import { TextColor } from './styles'
 
 type ListItemProps = {
 	isChecked?: boolean
@@ -32,3 +34,19 @@ export const ListFilterItem: FC<ListItemProps> = ({
 		</FilterItemBoxStyled>
 	)
 }
+
+export const ListFilterLoadingItem = ({
+	loadingText,
+}: {
+	loadingText: string
+}) => (
+	<FilterItemBoxStyled component="div">
+		<Typography
+			variant="body2"
+			style={{ color: TextColor.Disabled, fontSize: 14 }}
+		>
+			{loadingText}
+			<CircularProgress size={12} sx={{ ml: 1 }} />
+		</Typography>
+	</FilterItemBoxStyled>
+)

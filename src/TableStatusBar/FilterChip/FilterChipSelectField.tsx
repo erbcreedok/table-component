@@ -1,5 +1,6 @@
-import { useCallback, useMemo, useState } from 'react'
+import React, { useCallback, useMemo, useState } from 'react'
 
+import { ListFilterLoadingItem } from '../../components/ListFilterItem'
 import {
 	SelectOption,
 	Table_Column,
@@ -13,21 +14,30 @@ import { DropdownContentSearch } from '../../components/DropdownContent/Dropdown
 
 import { FilterChipList } from './FilterChipList'
 
-type Props<TData extends TableData> = {
+export type FilterChipSelectFieldProps<TData extends TableData = TableData> = {
 	column: Table_Column<TData>
 	table: TableInstance<TData>
+	options?: SelectOption[]
+	loading?: boolean
+	loadingText?: string
 }
-export const FilterChipSelectField = <TData extends TableData>({
+export const FilterChipSelectField = <TData extends TableData = TableData>({
 	column,
 	table,
-}: Props<TData>) => {
+	options: _options,
+	loading,
+	loadingText,
+}: FilterChipSelectFieldProps<TData>) => {
+	const {
+		options: { localization },
+	} = table
 	const headerTitle = column.columnDef.header
 	const [isSearchActive, setIsSearchActive] = useState(false)
 	const [searchValue, setSearchValue] = useState('')
 	const filterValue = column.getFilterValue() as string[]
 	const options = useMemo(
-		() => getColumnFilterOptions(column, table),
-		[column, table]
+		() => _options ?? getColumnFilterOptions(column, table),
+		[_options, column, table]
 	)
 	const { selectedOptions, notSelectedOptions } = useMemo(
 		() => splitFilterOptions(options, filterValue),
@@ -78,7 +88,11 @@ export const FilterChipSelectField = <TData extends TableData>({
 			/>
 
 			<>
-				{isSearchActive ? (
+				{loading ? (
+					<ListFilterLoadingItem
+						loadingText={loadingText ?? localization.loading}
+					/>
+				) : isSearchActive ? (
 					<FilterChipList
 						sx={{ maxHeight: 200, overflowY: 'auto' }}
 						options={filteredSearchOptions}

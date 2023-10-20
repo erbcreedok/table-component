@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 import Box from '@mui/material/Box'
 
 import {
@@ -7,31 +7,63 @@ import {
 	TableData,
 	TableInstance,
 } from '../TableComponent'
+import { getColumnFilterOptions } from '../utils/getColumnFilterOptions'
 
 import { DropdownContentHeader } from './DropdownContent/DropdownContentHeader'
 import { DropdownContentSearch } from './DropdownContent/DropdownContentSearch'
-import { ListFilterItem } from './ListFilterItem'
+import { ListFilterItem, ListFilterLoadingItem } from './ListFilterItem'
 import { NoOptions } from './NoOptions'
 
-type Props<TData extends TableData> = {
+export type QuickFiltersProps<Value, TData extends TableData> = {
 	column: Table_Column<TData>
 	table: TableInstance<TData>
-	selectedFilters: string[]
-	filterOptions: SelectOption[]
-	onCheckFilter: (value: string) => void
-	onClearAll: () => void
+	value: Value[]
+	onChange(value: Value[]): void
+	options?: SelectOption[]
+	loading?: boolean
+	loadingText?: string
 }
 
-export const QuickFilters = <TData extends TableData>({
+export const QuickFilters = <Value, TData extends TableData>({
 	column,
-	selectedFilters,
-	filterOptions,
-	onCheckFilter,
-	onClearAll,
-}: Props<TData>) => {
+	table,
+	value: selectedFilters = [],
+	onChange,
+	options: _options,
+	loading,
+	loadingText,
+}: QuickFiltersProps<Value, TData>) => {
+	const {
+		options: { localization },
+	} = table
 	const headerTitle = column.columnDef.header
 	const [isSearchActive, setIsSearchActive] = useState(false)
 	const [searchValue, setSearchValue] = useState('')
+	const filterOptions = useMemo(
+		() => _options ?? getColumnFilterOptions(column, table),
+		[_options, column, table]
+	)
+
+	const onCheckFilter = useCallback(
+		(value: Value) => {
+			if (selectedFilters.includes(value)) {
+				const updatedFilters = selectedFilters.filter(
+					(filter) => filter !== value
+				)
+
+				onChange(updatedFilters)
+
+				return
+			}
+
+			onChange([...selectedFilters, value])
+		},
+		[onChange, selectedFilters]
+	)
+
+	const onClearAll = useCallback(() => {
+		onChange([])
+	}, [onChange])
 
 	const options = useMemo(() => {
 		return filterOptions
@@ -66,7 +98,15 @@ export const QuickFilters = <TData extends TableData>({
 
 			<>
 				<Box sx={{ maxHeight: 220, overflowY: 'auto' }}>
-					{options.length ? options : <NoOptions />}
+					{loading ? (
+						<ListFilterLoadingItem
+							loadingText={loadingText ?? localization.loading}
+						/>
+					) : options.length ? (
+						options
+					) : (
+						<NoOptions />
+					)}
 				</Box>
 			</>
 		</>

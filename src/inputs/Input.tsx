@@ -25,7 +25,7 @@ import { sumAnyTwoValues } from '../stories/utils/sumAnyTwoValues'
 import { createNativeChangeEvent } from '../utils/createNativeChangeEvent'
 import { getValidNumber } from '../utils/getValidNumber'
 import { mergeSx } from '../utils/mergeSx'
-import { withStopPropagation } from '../utils/withStopPropagation'
+import { useStopPropagation } from '../utils/withStopPropagation'
 
 export type InputProps = Omit<
 	PartialKeys<TextFieldProps, 'variant'>,
@@ -86,6 +86,8 @@ export const Input = ({
 		}
 	}
 
+	const onClearStop = useStopPropagation(onClear, [onClear])
+
 	return (
 		<TextField
 			variant="outlined"
@@ -125,7 +127,7 @@ export const Input = ({
 						)}
 						{!!props.value && onClear && (
 							<IconButton
-								onClick={withStopPropagation(onClear)}
+								onClick={onClearStop}
 								sx={{
 									visibility: 'hidden',
 									right: 0,

@@ -1,4 +1,4 @@
-import React, { FC } from 'react'
+import React, { FC, useCallback } from 'react'
 import Box from '@mui/material/Box'
 import Divider from '@mui/material/Divider'
 
@@ -17,12 +17,20 @@ export const TableHeadCellResizeHandle: FC<Props> = ({ header, table }) => {
 	} = table
 	const { column } = header
 
+	const handleResize = useCallback(
+		(e: React.UIEvent) => {
+			e.stopPropagation() // for DragScrollingContainer to not mess things up
+			header.getResizeHandler()(e)
+		},
+		[header]
+	)
+
 	return (
 		<Box
 			onClick={(e) => e.stopPropagation()}
 			onDoubleClick={() => column.resetSize()}
-			onMouseDown={header.getResizeHandler()}
-			onTouchStart={header.getResizeHandler()}
+			onMouseDown={handleResize}
+			onTouchStart={handleResize}
 			sx={(theme) => ({
 				cursor: 'col-resize',
 				mr: '-11px',

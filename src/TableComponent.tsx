@@ -155,6 +155,7 @@ export interface Table_Localization {
 	hideAll: string
 	hideColumn: string
 	hideInView: string
+	loading: string
 	max: string
 	min: string
 	move: string
@@ -987,6 +988,7 @@ export type TableComponentProps<TData extends Record<string, any> = {}> = Omit<
 	enableColumnOrdering?: boolean
 	enableColumnVirtualization?: boolean
 	enableDensityToggle?: boolean
+	enableDragScrolling?: boolean
 	enableEditing?: boolean
 	enableExpandAll?: boolean
 	enableDetailedPanel?: boolean

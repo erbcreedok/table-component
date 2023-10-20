@@ -65,6 +65,7 @@ export const Table_Localization_EN: Table_Localization = {
 	hideAll: 'Hide all',
 	hideColumn: 'Hide {column} column',
 	hideInView: 'Hide column',
+	loading: 'Loading',
 	max: 'Max',
 	min: 'Min',
 	move: 'Move',

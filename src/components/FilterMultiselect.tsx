@@ -43,26 +43,32 @@ const Option: FC<BoxProps> = ({ children, sx, ...rest }) => (
 	</Box>
 )
 
+export type FilterMultiselectProps<TData extends TableData = TableData> = {
+	column: Table_Column<TData>
+	table: TableInstance<TData>
+	onChange: (value: SelectOption[]) => void
+	value: string[]
+	autoFocus?: boolean
+	options?: SelectOption[]
+	loading?: boolean
+	loadingText?: string
+}
 export const FilterMultiselect = <TData extends TableData>({
 	column,
 	table,
 	onChange,
 	value = [],
 	autoFocus,
-}: {
-	column: Table_Column<TData>
-	table: TableInstance<TData>
-	onChange: (value: SelectOption[]) => void
-	value: string[]
-	autoFocus?: boolean
-}) => {
+	options: _options,
+	...rest
+}: FilterMultiselectProps<TData>) => {
 	const [isOpen, setIsOpen] = useState(autoFocus)
 	const {
 		options: { localization },
 	} = table
 	const options = useMemo(
-		() => getColumnFilterOptions(column, table),
-		[column, table]
+		() => _options ?? getColumnFilterOptions(column, table),
+		[column, table, _options]
 	)
 	const { selectedOptions, notSelectedOptions } = useMemo(
 		() => splitFilterOptions(options, value),
@@ -176,6 +182,7 @@ export const FilterMultiselect = <TData extends TableData>({
 						</>
 					</Paper>
 				)}
+				{...rest}
 			/>
 		</ClickAwayListener>
 	)

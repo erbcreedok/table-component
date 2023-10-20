@@ -1,7 +1,8 @@
-import React, { FC, useEffect, useLayoutEffect, useState } from 'react'
+import { FC, useEffect, useLayoutEffect, useState } from 'react'
 import MuiTableContainer from '@mui/material/TableContainer'
 
 import type { TableInstance } from '..'
+import { DragScrollingContainer } from '../components/DragScrollingContainer'
 
 import { Table } from './Table'
 
@@ -15,7 +16,11 @@ interface Props {
 export const TableContainer: FC<Props> = ({ table }) => {
 	const {
 		getState,
-		options: { enableStickyHeader, muiTableContainerProps },
+		options: {
+			enableStickyHeader,
+			muiTableContainerProps,
+			enableDragScrolling,
+		},
 		refs: { tableContainerRef, bottomToolbarRef, topToolbarRef },
 	} = table
 	const { isFullScreen } = getState()
@@ -44,6 +49,7 @@ export const TableContainer: FC<Props> = ({ table }) => {
 	return (
 		<MuiTableContainer
 			{...tableContainerProps}
+			{...(enableDragScrolling ? { component: DragScrollingContainer } : {})}
 			ref={(node: HTMLDivElement) => {
 				if (node) {
 					tableContainerRef.current = node

@@ -1,7 +1,8 @@
-import React, { DragEventHandler } from 'react'
+import { DragEventHandler } from 'react'
 import IconButton from '@mui/material/IconButton'
 import type { IconButtonProps } from '@mui/material/IconButton'
 
+import { handleStopPropagation } from '../utils/withStopPropagation'
 import { Tooltip } from '../components/Tooltip'
 import type { TableInstance } from '..'
 
@@ -49,6 +50,7 @@ export const GrabHandleButton = <TData extends Record<string, any> = {}>({
 				onDragStart={onDragStart}
 				onDragEnd={onDragEnd}
 				onDrag={onDrag}
+				onMouseDown={handleStopPropagation} // for DragScrollingContainer to not mess things up
 				sx={(theme) => ({
 					cursor: 'grab',
 					m: '0 -0.1rem',

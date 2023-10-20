@@ -15,9 +15,17 @@ import type { Table_Icons } from './icons'
 import { CellBase, type CellBaseProps } from './components/CellBase'
 import { CopyButton } from './buttons/CopyButton'
 import { FilterOptionMenu } from './menus/FilterOptionMenu'
-import { FilterMultiselect } from './components/FilterMultiselect'
+import {
+	FilterMultiselect,
+	type FilterMultiselectProps,
+} from './components/FilterMultiselect'
+import {
+	FilterChipSelectField,
+	type FilterChipSelectFieldProps,
+} from './TableStatusBar/FilterChip/FilterChipSelectField'
 import { FullScreenToggleButton } from './buttons/FullScreenToggleButton'
 import { GlobalFilterTextField } from './inputs/GlobalFilterTextField'
+import { QuickFilters, type QuickFiltersProps } from './components/QuickFilters'
 import { RowActionMenuButton } from './buttons/RowActionMenuButton'
 import { ShowHideColumnsButton } from './buttons/ShowHideColumnsButton'
 import { TableMain } from './table/TableMain'
@@ -76,6 +84,9 @@ export {
 	ExpandButton,
 	FilterOptionMenu,
 	FilterMultiselect,
+	type FilterMultiselectProps,
+	FilterChipSelectField,
+	type FilterChipSelectFieldProps,
 	Flex,
 	FullScreenToggleButton,
 	GlobalFilterTextField,
@@ -84,6 +95,8 @@ export {
 	HeaderSearch,
 	Input,
 	MenuItemBase,
+	QuickFilters,
+	type QuickFiltersProps,
 	RowActionMenuButton,
 	Select,
 	SelectCheckbox,

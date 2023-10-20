@@ -608,6 +608,10 @@ const meta: Meta = {
 			control: 'boolean',
 			defaultValue: true,
 		},
+		enableDragScrolling: {
+			control: 'boolean',
+			defaultValue: true,
+		},
 		enableEditing: {
 			control: 'boolean',
 			defaultValue: true,
