@@ -5,17 +5,40 @@ import React from 'react'
 
 import { getPascalCase } from '../utils/getPascalCase'
 import { withNativeEvent } from '../utils/withNativeEvent'
+import { getMultirowDepthMatchingColumns } from '../utils/getMultirowDepthMatchingColumns'
+import { makeMultiheaderGroups } from '../utils/makeMultiheaderGroups'
+import { makeNonMultiheaderGroups } from '../utils/makeNonMultiheaderGroups'
+import { defaultOrganizeColumnsMenu } from '../TableToolbar/components/menus/ColumnsMenu/ColumnsMenu'
 
 import { commonListItemStyles, commonMenuItemStyles } from './constants'
 
 export const QuickHidingMenuItems = ({ column, table, setVisible }) => {
 	const {
+		getAllLeafColumns,
 		options: {
 			enableHiding,
 			icons: { EyeCrossedIcon },
 			localization,
+			multirowHeader,
+			multirowColumnsDisplayDepth,
+			organizeColumnsMenu = defaultOrganizeColumnsMenu,
 		},
 	} = table
+
+	const allColumns = organizeColumnsMenu(getAllLeafColumns())
+	const multirowDepthMatchingColumns = getMultirowDepthMatchingColumns(
+		multirowHeader,
+		multirowColumnsDisplayDepth
+	)
+	const { allMultirowColumns } = makeMultiheaderGroups(
+		allColumns,
+		multirowDepthMatchingColumns,
+		multirowColumnsDisplayDepth
+	)
+	const nonMultiheaderGroup = makeNonMultiheaderGroups(
+		allColumns,
+		allMultirowColumns
+	)
 
 	const handleHideColumn = () => {
 		column.toggleVisibility(false)
@@ -26,11 +49,15 @@ export const QuickHidingMenuItems = ({ column, table, setVisible }) => {
 		setVisible(false)
 	}
 
+	const isDisabled =
+		!column.getCanHide() ||
+		!nonMultiheaderGroup.columns.filter((col) => col.id === column.id).length
+
 	if (!enableHiding) return null
 
 	return (
 		<MenuItem
-			disabled={!column.getCanHide()}
+			disabled={isDisabled}
 			key={0}
 			onClick={withNativeEvent(
 				{

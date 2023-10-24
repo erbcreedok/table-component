@@ -353,6 +353,7 @@ export const getTeamMembersColumns = () => {
 			enableColumnOrdering: true,
 			sortDescFirst: false,
 			editVariant: 'text',
+			sortUndefined: -1,
 			validator: ({ value }) => {
 				const validationResult = /^(?:Leaver|High|Medium|Low)*$/i.test(value)
 

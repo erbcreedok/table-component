@@ -8,7 +8,11 @@ import type { Table_Column, TableData, TableInstance } from '../../../../index'
 import { TableSwitch } from '../../../../components/TableSwitch'
 import { Tooltip } from '../../../../components/Tooltip'
 import { TreeAngle } from '../../../../components/TreeAngle'
-import { DEFAULT_FONT_FAMILY, TextColor } from '../../../../components/styles'
+import {
+	DEFAULT_FONT_FAMILY,
+	TextColor,
+	IconsColor,
+} from '../../../../components/styles'
 
 interface Props<TData extends TableData> {
 	columnsGroup: Table_Column<TData>[]
@@ -26,9 +30,14 @@ export const ColumnsMenuGroupItem = <TData extends TableData = {}>({
 	renderTreeAngle,
 }: Props<TData>) => {
 	const {
-		options: { enableHiding, localization },
+		options: {
+			enableHiding,
+			localization,
+			icons: { LockedIcon },
+		},
 	} = table
 
+	const switchCannotBeChecked = columnsGroup.every((col) => !col.getCanHide())
 	const switchChecked = columnsGroup.some(
 		(col) => col.getCanHide() && col.getIsVisible()
 	)
@@ -89,7 +98,8 @@ export const ColumnsMenuGroupItem = <TData extends TableData = {}>({
 									},
 								},
 							}}
-							checked={switchChecked}
+							checked={switchCannotBeChecked || switchChecked}
+							disabled={switchCannotBeChecked}
 							control={
 								<Tooltip
 									arrow
@@ -107,6 +117,18 @@ export const ColumnsMenuGroupItem = <TData extends TableData = {}>({
 						<Typography sx={{ alignSelf: 'center' }}>
 							{columnsGroupText}
 						</Typography>
+					)}
+					{switchCannotBeChecked && (
+						<Tooltip
+							placement="top"
+							title={localization.locked}
+							arrow
+							sx={{ height: '30px', mb: '2px' }}
+						>
+							<Box sx={{ marginLeft: 'auto' }}>
+								<LockedIcon style={{ color: IconsColor.default }} />
+							</Box>
+						</Tooltip>
 					)}
 				</Box>
 			</MenuItem>
