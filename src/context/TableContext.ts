@@ -33,6 +33,7 @@ export type TableComponentState<TData extends Record<string, any> = {}> =
 		showColumnFilters: boolean
 		showGlobalFilter: boolean
 		showToolbarDropZone: boolean
+		stickyHorizontalScrollbarHeight: number
 	}
 
 export type TableContextType = {

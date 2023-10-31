@@ -18,6 +18,7 @@ import React, {
 } from 'react'
 
 import {
+	DEFAULT_EXPAND_PADDING,
 	ExpandByClick,
 	type Table_Cell,
 	type Table_Row,
@@ -90,6 +91,7 @@ export const TableBodyCell = ({
 			enableDetailedPanel,
 			cellStyleRules,
 			expandByClick,
+			expandPaddingSize = DEFAULT_EXPAND_PADDING,
 			summaryRowCell,
 			notClickableCells,
 			icons: { ExpandMoreIcon },
@@ -300,6 +302,7 @@ export const TableBodyCell = ({
 	}
 
 	const isUtilColumn = column.id === utilColumns.column
+	const isExpandColumn = column.id === utilColumns.expand
 	const isCurrentRowSelected = row.getIsSelected()
 	const isAnyRowSelected = table.getSelectedRowModel().flatRows.length > 0
 	const hideCheckBoxSpan =
@@ -328,11 +331,17 @@ export const TableBodyCell = ({
 		position: 'relative',
 		p: columnDefType === 'display' || isGroupedCell ? '0.5rem 0.75rem' : '0',
 		px: 0,
-		pl: column.id === utilColumns.expand ? `${row.depth + 0.75}rem` : undefined,
+		pl: isExpandColumn ? `${row.depth * expandPaddingSize}px` : undefined,
 		textOverflow: columnDefType !== 'display' ? 'ellipsis' : undefined,
 		whiteSpace: 'normal',
 		zIndex: draggingColumn?.id === column.id ? 2 : column.getIsPinned() ? 1 : 0,
 		'&:hover': {
+			...(isExpandColumn
+				? {
+						zIndex: 2,
+						overflow: 'visible',
+				  }
+				: {}),
 			backgroundColor:
 				enableHover &&
 				enableEditing &&
@@ -479,14 +488,13 @@ export const TableBodyCell = ({
 						display: 'flex',
 						alignItems: 'center',
 						mx: 'auto',
-						justifyContent: '',
 						width: isUtilColumn
 							? '100%'
 							: `max(calc(100% - ${isEditing ? `6px` : `1.4rem`}), ${
 									Table_DefaultColumn.minSize
 							  }px)`,
 					},
-					wrapperProps?.sx
+					wrapperProps.sx
 				)}
 			>
 				{isGroupedCell ? (
@@ -498,7 +506,7 @@ export const TableBodyCell = ({
 						width={skeletonWidth}
 						{...skeletonProps}
 					/>
-				) : column.id === utilColumns.column ? (
+				) : isUtilColumn ? (
 					<TableBodyCellUtility
 						table={table}
 						cell={cell}
@@ -508,7 +516,7 @@ export const TableBodyCell = ({
 						rowNumber={rowNumber}
 						enableRowNumbers={enableRowNumbers}
 					/>
-				) : columnDefType === 'display' && column.id === utilColumns.expand ? (
+				) : columnDefType === 'display' && isExpandColumn ? (
 					columnDef.Cell?.({ cell, column, row, table })
 				) : isEditing ? (
 					<EditCellField cell={cell} table={table} />

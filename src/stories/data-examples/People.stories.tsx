@@ -302,7 +302,7 @@ export const PeopleTable: Story<TableComponentProps> = () => {
 						openedDetailedPanels={rest.table.getState().openedDetailedPanels}
 					/>
 				)}
-				hideDefaultExpandIcon
+				hideExpandColumn
 				{...getTablePresetProps('PeoplePresets')}
 			/>
 		</>

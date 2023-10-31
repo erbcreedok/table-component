@@ -40,7 +40,7 @@ import { getDefaultRowActionMenuItems } from '../utils/rowActionMenuItems'
 import { ColumnActionsFiltersMenu } from './components/ColumnActionsFiltersMenu'
 import { UnitRow } from './components/UnitRow'
 
-const dataTree = getExpandingTeamMembers(10)
+const dataTree = getExpandingTeamMembers(5, '', 3)
 const columns = getTeamMembersColumns()
 const multiHeader = [
 	{
@@ -511,7 +511,7 @@ export const HierarchyGroupTableExample: Story = (args) => {
 				groupBorder={{ left: '6px solid white', top: '6px solid white' }}
 				{...args}
 				enableExpanding
-				hideRowExpandColumn
+				hideExpandColumn
 				hideTableHead
 				filterFromLeafRows
 				getIsUnitTreeItem={isUnitTreeItem}
@@ -580,6 +580,9 @@ const meta: Meta = {
 			control: 'boolean',
 			defaultValue: false,
 		},
+		enableExpandAll: {
+			control: 'boolean',
+		},
 		enableExpanding: {
 			control: 'boolean',
 			defaultValue: false,
@@ -632,6 +635,10 @@ const meta: Meta = {
 			control: 'boolean',
 			defaultValue: true,
 		},
+		enableStickyScrollbars: {
+			control: 'object',
+			description: 'Example: { "vertical": true }',
+		},
 		enableRowActions: {
 			control: 'boolean',
 			defaultValue: false,
@@ -662,6 +669,10 @@ const meta: Meta = {
 			control: 'boolean',
 			defaultValue: false,
 			description: 'Enable aggregation row, when grouping is enabled',
+		},
+		expandPaddingSize: {
+			control: 'number',
+			description: 'Size of padding for each child',
 		},
 		hideRowSelectionColumn: {
 			control: 'boolean',

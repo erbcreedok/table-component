@@ -14,6 +14,7 @@ import { ListTitle } from '../../../../components/ListTitle'
 import { Sidebar } from '../../../../components/Sidebar'
 import { withNativeEvent } from '../../../../utils/withNativeEvent'
 import { getSortingText } from '../../../../utils/getSortingInfo'
+import { getColumnsFilteredByDisplay } from '../../../../utils/getFilteredByDisplay'
 import { DeleteIcon } from '../../../../icons/DeleteIcon'
 import { SidebarSearch } from '../../../../components/SidebarSearch'
 
@@ -28,7 +29,10 @@ interface Props<TData extends Record<string, any> = {}> {
 
 export const defaultOrganizeSortingMenu = <TData extends TableData = {}>(
 	allColumns: Table_Column<TData>[]
-) => allColumns.filter((col) => col.getIsVisible() && col.getCanSort())
+) =>
+	getColumnsFilteredByDisplay(
+		allColumns.filter((col) => col.getIsVisible() && col.getCanSort())
+	)
 
 export const SortingMenu = <TData extends Record<string, any> = {}>({
 	anchorEl,

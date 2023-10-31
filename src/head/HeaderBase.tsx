@@ -31,7 +31,7 @@ export const HeaderBase = <TData extends Record<string, any>>({
 		<>
 			<TooltipOverflow
 				disabled={tooltipDisabled}
-				text={column.columnDef.header}
+				text={column.columnDef.shortHeader ?? column.columnDef.header}
 				spacing={5}
 				placement="top"
 				arrow

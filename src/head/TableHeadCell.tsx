@@ -25,6 +25,8 @@ import {
 } from '../column.utils'
 import type { Table_Header, Table_Row, TableInstance } from '..'
 import { Colors, groupDividerBorder } from '../components/styles'
+import { getValueOrFunctionHandler } from '../utils/getValueOrFunctionHandler'
+import { mergeSx } from '../utils/mergeSx'
 
 import { TableHeadCellActionsButton } from './TableHeadCellActionsButton'
 import { TableHeadCellFilterLabel } from './TableHeadCellFilterLabel'
@@ -67,6 +69,7 @@ export const TableHeadCell: FC<TableHeadCellProps> = ({
 			enableMultiSort,
 			layoutMode,
 			muiTableHeadCellProps,
+			muiTableHeadCellWrapperProps,
 			uppercaseHeader,
 			enableRowNumbers,
 			innerTable,
@@ -85,20 +88,35 @@ export const TableHeadCell: FC<TableHeadCellProps> = ({
 	const { hovered, hoverProps } = useHoverEffects()
 	const [grabHandleVisible, setGrabHandleVisible] = useState(false)
 	const isUtilColumn = utilColumns.column === getColumnId(columnDef)
+	const isExpandColumn = utilColumns.expand === getColumnId(columnDef)
 
-	const mTableHeadCellProps =
-		muiTableHeadCellProps instanceof Function
-			? muiTableHeadCellProps({ column, table })
-			: muiTableHeadCellProps
-
-	const mcTableHeadCellProps =
-		columnDef.muiTableHeadCellProps instanceof Function
-			? columnDef.muiTableHeadCellProps({ column, table })
-			: columnDef.muiTableHeadCellProps
-
+	const mTableHeadCellProps = getValueOrFunctionHandler(muiTableHeadCellProps)({
+		column,
+		table,
+	})
+	const mcTableHeadCellProps = getValueOrFunctionHandler(
+		columnDef.muiTableHeadCellProps
+	)({ column, table })
 	const tableCellProps = {
 		...mTableHeadCellProps,
 		...mcTableHeadCellProps,
+	}
+
+	const mTableHeadWrapperProps = getValueOrFunctionHandler(
+		muiTableHeadCellWrapperProps
+	)({
+		column,
+		table,
+	})
+	const mcTableHeadWrapperProps = getValueOrFunctionHandler(
+		columnDef.muiTableHeadCellWrapperProps
+	)({
+		column,
+		table,
+	})
+	const wrapperProps = {
+		...mTableHeadWrapperProps,
+		...mcTableHeadWrapperProps,
 	}
 
 	const showColumnActions =
@@ -161,11 +179,11 @@ export const TableHeadCell: FC<TableHeadCellProps> = ({
 	const [isTooShort, setIsTooShort] = useState(false)
 	const onResize = useCallback(
 		(width) => {
-			if (isUtilColumn) return
+			if (isUtilColumn || isExpandColumn) return
 
 			setIsTooShort(width < 30)
 		},
-		[isUtilColumn]
+		[isExpandColumn, isUtilColumn]
 	)
 	const { ref: headerContentRef } = useResizeDetector({
 		handleHeight: false,
@@ -284,24 +302,28 @@ export const TableHeadCell: FC<TableHeadCellProps> = ({
 						{header.isPlaceholder || emptyHeader ? null : (
 							<Box
 								className="Mui-TableHeadCell-Content"
-								sx={{
-									alignItems: 'flex-start',
-									display: 'flex',
-									flexDirection:
-										tableCellProps?.align === 'right' ? 'row-reverse' : 'row',
-									justifyContent:
-										columnDefType === 'group' ||
-										tableCellProps?.align === 'center'
-											? 'center'
-											: column.getCanResize()
-											? 'space-between'
-											: 'flex-start',
-									position: 'relative',
-									mx: 'auto',
-									width: isUtilColumn
-										? '100%'
-										: `max(calc(100% - 1.4rem), ${Table_DefaultColumn.minSize}px)`,
-								}}
+								{...wrapperProps}
+								sx={mergeSx(
+									{
+										alignItems: 'flex-start',
+										display: 'flex',
+										flexDirection:
+											tableCellProps?.align === 'right' ? 'row-reverse' : 'row',
+										justifyContent:
+											columnDefType === 'group' ||
+											tableCellProps?.align === 'center'
+												? 'center'
+												: column.getCanResize()
+												? 'space-between'
+												: 'flex-start',
+										position: 'relative',
+										mx: 'auto',
+										width: isUtilColumn
+											? '100%'
+											: `max(calc(100% - 1.4rem), ${Table_DefaultColumn.minSize}px)`,
+									},
+									wrapperProps.sx
+								)}
 							>
 								<Box
 									className="Mui-TableHeadCell-Content-Labels"

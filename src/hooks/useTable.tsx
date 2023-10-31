@@ -11,7 +11,7 @@ import {
 	SortingState,
 	ColumnOrderState,
 } from '@tanstack/react-table'
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import React, { useCallback, useMemo, useRef, useState } from 'react'
 
 import { getDefaultPreset } from '../TableToolbar/components/buttons/presetContants'
 import { ExpandAllButton } from '../buttons/ExpandAllButton'
@@ -37,6 +37,7 @@ import {
 	Table_Row,
 	Table_TableState,
 	TableComponentProps,
+	TableData,
 	TableInstance,
 } from '../TableComponent'
 import { getUtilColumn, utilColumns } from '../utilColumns'
@@ -45,7 +46,7 @@ import { getExpandedRowModel } from '../utils/getExpandedRowModel'
 import { getGroupedRowModel } from '../utils/getGroupedRowModel'
 import { getSortedRowModel } from '../utils/getSortedRowModel'
 
-export const useTable = <TData extends Record<string, any> = {}>(
+export const useTable = <TData extends TableData = TableData>(
 	config: TableComponentProps<TData> & { localization: Table_Localization }
 ) => {
 	const bottomToolbarRef = useRef<HTMLDivElement>(null)
@@ -148,27 +149,8 @@ export const useTable = <TData extends Record<string, any> = {}>(
 		null
 	)
 	const [groupCollapsed, setGroupCollapsed] = useState<GroupCollapsed>({})
-
-	useEffect(() => {
-		if (
-			(config.enableRowDragging ||
-				config.enableRowNumbers ||
-				(!config.hideRowSelectionColumn && config.enableRowSelection)) &&
-			!columnOrder.includes(utilColumns.column)
-		) {
-			setColumnOrder([utilColumns.column, ...columnOrder])
-		}
-		if (config.enableRowActions && !columnOrder.includes(utilColumns.actions)) {
-			setColumnOrder([utilColumns.actions, ...columnOrder])
-		}
-	}, [
-		config.enableRowActions,
-		config.enableRowDragging,
-		config.enableRowSelection,
-		config.hideRowSelectionColumn,
-		config.enableRowNumbers,
-		columnOrder,
-	])
+	const [stickyHorizontalScrollbarHeight, setStickyHorizontalScrollbarHeight] =
+		useState(0)
 
 	const displayColumns = useMemo(
 		() =>
@@ -178,13 +160,9 @@ export const useTable = <TData extends Record<string, any> = {}>(
 						config.enableRowNumbers ||
 						(!config.hideRowSelectionColumn && config.enableRowSelection)) &&
 						getUtilColumn(config),
-					columnOrder.includes(utilColumns.actions) && {
-						Cell: ({ cell, row }) => (
-							<ToggleRowActionMenuButton
-								cell={cell as any}
-								row={row as any}
-								table={table as any}
-							/>
+					config.enableRowActions && {
+						Cell: ({ cell, row, table }) => (
+							<ToggleRowActionMenuButton cell={cell} row={row} table={table} />
 						),
 						header: config.localization.actions,
 						size: 40,
@@ -193,26 +171,28 @@ export const useTable = <TData extends Record<string, any> = {}>(
 						...config.displayColumnDefOptions?.[utilColumns.actions],
 						id: utilColumns.actions,
 					},
-					columnOrder.includes(utilColumns.expand) &&
-						!config.hideRowExpandColumn &&
-						showExpandColumn(config) && {
-							Cell: ({ row }) => (
-								<ExpandButton row={row as any} table={table as any} />
-							),
-							Header: config.enableExpandAll
-								? () => <ExpandAllButton table={table as any} />
-								: null,
-							header: config.localization.expand,
-							size: 60,
-							...config.defaultDisplayColumn,
-							...config.displayColumnDefOptions?.[utilColumns.expand],
-							id: utilColumns.expand,
+					showExpandColumn(config) && {
+						Cell: ({ row, table }) => <ExpandButton row={row} table={table} />,
+						Header: config.enableExpandAll ? (
+							({ table }) => <ExpandAllButton table={table} />
+						) : (
+							<></>
+						),
+						header: config.localization.expand,
+						size: 24,
+						muiTableHeadCellWrapperProps: {
+							sx: { width: '100%' },
 						},
+						muiTableBodyCellWrapperProps: {
+							sx: { width: '100%' },
+						},
+						...config.defaultDisplayColumn,
+						...config.displayColumnDefOptions?.[utilColumns.expand],
+						id: utilColumns.expand,
+					},
 				] as Array<Table_ColumnDef<TData>>
 			).filter(Boolean),
 		[
-			columnOrder,
-			grouping,
 			config.displayColumnDefOptions,
 			config.editingMode,
 			config.enableColumnDragging,
@@ -312,7 +292,10 @@ export const useTable = <TData extends Record<string, any> = {}>(
 		}
 
 		return setGrouping((old) => {
-			const newGrouping = setter(old)
+			let newGrouping = setter
+			if (newGrouping instanceof Function) {
+				newGrouping = setter(old)
+			}
 			setColumnSizings(newGrouping)
 
 			return newGrouping
@@ -372,6 +355,7 @@ export const useTable = <TData extends Record<string, any> = {}>(
 		sorting,
 		searchId,
 		highlightHeadCellId,
+		stickyHorizontalScrollbarHeight,
 		...config.state,
 	} as TableComponentState<TData>
 
@@ -455,6 +439,7 @@ export const useTable = <TData extends Record<string, any> = {}>(
 		showSearchData: searchData,
 		setHighlightHeadCellId: highlightCellId,
 		CustomRow: config.CustomRow,
+		setStickyHorizontalScrollbarHeight,
 	} as TableInstance<TData>
 
 	if (config.tableInstanceRef) {

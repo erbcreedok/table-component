@@ -13,6 +13,7 @@ export type TeamMember = {
 	successionStatus: string | null
 	location: string
 	completion?: number | null
+	userAgent?: string | null
 	subRows?: TeamMember[]
 }
 

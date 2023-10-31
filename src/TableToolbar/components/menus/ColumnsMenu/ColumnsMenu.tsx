@@ -22,6 +22,7 @@ import { splitArrayItems } from '../../../../utils/splitArrayItems'
 import { getMultirowDepthMatchingColumns } from '../../../../utils/getMultirowDepthMatchingColumns'
 import { makeMultiheaderGroups } from '../../../../utils/makeMultiheaderGroups'
 import { makeNonMultiheaderGroups } from '../../../../utils/makeNonMultiheaderGroups'
+import { getColumnsFilteredByDisplay } from '../../../../utils/getFilteredByDisplay'
 
 import { ColumnsMenuItem } from './ColumnsMenuItem'
 import { ColumnsMenuGroupItem } from './ColumnsMenuGroupItem'
@@ -35,8 +36,10 @@ interface Props<TData extends Record<string, any> = {}> {
 export const defaultOrganizeColumnsMenu = <TData extends TableData = {}>(
 	allColumns: Table_Column<TData>[]
 ) =>
-	allColumns.filter(
-		(col) => !(Table_DisplayColumnIdsArray as string[]).includes(col.id)
+	getColumnsFilteredByDisplay(
+		allColumns.filter(
+			(col) => !(Table_DisplayColumnIdsArray as string[]).includes(col.id)
+		)
 	)
 
 export const ColumnsMenu = <TData extends TableData = {}>({
@@ -62,6 +65,7 @@ export const ColumnsMenu = <TData extends TableData = {}>({
 		Table_Column<TData>[] | MultirowColumnsGroup[]
 	>([])
 	const allColumns = organizeColumnsMenu(getAllLeafColumns())
+
 	const [visibleColumns, hiddenColumns] = splitArrayItems(allColumns, (col) =>
 		col.getIsVisible()
 	)

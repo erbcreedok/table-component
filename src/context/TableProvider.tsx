@@ -18,6 +18,7 @@ import {
 	TableComponentProps,
 } from '../TableComponent'
 import { createTheme } from '../theme/createTheme'
+import { DEFAULT_EXPAND_PADDING } from '../utilColumns'
 
 import { TableContext } from './TableContext'
 
@@ -62,6 +63,7 @@ export const TableProvider = <TData extends Record<string, any> = {}>({
 	enableTableHead = true,
 	enableToolbarInternalActions = true,
 	enableTopToolbar = true,
+	expandPaddingSize = DEFAULT_EXPAND_PADDING,
 	filterFns,
 	groupBorder = '6px solid white',
 	icons,
@@ -198,6 +200,7 @@ export const TableProvider = <TData extends Record<string, any> = {}>({
 		enableTableHead,
 		enableToolbarInternalActions,
 		enableTopToolbar,
+		expandPaddingSize,
 		filterFns: _filterFns,
 		groupBorder,
 		icons: _icons,

@@ -7,6 +7,7 @@ import type { VirtualItem, Virtualizer } from '@tanstack/react-virtual'
 import { EditingRowActionButtons } from '../components/EditingRowActionButtons'
 import { EmptyCell } from '../components/EmptyCell'
 import { getCellGroupBorders } from '../utils/getGroupBorders'
+import { getCellsFilteredByDisplay } from '../utils/getFilteredByDisplay'
 import type { Table_Cell, Table_Row, TableInstance } from '..'
 import { getColumnId } from '../column.utils'
 import { Colors } from '../components/styles'
@@ -145,7 +146,8 @@ export const TableBodyRow: FC<TableBodyRowProps> = ({
 		})
 		.filter(Boolean)
 
-	const cells = virtualColumns ?? row?.getVisibleCells?.() ?? []
+	const cells =
+		virtualColumns ?? getCellsFilteredByDisplay(row?.getVisibleCells?.()) ?? []
 
 	return (
 		<EditingRowActionButtons open={isEditingRow} table={table} row={row}>

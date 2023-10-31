@@ -2,9 +2,10 @@ import React, { FC } from 'react'
 import MuiTableHead from '@mui/material/TableHead'
 import type { VirtualItem } from '@tanstack/react-virtual'
 
-import type { TableInstance } from '..'
+import type { TableInstance, Table_HeaderGroup } from '..'
 import { useIntersectionObserver } from '../hooks/useIntersectionObserver'
 import { useMultiSticky } from '../hooks/useMultiSticky'
+import { getHeaderGroupFilteredByDisplay } from '../utils/getFilteredByDisplay'
 
 import { TableHeadRow } from './TableHeadRow'
 import { TableHeadMultiRow } from './TableHeadMultiRow'
@@ -75,9 +76,9 @@ export const TableHead: FC<Props> = ({
 				/>
 			)}
 			{!emptyTableHead ? (
-				getHeaderGroups().map((headerGroup) => (
+				(getHeaderGroups() as Table_HeaderGroup[]).map((headerGroup) => (
 					<TableHeadRow
-						headerGroup={headerGroup as any}
+						headerGroup={getHeaderGroupFilteredByDisplay(headerGroup)}
 						key={headerGroup.id}
 						table={table}
 						virtualColumns={virtualColumns}

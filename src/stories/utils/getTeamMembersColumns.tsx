@@ -290,6 +290,7 @@ export const getTeamMembersColumns = () => {
 		},
 		{
 			header: 'Impact on the project',
+			shortHeader: 'Impact',
 			id: 'impact',
 			dataType: 'textual',
 			accessorFn: teamMemberAccessorFn('impact'),
@@ -365,6 +366,7 @@ export const getTeamMembersColumns = () => {
 		},
 		{
 			header: 'Succession status',
+			shortHeader: 'Succession',
 			id: 'successionStatus',
 			dataType: 'textual',
 			accessorFn: teamMemberAccessorFn('successionStatus'),
@@ -424,6 +426,7 @@ export const getTeamMembersColumns = () => {
 		},
 		{
 			header: 'Project completion',
+			shortHeader: 'Completion',
 			id: 'completion',
 			accessorFn: teamMemberAccessorFn('completion'),
 			GroupedCell: ColoredGroupedCell,
@@ -451,6 +454,14 @@ export const getTeamMembersColumns = () => {
 					!isNaN(number) ? Math.trunc(number * 100) / 100 : value
 				}`.replace(/\B(?=(\d{3})+(?!\d))/g, ' ')
 			},
+		},
+		{
+			header: 'User agent',
+			id: 'userAgent',
+			dataType: 'textual',
+			accessorFn: teamMemberAccessorFn('userAgent'),
+			filterVariant: 'multi-select',
+			notDisplayed: true,
 		},
 		// {
 		// 	header: 'Lorem Ipsum',

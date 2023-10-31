@@ -7,7 +7,6 @@ import type { TableInstance } from '../index'
 import { mergeMuiProps } from '../utils/mergeMuiProps'
 
 import { GroupingChip } from './GroupingChip/GroupingChip'
-import { useGroupingControls } from './filter-bar-hooks/useGroupingControls'
 import { SortingChip } from './SortingChip/SortingChip'
 import { FilterChip } from './FilterChip/FilterChip'
 
@@ -54,6 +53,7 @@ export const TableStatusBar = <TData extends Record<string, any> = {}>({
 		getState,
 		resetSorting,
 		resetColumnFilters,
+		resetGrouping,
 		options: { muiTableStatusBarWrapperProps },
 	} = table
 
@@ -61,10 +61,8 @@ export const TableStatusBar = <TData extends Record<string, any> = {}>({
 
 	const barRef = useRef<HTMLDivElement>(null)
 
-	const { removeAllGroup } = useGroupingControls(table)
-
 	const handleClearAll = () => {
-		removeAllGroup()
+		resetGrouping()
 		resetSorting()
 		resetColumnFilters()
 	}

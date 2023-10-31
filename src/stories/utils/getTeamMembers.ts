@@ -57,15 +57,23 @@ export const getTeamMembers = (length = 200, prefix = ''): TeamMember[] =>
 		hiredAt: getDateOrEmpty(),
 		completion: getNumberOrEmpty(),
 		lorem: faker.lorem.lines(3),
+		userAgent: faker.internet.userAgent(),
 	}))
 
 export const getExpandingTeamMembers = (
 	length = 200,
-	prefix = ''
+	prefix = '',
+	depthLimit = 1
 ): TeamMember[] => {
-	const members = getTeamMembers(length)
-	for (let i = 0; i < length; i++) {
-		members[i].subRows = getTeamMembers(3, `${prefix}${i + 1}.`)
+	const members = getTeamMembers(length, prefix)
+	if (depthLimit > 0) {
+		for (let i = 0; i < length; i++) {
+			members[i].subRows = getExpandingTeamMembers(
+				3,
+				`${prefix}${i + 1}.`,
+				depthLimit - 1
+			)
+		}
 	}
 	return members
 }

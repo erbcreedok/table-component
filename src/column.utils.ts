@@ -171,7 +171,7 @@ export const showExpandColumn = <TData extends Record<string, any> = {}>(
 ) =>
 	!!(
 		(props.enableExpanding || props.renderDetailPanel) &&
-		!props.hideDefaultExpandIcon
+		!props.hideExpandColumn
 	)
 
 export const getLeadingDisplayColumnIds = <
@@ -191,7 +191,6 @@ export const getLeadingDisplayColumnIds = <
 		props.positionExpandColumn === 'first' &&
 			showExpandColumn(props) &&
 			utilColumns.expand,
-		props.enableRowNumbers && utilColumns.numbers,
 	].filter(Boolean) as Table_DisplayColumnIds[]
 
 export const getTrailingDisplayColumnIds = <
@@ -357,7 +356,6 @@ export const Table_DisplayColumnIdsArray = [
 	utilColumns.column,
 	utilColumns.actions,
 	utilColumns.expand,
-	utilColumns.numbers,
 ]
 
 export const Table_DefaultColumn = {

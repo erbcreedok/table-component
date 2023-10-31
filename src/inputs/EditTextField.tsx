@@ -47,6 +47,17 @@ export const EditTextField = <TData extends TableData>({
 	}
 
 	const handleBlur: InputProps['onBlur'] = (event) => {
+		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+		// @ts-ignore
+		if (event.relatedTarget?.ariaLabel === 'clear') {
+			setValue('')
+			// timeout used to save a blue MUI stroke
+			setTimeout(() => {
+				editInputRefs.current[column.id]?.focus()
+			}, 0)
+
+			return
+		}
 		muiInputProps.onBlur?.(event)
 		if (event.isPropagationStopped()) return
 		saveData(value)

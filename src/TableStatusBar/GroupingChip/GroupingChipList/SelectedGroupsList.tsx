@@ -41,7 +41,7 @@ export const SelectedGroupsList = (
 			{groupedList.map((item) => {
 				return (
 					<ListGroupItem
-						key={item?.columnDef?.accessorKey}
+						key={item.id}
 						title={item?.columnDef?.header}
 						columnDef={item.columnDef}
 						column={item}

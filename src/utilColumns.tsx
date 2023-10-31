@@ -12,9 +12,10 @@ import {
 export const utilColumns = {
 	expand: 'table-row-expand',
 	actions: 'table-row-actions',
-	numbers: 'table-row-numbers',
 	column: 'table-util-column',
 } as const
+
+export const DEFAULT_EXPAND_PADDING = 12
 
 type UtilColumnCellProps<TData extends TableData> = {
 	row: Table_Row<TData>

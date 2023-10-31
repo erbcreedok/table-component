@@ -46,14 +46,6 @@ export const useGroupingControls = <TData extends Record<string, any> = {}>(
 		[allColumns, grouping, columnVisibility]
 	)
 
-	const removeAllGroup = () => {
-		allColumns.forEach((col) => {
-			if (col.getIsGrouped()) {
-				col.toggleGrouping()
-			}
-		})
-	}
-
 	const groupedList = useMemo(
 		() =>
 			grouping
@@ -66,6 +58,5 @@ export const useGroupingControls = <TData extends Record<string, any> = {}>(
 		groupedList,
 		nonGroupedList,
 		allColumns,
-		removeAllGroup,
 	}
 }

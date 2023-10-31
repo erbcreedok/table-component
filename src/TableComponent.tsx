@@ -325,6 +325,7 @@ export type TableInstance<TData extends Record<string, any> = {}> = Omit<
 	setShowFilters: Dispatch<SetStateAction<boolean>>
 	setShowGlobalFilter: Dispatch<SetStateAction<boolean>>
 	setShowToolbarDropZone: Dispatch<SetStateAction<boolean>>
+	setStickyHorizontalScrollbarHeight: Dispatch<SetStateAction<number>>
 	CustomRow?: FC<TableBodyRowProps>
 }
 
@@ -355,6 +356,7 @@ export type Table_TableState<TData extends Record<string, any> = {}> =
 		searchId: string | null
 		highlightHeadCellId: string | null
 		groupCollapsed: GroupCollapsed
+		stickyHorizontalScrollbarHeight: number
 	}
 
 export type SelectOption = {
@@ -616,6 +618,10 @@ export type Table_ColumnDef<TData extends Record<string, any> = {}> = Omit<
 		 */
 		header: string
 		/**
+		 * shortHeader must be a string. This prop is used to display short header name for table columns
+		 */
+		shortHeader?: string
+		/**
 		 * Either an `accessorKey` or a combination of an `accessorFn` and `id` are required for a data column definition.
 		 *
 		 * If you have also specified an `accessorFn`, Table still needs to have a valid `id` to be able to identify the column uniquely.
@@ -722,6 +728,15 @@ export type Table_ColumnDef<TData extends Record<string, any> = {}> = Omit<
 					table: TableInstance<TData>
 					column: Table_Column<TData>
 			  }) => TableCellProps)
+		muiTableHeadCellWrapperProps?:
+			| BoxProps
+			| (({
+					table,
+					column,
+			  }: {
+					table: TableInstance<TData>
+					column: Table_Column<TData>
+			  }) => BoxProps)
 		renderColumnActionsMenuItems?: ({
 			closeMenu,
 			column,
@@ -758,6 +773,10 @@ export type Table_ColumnDef<TData extends Record<string, any> = {}> = Omit<
 		errorExplanation?: string
 		cellGroupedPlaceholderText?: string
 		cellPlaceholderText?: string
+		/**
+		 * Specifies that column is not diplayed in table and sidebars, except filtering
+		 */
+		notDisplayed?: boolean
 	}
 
 export type Table_DefinedColumnDef<TData extends Record<string, any> = {}> =
@@ -859,7 +878,6 @@ export type Table_InternalFilterOption = {
 export type Table_DisplayColumnIds =
 	| 'table-row-actions'
 	| 'table-row-expand'
-	| 'table-row-numbers'
 	| 'table-util-column'
 
 export type Table_Actions<TData extends Record<string, any> = {}> =
@@ -993,6 +1011,7 @@ export type TableComponentProps<TData extends Record<string, any> = {}> = Omit<
 	enableExpandAll?: boolean
 	enableDetailedPanel?: boolean
 	expandByClick?: ExpandByClick
+	expandPaddingSize?: number
 	notClickableCells?: string[]
 	tablePlugSlot?: React.ReactNode
 	noResultsFoundSlot?: React.ReactNode
@@ -1025,6 +1044,7 @@ export type TableComponentProps<TData extends Record<string, any> = {}> = Omit<
 	enableRowVirtualization?: boolean
 	enableSelectAll?: boolean
 	enableStatusBar?: boolean
+	enableStickyScrollbars?: { vertical?: boolean }
 	enableStickyFooter?: boolean
 	enableStickyHeader?: boolean
 	enableSummaryRow?: boolean
@@ -1062,9 +1082,8 @@ export type TableComponentProps<TData extends Record<string, any> = {}> = Omit<
 		grouping: GroupingState
 		table: TableInstance<TData>
 	}) => Promise<void> | void
-	hideDefaultExpandIcon?: boolean
+	hideExpandColumn?: boolean
 	hideSummaryRowInEmptyTable?: boolean
-	hideRowExpandColumn?: boolean
 	hideRowSelectionColumn?: boolean
 	hideTableHead?: boolean
 	icons?: Partial<Table_Icons>
@@ -1287,6 +1306,15 @@ export type TableComponentProps<TData extends Record<string, any> = {}> = Omit<
 				table: TableInstance<TData>
 				column: Table_Column<TData>
 		  }) => TableCellProps)
+	muiTableHeadCellWrapperProps?:
+		| BoxProps
+		| (({
+				table,
+				column,
+		  }: {
+				table: TableInstance<TData>
+				column: Table_Column<TData>
+		  }) => BoxProps)
 	muiTableHeadProps?:
 		| TableHeadProps
 		| (({ table }: { table: TableInstance<TData> }) => TableHeadProps)

@@ -18,6 +18,7 @@ export const GroupingChip: FC<GroupingChipProps> = (props) => {
 
 	const {
 		getState,
+		resetGrouping,
 		options: {
 			icons: { GroupingIcon },
 			localization,
@@ -32,21 +33,17 @@ export const GroupingChip: FC<GroupingChipProps> = (props) => {
 	const [searchValue, setSearchValue] = useState('')
 	const [selectedSearchedItems, setSelectedSearchedItems] = useState<any>([])
 
-	const { groupedList, removeAllGroup } = useGroupingControls(table)
+	const { groupedList } = useGroupingControls(table)
 
 	const onClearClick = () => {
 		setSelectedSearchedItems([])
-	}
-
-	const handleClearAll = () => {
-		removeAllGroup()
 	}
 
 	const DropdownContent = (
 		<Box sx={{ width: 300, padding: '6px 0' }}>
 			<DropdownContentHeader
 				headerTitle={localization.grouping}
-				onClearAll={handleClearAll}
+				onClearAll={resetGrouping}
 			/>
 
 			<DropdownContentSearch

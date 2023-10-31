@@ -1,14 +1,16 @@
-import React, { FC } from 'react'
+import React from 'react'
 import IconButton from '@mui/material/IconButton'
 import Tooltip from '@mui/material/Tooltip'
 
-import type { TableInstance } from '..'
+import type { TableData, TableInstance } from '..'
 
-interface Props {
-	table: TableInstance
+type Props<TData extends TableData = TableData> = {
+	table: TableInstance<TData>
 }
 
-export const ExpandAllButton: FC<Props> = ({ table }) => {
+export const ExpandAllButton = <TData extends TableData = TableData>({
+	table,
+}: Props<TData>) => {
 	const {
 		getIsAllRowsExpanded,
 		getIsSomeRowsExpanded,

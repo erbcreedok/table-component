@@ -25,7 +25,10 @@ import { sumAnyTwoValues } from '../stories/utils/sumAnyTwoValues'
 import { createNativeChangeEvent } from '../utils/createNativeChangeEvent'
 import { getValidNumber } from '../utils/getValidNumber'
 import { mergeSx } from '../utils/mergeSx'
-import { useStopPropagation } from '../utils/withStopPropagation'
+import {
+	handleStopPropagation,
+	useStopPropagation,
+} from '../utils/withStopPropagation'
 
 export type InputProps = Omit<
 	PartialKeys<TextFieldProps, 'variant'>,
@@ -99,6 +102,7 @@ export const Input = ({
 			onFocus={handleFocus}
 			onBlur={handleBlur}
 			error={showError}
+			onMouseDown={handleStopPropagation} // for DragScrollingContainer to not mess things up
 			InputProps={{
 				inputRef: (node) => {
 					if (node) {
@@ -128,6 +132,7 @@ export const Input = ({
 						{!!props.value && onClear && (
 							<IconButton
 								onClick={onClearStop}
+								aria-label="clear"
 								sx={{
 									visibility: 'hidden',
 									right: 0,

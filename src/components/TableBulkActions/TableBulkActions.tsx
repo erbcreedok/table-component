@@ -32,6 +32,7 @@ export const TableBulkActions = ({
 	...rest
 }: TableBulkActionsProps) => {
 	const {
+		getState,
 		getSelectedRowModel,
 		getPrePaginationRowModel,
 		resetRowSelection,
@@ -44,6 +45,8 @@ export const TableBulkActions = ({
 		},
 		refs: { bulkActionsRef },
 	} = table
+
+	const { stickyHorizontalScrollbarHeight } = getState()
 
 	const { innerRef, outerRef, computedEnableCaptions } =
 		useComputedEnableCaptions(enableCaptions)
@@ -81,7 +84,7 @@ export const TableBulkActions = ({
 				width: '100%',
 				zIndex: theme.zIndex.tooltip,
 				padding: '9px',
-				bottom: 0,
+				bottom: stickyHorizontalScrollbarHeight,
 				...(sx instanceof Function ? sx(theme) : (sx as any)),
 			})}
 		>

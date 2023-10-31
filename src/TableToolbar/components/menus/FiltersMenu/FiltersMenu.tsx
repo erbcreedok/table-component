@@ -96,7 +96,6 @@ export const FiltersMenu = <TData extends TableData>({
 			columns = filterNonAppliedColumns.filter(({ id }) =>
 				suggestedColumns.filtering?.includes(id)
 			)
-
 			if (columns.length === 0) columns = filterNonAppliedColumns
 			else areSuggestedShown = true
 		} else if (searchValue) {

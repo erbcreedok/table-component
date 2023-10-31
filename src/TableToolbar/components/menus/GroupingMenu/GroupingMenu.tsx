@@ -5,6 +5,7 @@ import { Divider, IconButton, Typography } from '@mui/material'
 import type { TableInstance } from '../../../../index'
 import { Table_Column, TableData } from '../../../../index'
 import { splitArrayItems } from '../../../../utils/splitArrayItems'
+import { getColumnsFilteredByDisplay } from '../../../../utils/getFilteredByDisplay'
 import {
 	SimpleMenuItem,
 	SimpleMenuItemProps,
@@ -25,7 +26,10 @@ interface Props<TData extends Record<string, any> = {}> {
 
 export const defaultOrganizeGroupingMenu = <TData extends TableData = {}>(
 	allColumns: Table_Column<TData>[]
-) => allColumns.filter((col) => col.getIsVisible() && col.getCanGroup())
+) =>
+	getColumnsFilteredByDisplay(
+		allColumns.filter((col) => col.getIsVisible() && col.getCanGroup())
+	)
 
 export const GroupingMenu = <TData extends Record<string, any> = {}>({
 	anchorEl,
@@ -34,6 +38,7 @@ export const GroupingMenu = <TData extends Record<string, any> = {}>({
 }: Props<TData>) => {
 	const {
 		getAllColumns,
+		resetGrouping,
 		setGrouping,
 		options: {
 			innerTable,
@@ -75,7 +80,7 @@ export const GroupingMenu = <TData extends Record<string, any> = {}>({
 	const handleCloseClick = () => setAnchorEl(null)
 
 	const removeAllGroup = () => {
-		setGrouping([])
+		resetGrouping()
 	}
 
 	const onColumnOrderChanged = (

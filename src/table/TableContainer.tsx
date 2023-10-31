@@ -3,6 +3,8 @@ import MuiTableContainer from '@mui/material/TableContainer'
 
 import type { TableInstance } from '..'
 import { DragScrollingContainer } from '../components/DragScrollingContainer'
+import { StickyHorizontalScrollbar } from '../components/StickyScrollbar'
+import { useStickyScrollbar } from '../hooks/useStickyScrollbar'
 
 import { Table } from './Table'
 
@@ -20,8 +22,10 @@ export const TableContainer: FC<Props> = ({ table }) => {
 			enableStickyHeader,
 			muiTableContainerProps,
 			enableDragScrolling,
+			enableStickyScrollbars,
 		},
 		refs: { tableContainerRef, bottomToolbarRef, topToolbarRef },
+		setStickyHorizontalScrollbarHeight,
 	} = table
 	const { isFullScreen } = getState()
 
@@ -46,38 +50,47 @@ export const TableContainer: FC<Props> = ({ table }) => {
 		setTotalToolbarHeight(topToolbarHeight + bottomToolbarHeight)
 	})
 
+	const { handleContainerRef, handleScrollbarRef } = useStickyScrollbar({
+		enabled: enableStickyScrollbars?.vertical === true,
+		onHorizontalScrollbarHeight: setStickyHorizontalScrollbarHeight,
+	})
+
 	return (
-		<MuiTableContainer
-			{...tableContainerProps}
-			{...(enableDragScrolling ? { component: DragScrollingContainer } : {})}
-			ref={(node: HTMLDivElement) => {
-				if (node) {
-					tableContainerRef.current = node
-					if (tableContainerProps?.ref) {
-						// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-						// @ts-ignore
-						tableContainerProps.ref.current = node
+		<>
+			<MuiTableContainer
+				{...tableContainerProps}
+				{...(enableDragScrolling ? { component: DragScrollingContainer } : {})}
+				ref={(node: HTMLDivElement) => {
+					if (node) {
+						tableContainerRef.current = node
+						if (tableContainerProps?.ref) {
+							// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+							// @ts-ignore
+							tableContainerProps.ref.current = node
+						}
 					}
-				}
-			}}
-			sx={(theme) => ({
-				maxWidth: '100%',
-				maxHeight: enableStickyHeader
-					? `clamp(350px, calc(100vh - ${totalToolbarHeight}px), 9999px)`
-					: undefined,
-				overflow: 'auto',
-				...(tableContainerProps?.sx instanceof Function
-					? tableContainerProps.sx(theme)
-					: (tableContainerProps?.sx as any)),
-			})}
-			style={{
-				maxHeight: isFullScreen
-					? `calc(100vh - ${totalToolbarHeight}px)`
-					: undefined,
-				...tableContainerProps?.style,
-			}}
-		>
-			<Table table={table} />
-		</MuiTableContainer>
+					handleContainerRef(node)
+				}}
+				sx={(theme) => ({
+					maxWidth: '100%',
+					maxHeight: enableStickyHeader
+						? `clamp(350px, calc(100vh - ${totalToolbarHeight}px), 9999px)`
+						: undefined,
+					overflow: 'auto',
+					...(tableContainerProps?.sx instanceof Function
+						? tableContainerProps.sx(theme)
+						: (tableContainerProps?.sx as any)),
+				})}
+				style={{
+					maxHeight: isFullScreen
+						? `calc(100vh - ${totalToolbarHeight}px)`
+						: undefined,
+					...tableContainerProps?.style,
+				}}
+			>
+				<Table table={table} />
+			</MuiTableContainer>
+			<StickyHorizontalScrollbar ref={handleScrollbarRef} />
+		</>
 	)
 }

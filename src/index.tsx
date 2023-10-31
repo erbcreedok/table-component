@@ -58,6 +58,7 @@ import {
 } from './components/TooltipOverflow'
 import { SelectCheckbox } from './inputs/SelectCheckbox'
 import { useMultiSticky } from './hooks/useMultiSticky'
+import { getColumnsFilteredByDisplay } from './utils/getFilteredByDisplay'
 
 export * from './hooks/useEditField'
 export default TableComponent
@@ -125,4 +126,5 @@ export {
 	TopToolbar,
 	useMultiSticky,
 	useTableContext,
+	getColumnsFilteredByDisplay,
 }

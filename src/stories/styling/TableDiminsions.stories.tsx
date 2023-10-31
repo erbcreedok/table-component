@@ -103,10 +103,11 @@ export const DragScrollingGrabResizeOrder: Story<TableComponentProps> = () => (
 		muiTablePaperProps={{
 			sx: {
 				maxWidth: '700px',
-				maxHeight: '600px',
+				maxHeight: '1200px',
 				m: 'auto',
 			},
 		}}
+		enableStickyScrollbars={{ vertical: true }}
 		enableDragScrolling
 		enableRowDragging
 		enableColumnResizing

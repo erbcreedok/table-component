@@ -2,7 +2,7 @@ import React, { MouseEvent } from 'react'
 import IconButton from '@mui/material/IconButton'
 import Tooltip from '@mui/material/Tooltip'
 
-import type { Table_Cell, Table_Row, TableInstance } from '..'
+import type { Table_Cell, Table_Row, TableData, TableInstance } from '..'
 
 import { RowActionMenuButton } from './RowActionMenuButton'
 
@@ -17,15 +17,13 @@ const commonIconButtonStyles = {
 	},
 }
 
-interface Props<TData extends Record<string, any> = {}> {
+interface Props<TData extends TableData = TableData> {
 	cell: Table_Cell<TData>
 	row: Table_Row<TData>
 	table: TableInstance<TData>
 }
 
-export const ToggleRowActionMenuButton = <
-	TData extends Record<string, any> = {}
->({
+export const ToggleRowActionMenuButton = <TData extends TableData = TableData>({
 	cell,
 	row,
 	table,
