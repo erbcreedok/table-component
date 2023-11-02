@@ -428,6 +428,15 @@ export type TableColumnEditProps<TData extends TableData> = {
 	Edit?: TableFunctionalProp<ReactNode, TData>
 }
 
+export type EnableEditingArgs<TData extends Record<string, any> = {}> = {
+	table: TableInstance<TData>
+	row: Table_Row<TData>
+}
+
+export type EnableEditingOption<TData extends Record<string, any> = {}> =
+	| boolean
+	| ((args: EnableEditingArgs<TData>) => boolean)
+
 export type Table_ColumnDef<TData extends Record<string, any> = {}> = Omit<
 	ColumnDef<TData, unknown>,
 	| 'accessorKey'
@@ -605,7 +614,7 @@ export type Table_ColumnDef<TData extends Record<string, any> = {}> = Omit<
 		enableColumnOrdering?: boolean
 		enableDividerLeft?: boolean
 		enableDividerRight?: boolean
-		enableEditing?: boolean
+		enableEditing?: EnableEditingOption<TData>
 		filterFn?: Table_FilterFn<TData>
 		filterSelectOptions?: (string | SelectOption)[]
 		filterVariant?: 'text' | 'select' | 'multi-select' | 'range' | 'checkbox'
@@ -1007,7 +1016,7 @@ export type TableComponentProps<TData extends Record<string, any> = {}> = Omit<
 	enableColumnVirtualization?: boolean
 	enableDensityToggle?: boolean
 	enableDragScrolling?: boolean
-	enableEditing?: boolean
+	enableEditing?: EnableEditingOption<TData>
 	enableExpandAll?: boolean
 	enableDetailedPanel?: boolean
 	expandByClick?: ExpandByClick

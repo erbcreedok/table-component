@@ -4,6 +4,7 @@ import { useOnClickOutside } from '../hooks/useOnClickOutside'
 import { SimpleEvent, TableData } from '../TableComponent'
 import { getValueOrFunctionHandler } from '../utils/getValueOrFunctionHandler'
 import { useEditField } from '../hooks/useEditField'
+import { isEditingEnabled } from '../utils/isEditingEnabled'
 
 import { DayPickerInput, DayPickerInputProps } from './DayPickerInput'
 import { EditCellFieldProps } from './EditCellField'
@@ -28,7 +29,7 @@ export const EditDateField = <TData extends TableData>({
 		setEditingCell,
 	} = table
 	const { columnDef } = column
-	const { editVariant } = columnDef
+	const { editVariant, enableEditing } = columnDef
 	const { setValue, saveData, value, error } = useEditField<TData, Date | null>(
 		cellDataProps
 	)
@@ -62,7 +63,7 @@ export const EditDateField = <TData extends TableData>({
 	useOnClickOutside([cellRef, dayPickerRef], handleClickOutside)
 
 	const dayPickerInputProps: DayPickerInputProps = {
-		disabled: columnDef.enableEditing === false,
+		disabled: !isEditingEnabled(enableEditing, { table, row }),
 		inputProps: {
 			placeholder: columnDef.header,
 			label: showLabel ? column.columnDef.header : undefined,

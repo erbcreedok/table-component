@@ -1,12 +1,8 @@
-import React, { MouseEvent } from 'react'
-import Box from '@mui/material/Box'
-import ListItemIcon from '@mui/material/ListItemIcon'
-import MenuItem from '@mui/material/MenuItem'
+import { MouseEvent } from 'react'
 
 import type { Table_Row, TableInstance } from '..'
 import { Menu, MenuItemBase } from '../components/Menu'
-
-import { commonListItemStyles, commonMenuItemStyles } from './constants'
+import { isEditingEnabled } from '../utils/isEditingEnabled'
 
 interface Props<TData extends Record<string, any> = {}> {
 	anchorEl: HTMLElement | null
@@ -60,7 +56,7 @@ export const RowActionMenu = <TData extends Record<string, any> = {}>({
 				},
 			}}
 		>
-			{enableEditing && (
+			{isEditingEnabled(enableEditing, { table, row }) && (
 				<MenuItemBase size="small" icon={<EditIcon />} onClick={handleEdit}>
 					{localization.edit}
 				</MenuItemBase>

@@ -34,6 +34,7 @@ import { getColorAlpha } from '../utils/getColorAlpha'
 import { GroupBorders } from '../utils/getGroupBorders'
 import { getValueOrFunctionHandler } from '../utils/getValueOrFunctionHandler'
 import { mergeSx } from '../utils/mergeSx'
+import { isEditingEnabled } from '../utils/isEditingEnabled'
 
 import { TableBodyCellValue } from './TableBodyCellValue'
 import { TableBodyCellUtility } from './TableBodyCellUtility'
@@ -184,8 +185,8 @@ export const TableBodyCell = ({
 	)
 
 	const isEditable =
-		(enableEditing || columnDef.enableEditing) &&
-		columnDef.enableEditing !== false
+		isEditingEnabled(enableEditing, { table, row }) ||
+		isEditingEnabled(columnDef.enableEditing, { table, row })
 
 	const isEditing =
 		isEditable &&
@@ -197,11 +198,7 @@ export const TableBodyCell = ({
 
 	const handleDoubleClick = (event: MouseEvent<HTMLTableCellElement>) => {
 		tableCellProps?.onDoubleClick?.(event)
-		if (
-			(enableEditing || columnDef.enableEditing) &&
-			columnDef.enableEditing !== false &&
-			editingMode === 'cell'
-		) {
+		if (isEditable && editingMode === 'cell') {
 			setEditingCell(cell)
 			queueMicrotask(() => {
 				const textField = editInputRefs.current[column.id]
@@ -344,8 +341,7 @@ export const TableBodyCell = ({
 				: {}),
 			backgroundColor:
 				enableHover &&
-				enableEditing &&
-				columnDef.enableEditing !== false &&
+				isEditable &&
 				['table', 'cell'].includes(editingMode ?? '')
 					? theme.palette.mode === 'dark'
 						? `${lighten(theme.palette.background.default, 0.2)} !important`

@@ -4,6 +4,7 @@ import { useEditField } from '../hooks/useEditField'
 import { useOnClickOutside } from '../hooks/useOnClickOutside'
 import { TableData } from '../TableComponent'
 import { getValueOrFunctionHandler } from '../utils/getValueOrFunctionHandler'
+import { isEditingEnabled } from '../utils/isEditingEnabled'
 
 import { EditCellFieldProps } from './EditCellField'
 import { Input, InputProps } from './Input'
@@ -26,7 +27,7 @@ export const EditTextField = <TData extends TableData>({
 		setEditingCell,
 	} = table
 	const { columnDef } = column
-	const { editVariant, minValue, maxValue } = columnDef
+	const { editVariant, minValue, maxValue, enableEditing } = columnDef
 	const { setValue, saveData, value, error } = useEditField(cellDataProps)
 
 	const mInputProps =
@@ -83,7 +84,7 @@ export const EditTextField = <TData extends TableData>({
 	useOnClickOutside(cellRef, handleClickOutside)
 
 	const inputProps: InputProps = {
-		disabled: columnDef.enableEditing === false,
+		disabled: !isEditingEnabled(enableEditing, { table, row }),
 		inputRef: (inputRef) => {
 			if (inputRef) {
 				cellRef.current = inputRef
