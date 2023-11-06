@@ -6,6 +6,8 @@ import { useSortingControls } from '../../filter-bar-hooks/useSortingControls'
 import { ButtonLink } from '../../../components/ButtonLink'
 import { IconsColor } from '../../../components/styles'
 import { PlusIcon } from '../../../icons/PlusIcon'
+import { withNativeEvent } from '../../../utils/withNativeEvent'
+import { getPascalCase } from '../../../utils/getPascalCase'
 
 // TODO:
 //  1. define props properly
@@ -33,7 +35,13 @@ export const ListSearchSortingItem: FC<any> = (props) => {
 	}
 
 	return (
-		<ItemBoxSearchedSortingStyled key={id} onClick={handleSelect}>
+		<ItemBoxSearchedSortingStyled
+			key={id}
+			onClick={withNativeEvent(
+				{ el: `SortingChip_${getPascalCase(header)}_Add`, type: 'click' },
+				table
+			)(handleSelect)}
+		>
 			<Typography variant="body2" style={{ fontSize: 14 }}>
 				{header}
 			</Typography>

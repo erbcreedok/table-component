@@ -43,6 +43,15 @@ export const getTeamMember = (user?: User) => ({
 	hiredAt: getDateOrEmpty()?.toString(),
 	completion: getNumberOrEmpty(),
 	lorem: faker.lorem.lines(3),
+	userAgent: faker.internet.userAgent(),
+	zipCode: faker.address.zipCode(),
+	city: faker.address.city(),
+	state: faker.address.state(),
+	country: faker.address.country(),
+	favoriteQuote: faker.lorem.sentence(),
+	favoriteColor: faker.internet.color(),
+	petName: faker.animal.cat(),
+	petType: faker.animal.type(),
 })
 
 export const getTeamMembers = (length = 200, prefix = ''): TeamMember[] =>
@@ -58,6 +67,14 @@ export const getTeamMembers = (length = 200, prefix = ''): TeamMember[] =>
 		completion: getNumberOrEmpty(),
 		lorem: faker.lorem.lines(3),
 		userAgent: faker.internet.userAgent(),
+		zipCode: faker.address.zipCode(),
+		city: faker.address.city(),
+		state: faker.address.state(),
+		country: faker.address.country(),
+		favoriteQuote: faker.lorem.sentence(),
+		favoriteColor: faker.internet.color(),
+		petName: faker.animal.cat(),
+		petType: faker.animal.type(),
 	}))
 
 export const getExpandingTeamMembers = (

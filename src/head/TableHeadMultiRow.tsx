@@ -3,17 +3,41 @@ import TableRow, { TableRowProps } from '@mui/material/TableRow'
 import TableCell from '@mui/material/TableCell'
 import type { VirtualItem } from '@tanstack/react-virtual'
 
-import type { Table_Row, TableInstance, MultirowHeader } from '..'
+import { ColumnVirtualizerWrapper, getColumnsFilteredByDisplay } from '..'
+import type {
+	Table_Row,
+	TableInstance,
+	MultirowHeader,
+	Table_Column,
+	MultirowColumn,
+} from '..'
 import type { StickyElement } from '../hooks/useMultiSticky'
 import { Colors, TextColor } from '../components/styles'
-import { Table_DisplayColumnIdsArray } from '../column.utils'
+import { getColumnId, getTotalRight } from '../column.utils'
+import { mapVirtualItems } from '../utils/mapVirtualItems'
+
+const sharedCellStyles = {
+	background: Colors.Gray10,
+}
+const cellStyles = {
+	...sharedCellStyles,
+	borderColor: Colors.Gray,
+	borderCollapse: 'collapse',
+	borderStyle: 'solid',
+	borderWidth: '1px',
+	height: '36px',
+	padding: '0 12px',
+	color: TextColor.Dark,
+	fontWeight: 600,
+	fontSize: '12px',
+	lineHeight: '18px',
+	textAlign: 'center',
+}
 
 type Props = {
 	multirowHeader: MultirowHeader
 	table: TableInstance
 	virtualColumns?: VirtualItem[]
-	virtualPaddingLeft?: number
-	virtualPaddingRight?: number
 	parentRow?: Table_Row
 	cellBackgroundColor?: string
 	cellBackgroundColorHover?: string
@@ -28,22 +52,18 @@ type Props = {
 
 export const TableHeadMultiRow = ({
 	table,
-	virtualPaddingLeft,
-	virtualPaddingRight,
 	sx,
 	isScrolled,
 	multirowHeader,
 	registerSticky,
 	stickyElements,
+	virtualColumns,
 	...rest
 }: Props) => {
 	const rowsRef = useRef<HTMLTableRowElement[]>([])
 	const {
-		options: { layoutMode, muiTableHeadRowProps, columns },
-		getAllColumns,
-		getState,
+		options: { layoutMode, muiTableHeadRowProps },
 	} = table
-	const { columnOrder, grouping } = getState()
 
 	useEffect(() => {
 		rowsRef.current = rowsRef.current.slice(0, multirowHeader.length)
@@ -55,20 +75,7 @@ export const TableHeadMultiRow = ({
 		})
 	}, [rowsRef.current, registerSticky])
 
-	const utilColumnsCount = columns.filter((col) => {
-		return Table_DisplayColumnIdsArray.includes(col.id as any)
-	}).length
-	const visibleColumnsIds = getAllColumns()
-		.filter((column) => column.getIsVisible())
-		.map((column) => column.id)
-
-	const isGroupingActive = !!grouping.length
-
-	const getTableCellsPropsArray = (
-		multiHeaderRow,
-		columnOrder,
-		isGroupingColumns = false
-	) => {
+	const getMultirowColumns = (multiHeaderRow) => {
 		const columnIdsText = multiHeaderRow.columns.reduce((result, current) => {
 			const obj = result
 			current.columnIds.forEach((id) => {
@@ -77,38 +84,77 @@ export const TableHeadMultiRow = ({
 
 			return obj
 		}, {})
-		const filteredColumnOrder = columnOrder.filter(
-			(column) =>
-				!Table_DisplayColumnIdsArray.includes(column) &&
-				visibleColumnsIds.includes(column)
-		)
-		const orderedColumnsText = filteredColumnOrder.map(
-			(column) => columnIdsText[column]
-		)
-
-		const res = orderedColumnsText.reduce((result, current, index) => {
+		const columns: Table_Column[] = mapVirtualItems(
+			getColumnsFilteredByDisplay([
+				...table.getLeftVisibleLeafColumns(),
+				...table.getCenterVisibleLeafColumns(),
+				...table.getRightVisibleLeafColumns(),
+			]),
+			virtualColumns
+		).map(([col]) => col)
+		const multirowColumns = columns.reduce((result, column) => {
+			const isGrouped = column.getIsGrouped()
+			const isPinned = column.getIsPinned()
+			const text = columnIdsText[getColumnId(column)]
+			let id = text ?? 'none'
+			let leftPinnedPosition: number | undefined
+			let rightPinnedPosition: number | undefined
+			if (isGrouped) {
+				id = `${id}-grouped`
+			}
+			if (isPinned) {
+				id = `${id}-pinned:${isPinned}`
+				if (isPinned === 'left') {
+					leftPinnedPosition = column.getStart('left')
+				}
+				if (isPinned === 'right') {
+					rightPinnedPosition = getTotalRight(table, column)
+				}
+			}
+			const current = {
+				id,
+				text,
+				isGrouped,
+				isPinned,
+				leftPinnedPosition,
+				rightPinnedPosition,
+				colSpan: 1,
+			}
 			if (!result.length) {
-				result.push({
-					text: current,
-					colSpan: 1 + (isGroupingColumns ? 0 : utilColumnsCount),
-				})
+				result.push(current)
 
 				return result
 			}
+			const prev = result[result.length - 1]
 
-			if (current === orderedColumnsText[index - 1]) {
-				result[result.length - 1].colSpan += 1
+			if (id === prev.id) {
+				prev.colSpan += 1
+				if (prev.isPinned === 'right' && prev.rightPinnedPosition) {
+					prev.rightPinnedPosition = getTotalRight(table, column)
+				}
 			} else {
-				result.push({
-					text: current,
-					colSpan: 1,
-				})
+				result.push(current)
 			}
 
 			return result
-		}, [])
+		}, [] as MultirowColumn[])
 
-		return res
+		const uniqueIdsCount = {}
+
+		// handle duplicate ids
+		return multirowColumns.map((multirowColumn) => {
+			if (!uniqueIdsCount[multirowColumn.id]) {
+				uniqueIdsCount[multirowColumn.id] = 0
+			}
+			uniqueIdsCount[multirowColumn.id] += 1
+			if (uniqueIdsCount[multirowColumn.id] > 1) {
+				multirowColumn.id = `${multirowColumn.id}-${
+					uniqueIdsCount[multirowColumn.id]
+				}`
+			}
+
+			return multirowColumn
+		})
 	}
 
 	const getRowStyles = (theme, row, stickyId) => {
@@ -131,26 +177,13 @@ export const TableHeadMultiRow = ({
 		}
 	}
 
-	const cellStyles = {
-		borderStyle: 'solid',
-		borderWidth: '1px',
-		borderColor: Colors.Gray,
-		borderCollapse: 'collapse',
-		background: Colors.Gray10,
-		height: '36px',
-		padding: '0 12px',
-		color: TextColor.Dark,
-		fontWeight: 600,
-		fontSize: '12px',
-		lineHeight: '18px',
-		textAlign: 'center',
-	}
-
 	return (
 		<>
 			{[...multirowHeader]
 				.sort((a, b) => a.depth - b.depth)
 				.map((row, i) => {
+					const multirowColumns = getMultirowColumns(row)
+
 					return (
 						<>
 							<TableRow
@@ -165,44 +198,31 @@ export const TableHeadMultiRow = ({
 								id={`${i}`}
 								sx={(theme) => getRowStyles(theme, row, i.toString())}
 							>
-								{virtualPaddingLeft ? (
-									<th
-										aria-label="virtual-padding-left"
-										style={{ display: 'flex', width: virtualPaddingLeft }}
-									/>
-								) : null}
-								{isGroupingActive &&
-									getTableCellsPropsArray(row, grouping, true).map((cell) => (
+								<ColumnVirtualizerWrapper sx={sharedCellStyles}>
+									{multirowColumns.map((cell) => (
 										<TableCell
-											key={`${cell.text}-${cell.colSpan}`}
-											sx={cellStyles}
+											key={cell.id}
+											sx={{
+												...cellStyles,
+												...(cell.isPinned
+													? {
+															position: 'sticky',
+															left: cell.leftPinnedPosition,
+															right: cell.rightPinnedPosition,
+															zIndex: 3,
+													  }
+													: {}),
+											}}
 											colSpan={cell.colSpan}
 										>
 											{cell.text}
 										</TableCell>
 									))}
-								{getTableCellsPropsArray(
-									row,
-									columnOrder.filter((el) => !grouping.includes(el))
-								).map((cell) => (
-									<TableCell
-										key={`${cell.text}-${cell.colSpan}`}
-										sx={cellStyles}
-										colSpan={cell.colSpan}
-									>
-										{cell.text}
-									</TableCell>
-								))}
-								{virtualPaddingRight ? (
-									<th
-										aria-label="virtual-padding-right"
-										style={{ display: 'flex', width: virtualPaddingRight }}
-									/>
-								) : null}
+								</ColumnVirtualizerWrapper>
 							</TableRow>
 							{row.additionalRowContent ? (
 								<TableRow
-									key={row.depth}
+									key={`${row.depth}-sub`}
 									ref={(ref: HTMLTableRowElement) => {
 										if (row.pin) {
 											rowsRef.current[i * 2 + 1] = ref
@@ -213,27 +233,9 @@ export const TableHeadMultiRow = ({
 									id={`${i}-sub`}
 									sx={(theme) => getRowStyles(theme, row, `${i}-sub`)}
 								>
-									{virtualPaddingLeft ? (
-										<th
-											aria-label="virtual-padding-left"
-											style={{ display: 'flex', width: virtualPaddingLeft }}
-										/>
-									) : null}
-									{row.additionalRowContent(
-										table,
-										getTableCellsPropsArray(
-											row,
-											columnOrder.filter((el) => !grouping.includes(el))
-										),
-										isGroupingActive &&
-											getTableCellsPropsArray(row, grouping, true)
-									)}
-									{virtualPaddingRight ? (
-										<th
-											aria-label="virtual-padding-right"
-											style={{ display: 'flex', width: virtualPaddingRight }}
-										/>
-									) : null}
+									<ColumnVirtualizerWrapper sx={sharedCellStyles}>
+										{row.additionalRowContent(table, multirowColumns)}
+									</ColumnVirtualizerWrapper>
 								</TableRow>
 							) : null}
 						</>

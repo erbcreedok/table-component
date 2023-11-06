@@ -1,4 +1,4 @@
-import { backdropClasses, paperClasses } from '@mui/material'
+import { backdropClasses, paperClasses, PaperProps } from '@mui/material'
 import { ReactElement, ReactNode, MouseEvent } from 'react'
 import Box from '@mui/material/Box'
 import Drawer from '@mui/material/Drawer'
@@ -26,6 +26,7 @@ interface Props {
 	children?: ReactNode
 	innerTableSidebar?: boolean
 	innerTable?: boolean
+	PaperProps?: PaperProps
 }
 
 export const Sidebar = ({
@@ -42,6 +43,7 @@ export const Sidebar = ({
 	innerTableSidebar,
 	children,
 	innerTable,
+	PaperProps,
 }: Props) => {
 	const innerTableDrawerStyles = {
 		[`& > .${backdropClasses.root}`]: {
@@ -59,6 +61,7 @@ export const Sidebar = ({
 			onClose={onClose}
 			transitionDuration={400}
 			sx={innerTableSidebar ? innerTableDrawerStyles : null}
+			PaperProps={PaperProps}
 		>
 			<Box sx={{ ...styles, ...(innerTable ? { maxHeight: '100%' } : {}) }}>
 				{withHeader && (

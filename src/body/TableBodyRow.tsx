@@ -1,17 +1,21 @@
 import { tableRowClasses } from '@mui/material'
-import React, { FC, memo, useMemo, useRef } from 'react'
+import React, { FC, memo, useCallback, useMemo, useRef } from 'react'
 import MuiTableRow from '@mui/material/TableRow'
 import { lighten } from '@mui/material/styles'
 import type { VirtualItem, Virtualizer } from '@tanstack/react-virtual'
+import { useResizeDetector } from 'react-resize-detector'
 
+import { ColumnVirtualizerWrapper } from '../components/ColumnVirtualizerWrapper'
 import { EditingRowActionButtons } from '../components/EditingRowActionButtons'
 import { EmptyCell } from '../components/EmptyCell'
+import { useComputedMeasureElement } from '../hooks/useComputedMeasureElement'
 import { getCellGroupBorders } from '../utils/getGroupBorders'
 import { getCellsFilteredByDisplay } from '../utils/getFilteredByDisplay'
 import type { Table_Cell, Table_Row, TableInstance } from '..'
 import { getColumnId } from '../column.utils'
 import { Colors } from '../components/styles'
 import { getSubRowIndex } from '../utils/getSubRowIndex'
+import { mapVirtualItems } from '../utils/mapVirtualItems'
 import { setHoveredRow } from '../utils/setHoveredRow'
 
 import { Memo_TableBodyCell, TableBodyCell } from './TableBodyCell'
@@ -19,7 +23,7 @@ import { TableDetailPanel } from './TableDetailPanel'
 
 export interface TableBodyRowProps {
 	columnVirtualizer?: Virtualizer<HTMLDivElement, HTMLTableCellElement>
-	domIndex?: number
+	domIndex: number
 	measureElement?: (element: HTMLTableRowElement) => void
 	numRows: number
 	row: Table_Row
@@ -27,8 +31,6 @@ export interface TableBodyRowProps {
 	rowNumber: number
 	table: TableInstance
 	virtualColumns?: VirtualItem[]
-	virtualPaddingLeft?: number
-	virtualPaddingRight?: number
 	virtualRow?: VirtualItem
 	isSummaryRow?: boolean
 	groupingProps?: {
@@ -41,6 +43,7 @@ export interface TableBodyRowProps {
 
 export const TableBodyRow: FC<TableBodyRowProps> = ({
 	columnVirtualizer,
+	isSummaryRow = false,
 	measureElement,
 	numRows,
 	row,
@@ -48,16 +51,14 @@ export const TableBodyRow: FC<TableBodyRowProps> = ({
 	rowNumber,
 	table,
 	virtualColumns,
-	virtualPaddingLeft,
-	virtualPaddingRight,
 	virtualRow,
-	isSummaryRow = false,
 	groupingProps,
 }) => {
 	const {
 		getIsSomeColumnsPinned,
 		getState,
 		options: {
+			enableTableHead,
 			editingMode,
 			enableRowDragging,
 			layoutMode,
@@ -93,6 +94,7 @@ export const TableBodyRow: FC<TableBodyRowProps> = ({
 	}
 
 	const rowRef = useRef<HTMLTableRowElement | null>(null)
+	const panelRef = useRef<HTMLTableRowElement | null>(null)
 
 	const isDraggingRow = useMemo(
 		() => draggingRows.some((dRow) => dRow?.id === row.id),
@@ -100,16 +102,15 @@ export const TableBodyRow: FC<TableBodyRowProps> = ({
 	)
 
 	const { collapsedColumnIndex } = row
-	const groupedCells = (groupingProps ?? [])
-		.map((group, index, arr) => {
+	const getGroupedCell = useCallback(
+		(cell: Table_Cell, virtualCell?: VirtualItem) => {
+			const groupIndex = (groupingProps ?? []).findIndex(
+				(group) => group?.columnId === getColumnId(cell.column)
+			)
+			const group = groupingProps?.[groupIndex]
+			if (!group || !groupingProps) return null
 			// There is an extra row for the detail panel, so multiply rowspan by 2
 			const rowSpan = group.count * (renderDetailPanel ? 2 : 1)
-			const cell = row
-				.getVisibleCells()
-				.find((cell) => getColumnId(cell.column.columnDef) === group.columnId)
-			if (cell === undefined) {
-				return null
-			}
 			const groupBorders = getCellGroupBorders({
 				table,
 				isFirstOfGroup: true,
@@ -117,20 +118,22 @@ export const TableBodyRow: FC<TableBodyRowProps> = ({
 				rowIndex: getSubRowIndex({ row }) ?? rowIndex,
 				colIndex: group.columnIndex,
 			})
-			if (collapsedColumnIndex !== undefined && collapsedColumnIndex < index) {
+			if (
+				collapsedColumnIndex !== undefined &&
+				collapsedColumnIndex < groupIndex
+			) {
 				return (
 					<EmptyCell
 						key={group.groupId}
 						groupBorders={groupBorders}
 						isGroupedCell
-						isLastGroupedColumn={index === arr.length - 1}
+						isLastGroupedColumn={groupIndex === groupingProps.length - 1}
 					/>
 				)
 			}
 			const props = {
 				cell,
 				enableHover: false,
-				measureElement: columnVirtualizer?.measureElement,
 				numRows,
 				row,
 				rowIndex,
@@ -141,14 +144,50 @@ export const TableBodyRow: FC<TableBodyRowProps> = ({
 				rowSpan,
 				isGroupedCell: true,
 				groupBorders,
+				virtualCell,
 			}
 
 			return <TableBodyCell key={group.groupId} {...props} />
-		})
-		.filter(Boolean)
+		},
+		[
+			collapsedColumnIndex,
+			groupingProps,
+			isSummaryRow,
+			numRows,
+			renderDetailPanel,
+			row,
+			rowIndex,
+			rowNumber,
+			table,
+		]
+	)
 
-	const cells =
-		virtualColumns ?? getCellsFilteredByDisplay(row?.getVisibleCells?.()) ?? []
+	const cells = mapVirtualItems(
+		getCellsFilteredByDisplay(row?.getVisibleCells()),
+		virtualColumns
+	)
+
+	const computedMeasureElement = useComputedMeasureElement(measureElement)
+
+	// handle resize of detailed panel, if row virtualization is enabled
+	useResizeDetector({
+		targetRef: panelRef,
+		handleWidth: false,
+		handleHeight: !!measureElement && !!renderDetailPanel,
+		onResize: useCallback(
+			(_, height) => {
+				if (rowRef.current) {
+					computedMeasureElement?.(rowRef.current, (el) => {
+						if (!height || !el) return null
+
+						return el.getBoundingClientRect().height + height
+					})
+				}
+			},
+			[computedMeasureElement]
+		),
+		refreshMode: 'debounce',
+	})
 
 	return (
 		<EditingRowActionButtons
@@ -167,7 +206,9 @@ export const TableBodyRow: FC<TableBodyRowProps> = ({
 							if (node) {
 								ref(node)
 								rowRef.current = node
-								measureElement?.(node)
+								if (!renderDetailPanel) {
+									measureElement?.(node)
+								}
 							}
 						}}
 						{...tableRowProps}
@@ -176,12 +217,6 @@ export const TableBodyRow: FC<TableBodyRowProps> = ({
 							display: layoutMode === 'grid' ? 'flex' : 'table-row',
 							alignItems: 'center',
 							opacity: isDraggingRow ? 0.5 : 1,
-							position: virtualRow ? 'absolute' : undefined,
-							top: virtualRow ? 0 : undefined,
-							transform: virtualRow
-								? `translateY(${virtualRow?.start}px)`
-								: undefined,
-							transition: virtualRow ? 'none' : 'all 150ms ease-in-out',
 							width: '100%',
 							[`&.${tableRowClasses.hover}:hover`]: {
 								backgroundColor: Colors.Gray10,
@@ -197,71 +232,54 @@ export const TableBodyRow: FC<TableBodyRowProps> = ({
 								: (tableRowProps?.sx as any)),
 						})}
 					>
-						{groupedCells}
-						{virtualPaddingLeft ? (
-							<td style={{ display: 'flex', width: virtualPaddingLeft }} />
-						) : null}
-						{cells.map((cellOrVirtualCell, index) => {
-							const groupBorders = getCellGroupBorders({
-								table,
-								rowIndex: getSubRowIndex({ row }) ?? rowIndex,
-								colIndex: index,
-								isGroupedColumn: false,
-								isFirstOfGroup: !!groupingProps,
-							})
-							const cell = columnVirtualizer
-								? row?.getVisibleCells?.()?.[
-										(cellOrVirtualCell as VirtualItem).index
-								  ]
-								: (cellOrVirtualCell as Table_Cell)
-							if (cell.getIsPlaceholder() && !isSummaryRow) {
-								return null
-							}
-							if (collapsedColumnIndex !== undefined && !isSummaryRow)
-								return <EmptyCell key={cell.id} groupBorders={groupBorders} />
-							const props = {
-								cell,
-								enableHover: tableRowProps?.hover !== false,
-								key: cell.id,
-								measureElement: columnVirtualizer?.measureElement,
-								numRows,
-								row,
-								rowIndex,
-								rowNumber,
-								rowRef,
-								table,
-								virtualCell: columnVirtualizer
-									? (cellOrVirtualCell as VirtualItem)
-									: undefined,
-								isSummaryRowCell: isSummaryRow,
-								groupBorders,
-							}
+						<ColumnVirtualizerWrapper>
+							{cells.map(([cell, virtualCell], index) => {
+								if (cell.getIsPlaceholder() && !isSummaryRow)
+									return getGroupedCell(cell, virtualCell)
+								const groupBorders = getCellGroupBorders({
+									table,
+									rowIndex: getSubRowIndex({ row }) ?? rowIndex,
+									colIndex: index,
+									isGroupedColumn: false,
+									isFirstOfGroup: !!groupingProps,
+								})
+								if (collapsedColumnIndex !== undefined && !isSummaryRow)
+									return <EmptyCell key={cell.id} groupBorders={groupBorders} />
+								const props = {
+									cell,
+									enableHover: tableRowProps?.hover !== false,
+									key: cell.id,
+									measureElement: !enableTableHead
+										? columnVirtualizer?.measureElement
+										: undefined,
+									numRows,
+									row,
+									rowIndex,
+									rowNumber,
+									rowRef,
+									table,
+									virtualCell,
+									isSummaryRowCell: isSummaryRow,
+									groupBorders,
+								}
 
-							return memoMode === 'cells' &&
-								cell.column.columnDef.columnDefType === 'data' &&
-								!draggingColumn &&
-								!draggingRows.length &&
-								editingCell?.id !== cell.id &&
-								editingRow?.id !== row.id ? (
-								// eslint-disable-next-line react/jsx-pascal-case
-								<Memo_TableBodyCell {...props} />
-							) : (
-								<TableBodyCell {...props} />
-							)
-						})}
-						{virtualPaddingRight ? (
-							<td style={{ display: 'flex', width: virtualPaddingRight }} />
-						) : null}
+								return memoMode === 'cells' &&
+									cell.column.columnDef.columnDefType === 'data' &&
+									!draggingColumn &&
+									!draggingRows.length &&
+									editingCell?.id !== cell.id &&
+									editingRow?.id !== row.id ? (
+									// eslint-disable-next-line react/jsx-pascal-case
+									<Memo_TableBodyCell {...props} />
+								) : (
+									<TableBodyCell {...props} />
+								)
+							})}
+						</ColumnVirtualizerWrapper>
 					</MuiTableRow>
 					{renderDetailPanel &&
-						!row?.getIsGrouped?.() &&
 						(collapsedColumnIndex === undefined ? (
-							<TableDetailPanel
-								parentRowRef={rowRef}
-								row={row}
-								table={table}
-								virtualRow={virtualRow}
-							/>
+							<TableDetailPanel ref={panelRef} row={row} table={table} />
 						) : (
 							<tr />
 						))}

@@ -11,16 +11,12 @@ interface Props {
 	footerGroup: Table_HeaderGroup
 	table: TableInstance
 	virtualColumns?: VirtualItem[]
-	virtualPaddingLeft?: number
-	virtualPaddingRight?: number
 }
 
 export const TableFooterRow: FC<Props> = ({
 	footerGroup,
 	table,
 	virtualColumns,
-	virtualPaddingLeft,
-	virtualPaddingRight,
 }) => {
 	const {
 		options: { layoutMode, muiTableFooterRowProps },
@@ -54,9 +50,6 @@ export const TableFooterRow: FC<Props> = ({
 					: (tableRowProps?.sx as any)),
 			})}
 		>
-			{virtualPaddingLeft ? (
-				<th style={{ display: 'flex', width: virtualPaddingLeft }} />
-			) : null}
 			{(virtualColumns ?? footerGroup.headers).map((footerOrVirtualFooter) => {
 				const footer = virtualColumns
 					? footerGroup.headers[footerOrVirtualFooter.index]
@@ -64,9 +57,6 @@ export const TableFooterRow: FC<Props> = ({
 
 				return <TableFooterCell footer={footer} key={footer.id} table={table} />
 			})}
-			{virtualPaddingRight ? (
-				<th style={{ display: 'flex', width: virtualPaddingRight }} />
-			) : null}
 		</TableRow>
 	)
 }

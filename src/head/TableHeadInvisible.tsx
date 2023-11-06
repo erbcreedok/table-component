@@ -1,14 +1,23 @@
-import { FC } from 'react'
+import React, { FC } from 'react'
+import { VirtualItem } from '@tanstack/react-virtual'
 
+import { ColumnVirtualizerWrapper } from '../components/ColumnVirtualizerWrapper'
 import { DEFAULT_EXPAND_PADDING, utilColumns } from '../utilColumns'
-import { getHeaderGroupFilteredByDisplay } from '../utils/getFilteredByDisplay'
-import { getColumnWidth } from '../column.utils'
+import { getHeadersFilteredByDisplay } from '../utils/getFilteredByDisplay'
+import { getColumnWidth, getTotalRight } from '../column.utils'
 import { Table_HeaderGroup, TableInstance } from '../TableComponent'
+import { mapVirtualItems } from '../utils/mapVirtualItems'
 
 type TableHeadInvisibleProps = {
+	measureElement?: (element: HTMLTableCellElement) => void
 	table: TableInstance
+	virtualColumns?: VirtualItem[]
 }
-export const TableHeadInvisible: FC<TableHeadInvisibleProps> = ({ table }) => {
+export const TableHeadInvisible: FC<TableHeadInvisibleProps> = ({
+	measureElement,
+	table,
+	virtualColumns,
+}) => {
 	const {
 		getHeaderGroups,
 		getPaginationRowModel,
@@ -21,18 +30,21 @@ export const TableHeadInvisible: FC<TableHeadInvisibleProps> = ({ table }) => {
 
 	return (
 		<thead>
-			{(getHeaderGroups() as Table_HeaderGroup[]).map((headerGroup) => {
-				const filteredHeaderGroup = getHeaderGroupFilteredByDisplay(headerGroup)
-
-				return (
-					<tr key={filteredHeaderGroup.id}>
-						{filteredHeaderGroup.headers.map((header) => {
+			{(getHeaderGroups() as Table_HeaderGroup[]).map((headerGroup) => (
+				<tr key={headerGroup.id}>
+					<ColumnVirtualizerWrapper>
+						{mapVirtualItems(
+							getHeadersFilteredByDisplay(headerGroup.headers),
+							virtualColumns
+						).map(([header, virtualColumn]) => {
 							const colWidth = getColumnWidth({ column: header.column, header })
+							const column = header.column
 
 							return (
-								// eslint-disable-next-line jsx-a11y/control-has-associated-label
 								<th
 									key={header.id}
+									ref={measureElement}
+									data-index={virtualColumn?.index}
 									style={{
 										...colWidth,
 										...(header.id === utilColumns.expand
@@ -41,13 +53,22 @@ export const TableHeadInvisible: FC<TableHeadInvisibleProps> = ({ table }) => {
 														expandedDepth * expandPaddingSize + colWidth.width,
 											  }
 											: {}),
+										left:
+											column.getIsPinned() === 'left'
+												? `${column.getStart('left')}px`
+												: undefined,
+										position: column.getIsPinned() ? 'sticky' : 'relative',
+										right:
+											column.getIsPinned() === 'right'
+												? `${getTotalRight(table, column)}px`
+												: undefined,
 									}}
 								/>
 							)
 						})}
-					</tr>
-				)
-			})}
+					</ColumnVirtualizerWrapper>
+				</tr>
+			))}
 		</thead>
 	)
 }

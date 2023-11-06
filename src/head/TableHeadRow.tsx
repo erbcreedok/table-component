@@ -4,17 +4,19 @@ import type { VirtualItem } from '@tanstack/react-virtual'
 
 import type {
 	Table_Column,
-	Table_Header,
 	Table_HeaderGroup,
 	Table_Row,
 	TableInstance,
 } from '..'
+import { ColumnVirtualizerWrapper } from '../components/ColumnVirtualizerWrapper'
 import type { StickyElement } from '../hooks/useMultiSticky'
 import { Colors } from '../components/styles'
 import { getHeaderGroupBorders } from '../utils/getGroupBorders'
 import { getIsColumnAllGroupsCollapsedDefault } from '../utils/getIsColumnAllGroupsCollapsed'
+import { mapVirtualItems } from '../utils/mapVirtualItems'
 import { onGroupCollapsedToggleAllDefault } from '../utils/onGroupCollapseToggleAll'
 import { setHoveredRow } from '../utils/setHoveredRow'
+import { getTestAttributes } from '../utils/getTestAttributes'
 
 import { TableHeadCell, TableHeadCellProps } from './TableHeadCell'
 
@@ -23,8 +25,6 @@ type Props = {
 	headerGroup: Table_HeaderGroup
 	table: TableInstance
 	virtualColumns?: VirtualItem[]
-	virtualPaddingLeft?: number
-	virtualPaddingRight?: number
 	parentRow?: Table_Row
 	cellBackgroundColor?: string
 	cellBackgroundColorHover?: string
@@ -41,8 +41,6 @@ export const TableHeadRow = ({
 	headerGroup,
 	table,
 	virtualColumns,
-	virtualPaddingLeft,
-	virtualPaddingRight,
 	parentRow,
 	sx,
 	cellBackgroundColor,
@@ -56,12 +54,13 @@ export const TableHeadRow = ({
 	const ref = useRef<HTMLTableRowElement | null>(null)
 	const {
 		options: {
+			enableRowDragging,
 			layoutMode,
 			muiTableHeadRowProps,
-			enableRowDragging,
 			multirowHeader,
 			onGroupCollapsedToggleAll,
 			getIsColumnAllGroupsCollapsed,
+			e2eLabels,
 		},
 		getState,
 	} = table
@@ -113,39 +112,34 @@ export const TableHeadRow = ({
 
 	const getHeaderCellProps = (): TableHeadCellProps[] => {
 		let isPrevColumnAllGroupsCollapsed = false
+		const headers = mapVirtualItems(headerGroup.headers, virtualColumns)
 
-		return (virtualColumns ?? headerGroup.headers).map(
-			(headerOrVirtualHeader) => {
-				const header = virtualColumns
-					? headerGroup.headers[headerOrVirtualHeader.index]
-					: (headerOrVirtualHeader as Table_Header)
-				const groupBorders = getHeaderGroupBorders({ header, table })
-				const isAllGroupsCollapsed =
-					isPrevColumnAllGroupsCollapsed ||
-					(
-						getIsColumnAllGroupsCollapsed ??
-						getIsColumnAllGroupsCollapsedDefault
-					)({
+		return headers.map(([header]) => {
+			const groupBorders = getHeaderGroupBorders({ header, table })
+			const isAllGroupsCollapsed =
+				isPrevColumnAllGroupsCollapsed ||
+				(getIsColumnAllGroupsCollapsed ?? getIsColumnAllGroupsCollapsedDefault)(
+					{
 						table,
 						column: header.column,
-					})
+					}
+				)
 
-				const props = {
-					parentRow,
-					header,
-					table,
-					groupBorders,
-					backgroundColor: cellBackgroundColor,
-					backgroundColorHover: cellBackgroundColorHover,
-					groupsExpanded: !isAllGroupsCollapsed,
-					disableToggleGroupCollapse: isPrevColumnAllGroupsCollapsed,
-					onToggleGroupCollapse: getOnToggleGroupCollapse(header.column),
-				}
-				isPrevColumnAllGroupsCollapsed = isAllGroupsCollapsed
-
-				return props
+			const props = {
+				parentRow,
+				header,
+				table,
+				groupBorders,
+				backgroundColor: cellBackgroundColor,
+				backgroundColorHover: cellBackgroundColorHover,
+				groupsExpanded: !isAllGroupsCollapsed,
+				disableToggleGroupCollapse: isPrevColumnAllGroupsCollapsed,
+				onToggleGroupCollapse: getOnToggleGroupCollapse(header.column),
 			}
-		)
+			isPrevColumnAllGroupsCollapsed = isAllGroupsCollapsed
+
+			return props
+		})
 	}
 
 	return (
@@ -170,22 +164,15 @@ export const TableHeadRow = ({
 					: (tableRowProps?.sx as any)),
 				...(sx instanceof Function ? sx(theme) : (sx as any)),
 			})}
+			{...getTestAttributes(e2eLabels, 'headerRow')}
 		>
-			{virtualPaddingLeft ? (
-				<th
-					aria-label="virtual-padding-left"
-					style={{ display: 'flex', width: virtualPaddingLeft }}
-				/>
-			) : null}
-			{getHeaderCellProps().map((props) => (
-				<TableHeadCell key={props.header.id} {...props} />
-			))}
-			{virtualPaddingRight ? (
-				<th
-					aria-label="virtual-padding-right"
-					style={{ display: 'flex', width: virtualPaddingRight }}
-				/>
-			) : null}
+			<ColumnVirtualizerWrapper
+				style={{ backgroundColor: cellBackgroundColor ?? Colors.Gray20 }}
+			>
+				{getHeaderCellProps().map((props) => (
+					<TableHeadCell key={props.header.id} {...props} />
+				))}
+			</ColumnVirtualizerWrapper>
 		</TableRow>
 	)
 }

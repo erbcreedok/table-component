@@ -8,8 +8,11 @@ import MuiTableBody from '@mui/material/TableBody'
 import Typography from '@mui/material/Typography'
 
 import { HoveredRowLine } from '../components/HoveredRowLine'
+import { RowVirtualizerWrapper } from '../components/RowVirtualizerWrapper'
 import { rankGlobalFuzzy } from '../sortingFns'
 import type { Table_Row, TableInstance } from '..'
+import { isColumnDisplayed } from '../utils/getFilteredByDisplay'
+import { getValueOrFunctionHandler } from '../utils/getValueOrFunctionHandler'
 
 import {
 	Memo_TableBodyRow,
@@ -21,16 +24,12 @@ interface Props {
 	columnVirtualizer?: Virtualizer<HTMLDivElement, HTMLTableCellElement>
 	table: TableInstance
 	virtualColumns?: VirtualItem[]
-	virtualPaddingLeft?: number
-	virtualPaddingRight?: number
 }
 
 export const TableBody: FC<Props> = ({
 	columnVirtualizer,
 	table,
 	virtualColumns,
-	virtualPaddingLeft,
-	virtualPaddingRight,
 }) => {
 	const {
 		getRowModel,
@@ -55,6 +54,7 @@ export const TableBody: FC<Props> = ({
 			isTablePlugSlotActive,
 			virtualizerInstanceRef,
 			virtualizerProps,
+			getIsUnitTreeItem,
 		},
 		refs: { tableContainerRef, tablePaperRef },
 		CustomRow,
@@ -62,20 +62,11 @@ export const TableBody: FC<Props> = ({
 	const { columnFilters, globalFilter, pagination, sorting, groupCollapsed } =
 		getState()
 
-	const tableBodyProps =
-		muiTableBodyProps instanceof Function
-			? muiTableBodyProps({ table })
-			: muiTableBodyProps
+	const tableBodyProps = getValueOrFunctionHandler(muiTableBodyProps)({ table })
 
-	const vProps_old =
-		virtualizerProps instanceof Function
-			? virtualizerProps({ table })
-			: virtualizerProps
+	const vProps_old = getValueOrFunctionHandler(virtualizerProps)({ table })
 
-	const vProps =
-		rowVirtualizerProps instanceof Function
-			? rowVirtualizerProps({ table })
-			: rowVirtualizerProps
+	const vProps = getValueOrFunctionHandler(rowVirtualizerProps)({ table })
 
 	const rows = useMemo(() => {
 		if (
@@ -116,7 +107,14 @@ export const TableBody: FC<Props> = ({
 				count: rows.length,
 				estimateSize: () => 48,
 				getScrollElement: () => tableContainerRef.current,
-				measureElement: (element) => element?.getBoundingClientRect().height,
+				measureElement: (element) => {
+					if (!element) return null
+					if (element.dataset.virtualHeight) {
+						return +element.dataset.virtualHeight
+					}
+
+					return element?.getBoundingClientRect().height
+				},
 				overscan: 4,
 				...vProps_old,
 				...vProps,
@@ -139,17 +137,18 @@ export const TableBody: FC<Props> = ({
 	const rowsOrVirtualRows = virtualRows ?? rows
 
 	const rowProps = useMemo(() => {
-		const increment = rowVirtualizer ? rowsOrVirtualRows[0].index + 1 : 1
+		const increment =
+			rowVirtualizer && rowsOrVirtualRows?.length
+				? rowsOrVirtualRows[0].index + 1
+				: 1
 		let domIndex = 0
-		let lastParent: Table_Row | undefined
 
 		return rowsOrVirtualRows.map((rowOrVirtualRow, rowIndex) => {
 			const row = rowVirtualizer
 				? rows[rowOrVirtualRow.index]
 				: (rowOrVirtualRow as Table_Row)
-			if (row.getParent() !== lastParent) {
-				lastParent = row.getParent()
-				domIndex = 0
+			if (getIsUnitTreeItem?.(row.original)) {
+				domIndex = -1
 			}
 			const rowNumber = increment + domIndex
 			// check if row has collapsed group rows
@@ -184,8 +183,6 @@ export const TableBody: FC<Props> = ({
 				domIndex: rowIndex,
 				table,
 				virtualColumns,
-				virtualPaddingLeft,
-				virtualPaddingRight,
 				virtualRow: rowVirtualizer
 					? (rowOrVirtualRow as VirtualItem)
 					: undefined,
@@ -198,8 +195,6 @@ export const TableBody: FC<Props> = ({
 		columnVirtualizer,
 		table,
 		virtualColumns,
-		virtualPaddingLeft,
-		virtualPaddingRight,
 	])
 
 	const rowsGroupingProps = useMemo(() => {
@@ -252,14 +247,15 @@ export const TableBody: FC<Props> = ({
 		</Typography>
 	)
 
+	const columnsCount = virtualColumns
+		? virtualColumns.length
+		: table.getVisibleLeafColumns().filter(isColumnDisplayed).length
+
 	return (
 		<MuiTableBody
 			{...tableBodyProps}
 			sx={(theme) => ({
 				display: layoutMode === 'grid' ? 'grid' : 'table-row-group',
-				height: rowVirtualizer
-					? `${rowVirtualizer.getTotalSize()}px`
-					: 'inherit',
 				minHeight: !rows.length ? '100px' : undefined,
 				position: 'relative',
 				...(tableBodyProps?.sx instanceof Function
@@ -286,7 +282,7 @@ export const TableBody: FC<Props> = ({
 								}}
 							>
 								<td
-									colSpan={table.getVisibleLeafColumns().length}
+									colSpan={columnsCount}
 									style={{
 										display: layoutMode === 'grid' ? 'grid' : 'table-cell',
 									}}
@@ -299,7 +295,10 @@ export const TableBody: FC<Props> = ({
 								</td>
 							</tr>
 						) : (
-							<>
+							<RowVirtualizerWrapper
+								rowVirtualizer={rowVirtualizer}
+								colSpan={columnsCount}
+							>
 								{rowProps.map((props) => {
 									const computedProps = {
 										...props,
@@ -315,7 +314,7 @@ export const TableBody: FC<Props> = ({
 										<TableBodyRow {...computedProps} />
 									)
 								})}
-							</>
+							</RowVirtualizerWrapper>
 						))}
 				</>
 			)}

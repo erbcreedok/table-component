@@ -30,7 +30,7 @@ export const ExpandButton = <TData extends TableData = TableData>({
 			? muiExpandButtonProps({ table, row })
 			: muiExpandButtonProps
 
-	const canExpand = row.getCanExpand()
+	const canExpand = row.getCanExpand() || renderDetailPanel
 	const isExpanded = row?.getIsExpanded?.()
 
 	const handleToggleExpand = (event: MouseEvent<HTMLButtonElement>) => {
@@ -42,7 +42,7 @@ export const ExpandButton = <TData extends TableData = TableData>({
 	return (
 		<Tooltip
 			arrow
-			disableHoverListener={!canExpand && !renderDetailPanel}
+			disableHoverListener={!canExpand}
 			enterDelay={1000}
 			enterNextDelay={1000}
 			title={
@@ -54,7 +54,7 @@ export const ExpandButton = <TData extends TableData = TableData>({
 			<span>
 				<IconButton
 					aria-label={localization.expand}
-					disabled={!canExpand && !renderDetailPanel}
+					disabled={!canExpand}
 					{...iconButtonProps}
 					onClick={handleToggleExpand}
 					sx={(theme) => ({

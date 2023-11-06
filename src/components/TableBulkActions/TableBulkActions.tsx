@@ -3,12 +3,14 @@ import Box from '@mui/material/Box'
 import Divider from '@mui/material/Divider'
 import IconButton from '@mui/material/IconButton'
 import Typography from '@mui/material/Typography'
-import React, { ComponentProps } from 'react'
+import { ComponentProps } from 'react'
 
 import { useComputedEnableCaptions } from '../../hooks/useComputedEnableCaptions'
 import { SelectCheckbox } from '../../inputs/SelectCheckbox'
 import { TableInstance } from '../../TableComponent'
 import { getColorAlpha } from '../../utils/getColorAlpha'
+import { getTestAttributes } from '../../utils/getTestAttributes'
+import { withNativeEvent } from '../../utils/withNativeEvent'
 import { Colors, IconsColor } from '../styles'
 import { Tooltip } from '../Tooltip'
 
@@ -42,6 +44,7 @@ export const TableBulkActions = ({
 			bulkActions,
 			enableBulkActionsSelect,
 			icons: { CloseIcon },
+			e2eLabels,
 		},
 		refs: { bulkActionsRef },
 	} = table
@@ -108,6 +111,7 @@ export const TableBulkActions = ({
 						? wrapperProps?.sx?.(theme)
 						: (sx as any)),
 				})}
+				{...getTestAttributes(e2eLabels, 'bulkActions')}
 			>
 				<Box
 					sx={{
@@ -158,7 +162,13 @@ export const TableBulkActions = ({
 				<Line orientation="vertical" height={18} sx={{ mx: '9px' }} />
 				<Tooltip title={localization.close}>
 					<IconButton
-						onClick={() => resetRowSelection()}
+						onClick={withNativeEvent(
+							{
+								el: 'BulkActionPanel_Close',
+								type: 'click',
+							},
+							table
+						)(() => resetRowSelection())}
 						sx={{
 							color: Colors.Gray10,
 							cursor: 'pointer',

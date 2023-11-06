@@ -6,6 +6,8 @@ import { SortingItemBoxStyled } from '../SortingChip.styled'
 import { SortingButtons } from '../../../TableToolbar/components/menus/SortingMenu/SortingButtons'
 import { IconsColor } from '../../../components/styles'
 import { useHoverEffects } from '../../../hooks/useHoverEffects'
+import { withNativeEvent } from '../../../utils/withNativeEvent'
+import { getPascalCase } from '../../../utils/getPascalCase'
 
 interface ListItemSortProps {
 	column: any
@@ -82,6 +84,9 @@ export const ListItemSort: FC<ListItemSortProps> = (props) => {
 								onDragStart={handleDragStart}
 								onDragEnd={handleDragEnd}
 								table={table}
+								analyticsElementName={`SortingChip_${getPascalCase(
+									column.columnDef.header
+								)}`}
 							/>
 						</div>
 					)}
@@ -97,6 +102,7 @@ export const ListItemSort: FC<ListItemSortProps> = (props) => {
 						sx={{ marginRight: hovered ? '10px' : '20px' }}
 						groupButtons
 						hideUnselected={!hovered}
+						isInChip
 					/>
 
 					<Box
@@ -106,7 +112,18 @@ export const ListItemSort: FC<ListItemSortProps> = (props) => {
 							mr: '20px',
 						}}
 					>
-						<TrashIcon onClick={handleDelete} htmlColor={IconsColor.default} />
+						<TrashIcon
+							onClick={withNativeEvent(
+								{
+									el: `SortingChip_${getPascalCase(
+										column.columnDef.header
+									)}_Remove`,
+									type: 'click',
+								},
+								table
+							)(handleDelete)}
+							htmlColor={IconsColor.default}
+						/>
 					</Box>
 				</Box>
 			</SortingItemBoxStyled>

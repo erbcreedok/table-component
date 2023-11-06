@@ -12,6 +12,8 @@ import { ButtonLink } from '../../../../components/ButtonLink'
 import { getColumnId, reorderColumn } from '../../../../column.utils'
 import { ListTitle } from '../../../../components/ListTitle'
 import { Sidebar } from '../../../../components/Sidebar'
+import { getPascalCase } from '../../../../utils/getPascalCase'
+import { withNativeEvent } from '../../../../utils/withNativeEvent'
 import { getSortingText } from '../../../../utils/getSortingInfo'
 import { getColumnsFilteredByDisplay } from '../../../../utils/getFilteredByDisplay'
 import { DeleteIcon } from '../../../../icons/DeleteIcon'
@@ -20,6 +22,7 @@ import { getOrderedColumns } from '../../../../utils/getOrderedColumns'
 import { getSuggestedColumns } from '../../../../utils/getSuggestedColumns'
 import { splitArrayItems } from '../../../../utils/splitArrayItems'
 import { sortByStringArray } from '../../../../utils/sortByStringArray'
+import { getTestAttributes } from '../../../../utils/getTestAttributes'
 
 import { SortingButtons } from './SortingButtons'
 
@@ -52,6 +55,7 @@ export const SortingMenu = <TData extends Record<string, any> = {}>({
 			localization,
 			suggestedColumns,
 			organizeSortingMenu,
+			e2eLabels,
 		},
 	} = table
 	const [hoveredColumn, setHoveredColumn] =
@@ -140,6 +144,7 @@ export const SortingMenu = <TData extends Record<string, any> = {}>({
 				</>
 			}
 			innerTableSidebar={innerTable}
+			PaperProps={getTestAttributes(e2eLabels, 'sidebarSorting')}
 		>
 			<Box sx={{ marginTop: '12px' }}>
 				{searchValue ? (
@@ -176,7 +181,18 @@ export const SortingMenu = <TData extends Record<string, any> = {}>({
 									}}
 								>
 									<ListTitle>Sorted</ListTitle>
-									<ButtonLink onClick={removeAllSorted}>Remove all</ButtonLink>
+									<ButtonLink
+										onClick={withNativeEvent(
+											{
+												el: 'SortingSidebar_RemoveAll',
+												type: 'click',
+											},
+											table
+										)(removeAllSorted)}
+										{...getTestAttributes(e2eLabels, 'sidebarSortingRemoveAll')}
+									>
+										{localization.removeAll}
+									</ButtonLink>
 								</Box>
 
 								{sortedColumns?.map((column) => (
@@ -235,6 +251,18 @@ const MenuItem = <TData extends Record<string, any> = {}>({
 	...rest
 }: MenuItemProps<TData>) => {
 	const { table } = useTableContext()
+	const ascSortingText = getSortingText({
+		table,
+		sortingFn: column.getSortingFn(),
+		isAsc: true,
+		withSortWord: false,
+	})
+	const descSortingText = getSortingText({
+		table,
+		sortingFn: column.getSortingFn(),
+		isAsc: false,
+		withSortWord: false,
+	})
 
 	return (
 		<SimpleMenuItem
@@ -248,7 +276,19 @@ const MenuItem = <TData extends Record<string, any> = {}>({
 			{isCompact ? (
 				<>
 					<SortingButtons column={column} sx={{ marginRight: '20px' }} />
-					<IconButton disableRipple onClick={column.clearSorting} size="small">
+					<IconButton
+						disableRipple
+						onClick={withNativeEvent(
+							{
+								el: `SortingSidebar_${getPascalCase(
+									column.columnDef.header
+								)}_Remove`,
+								type: 'click',
+							},
+							table
+						)(column.clearSorting)}
+						size="small"
+					>
 						<DeleteIcon />
 					</IconButton>
 				</>
@@ -256,33 +296,37 @@ const MenuItem = <TData extends Record<string, any> = {}>({
 				<>
 					<ButtonLink
 						style={{ marginRight: '18px', fontWeight: 600 }}
-						onClick={() => {
+						onClick={withNativeEvent(
+							{
+								el: `SortingSidebar_${getPascalCase(
+									column.columnDef.header
+								)}_${getPascalCase(ascSortingText)}`,
+								type: 'click',
+							},
+							table
+						)(() => {
 							setSearchValue?.('')
 							column.toggleSorting(false, true)
-						}}
+						})}
 					>
-						{getSortingText({
-							table,
-							sortingFn: column.getSortingFn(),
-							isAsc: true,
-							withSortWord: false,
-						})}{' '}
-						+
+						{ascSortingText} +
 					</ButtonLink>
 					<ButtonLink
-						onClick={() => {
+						onClick={withNativeEvent(
+							{
+								el: `SortingSidebar_${getPascalCase(
+									column.columnDef.header
+								)}_${getPascalCase(descSortingText)}`,
+								type: 'click',
+							},
+							table
+						)(() => {
 							setSearchValue?.('')
 							column.toggleSorting(true, true)
-						}}
+						})}
 						style={{ fontWeight: 600 }}
 					>
-						{getSortingText({
-							table,
-							sortingFn: column.getSortingFn(),
-							isAsc: false,
-							withSortWord: false,
-						})}{' '}
-						+
+						{descSortingText} +
 					</ButtonLink>
 				</>
 			)}

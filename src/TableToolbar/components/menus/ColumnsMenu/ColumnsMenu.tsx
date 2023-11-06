@@ -23,6 +23,8 @@ import { getMultirowDepthMatchingColumns } from '../../../../utils/getMultirowDe
 import { makeMultiheaderGroups } from '../../../../utils/makeMultiheaderGroups'
 import { makeNonMultiheaderGroups } from '../../../../utils/makeNonMultiheaderGroups'
 import { getColumnsFilteredByDisplay } from '../../../../utils/getFilteredByDisplay'
+import { getTestAttributes } from '../../../../utils/getTestAttributes'
+import { withNativeEvent } from '../../../../utils/withNativeEvent'
 
 import { ColumnsMenuItem } from './ColumnsMenuItem'
 import { ColumnsMenuGroupItem } from './ColumnsMenuGroupItem'
@@ -57,6 +59,7 @@ export const ColumnsMenu = <TData extends TableData = {}>({
 			multirowHeader,
 			multirowColumnsDisplayDepth,
 			organizeColumnsMenu = defaultOrganizeColumnsMenu,
+			e2eLabels,
 		},
 	} = table
 	const [isSearchActive, setIsSearchActive] = useState<boolean>(false)
@@ -394,6 +397,7 @@ export const ColumnsMenu = <TData extends TableData = {}>({
 			withSearch
 			onSearchChange={handleOnSearchChange}
 			innerTableSidebar={innerTable}
+			PaperProps={getTestAttributes(e2eLabels, 'sidebarColumns')}
 		>
 			{isSearchActive ? (
 				multirowHeader && multirowSearchList.length ? (
@@ -478,8 +482,30 @@ export const ColumnsMenu = <TData extends TableData = {}>({
 									justifyContent: 'space-between',
 								}}
 							>
-								<ButtonLink onClick={handleHideAllClick}>Hide All</ButtonLink>
-								<ButtonLink onClick={handleShowAllClick}>Show All</ButtonLink>
+								<ButtonLink
+									onClick={withNativeEvent(
+										{
+											el: 'ColumnsSettingsSidebar_HideAll',
+											type: 'click',
+										},
+										table
+									)(handleHideAllClick)}
+									{...getTestAttributes(e2eLabels, 'sidebarColumnsHideAll')}
+								>
+									{localization.hideAll}
+								</ButtonLink>
+								<ButtonLink
+									onClick={withNativeEvent(
+										{
+											el: 'ColumnsSettingsSidebar_ShowAll',
+											type: 'click',
+										},
+										table
+									)(handleShowAllClick)}
+									{...getTestAttributes(e2eLabels, 'sidebarColumnsShowAll')}
+								>
+									{localization.showAll}
+								</ButtonLink>
 							</Box>
 						</Box>
 						{groupedColumns.map((column) => (

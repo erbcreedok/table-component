@@ -67,7 +67,6 @@ export const TableHeadCell: FC<TableHeadCellProps> = ({
 			enableColumnOrdering,
 			enableGrouping,
 			enableMultiSort,
-			layoutMode,
 			muiTableHeadCellProps,
 			muiTableHeadCellWrapperProps,
 			uppercaseHeader,
@@ -236,7 +235,6 @@ export const TableHeadCell: FC<TableHeadCellProps> = ({
 							boxSizing: 'border-box',
 							cursor: showColumnActions ? 'pointer' : undefined,
 							fontSize: theme.typography.subtitle2.fontSize,
-							flexDirection: layoutMode === 'grid' ? 'column' : undefined,
 							fontWeight: 'bold',
 							height: '48px',
 							overflow: column.getIsResizing() ? 'visible' : 'hidden',
@@ -305,7 +303,6 @@ export const TableHeadCell: FC<TableHeadCellProps> = ({
 								{...wrapperProps}
 								sx={mergeSx(
 									{
-										alignItems: 'flex-start',
 										display: 'flex',
 										flexDirection:
 											tableCellProps?.align === 'right' ? 'row-reverse' : 'row',

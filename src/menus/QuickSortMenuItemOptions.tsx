@@ -1,13 +1,14 @@
 import Box from '@mui/material/Box'
 import ListItemIcon from '@mui/material/ListItemIcon'
 import MenuItem from '@mui/material/MenuItem'
-import React, { FC } from 'react'
+import { FC } from 'react'
 
 import { Colors } from '../components/styles'
 import { Table_Column, TableInstance } from '../TableComponent'
 import { getSortingIcon, getSortingText } from '../utils/getSortingInfo'
 import { getPascalCase } from '../utils/getPascalCase'
 import { withNativeEvent } from '../utils/withNativeEvent'
+import { getTestAttributes } from '../utils/getTestAttributes'
 
 import { commonListItemStyles, commonMenuItemStyles } from './constants'
 
@@ -26,6 +27,7 @@ export const QuickSortMenuItemOptions: FC<Props> = ({
 			enableSorting,
 			enableMultiSort,
 			icons: { CheckIcon },
+			e2eLabels,
 		},
 	} = table
 
@@ -69,6 +71,7 @@ export const QuickSortMenuItemOptions: FC<Props> = ({
 					table
 				)(handleSortAsc)}
 				sx={commonMenuItemStyles}
+				{...getTestAttributes(e2eLabels, 'columnMenuSortAsc')}
 			>
 				<Box sx={commonListItemStyles}>
 					<ListItemIcon>
@@ -106,6 +109,7 @@ export const QuickSortMenuItemOptions: FC<Props> = ({
 					table
 				)(handleSortDesc)}
 				sx={commonMenuItemStyles}
+				{...getTestAttributes(e2eLabels, 'columnMenuSortDesc')}
 			>
 				<Box sx={commonListItemStyles}>
 					<ListItemIcon>

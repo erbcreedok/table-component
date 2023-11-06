@@ -1,7 +1,8 @@
-import React, { FC, useRef, useState } from 'react'
+import { FC, useRef, useState } from 'react'
 
 import type { Table_Header, TableInstance } from '..'
 import { Menu } from '../components/Menu'
+import { getTestAttributes } from '../utils/getTestAttributes'
 
 import { QuickFilterMenuItems } from './QuickFilterMenuItems'
 import { QuickFiltersMenu } from './QuickFiltersMenu'
@@ -25,7 +26,7 @@ export const ColumnActionMenu: FC<Props> = ({
 }) => {
 	const menuRef = useRef(null)
 	const {
-		options: { renderColumnActionsMenuItems },
+		options: { renderColumnActionsMenuItems, e2eLabels },
 	} = table
 	const { column } = header
 	const { columnDef } = column
@@ -67,6 +68,7 @@ export const ColumnActionMenu: FC<Props> = ({
 					margin: '6px 0',
 				},
 			}}
+			MenuListProps={getTestAttributes(e2eLabels, 'columnMenu')}
 		>
 			{columnDef.renderColumnActionsMenuItems?.({
 				closeMenu: () => handleClose(),

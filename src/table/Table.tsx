@@ -10,12 +10,14 @@ import {
 import MuiTable from '@mui/material/Table'
 
 import { getColumnId } from '../column.utils'
+import { VirtualizerProvider } from '../context/VirtualizerProvider'
 import { TableHead } from '../head/TableHead'
 import { Memo_TableBody, TableBody } from '../body/TableBody'
 import { TableBodyRow } from '../body/TableBodyRow'
 import { TableFooter } from '../footer/TableFooter'
 import type { Table_ColumnDef, Table_Row, TableInstance } from '..'
 import { TableHeadInvisible } from '../head/TableHeadInvisible'
+import { isColumnDisplayed } from '../utils/getFilteredByDisplay'
 
 interface Props {
 	table: TableInstance
@@ -27,9 +29,7 @@ export const Table: FC<Props> = ({ table }) => {
 		options: {
 			columnVirtualizerInstanceRef,
 			columnVirtualizerProps,
-			enableColumnResizing,
 			enableColumnVirtualization,
-			enablePinning,
 			enableStickyHeader,
 			enableTableFooter,
 			enableTableHead,
@@ -69,18 +69,25 @@ export const Table: FC<Props> = ({ table }) => {
 
 	const [leftPinnedIndexes, rightPinnedIndexes] = useMemo(
 		() =>
-			enableColumnVirtualization && enablePinning
+			enableColumnVirtualization
 				? [
-						table.getLeftLeafColumns().map((c) => c.getPinnedIndex()),
+						table
+							.getLeftLeafColumns()
+							.filter(isColumnDisplayed)
+							.map((c) => c.getPinnedIndex()),
 						table
 							.getRightLeafColumns()
+							.filter(isColumnDisplayed)
 							.map(
 								(c) =>
-									table.getVisibleLeafColumns().length - c.getPinnedIndex() - 1
+									table.getVisibleLeafColumns().filter(isColumnDisplayed)
+										.length -
+									c.getPinnedIndex() -
+									1
 							),
 				  ]
 				: [[], []],
-		[enableColumnVirtualization, enablePinning, table]
+		[enableColumnVirtualization, table]
 	)
 
 	const columnVirtualizer:
@@ -88,11 +95,13 @@ export const Table: FC<Props> = ({ table }) => {
 		| undefined = enableColumnVirtualization
 		? // eslint-disable-next-line react-hooks/rules-of-hooks
 		  useVirtualizer({
-				count: table.getVisibleLeafColumns().length,
+				count: table
+					.getVisibleLeafColumns()
+					.filter((col) => !col.columnDef.notDisplayed).length,
 				estimateSize: () => averageColumnWidth,
 				getScrollElement: () => tableContainerRef.current,
 				horizontal: true,
-				overscan: 3,
+				overscan: 1,
 				// eslint-disable-next-line react-hooks/rules-of-hooks
 				rangeExtractor: useCallback(
 					(range: Range) =>
@@ -117,8 +126,8 @@ export const Table: FC<Props> = ({ table }) => {
 		? columnVirtualizer.getVirtualItems()
 		: undefined
 
-	let virtualPaddingLeft: number | undefined
-	let virtualPaddingRight: number | undefined
+	let virtualPaddingLeft = 0
+	let virtualPaddingRight = 0
 
 	if (columnVirtualizer && virtualColumns?.length) {
 		virtualPaddingLeft = virtualColumns[leftPinnedIndexes.length]?.start ?? 0
@@ -126,14 +135,29 @@ export const Table: FC<Props> = ({ table }) => {
 			columnVirtualizer.getTotalSize() -
 			(virtualColumns[virtualColumns.length - 1 - rightPinnedIndexes.length]
 				?.end ?? 0)
+		const pinnedColumnsLeft =
+			virtualColumns[leftPinnedIndexes.length - 1]?.end ?? 0
+		const pinnedColumnsRight = rightPinnedIndexes.length
+			? virtualColumns
+					.slice(-rightPinnedIndexes.length)
+					.reduce((acc, column) => acc + column.size, 0)
+			: 0
+		virtualPaddingLeft -= pinnedColumnsLeft
+		virtualPaddingRight -= pinnedColumnsRight
 	}
 
 	const props = {
 		table,
 		virtualColumns,
-		virtualPaddingLeft,
-		virtualPaddingRight,
 	}
+
+	const virtualizerProps = useMemo(
+		() => ({
+			virtualPaddingLeft,
+			virtualPaddingRight,
+		}),
+		[virtualPaddingLeft, virtualPaddingRight]
+	)
 
 	const summaryRow = useMemo(
 		() => createRow(table as TableType<{}>, 'summaryRow', {}, -1, 0, []),
@@ -146,6 +170,7 @@ export const Table: FC<Props> = ({ table }) => {
 			rowIndex: -1,
 			rowNumber: -1,
 			table,
+			virtualColumns,
 			row: {
 				getIsSelected: () => false,
 				getVisibleCells: () =>
@@ -161,7 +186,7 @@ export const Table: FC<Props> = ({ table }) => {
 						),
 			} as Table_Row,
 		}),
-		[columnVirtualizer, summaryRow, table]
+		[columnVirtualizer, summaryRow, table, virtualColumns]
 	)
 	const showSummaryRow =
 		enableSummaryRow &&
@@ -170,37 +195,48 @@ export const Table: FC<Props> = ({ table }) => {
 			table.getPaginationRowModel().rows.length > 0)
 
 	return (
-		<MuiTable
-			stickyHeader={enableStickyHeader || isFullScreen}
-			{...tableProps}
-			sx={(theme) => ({
-				borderCollapse: 'separate',
-				display: layoutMode === 'grid' ? 'grid' : 'table',
-				// Invisible Table Head margin
-				marginTop: enableTableHead ? '-2px' : undefined,
-				tableLayout:
-					layoutMode !== 'grid' && enableColumnResizing ? 'fixed' : undefined,
-				...(tableProps?.sx instanceof Function
-					? tableProps.sx(theme)
-					: (tableProps?.sx as any)),
-			})}
-		>
-			{enableTableHead && <TableHeadInvisible table={table} />}
-			{showSummaryRow && (
-				<thead>
-					<TableBodyRow key="summaryRow" isSummaryRow {...summaryRowProps} />
-				</thead>
-			)}
-			{enableTableHead && (
-				<TableHead {...props} emptyTableHead={hideTableHead} />
-			)}
-			{memoMode === 'table-body' ? (
-				// eslint-disable-next-line react/jsx-pascal-case
-				<Memo_TableBody columnVirtualizer={columnVirtualizer} {...props} />
-			) : (
-				<TableBody columnVirtualizer={columnVirtualizer} {...props} />
-			)}
-			{enableTableFooter && <TableFooter {...props} />}
-		</MuiTable>
+		<VirtualizerProvider value={virtualizerProps}>
+			<MuiTable
+				stickyHeader={enableStickyHeader || isFullScreen}
+				{...tableProps}
+				sx={(theme) => ({
+					borderCollapse: 'separate',
+					display: layoutMode === 'grid' ? 'grid' : 'table',
+					// Invisible Table Head margin
+					marginTop: enableTableHead ? '-2px' : undefined,
+					tableLayout: layoutMode !== 'grid' ? 'fixed' : undefined,
+					...(tableProps?.sx instanceof Function
+						? tableProps.sx(theme)
+						: (tableProps?.sx as any)),
+				})}
+			>
+				{enableTableHead && layoutMode !== 'grid' && (
+					<TableHeadInvisible
+						{...props}
+						measureElement={columnVirtualizer?.measureElement}
+					/>
+				)}
+				{showSummaryRow && (
+					<thead>
+						<TableBodyRow
+							key="summaryRow"
+							domIndex={-1}
+							isSummaryRow
+							{...summaryRowProps}
+						/>
+					</thead>
+				)}
+				{enableTableHead && (
+					<TableHead {...props} emptyTableHead={hideTableHead} />
+				)}
+				{memoMode === 'table-body' ? (
+					// eslint-disable-next-line react/jsx-pascal-case
+					<Memo_TableBody columnVirtualizer={columnVirtualizer} {...props} />
+				) : (
+					<TableBody columnVirtualizer={columnVirtualizer} {...props} />
+				)}
+				{enableTableFooter && <TableFooter {...props} />}
+			</MuiTable>
+		</VirtualizerProvider>
 	)
 }

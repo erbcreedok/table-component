@@ -1,15 +1,22 @@
 import { Box, Typography } from '@mui/material'
-import React, { FC } from 'react'
+import React from 'react'
 
-type DropdownContentHeaderProps = {
+import { withNativeEvent } from '../../utils/withNativeEvent'
+import { TableData, TableInstance } from '../../TableComponent'
+
+type DropdownContentHeaderProps<TData extends TableData> = {
 	headerTitle: string
 	onClearAll: () => void
+	analyticsElementName?: string
+	table?: TableInstance<TData>
 }
 
-export const DropdownContentHeader: FC<DropdownContentHeaderProps> = ({
+export const DropdownContentHeader = <TData extends TableData>({
+	table,
 	headerTitle,
 	onClearAll,
-}) => {
+	analyticsElementName,
+}: DropdownContentHeaderProps<TData>) => {
 	return (
 		<Box
 			component="div"
@@ -27,7 +34,14 @@ export const DropdownContentHeader: FC<DropdownContentHeaderProps> = ({
 
 			<Typography
 				variant="body2"
-				onClick={onClearAll}
+				onClick={
+					analyticsElementName && table
+						? withNativeEvent(
+								{ el: analyticsElementName, type: 'click' },
+								table
+						  )(onClearAll)
+						: onClearAll
+				}
 				style={{ color: '#009ECC', fontSize: 12, cursor: 'pointer' }}
 			>
 				Clear All

@@ -9,12 +9,20 @@ import React, {
 } from 'react'
 import { Box, BoxProps, styled } from '@mui/material'
 
+import { useTableContext } from '../context/useTableContext'
+import { useDebouncedScrollTo } from '../hooks/useDebouncedScrollTo'
+
 export const DragScrollingContainer = forwardRef<
 	HTMLElement,
 	PropsWithChildren<BoxProps>
 >(({ children, ...rest }, _ref) => {
+	const { table } = useTableContext()
+	const {
+		options: { enableDragScrolling },
+	} = table
 	const ref = useRef<HTMLElement>(null)
 	useImperativeHandle(_ref, () => ref.current as HTMLElement)
+	const { debouncedScrollTo, enableScrollListeners } = useDebouncedScrollTo(ref)
 
 	const [isDragging, setIsDragging] = useState(false)
 	const [startX, setStartX] = useState<number | null>(null)
@@ -23,7 +31,6 @@ export const DragScrollingContainer = forwardRef<
 	const [scrollTop, setScrollTop] = useState(0)
 
 	const handleMouseDown = useCallback((e: React.MouseEvent) => {
-		// e.preventDefault() // touch devices
 		setIsDragging(true)
 		setStartX(e.pageX - (ref.current?.offsetLeft || 0))
 		setStartY(e.pageY - (ref.current?.offsetTop || 0))
@@ -31,47 +38,34 @@ export const DragScrollingContainer = forwardRef<
 		setScrollTop(ref.current?.scrollTop || 0)
 	}, [])
 
-	// const handleTouchStart = useCallback((e: React.TouchEvent) => {
-	// 	setIsDragging(true)
-	// 	setStartX(e.touches[0].pageX - (ref.current?.offsetLeft || 0))
-	// 	setStartY(e.touches[0].pageY - (ref.current?.offsetTop || 0))
-	// 	setScrollLeft(ref.current?.scrollLeft || 0)
-	// 	setScrollTop(ref.current?.scrollTop || 0)
-	// }, [])
-
 	const handleMouseMove = useCallback(
 		(e: React.MouseEvent) => {
 			if (!isDragging || !ref.current) return
 			const x = e.pageX - (ref.current.offsetLeft || 0)
 			const y = e.pageY - (ref.current.offsetTop || 0)
-			const deltaX = x - (startX || 0)
-			const deltaY = y - (startY || 0)
-			ref.current.scrollLeft = (scrollLeft || 0) - deltaX
-			ref.current.scrollTop = (scrollTop || 0) - deltaY
+			const deltaX = enableDragScrolling === 'vertical' ? 0 : x - (startX || 0)
+			const deltaY =
+				enableDragScrolling === 'horizontal' ? 0 : y - (startY || 0)
+			debouncedScrollTo({
+				left: (scrollLeft || 0) - deltaX,
+				top: (scrollTop || 0) - deltaY,
+			})
 		},
-		[isDragging, startX, startY, scrollLeft, scrollTop]
+		[
+			isDragging,
+			enableDragScrolling,
+			startX,
+			startY,
+			debouncedScrollTo,
+			scrollLeft,
+			scrollTop,
+		]
 	)
 
-	// const handleTouchMove = useCallback(
-	// 	(e: React.TouchEvent) => {
-	// 		if (!isDragging || e.touches.length !== 1 || !ref.current) return
-	// 		const x = e.touches[0].pageX - (ref.current.offsetLeft || 0)
-	// 		const y = e.touches[0].pageY - (ref.current.offsetTop || 0)
-	// 		const deltaX = x - (startX || 0)
-	// 		const deltaY = y - (startY || 0)
-	// 		ref.current.scrollLeft = (scrollLeft || 0) - deltaX
-	// 		ref.current.scrollTop = (scrollTop || 0) - deltaY
-	// 	},
-	// 	[isDragging, startX, startY, scrollLeft, scrollTop]
-	// )
-
 	const handleMouseUp = useCallback(() => {
+		enableScrollListeners()
 		setIsDragging(false)
-	}, [])
-
-	// const handleTouchEnd = useCallback(() => {
-	// 	setIsDragging(false)
-	// }, [])
+	}, [enableScrollListeners])
 
 	useEffect(() => {
 		document.addEventListener('mouseup', handleMouseUp)
@@ -86,11 +80,8 @@ export const DragScrollingContainer = forwardRef<
 			{...rest}
 			ref={ref}
 			onMouseDown={handleMouseDown}
-			// onTouchStart={handleTouchStart}
 			onMouseMove={handleMouseMove}
-			// onTouchMove={handleTouchMove}
 			onMouseUp={handleMouseUp}
-			// onTouchEnd={handleTouchEnd}
 		>
 			{children}
 		</StyledDiv>

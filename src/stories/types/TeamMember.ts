@@ -15,6 +15,14 @@ export type TeamMember = {
 	completion?: number | null
 	userAgent?: string | null
 	subRows?: TeamMember[]
+	zipCode: string,
+	city: string,
+	state: string,
+	country: string,
+	favoriteQuote: string,
+	favoriteColor: string,
+	petName: string,
+	petType: string,
 }
 
 export type UnitTreeItem = {

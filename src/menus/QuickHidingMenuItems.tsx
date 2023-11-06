@@ -1,7 +1,6 @@
 import Box from '@mui/material/Box'
 import ListItemIcon from '@mui/material/ListItemIcon'
 import MenuItem from '@mui/material/MenuItem'
-import React from 'react'
 
 import { getPascalCase } from '../utils/getPascalCase'
 import { withNativeEvent } from '../utils/withNativeEvent'
@@ -9,6 +8,7 @@ import { getMultirowDepthMatchingColumns } from '../utils/getMultirowDepthMatchi
 import { makeMultiheaderGroups } from '../utils/makeMultiheaderGroups'
 import { makeNonMultiheaderGroups } from '../utils/makeNonMultiheaderGroups'
 import { defaultOrganizeColumnsMenu } from '../TableToolbar/components/menus/ColumnsMenu/ColumnsMenu'
+import { getTestAttributes } from '../utils/getTestAttributes'
 
 import { commonListItemStyles, commonMenuItemStyles } from './constants'
 
@@ -22,6 +22,7 @@ export const QuickHidingMenuItems = ({ column, table, setVisible }) => {
 			multirowHeader,
 			multirowColumnsDisplayDepth,
 			organizeColumnsMenu = defaultOrganizeColumnsMenu,
+			test,
 		},
 	} = table
 
@@ -69,6 +70,7 @@ export const QuickHidingMenuItems = ({ column, table, setVisible }) => {
 				table
 			)(handleHideColumn)}
 			sx={commonMenuItemStyles}
+			{...getTestAttributes(test, 'columnMenuHide')}
 		>
 			<Box sx={commonListItemStyles}>
 				<ListItemIcon>

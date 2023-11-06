@@ -256,9 +256,7 @@ export const getIsFirstRightPinnedColumn = (column: Table_Column) => {
 }
 
 export const getTotalRight = (table: TableInstance, column: Table_Column) => {
-	return (
-		(table.getRightLeafHeaders().length - 1 - column.getPinnedIndex()) * 200
-	)
+	return table.getRightTotalSize() - column.getSize() - column.getStart('right')
 }
 
 export const getColumnWidth = ({
@@ -311,24 +309,6 @@ export const getCommonCellStyles = ({
 		column.getIsPinned() === 'left'
 			? `${column.getStart('left')}px`
 			: undefined,
-	ml:
-		table.options.enableColumnVirtualization &&
-		column.getIsPinned() === 'left' &&
-		column.getPinnedIndex() === 0
-			? `-${
-					column.getSize() * (table.getState().columnPinning.left?.length ?? 1)
-			  }px`
-			: undefined,
-	mr:
-		table.options.enableColumnVirtualization &&
-		column.getIsPinned() === 'right' &&
-		column.getPinnedIndex() === table.getVisibleLeafColumns().length - 1
-			? `-${
-					column.getSize() *
-					(table.getState().columnPinning.right?.length ?? 1) *
-					1.2
-			  }px`
-			: undefined,
 	opacity:
 		table.getState().draggingColumn?.id === column.id ||
 		table.getState().hoveredColumn?.id === column.id
@@ -356,7 +336,7 @@ export const getCommonCellStyles = ({
 	...getColumnWidth({ column, header }),
 })
 
-export const Table_DisplayColumnIdsArray = [
+export const Table_DisplayColumnIdsArray: string[] = [
 	utilColumns.column,
 	utilColumns.actions,
 	utilColumns.expand,

@@ -322,12 +322,12 @@ export const TableBodyCell = ({
 	const getTableCellStyles = (theme) => ({
 		alignItems: layoutMode === 'grid' ? 'center' : undefined,
 		cursor: isEditable && editingMode === 'cell' ? 'pointer' : 'inherit',
-		height: columnDefType === 'display' ? '1px' : '47px',
+		height: '47px',
 		boxSizing: 'content-box',
 		overflow: 'hidden',
 		verticalAlign: 'middle',
 		position: 'relative',
-		p: columnDefType === 'display' || isGroupedCell ? '0.5rem 0.75rem' : '0',
+		p: isGroupedCell ? '0.5rem 0.75rem' : '0',
 		px: 0,
 		pl: isExpandColumn ? `${row.depth * expandPaddingSize}px` : undefined,
 		textOverflow: columnDefType !== 'display' ? 'ellipsis' : undefined,
@@ -467,11 +467,7 @@ export const TableBodyCell = ({
 			data-index={virtualCell?.index}
 			data-is-grouped={isGroupedCell}
 			data-is-util={isUtilColumn}
-			ref={(node: HTMLTableCellElement) => {
-				if (node) {
-					measureElement?.(node)
-				}
-			}}
+			ref={measureElement}
 			{...tableCellProps}
 			onDragEnter={handleDragEnter}
 			onDoubleClick={handleDoubleClick}

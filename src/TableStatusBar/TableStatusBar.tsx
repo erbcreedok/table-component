@@ -5,6 +5,7 @@ import Box from '@mui/material/Box'
 import { Colors } from '../components/styles'
 import type { TableInstance } from '../index'
 import { mergeMuiProps } from '../utils/mergeMuiProps'
+import { withNativeEvent } from '../utils/withNativeEvent'
 
 import { GroupingChip } from './GroupingChip/GroupingChip'
 import { SortingChip } from './SortingChip/SortingChip'
@@ -103,7 +104,13 @@ export const TableStatusBar = <TData extends Record<string, any> = {}>({
 				{filterChips}
 				<ClearAllButton
 					className={clearButtonClassName}
-					onClick={handleClearAll}
+					onClick={withNativeEvent(
+						{
+							el: 'ActionBar_ClearAll',
+							type: 'click',
+						},
+						table
+					)(handleClearAll)}
 				>
 					Clear all
 				</ClearAllButton>

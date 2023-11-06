@@ -4,6 +4,7 @@ import type { Table_Row, TableInstance } from '..'
 import { Menu, MenuItemBase } from '../components/Menu'
 import { isEditingEnabled } from '../utils/isEditingEnabled'
 import { isEditRowActionVisible } from '../utils/showRowActionsColumn'
+import { getTestAttributes } from '../utils/getTestAttributes'
 
 interface Props<TData extends Record<string, any> = {}> {
 	anchorEl: HTMLElement | null
@@ -31,6 +32,7 @@ export const RowActionMenu = <TData extends Record<string, any> = {}>({
 			localization,
 			renderEditMenuItem,
 			renderRowActionMenuItems,
+			e2eLabels,
 		},
 	} = table
 
@@ -59,6 +61,7 @@ export const RowActionMenu = <TData extends Record<string, any> = {}>({
 					},
 				},
 			}}
+			MenuListProps={getTestAttributes(e2eLabels, 'rowActionMenu')}
 		>
 			{!(hideEditRowAction ?? !isEditRowActionVisible(editingMode)) &&
 				isEditingEnabled(enableEditing, { table, row }) &&

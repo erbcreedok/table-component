@@ -9,6 +9,7 @@ import {
 } from '../../TableComponent'
 import { getColumnFilterOptions } from '../../utils/getColumnFilterOptions'
 import { splitFilterOptions } from '../../utils/splitFilterOptions'
+import { getPascalCase } from '../../utils/getPascalCase'
 import { DropdownContentHeader } from '../../components/DropdownContent/DropdownContentHeader'
 import { DropdownContentSearch } from '../../components/DropdownContent/DropdownContentSearch'
 
@@ -78,6 +79,10 @@ export const FilterChipSelectField = <TData extends TableData = TableData>({
 			<DropdownContentHeader
 				headerTitle={headerTitle}
 				onClearAll={handleClearAll}
+				analyticsElementName={`FilteringChip_${getPascalCase(
+					headerTitle
+				)}_ClearAll`}
+				table={table}
 			/>
 
 			<DropdownContentSearch
@@ -94,12 +99,14 @@ export const FilterChipSelectField = <TData extends TableData = TableData>({
 					/>
 				) : isSearchActive ? (
 					<FilterChipList
+						chipTitle={headerTitle}
 						sx={{ maxHeight: 200, overflowY: 'auto' }}
 						options={filteredSearchOptions}
 						onOptionClick={handleAppend}
 					/>
 				) : (
 					<FilterChipList
+						chipTitle={headerTitle}
 						options={selectedOptions}
 						onOptionClick={handleRemove}
 						isCheckedOptions

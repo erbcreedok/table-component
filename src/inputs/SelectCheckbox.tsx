@@ -1,12 +1,13 @@
 import { FormGroup } from '@mui/material'
 import FormControlLabel from '@mui/material/FormControlLabel'
-import React, { MouseEvent, ReactNode } from 'react'
+import React, { ChangeEvent, MouseEvent, ReactNode } from 'react'
 import Checkbox, { CheckboxProps } from '@mui/material/Checkbox'
 import Tooltip from '@mui/material/Tooltip'
 import Radio from '@mui/material/Radio'
 import type { Theme } from '@mui/material/styles'
 
 import type { Table_Row, TableData, TableInstance } from '..'
+import { withNativeEvent } from '../utils/withNativeEvent'
 
 type Props<TData extends TableData> = {
 	row?: Table_Row | Table_Row<TData>
@@ -80,14 +81,27 @@ export const SelectCheckbox = <TData extends TableData>({
 			'aria-label': selectAll ? localization.selectAll : localization.selectRow,
 		},
 		onChange: parentRow
-			? (e) =>
+			? withNativeEvent<ChangeEvent<HTMLInputElement>, TData>(
+					{
+						el: 'Table_SelectRow',
+						type: 'click',
+					},
+					table
+			  )((e) =>
 					indeterminate
 						? parentRow.subRows?.forEach((row) => {
 								row.toggleSelected(false)
 						  })
 						: parentRow.subRows?.map((row) => row.getToggleSelectedHandler()(e))
+			  )
 			: row
-			? row.getToggleSelectedHandler()
+			? withNativeEvent<ChangeEvent<HTMLInputElement>, TData>(
+					{
+						el: 'Table_SelectRow',
+						type: 'click',
+					},
+					table
+			  )(row.getToggleSelectedHandler())
 			: selectAllMode === 'all'
 			? table.getToggleAllRowsSelectedHandler()
 			: table.getToggleAllPageRowsSelectedHandler(),

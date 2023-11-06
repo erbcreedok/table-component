@@ -1,8 +1,9 @@
-import { DragEventHandler } from 'react'
+import { DragEventHandler, DragEvent } from 'react'
 import IconButton from '@mui/material/IconButton'
 import type { IconButtonProps } from '@mui/material/IconButton'
 
 import { handleStopPropagation } from '../utils/withStopPropagation'
+import { withNativeEvent } from '../utils/withNativeEvent'
 import { Tooltip } from '../components/Tooltip'
 import type { TableInstance } from '..'
 
@@ -13,6 +14,7 @@ interface Props<TData extends Record<string, any> = {}> {
 	onDragEnd: DragEventHandler<HTMLButtonElement>
 	table: TableInstance<TData>
 	Icon?: any
+	analyticsElementName?: string
 }
 
 export const GrabHandleButton = <TData extends Record<string, any> = {}>({
@@ -22,6 +24,7 @@ export const GrabHandleButton = <TData extends Record<string, any> = {}>({
 	onDragStart,
 	table,
 	Icon,
+	analyticsElementName,
 }: Props<TData>) => {
 	const {
 		options: {
@@ -47,8 +50,22 @@ export const GrabHandleButton = <TData extends Record<string, any> = {}>({
 					e.stopPropagation()
 					iconButtonProps?.onClick?.(e)
 				}}
-				onDragStart={onDragStart}
-				onDragEnd={onDragEnd}
+				onDragStart={
+					analyticsElementName
+						? withNativeEvent<DragEvent<HTMLButtonElement>, TData>(
+								{ el: `${analyticsElementName}_DragStart`, type: 'dragstart' },
+								table
+						  )(onDragStart)
+						: onDragStart
+				}
+				onDragEnd={
+					analyticsElementName
+						? withNativeEvent<DragEvent<HTMLButtonElement>, TData>(
+								{ el: `${analyticsElementName}_DragEnd`, type: 'dragend' },
+								table
+						  )(onDragEnd)
+						: onDragEnd
+				}
 				onDrag={onDrag}
 				onMouseDown={handleStopPropagation} // for DragScrollingContainer to not mess things up
 				sx={(theme) => ({

@@ -1,7 +1,8 @@
 import Box from '@mui/material/Box'
 import ListItemIcon from '@mui/material/ListItemIcon'
 import MenuItem from '@mui/material/MenuItem'
-import React from 'react'
+
+import { getTestAttributes } from '../utils/getTestAttributes'
 
 import { commonListItemStyles, commonMenuItemStyles } from './constants'
 
@@ -11,6 +12,7 @@ export const QuickPinningMenuItems = ({ column, table, setVisible }) => {
 			enablePinning,
 			icons: { PushPinIcon },
 			localization,
+			test,
 		},
 	} = table
 
@@ -28,6 +30,7 @@ export const QuickPinningMenuItems = ({ column, table, setVisible }) => {
 						key={0}
 						onClick={() => handlePinColumn('left')}
 						sx={commonMenuItemStyles}
+						{...getTestAttributes(test, 'columnMenuPin')}
 					>
 						<Box sx={commonListItemStyles}>
 							<ListItemIcon>

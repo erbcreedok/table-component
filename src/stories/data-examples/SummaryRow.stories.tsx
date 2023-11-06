@@ -3,20 +3,13 @@ import ModeIcon from '@mui/icons-material/Mode';
 import Tooltip from '@mui/material/Tooltip';
 import MuiTableCell from '@mui/material/TableCell'
 import { ColumnOrderState, VisibilityState, SortingState } from '@tanstack/react-table'
-import React, { useState } from 'react'
+import React from 'react'
 import { getColumnId, Table_DisplayColumnIdsArray } from '../../column.utils'
 import TableComponent, { Table_ColumnDef, TableComponentProps } from '../../index'
 import { TeamMember } from '../types/TeamMember'
 import { getSeparatedTeamMembers } from '../utils/getTeamMembers'
 import { getTeamMembersColumns } from '../utils/getTeamMembersColumns'
 import { getDefaultRowActionMenuItems } from '../utils/rowActionMenuItems'
-import { sortByArrayOrder } from '../utils/sortByArrayOrder'
-
-const groupsSorting = {
-	impact: sortByArrayOrder(['Critical', 'High', 'Medium', 'Low']),
-	performance: sortByArrayOrder(['Often exceeds', 'Sometimes exceeds', 'Meets']),
-	riskOfLeaving: sortByArrayOrder(['Leaver', 'High', 'Medium', 'Low']),
-}
 
 const data = getSeparatedTeamMembers()
 const columns = getTeamMembersColumns()
@@ -132,10 +125,11 @@ const SummaryRowTable: Story<TableConfigs> = (args) => {
 	return (
 		<TableComponent
 			columns={getPropsHandledColumns(columns, args)}
-			groupsSorting={groupsSorting}
 			groupBorder={{ left: '12px solid white', top: '20px solid white' }}
 			initialState={{ sorting: defaultSorting, columnOrder: defaultColumnOrder, columnVisibility: defaultColumnVisibility }}
 			renderRowActionMenuItems={getDefaultRowActionMenuItems}
+			enableRowVirtualization
+			renderDetailPanel={() => <div>hello</div>}
 			{...rest}
 		/>
 	)
@@ -162,7 +156,7 @@ const meta: Meta = {
 			}],
 		},
 		enableRowSelection: {
-			defaultValue: (row) => true
+			defaultValue: true
 		},
 		uppercaseHeader: {
 			control: 'boolean',

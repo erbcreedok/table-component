@@ -245,15 +245,18 @@ export type TableInstance<TData extends Record<string, any> = {}> = Omit<
 	| 'getAllFlatColumns'
 	| 'getAllLeafColumns'
 	| 'getCenterLeafColumns'
+	| 'getCenterVisibleLeafColumns'
 	| 'getColumn'
 	| 'getExpandedRowModel'
 	| 'getFlatHeaders'
 	| 'getLeftLeafColumns'
+	| 'getLeftVisibleLeafColumns'
 	| 'getPaginationRowModel'
 	| 'getPreFilteredRowModel'
 	| 'getPrePaginationRowModel'
 	| 'getVisibleLeafColumns'
 	| 'getRightLeafColumns'
+	| 'getRightVisibleLeafColumns'
 	| 'getRowModel'
 	| 'getRow'
 	| 'getSelectedRowModel'
@@ -264,14 +267,17 @@ export type TableInstance<TData extends Record<string, any> = {}> = Omit<
 	getAllFlatColumns: () => Table_Column<TData>[]
 	getAllLeafColumns: () => Table_Column<TData>[]
 	getCenterLeafColumns: () => Table_Column<TData>[]
+	getCenterVisibleLeafColumns: () => Table_Column<TData>[]
 	getColumn: (columnId: string) => Table_Column<TData>
 	getExpandedRowModel: () => Table_RowModel<TData>
 	getFlatHeaders: () => Table_Header<TData>[]
 	getLeftLeafColumns: () => Table_Column<TData>[]
+	getLeftVisibleLeafColumns: () => Table_Column<TData>[]
 	getPaginationRowModel: () => Table_RowModel<TData>
 	getPreFilteredRowModel: () => Table_RowModel<TData>
 	getPrePaginationRowModel: () => Table_RowModel<TData>
 	getRightLeafColumns: () => Table_Column<TData>[]
+	getRightVisibleLeafColumns: () => Table_Column<TData>[]
 	getRow: (rowId: string) => Table_Row<TData>
 	getRowModel: () => Table_RowModel<TData>
 	getSelectedRowModel: () => Table_RowModel<TData>
@@ -364,11 +370,20 @@ export type SelectOption = {
 	value: any
 }
 
+export type MultirowColumn = {
+	id: string
+	text: string
+	colSpan: number
+	isGrouped: boolean
+	isPinned: false | 'left' | 'right'
+	leftPinnedPosition?: number
+	rightPinnedPosition?: number
+}
+
 export type MultirowHeader = {
 	additionalRowContent?: (
 		table: TableInstance<{}>,
-		cellsPropsArray: { text: string; colSpan: number }[],
-		groupedCellsPropsArray: { text: string; colSpan: number }[]
+		cellsPropsArray: MultirowColumn[]
 	) => React.ReactNode
 	pin?: boolean
 	depth: number
@@ -782,6 +797,7 @@ export type Table_ColumnDef<TData extends Record<string, any> = {}> = Omit<
 		errorExplanation?: string
 		cellGroupedPlaceholderText?: string
 		cellPlaceholderText?: string
+		lineClamp?: number | boolean
 		/**
 		 * Specifies that column is not diplayed in table and sidebars, except filtering
 		 */
@@ -910,7 +926,7 @@ export type TableInputProps = TextFieldProps & {
 
 export type NativeEventArgs = {
 	el: any
-	type: 'click' | 'keypress' | 'hover'
+	type: 'click' | 'keypress' | 'hover' | 'dragstart' | 'dragend'
 	event?: any
 	value?: any
 }
@@ -941,6 +957,36 @@ type RenderEditMenuItem<TData extends TableData = TableData> = (args: {
 }) => ReactNode
 
 export type ValueTransformer<In, Out = In> = (value: In) => Out
+
+export interface TestIds {
+	headerRow?: string
+	columnMenu?: string
+	columnMenuSort?: string
+	columnMenuSortMenu?: string
+	columnMenuSortAsc?: string
+	columnMenuSortDesc?: string
+	columnMenuSortMenuClear?: string
+	columnMenuFilter?: string
+	columnMenuGroup?: string
+	columnMenuPin?: string
+	columnMenuHide?: string
+	rowActionMenu?: string
+	sidebarColumns?: string
+	sidebarColumnsHideAll?: string
+	sidebarColumnsShowAll?: string
+	sidebarSorting?: string
+	sidebarSortingRemoveAll?: string
+	bulkActions?: string
+}
+
+export interface E2ELabelsOption {
+	/** @default false */
+	enabled?: boolean
+	/** `data-testid` attributes */
+	ids?: TestIds
+	/** @default "table_" */
+	idPrefix?: string
+}
 
 /**
  * `columns` and `data` props are the only required props, but there are over 150 other optional props.
@@ -1023,7 +1069,7 @@ export type TableComponentProps<TData extends Record<string, any> = {}> = Omit<
 	enableColumnOrdering?: boolean
 	enableColumnVirtualization?: boolean
 	enableDensityToggle?: boolean
-	enableDragScrolling?: boolean
+	enableDragScrolling?: boolean | 'horizontal' | 'vertical'
 	enableEditing?: EnableEditingOption<TData>
 	enableExpandAll?: boolean
 	enableDetailedPanel?: boolean
@@ -1444,7 +1490,7 @@ export type TableComponentProps<TData extends Record<string, any> = {}> = Omit<
 		value,
 	}: {
 		el: any
-		type: 'click' | 'keypress' | 'hover'
+		type: 'click' | 'keypress' | 'hover' | 'dragstart' | 'dragend'
 		event?: any
 		value?: any
 	}) => void
@@ -1588,6 +1634,7 @@ export type TableComponentProps<TData extends Record<string, any> = {}> = Omit<
 	detailedRowBackgroundColor?: string
 	CustomRow?: FC<TableBodyRowProps>
 	theme?: Theme
+	e2eLabels?: E2ELabelsOption
 }
 
 const TableComponent = <TData extends Record<string, any> = {}>(

@@ -3,6 +3,7 @@ import { Meta, Story } from '@storybook/react'
 import TableComponent, { TableComponentProps } from '../../'
 import { faker } from '@faker-js/faker'
 import { MenuItem } from '@mui/material'
+import { ensureArray } from '../../utils/ensureArray'
 
 const meta: Meta = {
 	title: 'Features/Editing Examples',
@@ -23,8 +24,10 @@ export const EditingEnabledEditModeModalDefault: Story<
 > = () => {
 	const [tableData, setTableData] = useState(data)
 
-	const handleSaveRow = ({ exitEditingMode, row, values }) => {
-		tableData[row.index] = values
+	const handleSaveRow = ({ exitEditingMode, rows, values }) => {
+		ensureArray(rows).forEach((row) => {
+			tableData[row.index] = values
+		})
 		setTableData([...tableData])
 		exitEditingMode()
 	}
@@ -64,8 +67,10 @@ export const EditingEnabledEditModeModalDefault: Story<
 export const EditingEnabledEditModeRow: Story<TableComponentProps> = () => {
 	const [tableData, setTableData] = useState(data)
 
-	const handleSaveRow = ({ exitEditingMode, row, values }) => {
-		tableData[row.index] = values
+	const handleSaveRow = ({ exitEditingMode, rows, values }) => {
+		ensureArray(rows).forEach((row) => {
+			tableData[row.index] = values
+		})
 		setTableData([...tableData])
 		exitEditingMode()
 	}
@@ -183,9 +188,10 @@ export const EditingEnabledEditModeTable: Story<TableComponentProps> = () => {
 					header: 'Last Name',
 					accessorKey: 'lastName',
 					enableEditing: ({ row }) => {
-						const e = (!row.subRows || row.subRows.length === 0) && row.index !== 1
+						const e =
+							(!row.subRows || row.subRows.length === 0) && row.index !== 1
 						return e
-					}
+					},
 				},
 				{
 					header: 'Address',
@@ -201,7 +207,7 @@ export const EditingEnabledEditModeTable: Story<TableComponentProps> = () => {
 				},
 			]}
 			data={tableData}
-      enableExpanding
+			enableExpanding
 			enableRowNumbers={false}
 			editingMode="table"
 			enableEditing={({ row }) => {
@@ -219,8 +225,10 @@ export const EditingEnabledEditModeTable: Story<TableComponentProps> = () => {
 export const EditingCustomizeInput: Story<TableComponentProps> = () => {
 	const [tableData, setTableData] = useState(data)
 
-	const handleSaveRow = ({ row, values }) => {
-		tableData[row.index] = values
+	const handleSaveRow = ({ rows, values }) => {
+		ensureArray(rows).forEach((row) => {
+			tableData[row.index] = values
+		})
 		setTableData([...tableData])
 	}
 
@@ -401,10 +409,12 @@ export const EditingEnabledAsync: Story<TableComponentProps> = () => {
 	const [tableData, setTableData] = useState(data)
 	const [isSaving, setIsSaving] = useState(false)
 
-	const handleSaveRow = ({ row, values }) => {
+	const handleSaveRow = ({ rows, values }) => {
 		setIsSaving(true)
 		setTimeout(() => {
-			tableData[row.index] = values
+			ensureArray(rows).forEach((row) => {
+				tableData[row.index] = values
+			})
 			setTableData([...tableData])
 			setIsSaving(false)
 		}, 1500)
@@ -486,16 +496,18 @@ export const EditingNestedData: Story<TableComponentProps> = () => {
 			]}
 			data={tableData}
 			enableEditing
-			onEditingRowsSave={({ row, values }) => {
-				tableData[row.index] = {
-					name: {
-						firstName: values.firstName,
-						lastName: values['name.lastName'],
-					},
-					address: row._valuesCache.address,
-					state: row._valuesCache.state,
-					phoneNumber: row._valuesCache.phoneNumber,
-				}
+			onEditingRowsSave={({ rows, values }) => {
+				ensureArray(rows).forEach((row) => {
+					tableData[row.index] = {
+						name: {
+							firstName: values['name.firstName'],
+							lastName: values['name.lastName'],
+						},
+						address: row._valuesCache.address,
+						state: row._valuesCache.state,
+						phoneNumber: row._valuesCache.phoneNumber,
+					}
+				})
 				setTableData([...tableData])
 			}}
 		/>
@@ -507,8 +519,10 @@ export const EditingEnabledEditModeTableWithGroupedRows: Story<
 > = () => {
 	const [tableData, setTableData] = useState(data)
 
-	const handleSaveRow = ({ exitEditingMode, row, values }) => {
-		tableData[row.index] = values
+	const handleSaveRow = ({ exitEditingMode, rows, values }) => {
+		ensureArray(rows).forEach((row) => {
+			tableData[row.index] = values
+		})
 		setTableData([...tableData])
 		exitEditingMode()
 	}

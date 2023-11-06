@@ -3,13 +3,14 @@ import Box from '@mui/material/Box'
 import ListItemIcon from '@mui/material/ListItemIcon'
 import MenuItem from '@mui/material/MenuItem'
 import zIndex from '@mui/material/styles/zIndex'
-import React, { FC, MutableRefObject } from 'react'
+import { FC, MutableRefObject } from 'react'
 
 import { MenuPaper } from '../components/Menu'
 import { useHoverEffects } from '../hooks/useHoverEffects'
 import { Table_Column, TableInstance } from '../TableComponent'
 import { getPascalCase } from '../utils/getPascalCase'
 import { withNativeEvent } from '../utils/withNativeEvent'
+import { getTestAttributes } from '../utils/getTestAttributes'
 
 import { QuickSortMenuItemOptions } from './QuickSortMenuItemOptions'
 import { commonListItemStyles, commonMenuItemStyles } from './constants'
@@ -32,6 +33,7 @@ export const QuickSortMenuItems: FC<Props> = ({
 			enableSorting,
 			icons: { ClearIcon, ArrowsIcon, ExpandMoreIcon },
 			localization,
+			e2eLabels,
 		},
 	} = table
 
@@ -62,6 +64,7 @@ export const QuickSortMenuItems: FC<Props> = ({
 					},
 					table
 				)(hoverProps.onMouseEnter)}
+				{...getTestAttributes(e2eLabels, 'columnMenuSort')}
 			>
 				<Box sx={commonListItemStyles}>
 					<ListItemIcon>
@@ -87,7 +90,7 @@ export const QuickSortMenuItems: FC<Props> = ({
 				placement="right-start"
 			>
 				<MenuPaper sx={{ mx: '6px' }} {...hoverProps}>
-					<MenuList>
+					<MenuList {...getTestAttributes(e2eLabels, 'columnMenuSortMenu')}>
 						<QuickSortMenuItemOptions
 							column={column}
 							table={table}
@@ -95,9 +98,18 @@ export const QuickSortMenuItems: FC<Props> = ({
 						/>
 						<MenuItem
 							key={0}
-							onClick={handleClearSort}
+							onClick={withNativeEvent(
+								{
+									el: `ColumnHeaderMenu_${getPascalCase(
+										column.columnDef.header
+									)}_ClearSortButton`,
+									type: 'click',
+								},
+								table
+							)(handleClearSort)}
 							sx={commonMenuItemStyles}
 							disabled={!column.getIsSorted()}
+							{...getTestAttributes(e2eLabels, 'columnMenuSortMenuClear')}
 						>
 							<Box sx={commonListItemStyles}>
 								<ListItemIcon>

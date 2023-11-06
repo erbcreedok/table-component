@@ -69,7 +69,8 @@ export const CellBase = <TData extends TableData = {}>({
 	])
 
 	const content = <>{children ?? text}</>
-	const computedClamp = clamp === true ? 2 : !clamp ? 1 : clamp
+	const lineClamp = column.columnDef.lineClamp ?? clamp
+	const computedClamp = lineClamp === true ? 2 : !lineClamp ? 1 : lineClamp
 	const isParagraph =
 		typeof content.props.children === 'string'
 			? content.props.children.split(' ').length > computedClamp
@@ -94,6 +95,9 @@ export const CellBase = <TData extends TableData = {}>({
 					{
 						overflow: 'hidden',
 						textOverflow: 'ellipsis',
+						...(lineClamp === false && {
+							whiteSpace: 'normal',
+						}),
 						...(canClamp && {
 							display: '-webkit-box',
 							WebkitLineClamp: computedClamp,

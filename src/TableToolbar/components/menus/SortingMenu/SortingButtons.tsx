@@ -2,7 +2,12 @@ import React from 'react'
 import Box from '@mui/material/Box'
 import { IconButton, SxProps } from '@mui/material'
 
-import { getSortingIcon } from '../../../../utils/getSortingInfo'
+import {
+	getSortingIcon,
+	getSortingText,
+} from '../../../../utils/getSortingInfo'
+import { getPascalCase } from '../../../../utils/getPascalCase'
+import { withNativeEvent } from '../../../../utils/withNativeEvent'
 import { useTableContext } from '../../../../context/useTableContext'
 import { Table_Column } from '../../../../TableComponent'
 import { Colors, TextColor } from '../../../../components/styles'
@@ -13,6 +18,7 @@ interface Props<TData extends Record<string, any> = {}> {
 	sx?: SxProps | undefined
 	hideUnselected?: boolean
 	groupButtons?: boolean
+	isInChip?: boolean
 }
 export const SortingButtons = <TData extends Record<string, any> = {}>(
 	props: Props<TData>
@@ -20,6 +26,18 @@ export const SortingButtons = <TData extends Record<string, any> = {}>(
 	const { table } = useTableContext()
 	const { column, hideUnselected } = props
 	const sorting = column?.getIsSorted()
+	const ascSortingText = getSortingText({
+		table,
+		sortingFn: column.getSortingFn(),
+		isAsc: true,
+		withSortWord: false,
+	})
+	const descSortingText = getSortingText({
+		table,
+		sortingFn: column.getSortingFn(),
+		isAsc: false,
+		withSortWord: false,
+	})
 
 	return (
 		<Box
@@ -53,7 +71,17 @@ export const SortingButtons = <TData extends Record<string, any> = {}>(
 				}}
 			>
 				<IconButton
-					onClick={() => column.toggleSorting(false, true)}
+					onClick={withNativeEvent(
+						{
+							el: `${
+								props.isInChip ? 'SortingChip' : 'SortingSidebar'
+							}_${getPascalCase(column.columnDef.header)}_${getPascalCase(
+								ascSortingText
+							)}`,
+							type: 'click',
+						},
+						table
+					)(() => column.toggleSorting(false, true))}
 					disableRipple
 					sx={{
 						display: hideUnselected && sorting === 'desc' ? 'none' : 'flex',
@@ -76,7 +104,17 @@ export const SortingButtons = <TData extends Record<string, any> = {}>(
 					})}
 				</IconButton>
 				<IconButton
-					onClick={() => column.toggleSorting(true, true)}
+					onClick={withNativeEvent(
+						{
+							el: `${
+								props.isInChip ? 'SortingChip' : 'SortingSidebar'
+							}_${getPascalCase(column.columnDef.header)}_${getPascalCase(
+								descSortingText
+							)}`,
+							type: 'click',
+						},
+						table
+					)(() => column.toggleSorting(true, true))}
 					disableRipple
 					sx={{
 						display: hideUnselected && sorting === 'asc' ? 'none' : 'flex',

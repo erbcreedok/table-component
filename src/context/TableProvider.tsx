@@ -136,14 +136,6 @@ export const TableProvider = <TData extends Record<string, any> = {}>({
 		[columns]
 	)
 
-	if (rest.enableRowVirtualization || rest.enableColumnVirtualization) {
-		layoutMode = 'grid'
-	}
-
-	if (rest.enableRowVirtualization) {
-		enableStickyHeader = true
-	}
-
 	if (enablePagination === false && manualPagination === undefined) {
 		manualPagination = true
 	}

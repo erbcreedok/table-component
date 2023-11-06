@@ -13,16 +13,12 @@ import { TableHeadMultiRow } from './TableHeadMultiRow'
 interface Props {
 	table: TableInstance
 	virtualColumns?: VirtualItem[]
-	virtualPaddingLeft?: number
-	virtualPaddingRight?: number
 	emptyTableHead?: boolean
 }
 
 export const TableHead: FC<Props> = ({
 	table,
 	virtualColumns,
-	virtualPaddingLeft,
-	virtualPaddingRight,
 	emptyTableHead,
 }) => {
 	const {
@@ -69,8 +65,6 @@ export const TableHead: FC<Props> = ({
 					multirowHeader={multirowHeader}
 					isScrolled={!isIntersecting}
 					virtualColumns={virtualColumns}
-					virtualPaddingLeft={virtualPaddingLeft}
-					virtualPaddingRight={virtualPaddingRight}
 					registerSticky={registerSticky}
 					stickyElements={stickyElements}
 				/>
@@ -82,8 +76,6 @@ export const TableHead: FC<Props> = ({
 						key={headerGroup.id}
 						table={table}
 						virtualColumns={virtualColumns}
-						virtualPaddingLeft={virtualPaddingLeft}
-						virtualPaddingRight={virtualPaddingRight}
 						stickyHeader={stickyHeader}
 						isScrolled={!isIntersecting}
 						registerSticky={registerSticky}

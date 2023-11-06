@@ -1,3 +1,4 @@
+import { Box } from '@mui/material'
 import { Meta, Story } from '@storybook/react'
 import ModeIcon from '@mui/icons-material/Mode'
 import LinearProgress from '@mui/material/LinearProgress'
@@ -42,6 +43,51 @@ import { UnitRow } from './components/UnitRow'
 
 const dataTree = getExpandingTeamMembers(5, '', 3)
 const columns = getTeamMembersColumns()
+const manyColumns: Table_ColumnDef<TeamMember>[] = [
+	...columns,
+	{
+		header: 'Zip Code',
+		accessorKey: 'zipCode',
+		notDisplayed: true,
+	},
+	{
+		header: 'City',
+		accessorKey: 'city',
+	},
+	{
+		header: 'State',
+		accessorKey: 'state',
+	},
+	{
+		header: 'Country',
+		accessorKey: 'country',
+		size: 200,
+	},
+	{
+		header: 'Favorite Color',
+		accessorKey: 'favoriteColor',
+		Cell: ({ cell }) => (
+			<>
+				<Box
+					sx={{ width: 10, height: 10, background: cell.getValue<string>() }}
+				></Box>
+				{cell.getValue()}
+			</>
+		),
+	},
+	{
+		header: 'Favorite Quote',
+		accessorKey: 'favoriteQuote',
+	},
+	{
+		header: 'Pet Name',
+		accessorKey: 'petName',
+	},
+	{
+		header: 'Pet Type',
+		accessorKey: 'petType',
+	},
+]
 const multiHeader = [
 	{
 		depth: 1,
@@ -210,27 +256,15 @@ const getMultiHeaderByOption = (option: string) => {
 				if (i === 0) {
 					return {
 						...el,
-						additionalRowContent: (
-							table,
-							cellsPropsArray,
-							groupedCellsPropsArray
-						) => {
+						additionalRowContent: (table, cellsPropsArray) => {
 							const colSpan = cellsPropsArray.reduce((colSpan, cellProps) => {
-								return (colSpan += cellProps.colSpan)
+								return colSpan + cellProps.colSpan
 							}, 0)
-							const groupedColSpan =
-								groupedCellsPropsArray &&
-								groupedCellsPropsArray.reduce((colSpan, cellProps) => {
-									return (colSpan += cellProps.colSpan)
-								}, 0)
 
 							return (
-								<>
-									{groupedCellsPropsArray && <th colSpan={groupedColSpan} />}
-									<th colSpan={colSpan} style={{ backgroundColor: 'E1E3EB' }}>
-										Additional Content
-									</th>
-								</>
+								<th colSpan={colSpan} style={{ backgroundColor: '#F5F6FA' }}>
+									Additional Content
+								</th>
 							)
 						},
 					}
@@ -433,6 +467,9 @@ const TeamsTable: Story<TeamsTableConfigs> = (args) => {
 export const TeamsTableDefault: Story<TeamsTableExample> = (args) => {
 	return <TeamsTable columns={columns} {...args} />
 }
+export const TeamsTableWithManyColumns: Story<TeamsTableExample> = (args) => {
+	return <TeamsTable columns={manyColumns} {...args} />
+}
 
 export const TeamsTableSubtree: Story<TeamsTableExample> = (args) => (
 	<TeamsTable
@@ -505,7 +542,11 @@ export const HierarchyGroupTableExample: Story = (args) => {
 	return (
 		<>
 			<TableComponent
-				columns={columns as unknown as Table_ColumnDef<UnitTreeItem>[]}
+				columns={
+					(args.enableColumnVirtualization
+						? manyColumns
+						: columns) as unknown as Table_ColumnDef<UnitTreeItem>[]
+				}
 				data={data}
 				CustomRow={UnitRow}
 				groupBorder={{ left: '6px solid white', top: '6px solid white' }}
@@ -611,9 +652,20 @@ const meta: Meta = {
 			control: 'boolean',
 			defaultValue: true,
 		},
-		enableDragScrolling: {
+		enableColumnVirtualization: {
 			control: 'boolean',
-			defaultValue: true,
+			defaultValue: false,
+		},
+		enableDragScrolling: {
+			control: 'radio',
+			defaultValue: 'enabled',
+			options: ['enabled', 'disabled', 'horizontal', 'vertical'],
+			mapping: {
+				enabled: true,
+				disabled: false,
+				horizontal: 'horizontal',
+				vertical: 'vertical',
+			}
 		},
 		enableEditing: {
 			control: 'boolean',
@@ -627,17 +679,14 @@ const meta: Meta = {
 			control: 'boolean',
 			defaultValue: true,
 		},
-		enableSummaryRow: {
+		expandPaddingSize: {
+			control: 'number',
+			description: 'Size of padding for each child',
+		},
+		enablePinning: {
 			control: 'boolean',
 			defaultValue: false,
-		},
-		enableStickyHeader: {
-			control: 'boolean',
-			defaultValue: true,
-		},
-		enableStickyScrollbars: {
-			control: 'object',
-			description: 'Example: { "horizontal": true }',
+			description: 'Pin columns to left or right side of the table',
 		},
 		enableRowActions: {
 			control: 'boolean',
@@ -660,19 +709,25 @@ const meta: Meta = {
 			control: { type: 'select' },
 			defaultValue: 'enabled',
 		},
-		enablePinning: {
+		enableRowVirtualization: {
 			control: 'boolean',
 			defaultValue: false,
-			description: 'Pin columns to left or right side of the table',
 		},
-		enableAggregationRow: {
+		enableStickyHeader: {
+			control: 'boolean',
+			defaultValue: true,
+		},
+		enableStickyScrollbars: {
+			control: 'object',
+			description: 'Example: { "horizontal": true }',
+		},
+		enableSummaryRow: {
 			control: 'boolean',
 			defaultValue: false,
-			description: 'Enable aggregation row, when grouping is enabled',
 		},
-		expandPaddingSize: {
-			control: 'number',
-			description: 'Size of padding for each child',
+		enableTableHead: {
+			control: 'boolean',
+			defaultValue: true,
 		},
 		hideRowSelectionColumn: {
 			control: 'boolean',
@@ -736,7 +791,7 @@ const meta: Meta = {
 			defaultValue: [
 				utilColumns.column,
 				utilColumns.expand,
-				...columns.map(getColumnId),
+				...manyColumns.map(getColumnId),
 			],
 			description:
 				'***THIS IS NOT A PROP***\n' +
@@ -889,6 +944,10 @@ const meta: Meta = {
 			description: `Example: ["${columns
 				.map((col) => getColumnId(col))
 				.join('", "')}"]`,
+		},
+		e2eLabels: {
+			control: { type: 'object' },
+			description: `manage data-testid attributes`,
 		},
 	},
 }

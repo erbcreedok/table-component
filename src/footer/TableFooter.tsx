@@ -9,16 +9,9 @@ import { TableFooterRow } from './TableFooterRow'
 interface Props {
 	table: TableInstance
 	virtualColumns?: VirtualItem[]
-	virtualPaddingLeft?: number
-	virtualPaddingRight?: number
 }
 
-export const TableFooter: FC<Props> = ({
-	table,
-	virtualColumns,
-	virtualPaddingLeft,
-	virtualPaddingRight,
-}) => {
+export const TableFooter: FC<Props> = ({ table, virtualColumns }) => {
 	const {
 		getFooterGroups,
 		getState,
@@ -59,8 +52,6 @@ export const TableFooter: FC<Props> = ({
 					key={footerGroup.id}
 					table={table}
 					virtualColumns={virtualColumns}
-					virtualPaddingLeft={virtualPaddingLeft}
-					virtualPaddingRight={virtualPaddingRight}
 				/>
 			))}
 		</MuiTableFooter>

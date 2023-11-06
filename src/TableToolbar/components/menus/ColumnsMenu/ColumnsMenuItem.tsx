@@ -16,6 +16,8 @@ import {
 	TextColor,
 	IconsColor,
 } from '../../../../components/styles'
+import { withNativeEvent } from '../../../../utils/withNativeEvent'
+import { getPascalCase } from '../../../../utils/getPascalCase'
 
 interface Props<TData extends TableData> {
 	column: Table_Column<TData>
@@ -138,6 +140,15 @@ export const ColumnsMenuItem = <TData extends TableData = {}>({
 						visibility: 'visible',
 					},
 				})}
+				onClick={withNativeEvent(
+					{
+						el: `ColumnsSettingsSidebar_${getPascalCase(
+							column.columnDef.header
+						)}_${switchChecked ? 'Hide' : 'Show'}`,
+						type: 'click',
+					},
+					table
+				)(() => null)}
 			>
 				<Box
 					sx={{

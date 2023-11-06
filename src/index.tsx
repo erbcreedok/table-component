@@ -1,3 +1,7 @@
+import {
+	ColumnVirtualizerWrapper,
+	ColumnVirtualizerWrapperProps,
+} from './components/ColumnVirtualizerWrapper'
 import { Flex } from './components/Flex'
 import { MenuItemBase } from './components/Menu'
 import { DateInput } from './inputs/DateInput'
@@ -13,6 +17,7 @@ import { createTheme } from './theme/createTheme'
 import TableComponent from './TableComponent'
 import type { Table_Icons } from './icons'
 import { CellBase, type CellBaseProps } from './components/CellBase'
+import { EmptyCell, type EmptyCellProps } from './components/EmptyCell'
 import { CopyButton } from './buttons/CopyButton'
 import { FilterOptionMenu } from './menus/FilterOptionMenu'
 import {
@@ -76,6 +81,8 @@ export {
 	BottomToolbar,
 	CellBase,
 	type CellBaseProps,
+	ColumnVirtualizerWrapper,
+	type ColumnVirtualizerWrapperProps,
 	CopyButton,
 	createTheme,
 	DateInput,
@@ -83,6 +90,8 @@ export {
 	dayPickerStyles,
 	DayPickerInput,
 	ExpandButton,
+	EmptyCell,
+	type EmptyCellProps,
 	FilterOptionMenu,
 	FilterMultiselect,
 	type FilterMultiselectProps,

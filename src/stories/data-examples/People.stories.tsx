@@ -1,6 +1,11 @@
 import React, { useState } from 'react'
 import { Meta, Story } from '@storybook/react'
-import TableComponent, { TableComponentProps, Sidebar, ExpandByClick, utilColumns } from '../../'
+import TableComponent, {
+	TableComponentProps,
+	Sidebar,
+	ExpandByClick,
+	utilColumns,
+} from '../../'
 import { Typography } from '@mui/material'
 import { OpenIcon } from '../../icons/OpenIcon'
 import {
@@ -115,7 +120,7 @@ const SummaryRowExampleCellValue = (props) => {
 }
 
 const columns = getPeopleColumns()
-const data = getSeparatedPeopleMembers()
+const data = getSeparatedPeopleMembers(400)
 const innerTableData = getSeparatedPeopleMembers(50)
 
 export const PeopleTable: Story<TableComponentProps> = () => {
@@ -151,7 +156,6 @@ export const PeopleTable: Story<TableComponentProps> = () => {
 						// @ts-ignore
 						expanded: false,
 						showColumnFilters: true,
-
 					}}
 					{...getTablePresetProps('PeoplePresets')}
 				/>
@@ -176,7 +180,7 @@ export const PeopleTable: Story<TableComponentProps> = () => {
 				hideRowSelectionColumn
 				expandByClick={ExpandByClick.CellAction}
 				muiTableStatusBarWrapperProps={{ sx: { p: '9px 15px' } }}
-				// enableRowVirtualization
+				enableRowVirtualization
 				cellStyleRules={{
 					performance: {
 						executeStyleCondition: ({ cell, column, isCurrentCellClicked }) => {
@@ -293,7 +297,6 @@ export const PeopleTable: Story<TableComponentProps> = () => {
 					// @ts-ignore
 					expanded: false,
 					showColumnFilters: true,
-
 				}}
 				renderDetailPanel={({ row, ...rest }) => (
 					<DetailedPanel

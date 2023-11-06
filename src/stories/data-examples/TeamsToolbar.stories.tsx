@@ -13,7 +13,6 @@ import { Colors, DEFAULT_TEAMS_PRESETS } from '../utils/constants'
 import { getTablePresetProps } from '../utils/getTablePresetProps'
 import { getSeparatedTeamMembers } from '../utils/getTeamMembers'
 import { getTeamMembersColumns } from '../utils/getTeamMembersColumns'
-import { sortByArrayOrder } from '../utils/sortByArrayOrder'
 
 const meta: Meta = {
 	title: 'Data Examples/Table Toolbar',
@@ -23,16 +22,6 @@ export default meta
 
 const data = getSeparatedTeamMembers()
 const columns = getTeamMembersColumns()
-
-const groupsSorting = {
-	impact: sortByArrayOrder(['Critical', 'High', 'Medium', 'Low']),
-	performance: sortByArrayOrder([
-		'Often exceeds',
-		'Sometimes exceeds',
-		'Meets',
-	]),
-	riskOfLeaving: sortByArrayOrder(['Leaver', 'High', 'Medium', 'Low']),
-}
 
 const Wrapper = styled('div')`
 	display: flex;
@@ -92,7 +81,6 @@ export const TeamsToolbar: Story<TableComponentProps> = () => (
 			top: `20px solid ${Colors.bg}`,
 		}}
 		uppercaseHeader
-		groupsSorting={groupsSorting}
 		muiTablePaperProps={{ sx: { boxShadow: 'none' } }}
 		initialState={{
 			grouping: ['impact'],
