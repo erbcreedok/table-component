@@ -3,6 +3,7 @@ import { MouseEvent } from 'react'
 import type { Table_Row, TableInstance } from '..'
 import { Menu, MenuItemBase } from '../components/Menu'
 import { isEditingEnabled } from '../utils/isEditingEnabled'
+import { isEditRowActionVisible } from '../utils/showRowActionsColumn'
 
 interface Props<TData extends Record<string, any> = {}> {
 	anchorEl: HTMLElement | null
@@ -24,8 +25,11 @@ export const RowActionMenu = <TData extends Record<string, any> = {}>({
 	const {
 		options: {
 			icons: { EditIcon },
+			editingMode,
 			enableEditing,
+			hideEditRowAction,
 			localization,
+			renderEditMenuItem,
 			renderRowActionMenuItems,
 		},
 	} = table
@@ -56,11 +60,15 @@ export const RowActionMenu = <TData extends Record<string, any> = {}>({
 				},
 			}}
 		>
-			{isEditingEnabled(enableEditing, { table, row }) && (
-				<MenuItemBase size="small" icon={<EditIcon />} onClick={handleEdit}>
-					{localization.edit}
-				</MenuItemBase>
-			)}
+			{!(hideEditRowAction ?? !isEditRowActionVisible(editingMode)) &&
+				isEditingEnabled(enableEditing, { table, row }) &&
+				(renderEditMenuItem ? (
+					renderEditMenuItem({ table, row, handleEdit })
+				) : (
+					<MenuItemBase size="small" icon={<EditIcon />} onClick={handleEdit}>
+						{localization.edit}
+					</MenuItemBase>
+				))}
 			{renderRowActionMenuItems?.({
 				row,
 				table,

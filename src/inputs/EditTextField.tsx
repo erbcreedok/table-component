@@ -4,7 +4,7 @@ import { useEditField } from '../hooks/useEditField'
 import { useOnClickOutside } from '../hooks/useOnClickOutside'
 import { TableData } from '../TableComponent'
 import { getValueOrFunctionHandler } from '../utils/getValueOrFunctionHandler'
-import { isEditingEnabled } from '../utils/isEditingEnabled'
+import { isEditInputDisabled } from '../utils/isEditingEnabled'
 
 import { EditCellFieldProps } from './EditCellField'
 import { Input, InputProps } from './Input'
@@ -48,17 +48,6 @@ export const EditTextField = <TData extends TableData>({
 	}
 
 	const handleBlur: InputProps['onBlur'] = (event) => {
-		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-		// @ts-ignore
-		if (event.relatedTarget?.ariaLabel === 'clear') {
-			setValue('')
-			// timeout used to save a blue MUI stroke
-			setTimeout(() => {
-				editInputRefs.current[column.id]?.focus()
-			}, 0)
-
-			return
-		}
 		muiInputProps.onBlur?.(event)
 		if (event.isPropagationStopped()) return
 		saveData(value)
@@ -84,7 +73,7 @@ export const EditTextField = <TData extends TableData>({
 	useOnClickOutside(cellRef, handleClickOutside)
 
 	const inputProps: InputProps = {
-		disabled: !isEditingEnabled(enableEditing, { table, row }),
+		disabled: isEditInputDisabled(enableEditing, { table, row }),
 		inputRef: (inputRef) => {
 			if (inputRef) {
 				cellRef.current = inputRef
@@ -109,7 +98,6 @@ export const EditTextField = <TData extends TableData>({
 		onClear: (e) => {
 			muiInputProps.onClear?.(e)
 			setValue('')
-			saveData(undefined)
 		},
 		error,
 		hideErrorOnFocus: true,

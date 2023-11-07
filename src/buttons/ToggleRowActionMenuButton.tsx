@@ -4,6 +4,7 @@ import Tooltip from '@mui/material/Tooltip'
 
 import type { Table_Cell, Table_Row, TableData, TableInstance } from '..'
 import { isEditingEnabled } from '../utils/isEditingEnabled'
+import { isEditRowActionVisible } from '../utils/showRowActionsColumn'
 
 import { RowActionMenuButton } from './RowActionMenuButton'
 
@@ -53,7 +54,7 @@ export const ToggleRowActionMenuButton = <TData extends TableData = TableData>({
 			) : renderRowActionMenuItems ? (
 				<RowActionMenuButton table={table} row={row} />
 			) : isEditingEnabled(enableEditing, { table, row }) &&
-			  editingMode === 'row' ? (
+			  isEditRowActionVisible(editingMode) ? (
 				<Tooltip placement="right" arrow title={localization.edit}>
 					<IconButton
 						aria-label={localization.edit}

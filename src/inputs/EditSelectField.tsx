@@ -4,7 +4,7 @@ import { TableData } from '../TableComponent'
 import { getValueOrFunctionHandler } from '../utils/getValueOrFunctionHandler'
 import { normalizeSelectOptions } from '../utils/normalizeSelectOptions'
 import { useEditField } from '../hooks/useEditField'
-import { isEditingEnabled } from '../utils/isEditingEnabled'
+import { isEditInputDisabled } from '../utils/isEditingEnabled'
 
 import { EditCellFieldProps } from './EditCellField'
 import { Select, SelectProps } from './Select'
@@ -41,15 +41,15 @@ export const EditSelectField = <TData extends TableData>({
 			? value.map(({ value }) => value)
 			: value?.value
 		setValue(computedValue)
-		saveData(computedValue)
 	}
 
 	const handleBlur = (event: FocusEvent<HTMLInputElement>) => {
 		muiSelectProps.onBlur?.(event)
+		saveData(value)
 	}
 
 	const selectProps: SelectProps = {
-		disabled: !isEditingEnabled(enableEditing, { table, row }),
+		disabled: isEditInputDisabled(enableEditing, { table, row }),
 		multiple,
 		options: editSelectOptions ? normalizeSelectOptions(editSelectOptions) : [],
 		placeholder: columnDef.header,

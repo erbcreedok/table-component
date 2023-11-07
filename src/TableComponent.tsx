@@ -934,6 +934,12 @@ export type MuiTableBodyRowDragHandleFnProps<TData extends TableData = {}> = ({
 	row: Table_Row<TData>
 }) => IconButtonProps
 
+type RenderEditMenuItem<TData extends TableData = TableData> = (args: {
+	table: TableInstance<TData>
+	row: Table_Row<TData>
+	handleEdit: MouseEventHandler
+}) => ReactNode
+
 /**
  * `columns` and `data` props are the only required props, but there are over 150 other optional props.
  *
@@ -1091,6 +1097,7 @@ export type TableComponentProps<TData extends Record<string, any> = {}> = Omit<
 		grouping: GroupingState
 		table: TableInstance<TData>
 	}) => Promise<void> | void
+	hideEditRowAction?: boolean
 	hideExpandColumn?: boolean
 	hideSummaryRowInEmptyTable?: boolean
 	hideRowSelectionColumn?: boolean
@@ -1475,6 +1482,7 @@ export type TableComponentProps<TData extends Record<string, any> = {}> = Omit<
 		row: Table_Row<TData>
 		table: TableInstance<TData>
 	}) => ReactNode
+	renderEditMenuItem?: RenderEditMenuItem<TData>
 	renderGlobalFilterModeMenuItems?: ({
 		internalFilterOptions,
 		onSelectFilterMode,

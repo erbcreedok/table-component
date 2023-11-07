@@ -60,17 +60,39 @@ export const Input = ({
 			},
 		},
 	} = useTableContext()
+	const textFieldRef = useRef<HTMLDivElement>(null)
 	const inputRef = useRef<HTMLInputElement>(null)
 	const {
 		focused,
 		focusProps: { handleFocus, handleBlur },
 	} = useFocusEvents<HTMLInputElement>(props)
 
+	const onBlur = useCallback(
+		(event) => {
+			if (
+				textFieldRef.current &&
+				event.relatedTarget &&
+				textFieldRef.current.contains(event.relatedTarget)
+			) {
+				queueMicrotask(() => {
+					inputRef.current?.focus()
+				})
+				event.stopPropagation()
+
+				return
+			}
+			handleBlur(event)
+		},
+		[handleBlur]
+	)
+
 	const handleChange = useCallback<ChangeEventHandler<HTMLInputElement>>(
 		(event) => {
 			if (isNumeric) {
+				const value = getValidNumber(minValue, maxValue)(event.target.value)
+				if (value === false) return
 				Object.assign(event.target, {
-					value: getValidNumber(minValue, maxValue)(event.target.value),
+					value,
 				})
 			}
 			onChange?.(event)
@@ -84,8 +106,6 @@ export const Input = ({
 	const handleStepClick = (step: number) => () => {
 		if (inputRef.current) {
 			createNativeChangeEvent(inputRef.current, Number(props.value || 0) + step)
-			// our validation works only after blur event, so we need to focus again
-			inputRef.current.focus()
 		}
 	}
 
@@ -93,6 +113,7 @@ export const Input = ({
 
 	return (
 		<TextField
+			ref={textFieldRef}
 			variant="outlined"
 			size="small"
 			margin="none"
@@ -100,7 +121,7 @@ export const Input = ({
 			{...props}
 			onChange={handleChange}
 			onFocus={handleFocus}
-			onBlur={handleBlur}
+			onBlur={onBlur}
 			error={showError}
 			onMouseDown={handleStopPropagation} // for DragScrollingContainer to not mess things up
 			InputProps={{
@@ -132,7 +153,6 @@ export const Input = ({
 						{!!props.value && onClear && (
 							<IconButton
 								onClick={onClearStop}
-								aria-label="clear"
 								sx={{
 									visibility: 'hidden',
 									right: 0,
@@ -176,18 +196,7 @@ export const Input = ({
 						{props.InputProps?.endAdornment}
 					</>
 				),
-				inputProps: {
-					...(isNumeric
-						? {
-								type: 'number',
-								inputMode: 'numeric',
-								pattern: '[0-9]*',
-								min: minValue,
-								max: maxValue,
-						  }
-						: {}),
-					...props.inputProps,
-				},
+				inputProps: props.inputProps,
 			}}
 			sx={mergeSx(
 				{

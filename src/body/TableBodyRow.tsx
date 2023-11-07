@@ -58,6 +58,7 @@ export const TableBodyRow: FC<TableBodyRowProps> = ({
 		getIsSomeColumnsPinned,
 		getState,
 		options: {
+			editingMode,
 			enableRowDragging,
 			layoutMode,
 			memoMode,
@@ -150,7 +151,11 @@ export const TableBodyRow: FC<TableBodyRowProps> = ({
 		virtualColumns ?? getCellsFilteredByDisplay(row?.getVisibleCells?.()) ?? []
 
 	return (
-		<EditingRowActionButtons open={isEditingRow} table={table} row={row}>
+		<EditingRowActionButtons
+			open={isEditingRow && editingMode === 'row'}
+			table={table}
+			row={row}
+		>
 			{({ ref }) => (
 				<>
 					<MuiTableRow

@@ -185,16 +185,17 @@ export const TableBodyCell = ({
 	)
 
 	const isEditable =
-		isEditingEnabled(enableEditing, { table, row }) ||
-		isEditingEnabled(columnDef.enableEditing, { table, row })
+		columnDef.enableEditing !== undefined
+			? isEditingEnabled(columnDef.enableEditing, { table, row })
+			: isEditingEnabled(enableEditing, { table, row })
 
 	const isEditing =
-		isEditable &&
-		editingMode !== 'modal' &&
-		(editingMode === 'table' ||
-			editingRow?.id === row.id ||
-			editingCell?.id === cell.id) &&
-		!row?.getIsGrouped?.()
+		!isGroupedCell &&
+		// if editingCell state is provided, it should be higher priority, than any config
+		(editingCell?.id === cell.id ||
+			(isEditable &&
+				editingMode !== 'modal' &&
+				(editingMode === 'table' || editingRow?.id === row.id)))
 
 	const handleDoubleClick = (event: MouseEvent<HTMLTableCellElement>) => {
 		tableCellProps?.onDoubleClick?.(event)

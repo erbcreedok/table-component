@@ -45,6 +45,7 @@ import { getCoreRowModel } from '../utils/getCoreRowModel'
 import { getExpandedRowModel } from '../utils/getExpandedRowModel'
 import { getGroupedRowModel } from '../utils/getGroupedRowModel'
 import { getSortedRowModel } from '../utils/getSortedRowModel'
+import { showRowActionsColumn } from '../utils/showRowActionsColumn'
 
 export const useTable = <TData extends TableData = TableData>(
 	config: TableComponentProps<TData> & { localization: Table_Localization }
@@ -160,7 +161,7 @@ export const useTable = <TData extends TableData = TableData>(
 						config.enableRowNumbers ||
 						(!config.hideRowSelectionColumn && config.enableRowSelection)) &&
 						getUtilColumn(config),
-					config.enableRowActions && {
+					showRowActionsColumn(config) && {
 						Cell: ({ cell, row, table }) => (
 							<ToggleRowActionMenuButton cell={cell} row={row} table={table} />
 						),

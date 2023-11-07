@@ -1,309 +1,326 @@
-import React, { useState } from 'react';
-import { Meta, Story } from '@storybook/react';
-import TableComponent, {
-  TableComponentProps,
-} from '../../';
-import { faker } from '@faker-js/faker';
-import { MenuItem } from '@mui/material';
+import React, { useState } from 'react'
+import { Meta, Story } from '@storybook/react'
+import TableComponent, { TableComponentProps } from '../../'
+import { faker } from '@faker-js/faker'
+import { MenuItem } from '@mui/material'
 
 const meta: Meta = {
-  title: 'Features/Editing Examples',
-};
+	title: 'Features/Editing Examples',
+}
 
-export default meta;
+export default meta
 
-const data = [...Array(100)].map(() => ({
-  firstName: faker.name.firstName(),
-  lastName: faker.name.lastName(),
-  address: faker.address.streetAddress(),
-  state: faker.address.state(),
-  phoneNumber: faker.phone.number(),
-}));
+const data = [...Array(10)].map(() => ({
+	firstName: faker.name.firstName(),
+	lastName: faker.name.lastName(),
+	address: faker.address.streetAddress(),
+	state: faker.address.state(),
+	phoneNumber: faker.phone.number(),
+}))
 
 export const EditingEnabledEditModeModalDefault: Story<
-  TableComponentProps
+	TableComponentProps
 > = () => {
-  const [tableData, setTableData] = useState(data);
+	const [tableData, setTableData] = useState(data)
 
-  const handleSaveRow = ({ exitEditingMode, row, values }) => {
-    tableData[row.index] = values;
-    setTableData([...tableData]);
-    exitEditingMode();
-  };
+	const handleSaveRow = ({ exitEditingMode, row, values }) => {
+		tableData[row.index] = values
+		setTableData([...tableData])
+		exitEditingMode()
+	}
 
-  return (
-    <TableComponent
-      columns={[
-        {
-          header: 'First Name',
-          accessorKey: 'firstName',
-        },
-        {
-          header: 'Last Name',
-          accessorKey: 'lastName',
-        },
-        {
-          header: 'Address',
-          accessorKey: 'address',
-        },
-        {
-          header: 'State',
-          accessorKey: 'state',
-        },
-        {
-          header: 'Phone Number',
-          accessorKey: 'phoneNumber',
-          enableEditing: false,
-        },
-      ]}
-      data={tableData}
-      enableEditing
-      onEditingRowsSave={handleSaveRow}
-    />
-  );
-};
+	return (
+		<TableComponent
+			columns={[
+				{
+					header: 'First Name',
+					accessorKey: 'firstName',
+				},
+				{
+					header: 'Last Name',
+					accessorKey: 'lastName',
+				},
+				{
+					header: 'Address',
+					accessorKey: 'address',
+				},
+				{
+					header: 'State',
+					accessorKey: 'state',
+				},
+				{
+					header: 'Phone Number',
+					accessorKey: 'phoneNumber',
+					enableEditing: false,
+				},
+			]}
+			data={tableData}
+			enableEditing
+			onEditingRowsSave={handleSaveRow}
+		/>
+	)
+}
 
 export const EditingEnabledEditModeRow: Story<TableComponentProps> = () => {
-  const [tableData, setTableData] = useState(data);
+	const [tableData, setTableData] = useState(data)
 
-  const handleSaveRow = ({ exitEditingMode, row, values }) => {
-    tableData[row.index] = values;
-    setTableData([...tableData]);
-    exitEditingMode();
-  };
+	const handleSaveRow = ({ exitEditingMode, row, values }) => {
+		tableData[row.index] = values
+		setTableData([...tableData])
+		exitEditingMode()
+	}
 
-  return (
-    <TableComponent
-      columns={[
-        {
-          header: 'First Name',
-          accessorKey: 'firstName',
-        },
-        {
-          header: 'Last Name',
-          accessorKey: 'lastName',
-        },
-        {
-          header: 'Address',
-          accessorKey: 'address',
-        },
-        {
-          header: 'State',
-          accessorKey: 'state',
-        },
-        {
-          header: 'Phone Number',
-          accessorKey: 'phoneNumber',
-          enableEditing: false,
-        },
-      ]}
-      data={tableData}
-      enableEditing
-      editingMode="row"
-      onEditingRowsSave={handleSaveRow}
-    />
-  );
-};
+	return (
+		<TableComponent
+			columns={[
+				{
+					header: 'First Name',
+					accessorKey: 'firstName',
+				},
+				{
+					header: 'Last Name',
+					accessorKey: 'lastName',
+				},
+				{
+					header: 'Address',
+					accessorKey: 'address',
+				},
+				{
+					header: 'State',
+					accessorKey: 'state',
+				},
+				{
+					header: 'Phone Number',
+					accessorKey: 'phoneNumber',
+					enableEditing: false,
+				},
+			]}
+			data={tableData}
+			enableEditing
+			editingMode="row"
+			onEditingRowsSave={handleSaveRow}
+		/>
+	)
+}
 
-export const EditingEnabledEditModeCell: Story<
-  TableComponentProps
-> = () => {
-  const [tableData, setTableData] = useState(data);
+export const EditingEnabledEditModeCell: Story<TableComponentProps> = () => {
+	const [tableData, setTableData] = useState(data)
 
-  const handleSaveCell = (cell, value) => {
-    tableData[cell.row.index][cell.column.id] = value;
-    setTableData([...tableData]);
-  };
+	const handleSaveCell = (cell, value) => {
+		tableData[cell.row.index][cell.column.id] = value
+		setTableData([...tableData])
+	}
 
-  return (
-    <TableComponent
-      columns={[
-        {
-          header: 'First Name',
-          accessorKey: 'firstName',
-        },
-        {
-          header: 'Last Name',
-          accessorKey: 'lastName',
-        },
-        {
-          header: 'Address',
-          accessorKey: 'address',
-        },
-        {
-          header: 'State',
-          accessorKey: 'state',
-        },
-        {
-          header: 'Phone Number',
-          accessorKey: 'phoneNumber',
-          enableEditing: false,
-        },
-      ]}
-      data={tableData}
-      editingMode="cell"
-      enableEditing
-      muiEditInputProps={({ cell }) => ({
-        onBlur: (event) => {
-          handleSaveCell(cell, event.target.value);
-        },
-      })}
-    />
-  );
-};
+	return (
+		<TableComponent
+			columns={[
+				{
+					header: 'First Name',
+					accessorKey: 'firstName',
+				},
+				{
+					header: 'Last Name',
+					accessorKey: 'lastName',
+				},
+				{
+					header: 'Address',
+					accessorKey: 'address',
+				},
+				{
+					header: 'State',
+					accessorKey: 'state',
+				},
+				{
+					header: 'Phone Number',
+					accessorKey: 'phoneNumber',
+					enableEditing: false,
+				},
+			]}
+			data={tableData}
+			editingMode="cell"
+			enableEditing
+			muiEditInputProps={({ cell }) => ({
+				onBlur: (event) => {
+					handleSaveCell(cell, event.target.value)
+				},
+			})}
+		/>
+	)
+}
 
-export const EditingEnabledEditModeTable: Story<
-  TableComponentProps
-> = () => {
-  const [tableData, setTableData] = useState(data);
+export const EditingEnabledEditModeTable: Story<TableComponentProps> = () => {
+	const [tableData, setTableData] = useState(
+		data.map((row, index) => ({
+			...row,
+			...(index % 3 === 0
+				? {
+						subRows: [...Array(4)].map(() => ({
+							firstName: faker.name.firstName(),
+							lastName: faker.name.lastName(),
+							address: faker.address.streetAddress(),
+							state: faker.address.state(),
+							phoneNumber: faker.phone.number(),
+						})),
+				  }
+				: {}),
+		}))
+	)
 
-  const handleSaveCell = (cell, value) => {
-    tableData[+cell.row.index][cell.column.id] = value;
-    setTableData([...tableData]);
-    console.info('saved cell with value: ', value);
-  };
+	const handleSaveCell = (cell, value) => {
+		tableData[+cell.row.index][cell.column.id] = value
+		setTableData([...tableData])
+		console.info('saved cell with value: ', value)
+	}
 
-  return (
-    <TableComponent
-      columns={[
-        {
-          header: 'First Name',
-          accessorKey: 'firstName',
-        },
-        {
-          header: 'Last Name',
-          accessorKey: 'lastName',
-        },
-        {
-          header: 'Address',
-          accessorKey: 'address',
-        },
-        {
-          header: 'State',
-          accessorKey: 'state',
-        },
-        {
-          header: 'Phone Number',
-          accessorKey: 'phoneNumber',
-        },
-      ]}
-      data={tableData}
-      editingMode="table"
-      enableEditing
-      muiEditInputProps={({ cell }) => ({
-        onBlur: (event) => {
-          handleSaveCell(cell, event.target.value);
-        },
-      })}
-    />
-  );
-};
+	return (
+		<TableComponent
+			columns={[
+				{
+					header: 'First Name',
+					accessorKey: 'firstName',
+				},
+				{
+					header: 'Last Name',
+					accessorKey: 'lastName',
+					enableEditing: ({ row }) => {
+						const e = (!row.subRows || row.subRows.length === 0) && row.index !== 1
+						return e
+					}
+				},
+				{
+					header: 'Address',
+					accessorKey: 'address',
+				},
+				{
+					header: 'State',
+					accessorKey: 'state',
+				},
+				{
+					header: 'Phone Number',
+					accessorKey: 'phoneNumber',
+				},
+			]}
+			data={tableData}
+      enableExpanding
+			enableRowNumbers={false}
+			editingMode="table"
+			enableEditing={({ row }) => {
+				return row.index !== 1
+			}}
+			muiEditInputProps={({ cell }) => ({
+				onBlur: (event) => {
+					handleSaveCell(cell, event.target.value)
+				},
+			})}
+		/>
+	)
+}
 
 export const EditingCustomizeInput: Story<TableComponentProps> = () => {
-  const [tableData, setTableData] = useState(data);
+	const [tableData, setTableData] = useState(data)
 
-  const handleSaveRow = ({ row, values }) => {
-    tableData[row.index] = values;
-    setTableData([...tableData]);
-  };
+	const handleSaveRow = ({ row, values }) => {
+		tableData[row.index] = values
+		setTableData([...tableData])
+	}
 
-  const usStates = [
-    'Alabama',
-    'Alaska',
-    'American Samoa',
-    'Arizona',
-    'Arkansas',
-    'California',
-    'Colorado',
-    'Connecticut',
-    'Delaware',
-    'Florida',
-    'Georgia',
-    'Guam',
-    'Hawaii',
-    'Idaho',
-    'Illinois',
-    'Indiana',
-    'Iowa',
-    'Kansas',
-    'Kentucky',
-    'Louisiana',
-    'Maine',
-    'Maryland',
-    'Massachusetts',
-    'Michigan',
-    'Minnesota',
-    'Mississippi',
-    'Missouri',
-    'Montana',
-    'Nebraska',
-    'Nevada',
-    'New Hampshire',
-    'New Jersey',
-    'New Mexico',
-    'New York',
-    'North Carolina',
-    'North Dakota',
-    'Ohio',
-    'Oklahoma',
-    'Oregon',
-    'Palau',
-    'Pennsylvania',
-    'Rhode Island',
-    'South Carolina',
-    'South Dakota',
-    'Tennessee',
-    'Texas',
-    'Utah',
-    'Vermont',
-    'Virgin Island',
-    'Virginia',
-    'Washington',
-    'West Virginia',
-    'Wisconsin',
-    'Wyoming',
-  ];
+	const usStates = [
+		'Alabama',
+		'Alaska',
+		'American Samoa',
+		'Arizona',
+		'Arkansas',
+		'California',
+		'Colorado',
+		'Connecticut',
+		'Delaware',
+		'Florida',
+		'Georgia',
+		'Guam',
+		'Hawaii',
+		'Idaho',
+		'Illinois',
+		'Indiana',
+		'Iowa',
+		'Kansas',
+		'Kentucky',
+		'Louisiana',
+		'Maine',
+		'Maryland',
+		'Massachusetts',
+		'Michigan',
+		'Minnesota',
+		'Mississippi',
+		'Missouri',
+		'Montana',
+		'Nebraska',
+		'Nevada',
+		'New Hampshire',
+		'New Jersey',
+		'New Mexico',
+		'New York',
+		'North Carolina',
+		'North Dakota',
+		'Ohio',
+		'Oklahoma',
+		'Oregon',
+		'Palau',
+		'Pennsylvania',
+		'Rhode Island',
+		'South Carolina',
+		'South Dakota',
+		'Tennessee',
+		'Texas',
+		'Utah',
+		'Vermont',
+		'Virgin Island',
+		'Virginia',
+		'Washington',
+		'West Virginia',
+		'Wisconsin',
+		'Wyoming',
+	]
 
-  return (
-    <TableComponent
-      columns={[
-        {
-          header: 'First Name',
-          accessorKey: 'firstName',
-        },
-        {
-          header: 'Last Name',
-          accessorKey: 'lastName',
-        },
-        {
-          header: 'Address',
-          accessorKey: 'address',
-        },
-        {
-          header: 'State',
-          accessorKey: 'state',
-          muiEditInputProps: () => ({
-            children: usStates.map((state) => (
-              <MenuItem key={state} value={state}>
-                {state}
-              </MenuItem>
-            )),
-            select: true,
-          }),
-        },
-        {
-          header: 'Phone Number',
-          accessorKey: 'phoneNumber',
-        },
-      ]}
-      data={tableData}
-      enableRowActions
-      enableEditing
-      muiEditInputProps={{ variant: 'outlined' }}
-      onEditingRowsSave={handleSaveRow}
-    />
-  );
-};
+	return (
+		<TableComponent
+			columns={[
+				{
+					header: 'First Name',
+					accessorKey: 'firstName',
+				},
+				{
+					header: 'Last Name',
+					accessorKey: 'lastName',
+				},
+				{
+					header: 'Address',
+					accessorKey: 'address',
+				},
+				{
+					header: 'State',
+					accessorKey: 'state',
+					muiEditInputProps: () => ({
+						children: usStates.map((state) => (
+							<MenuItem key={state} value={state}>
+								{state}
+							</MenuItem>
+						)),
+						select: true,
+					}),
+				},
+				{
+					header: 'Phone Number',
+					accessorKey: 'phoneNumber',
+				},
+			]}
+			data={tableData}
+			enableRowActions
+			enableEditing
+			muiEditInputProps={{ variant: 'outlined' }}
+			onEditingRowsSave={handleSaveRow}
+		/>
+	)
+}
 
 // export const EditingWithValidation: Story<TableComponentProps> = () => {
 //   const [tableData, setTableData] = useState(data);
@@ -381,151 +398,151 @@ export const EditingCustomizeInput: Story<TableComponentProps> = () => {
 // };
 
 export const EditingEnabledAsync: Story<TableComponentProps> = () => {
-  const [tableData, setTableData] = useState(data);
-  const [isSaving, setIsSaving] = useState(false);
+	const [tableData, setTableData] = useState(data)
+	const [isSaving, setIsSaving] = useState(false)
 
-  const handleSaveRow = ({ row, values }) => {
-    setIsSaving(true);
-    setTimeout(() => {
-      tableData[row.index] = values;
-      setTableData([...tableData]);
-      setIsSaving(false);
-    }, 1500);
-  };
+	const handleSaveRow = ({ row, values }) => {
+		setIsSaving(true)
+		setTimeout(() => {
+			tableData[row.index] = values
+			setTableData([...tableData])
+			setIsSaving(false)
+		}, 1500)
+	}
 
-  return (
-    <TableComponent
-      columns={[
-        {
-          header: 'First Name',
-          accessorKey: 'firstName',
-        },
-        {
-          header: 'Last Name',
-          accessorKey: 'lastName',
-        },
-        {
-          header: 'Address',
-          accessorKey: 'address',
-        },
-        {
-          header: 'State',
-          accessorKey: 'state',
-        },
-        {
-          header: 'Phone Number',
-          accessorKey: 'phoneNumber',
-        },
-      ]}
-      data={tableData}
-      enableRowActions
-      enableEditing
-      onEditingRowsSave={handleSaveRow}
-      state={{
-        showProgressBars: isSaving,
-      }}
-    />
-  );
-};
+	return (
+		<TableComponent
+			columns={[
+				{
+					header: 'First Name',
+					accessorKey: 'firstName',
+				},
+				{
+					header: 'Last Name',
+					accessorKey: 'lastName',
+				},
+				{
+					header: 'Address',
+					accessorKey: 'address',
+				},
+				{
+					header: 'State',
+					accessorKey: 'state',
+				},
+				{
+					header: 'Phone Number',
+					accessorKey: 'phoneNumber',
+				},
+			]}
+			data={tableData}
+			enableRowActions
+			enableEditing
+			onEditingRowsSave={handleSaveRow}
+			state={{
+				showProgressBars: isSaving,
+			}}
+		/>
+	)
+}
 
 const nestedData = [...Array(10)].map(() => ({
-  name: {
-    firstName: faker.name.firstName(),
-    lastName: faker.name.lastName(),
-  },
-  address: faker.address.streetAddress(),
-  state: faker.address.state(),
-  phoneNumber: faker.phone.number(),
-}));
+	name: {
+		firstName: faker.name.firstName(),
+		lastName: faker.name.lastName(),
+	},
+	address: faker.address.streetAddress(),
+	state: faker.address.state(),
+	phoneNumber: faker.phone.number(),
+}))
 
 export const EditingNestedData: Story<TableComponentProps> = () => {
-  const [tableData, setTableData] = useState(() => nestedData);
+	const [tableData, setTableData] = useState(() => nestedData)
 
-  return (
-    <TableComponent
-      columns={[
-        {
-          header: 'First Name',
-          accessorFn: (row) => row.name.firstName,
-          id: 'firstName',
-        },
-        {
-          header: 'Last Name',
-          accessorKey: 'name.lastName',
-        },
-        {
-          header: 'Address',
-          accessorKey: 'address',
-        },
-        {
-          header: 'State',
-          accessorKey: 'state',
-        },
-        {
-          header: 'Phone Number',
-          accessorKey: 'phoneNumber',
-          enableEditing: false,
-        },
-      ]}
-      data={tableData}
-      enableEditing
-      onEditingRowsSave={({ row, values }) => {
-        tableData[row.index] = {
-          name: {
-            firstName: values.firstName,
-            lastName: values['name.lastName'],
-          },
-          address: row._valuesCache.address,
-          state: row._valuesCache.state,
-          phoneNumber: row._valuesCache.phoneNumber,
-        };
-        setTableData([...tableData]);
-      }}
-    />
-  );
-};
+	return (
+		<TableComponent
+			columns={[
+				{
+					header: 'First Name',
+					accessorFn: (row) => row.name.firstName,
+					id: 'firstName',
+				},
+				{
+					header: 'Last Name',
+					accessorKey: 'name.lastName',
+				},
+				{
+					header: 'Address',
+					accessorKey: 'address',
+				},
+				{
+					header: 'State',
+					accessorKey: 'state',
+				},
+				{
+					header: 'Phone Number',
+					accessorKey: 'phoneNumber',
+					enableEditing: false,
+				},
+			]}
+			data={tableData}
+			enableEditing
+			onEditingRowsSave={({ row, values }) => {
+				tableData[row.index] = {
+					name: {
+						firstName: values.firstName,
+						lastName: values['name.lastName'],
+					},
+					address: row._valuesCache.address,
+					state: row._valuesCache.state,
+					phoneNumber: row._valuesCache.phoneNumber,
+				}
+				setTableData([...tableData])
+			}}
+		/>
+	)
+}
 
 export const EditingEnabledEditModeTableWithGroupedRows: Story<
-  TableComponentProps
+	TableComponentProps
 > = () => {
-  const [tableData, setTableData] = useState(data);
+	const [tableData, setTableData] = useState(data)
 
-  const handleSaveRow = ({ exitEditingMode, row, values }) => {
-    tableData[row.index] = values;
-    setTableData([...tableData]);
-    exitEditingMode();
-  };
+	const handleSaveRow = ({ exitEditingMode, row, values }) => {
+		tableData[row.index] = values
+		setTableData([...tableData])
+		exitEditingMode()
+	}
 
-  return (
-    <TableComponent
-      columns={[
-        {
-          header: 'First Name',
-          accessorKey: 'firstName',
-        },
-        {
-          header: 'Last Name',
-          accessorKey: 'lastName',
-        },
-        {
-          header: 'Address',
-          accessorKey: 'address',
-        },
-        {
-          header: 'State',
-          accessorKey: 'state',
-        },
-        {
-          header: 'Phone Number',
-          accessorKey: 'phoneNumber',
-          enableEditing: false,
-        },
-      ]}
-      data={tableData}
-      enableEditing
-      enableGrouping
-      editingMode="table"
-      onEditingRowsSave={handleSaveRow}
-    />
-  );
-};
+	return (
+		<TableComponent
+			columns={[
+				{
+					header: 'First Name',
+					accessorKey: 'firstName',
+				},
+				{
+					header: 'Last Name',
+					accessorKey: 'lastName',
+				},
+				{
+					header: 'Address',
+					accessorKey: 'address',
+				},
+				{
+					header: 'State',
+					accessorKey: 'state',
+				},
+				{
+					header: 'Phone Number',
+					accessorKey: 'phoneNumber',
+					enableEditing: false,
+				},
+			]}
+			data={tableData}
+			enableEditing
+			enableGrouping
+			editingMode="table"
+			onEditingRowsSave={handleSaveRow}
+		/>
+	)
+}
