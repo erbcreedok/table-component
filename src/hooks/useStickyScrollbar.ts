@@ -3,21 +3,50 @@ import { useCallback, useEffect, useRef } from 'react'
 interface Props {
 	enabled: boolean
 	onHorizontalScrollbarHeight: (height: number) => void
+	parent?: HTMLElement | null
 }
 
 export const useStickyScrollbar = ({
 	enabled,
 	onHorizontalScrollbarHeight,
+	parent,
 }: Props) => {
+	const parentRef = useRef<HTMLElement | null | undefined>()
 	const containerRef = useRef<HTMLDivElement | null>(null)
 	const scrollbarRef = useRef<HTMLDivElement | null>(null)
 	const fakeContentRef = useRef<HTMLElement | undefined>()
 	const destructorsRef = useRef<{
-		documentScroll?: Destructor
 		containerScroll?: Destructor
 		containerResizeObserver?: Destructor
 		scrollbarScroll?: Destructor
 	}>({})
+
+	// Show the virtual scrollbar when the container's scrollbar is out of view.
+	const handleScrollbarVisibility = useCallback(() => {
+		const parent = parentRef.current
+		const scrollbar = scrollbarRef.current
+
+		if (!scrollbar) return
+
+		const height = parent ? parent.clientHeight : window.innerHeight
+
+		const { top, bottom } = containerRef.current?.getBoundingClientRect() ?? {
+			top: 0,
+			bottom: 0,
+		}
+		scrollbar.classList.toggle('visible', top < height && bottom >= height)
+	}, [])
+
+	useEffect(() => {
+		parentRef.current = parent
+		;(parent ?? document).addEventListener('scroll', handleScrollbarVisibility)
+
+		return () =>
+			(parent ?? document).removeEventListener(
+				'scroll',
+				handleScrollbarVisibility
+			)
+	}, [handleScrollbarVisibility, parent])
 
 	const handleScrollbarRef = useCallback(
 		(scrollbar: HTMLDivElement | null) => {
@@ -47,7 +76,6 @@ export const useStickyScrollbar = ({
 
 	const handleContainerRef = useCallback(
 		(container: HTMLDivElement | null) => {
-			destructorsRef.current.documentScroll?.()
 			destructorsRef.current.containerScroll?.()
 			destructorsRef.current.containerResizeObserver?.()
 
@@ -66,22 +94,6 @@ export const useStickyScrollbar = ({
 					destructorsRef.current.containerScroll = () => {
 						container.removeEventListener('scroll', handleContainerScroll)
 					}
-				}
-
-				// Show the virtual scrollbar when the container's scrollbar is out of view.
-				const handleScrollbarVisibility = () => {
-					const scrollbar = scrollbarRef.current
-					if (!scrollbar) return
-					const { innerHeight } = window
-					const { top, bottom } = container.getBoundingClientRect()
-					scrollbar.classList.toggle(
-						'visible',
-						top < innerHeight && bottom >= innerHeight
-					)
-				}
-				document.addEventListener('scroll', handleScrollbarVisibility)
-				destructorsRef.current.documentScroll = () => {
-					document.removeEventListener('scroll', handleScrollbarVisibility)
 				}
 
 				// If the container's resizing occurs or on initial calculation.
@@ -109,7 +121,7 @@ export const useStickyScrollbar = ({
 
 			containerRef.current = container
 		},
-		[enabled, onHorizontalScrollbarHeight]
+		[enabled, handleScrollbarVisibility, onHorizontalScrollbarHeight]
 	)
 
 	useEffect(() => {
@@ -129,13 +141,6 @@ export const useStickyScrollbar = ({
 		handleScrollbarRef,
 		onHorizontalScrollbarHeight,
 	])
-
-	useEffect(() => {
-		return () => {
-			// eslint-disable-next-line react-hooks/exhaustive-deps
-			destructorsRef.current.documentScroll?.()
-		}
-	}, [])
 
 	return {
 		handleContainerRef,

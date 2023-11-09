@@ -21,10 +21,14 @@ import type {
 	TableInstance,
 } from '.'
 
-export const getColumnId = <TData extends Record<string, any> = {}>(
+const getColumnIdHelper = <TData extends Record<string, any> = {}>(
 	columnDef: Table_ColumnDef<TData>
 ): string =>
 	columnDef.id ?? columnDef.accessorKey?.toString?.() ?? columnDef.header
+
+export const getColumnId = <TData extends Record<string, any> = {}>(
+	column: Table_Column<TData> | Table_ColumnDef<TData>
+) => getColumnIdHelper('columnDef' in column ? column.columnDef : column)
 
 export const getAllLeafColumnDefs = <TData extends Record<string, any> = {}>(
 	columns: Table_ColumnDef<TData>[]

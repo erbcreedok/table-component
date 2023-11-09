@@ -637,7 +637,7 @@ const meta: Meta = {
 		},
 		enableStickyScrollbars: {
 			control: 'object',
-			description: 'Example: { "vertical": true }',
+			description: 'Example: { "horizontal": true }',
 		},
 		enableRowActions: {
 			control: 'boolean',
@@ -871,6 +871,24 @@ const meta: Meta = {
 			control: { type: 'object' },
 			defaultValue: {},
 			description: 'Set props for toolbar component',
+		},
+		organizeGroupingMenu: {
+			control: { type: 'array' },
+			description: `Example: ["${columns
+				.map((col) => getColumnId(col))
+				.join('", "')}"]`,
+		},
+		organizeSortingMenu: {
+			control: { type: 'array' },
+			description: `Example: ["${columns
+				.map((col) => getColumnId(col))
+				.join('", "')}"]`,
+		},
+		organizeFilteringMenu: {
+			control: { type: 'array' },
+			description: `Example: ["${columns
+				.map((col) => getColumnId(col))
+				.join('", "')}"]`,
 		},
 	},
 }

@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useRef } from 'react'
 import { Meta, Story } from '@storybook/react'
 import TableComponent, { TableComponentProps, Table_ColumnDef } from '../../'
 import { faker } from '@faker-js/faker'
@@ -96,21 +96,37 @@ export const minHeightParent: Story<TableComponentProps> = () => (
 	</div>
 )
 
-export const DragScrollingGrabResizeOrder: Story<TableComponentProps> = () => (
-	<TableComponent
-		columns={columns}
-		data={data}
-		muiTablePaperProps={{
-			sx: {
-				maxWidth: '700px',
-				maxHeight: '1200px',
-				m: 'auto',
-			},
-		}}
-		enableStickyScrollbars={{ vertical: true }}
-		enableDragScrolling
-		enableRowDragging
-		enableColumnResizing
-		enableColumnOrdering
-	/>
-)
+export const DragScrollingGrabResizeOrder: Story<TableComponentProps> = () => {
+	// const ref = useRef(null)
+	return (
+		// <div
+		// 	ref={ref}
+		// 	style={{
+		// 		width: '700px',
+		// 		height: '600px',
+		// 		overflow: 'auto',
+		// 		position: 'relative',
+		// 	}}
+		// >
+		<TableComponent
+			columns={columns}
+			data={data}
+			muiTablePaperProps={{
+				sx: {
+					maxWidth: '700px',
+					maxHeight: '1200px',
+					m: '70em auto',
+				},
+			}}
+			enableStickyScrollbars={{
+				horizontal: true,
+				// parent: ref.current
+			}}
+			enableDragScrolling
+			enableRowDragging
+			enableColumnResizing
+			enableColumnOrdering
+		/>
+		// </div>
+	)
+}

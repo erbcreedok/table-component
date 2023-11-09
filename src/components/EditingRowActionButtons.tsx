@@ -45,7 +45,7 @@ export const EditingRowActionButtons = <TData extends TableData>({
 			onEditingRowsSave,
 			onEditingRowCancel,
 		},
-		refs: { tableContainerRef },
+		refs: { tableContainerRef, tableHeadCellRefs },
 		setEditingRow,
 	} = table
 	const { editingRow } = getState()
@@ -59,6 +59,23 @@ export const EditingRowActionButtons = <TData extends TableData>({
 		const hasErrors = Object.values(editingRow?.errors ?? {}).some(
 			(error) => error !== null
 		)
+		if (hasErrors) {
+			const firstErrorKey = Object.keys(editingRow?.errors ?? {}).find(
+				(key) => editingRow?.errors[key] !== null
+			)
+			if (firstErrorKey) {
+				const errorTableHeadRef = tableHeadCellRefs.current[firstErrorKey]
+				const rect = errorTableHeadRef.getBoundingClientRect()
+				const x =
+					rect?.left +
+					tableContainerRef.current?.scrollLeft -
+					tableContainerRef.current?.clientWidth / 2
+				tableContainerRef.current?.scrollTo({
+					left: x,
+					behavior: 'smooth',
+				})
+			}
+		}
 		if (editingRow && !hasErrors) {
 			onEditingRowsSave?.({
 				exitEditingMode: () => setEditingRow(null),

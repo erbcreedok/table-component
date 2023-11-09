@@ -940,6 +940,8 @@ type RenderEditMenuItem<TData extends TableData = TableData> = (args: {
 	handleEdit: MouseEventHandler
 }) => ReactNode
 
+export type ValueTransformer<In, Out = In> = (value: In) => Out
+
 /**
  * `columns` and `data` props are the only required props, but there are over 150 other optional props.
  *
@@ -980,9 +982,9 @@ export type TableComponentProps<TData extends Record<string, any> = {}> = Omit<
 	 * Contains list of column accessorKey.
 	 */
 	suggestedColumns?: {
-		filtering?: string[]
-		grouping?: string[]
-		sorting?: string[]
+		filtering?: readonly string[]
+		grouping?: readonly string[]
+		sorting?: readonly string[]
 	}
 	/**
 	 * Pass your data as an array of objects. Objects can theoretically be any shape, but it's best to keep them consistent.
@@ -1059,7 +1061,15 @@ export type TableComponentProps<TData extends Record<string, any> = {}> = Omit<
 	enableRowVirtualization?: boolean
 	enableSelectAll?: boolean
 	enableStatusBar?: boolean
-	enableStickyScrollbars?: { vertical?: boolean }
+	enableStickyScrollbars?: {
+		horizontal?: boolean
+		/**
+		 * todo
+		 * position must relative
+		 * @default window
+		 */
+		// parent: HTMLElement | null | undefined
+	}
 	enableStickyFooter?: boolean
 	enableStickyHeader?: boolean
 	enableSummaryRow?: boolean
@@ -1439,8 +1449,15 @@ export type TableComponentProps<TData extends Record<string, any> = {}> = Omit<
 		value?: any
 	}) => void
 	organizeColumnsMenu?(columns: Table_Column<TData>[]): Table_Column<TData>[]
-	organizeGroupingMenu?(columns: Table_Column<TData>[]): Table_Column<TData>[]
-	organizeSortingMenu?(columns: Table_Column<TData>[]): Table_Column<TData>[]
+	organizeGroupingMenu?:
+		| readonly string[]
+		| ValueTransformer<readonly Table_Column<TData>[]>
+	organizeSortingMenu?:
+		| readonly string[]
+		| ValueTransformer<readonly Table_Column<TData>[]>
+	organizeFilteringMenu?:
+		| readonly string[]
+		| ValueTransformer<readonly Table_Column<TData>[]>
 	positionActionsColumn?: 'first' | 'last'
 	positionExpandColumn?: 'first' | 'last'
 	positionGlobalFilter?: 'left' | 'right' | 'none'

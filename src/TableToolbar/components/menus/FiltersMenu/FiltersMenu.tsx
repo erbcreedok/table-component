@@ -10,7 +10,10 @@ import type { Table_Column, TableInstance } from '../../../../index'
 import { getColumnId } from '../../../../column.utils'
 import { SidebarSearchComponent } from '../../../../components/SidebarSearch'
 import { Sidebar } from '../../../../components/Sidebar'
-import { splitFilterColumns } from '../../../../utils/splitFilterColumns'
+import { getOrderedColumns } from '../../../../utils/getOrderedColumns'
+import { getSuggestedColumns } from '../../../../utils/getSuggestedColumns'
+import { sortByStringArray } from '../../../../utils/sortByStringArray'
+import { splitArrayItems } from '../../../../utils/splitArrayItems'
 
 import { FiltersMenuListItem } from './FiltersMenuListItem'
 import { ColumnFilterField } from './ColumnFilterField'
@@ -31,12 +34,18 @@ export const FiltersMenu = <TData extends TableData>({
 		getAllLeafColumns,
 		getState,
 		resetColumnFilters,
-		options: { localization, innerTable, suggestedColumns },
+		options: {
+			localization,
+			innerTable,
+			suggestedColumns,
+			organizeFilteringMenu,
+		},
 	} = table
+
 	const [searchValue, setSearchValue] = useState<string>('')
 	const [newColumnFilter, setNewColumnFilter] =
 		useState<Table_Column<TData> | null>(null)
-	const { columnFilters } = getState()
+	const { columnFilters } = getState() // this updates memo below
 	const [isSearchActive, setSearchActive] = useState<boolean>(
 		!columnFilters || !columnFilters.length
 	)
@@ -50,18 +59,48 @@ export const FiltersMenu = <TData extends TableData>({
 			setMyFiltersIds((myFilters) => [...myFilters, newColumnFilter.id])
 	}, [newColumnFilter])
 
-	// all columns that can be filtered
-	const allColumns = useMemo(() => {
-		const columns = getAllLeafColumns()
+	const { filteredColumns, unfilteredColumns, areSuggestedShown } =
+		useMemo(() => {
+			const allColumns = getOrderedColumns(
+				getAllLeafColumns(),
+				(cols) => cols.filter((col) => col.getCanFilter()),
+				organizeFilteringMenu
+			)
 
-		return columns.filter((column) => column.getCanFilter())
-	}, [getAllLeafColumns])
+			const [filteredColumns, unfilteredColumns] = splitArrayItems(
+				allColumns,
+				(col) => myFiltersIds.includes(getColumnId(col))
+			)
 
-	// all columns that can be filtered, but not already filtered
-	const { filterAppliedColumns, filterNonAppliedColumns } = useMemo(
-		() => splitFilterColumns(allColumns, myFiltersIds),
-		[allColumns, myFiltersIds]
-	)
+			let result: Table_Column<TData>[]
+			let areSuggestedShown = false
+
+			if (searchValue)
+				result = unfilteredColumns.filter(({ columnDef: { header } }) =>
+					header.toLowerCase().includes(searchValue.toLowerCase())
+				)
+			else
+				[result, areSuggestedShown] = getSuggestedColumns(
+					unfilteredColumns,
+					suggestedColumns?.filtering
+				)
+
+			return {
+				filteredColumns: sortByStringArray(
+					filteredColumns,
+					myFiltersIds,
+					getColumnId
+				),
+				unfilteredColumns: result,
+				areSuggestedShown,
+			}
+		}, [
+			getAllLeafColumns,
+			organizeFilteringMenu,
+			myFiltersIds,
+			suggestedColumns?.filtering,
+			searchValue,
+		])
 
 	const changeFilter = useCallback((column, value) => {
 		column.setFilterValue(value)
@@ -80,44 +119,13 @@ export const FiltersMenu = <TData extends TableData>({
 		setMyFiltersIds((ids) => ids.filter((id) => id !== column.id))
 	}, [])
 
-	// Columns that are non-filtered, and match the search value
-	const [menuItems, areSuggestedShown] = useMemo(() => {
-		const handleAddFilter = (column: Table_Column<TData>) => {
-			setSearchValue('')
-			setSearchActive(false)
-			setNewColumnFilter(column)
-		}
+	const handleAddFilter = useCallback((column: Table_Column<TData>) => {
+		setSearchValue('')
+		setSearchActive(false)
+		setNewColumnFilter(column)
+	}, [])
 
-		let areSuggestedShown = false
-
-		let columns: Table_Column<TData>[]
-
-		if (suggestedColumns?.filtering && !searchValue) {
-			columns = filterNonAppliedColumns.filter(({ id }) =>
-				suggestedColumns.filtering?.includes(id)
-			)
-			if (columns.length === 0) columns = filterNonAppliedColumns
-			else areSuggestedShown = true
-		} else if (searchValue) {
-			columns = filterNonAppliedColumns.filter(({ columnDef: { header } }) =>
-				header.toLowerCase().includes(searchValue.toLowerCase())
-			)
-		} else {
-			columns = filterNonAppliedColumns
-		}
-
-		return [
-			columns.map((column) => (
-				<FiltersMenuListItem
-					key={column.id}
-					column={column}
-					onAddFilter={handleAddFilter}
-				/>
-			)),
-			areSuggestedShown,
-		]
-	}, [filterNonAppliedColumns, searchValue, suggestedColumns])
-
+	//
 	return (
 		<Sidebar
 			open={open}
@@ -127,11 +135,11 @@ export const FiltersMenu = <TData extends TableData>({
 			headerTitle={localization.showFiltering}
 			innerTableSidebar={innerTable}
 		>
-			{!isSearchActive && !!filterAppliedColumns.length ? (
+			{!isSearchActive && filteredColumns.length > 0 ? (
 				<>
-					{filterAppliedColumns.map((column, index) => (
+					{filteredColumns.map((column, index) => (
 						<FilterWrapper
-							key={getColumnId(column.columnDef)}
+							key={getColumnId(column)}
 							onDelete={() => handleRemoveFilter(column)}
 							table={table}
 							column={column}
@@ -185,8 +193,14 @@ export const FiltersMenu = <TData extends TableData>({
 							{localization.suggested}
 						</ListTitle>
 					)}
-					{menuItems.length ? (
-						menuItems
+					{unfilteredColumns.length > 0 ? (
+						unfilteredColumns.map((column) => (
+							<FiltersMenuListItem
+								key={column.id}
+								column={column}
+								onAddFilter={handleAddFilter}
+							/>
+						))
 					) : (
 						<Typography
 							sx={{ display: 'flex', justifyContent: 'center', mt: '20px' }}

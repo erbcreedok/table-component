@@ -14,9 +14,14 @@ const StyledScrollbar = styled('div')`
 
 	/* display: none; // will not be able to set the scrollLeft  */
 	visibility: hidden;
+	z-index: ${Number.MAX_SAFE_INTEGER};
 
 	position: fixed;
 	bottom: 0;
+
+	/* position: absolute;
+	top: 50%;
+	left: 50%; */
 
 	&.visible {
 		visibility: visible;

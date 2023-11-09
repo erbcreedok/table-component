@@ -2,8 +2,7 @@ import { useMemo, useState } from 'react'
 import Box from '@mui/material/Box'
 import { Divider, IconButton, Typography } from '@mui/material'
 
-import type { TableInstance } from '../../../../index'
-import { Table_Column, TableData } from '../../../../index'
+import { TableInstance, TableData, Table_Column } from '../../../../index'
 import { splitArrayItems } from '../../../../utils/splitArrayItems'
 import { getColumnsFilteredByDisplay } from '../../../../utils/getFilteredByDisplay'
 import {
@@ -11,11 +10,14 @@ import {
 	SimpleMenuItemProps,
 } from '../components/SimpleMenuItem'
 import { ButtonLink } from '../../../../components/ButtonLink'
-import { reorderColumn } from '../../../../column.utils'
+import { getColumnId, reorderColumn } from '../../../../column.utils'
 import { ListTitle } from '../../../../components/ListTitle'
 import { Sidebar } from '../../../../components/Sidebar'
 import { DeleteIcon } from '../../../../icons/DeleteIcon'
 import { SidebarSearch } from '../../../../components/SidebarSearch'
+import { getOrderedColumns } from '../../../../utils/getOrderedColumns'
+import { getSuggestedColumns } from '../../../../utils/getSuggestedColumns'
+import { sortByStringArray } from '../../../../utils/sortByStringArray'
 
 interface Props<TData extends Record<string, any> = {}> {
 	anchorEl: HTMLElement | null
@@ -25,7 +27,7 @@ interface Props<TData extends Record<string, any> = {}> {
 }
 
 export const defaultOrganizeGroupingMenu = <TData extends TableData = {}>(
-	allColumns: Table_Column<TData>[]
+	allColumns: readonly Table_Column<TData>[]
 ) =>
 	getColumnsFilteredByDisplay(
 		allColumns.filter((col) => col.getIsVisible() && col.getCanGroup())
@@ -37,6 +39,7 @@ export const GroupingMenu = <TData extends Record<string, any> = {}>({
 	table,
 }: Props<TData>) => {
 	const {
+		getState,
 		getAllColumns,
 		resetGrouping,
 		setGrouping,
@@ -44,38 +47,56 @@ export const GroupingMenu = <TData extends Record<string, any> = {}>({
 			innerTable,
 			localization,
 			suggestedColumns,
-			organizeGroupingMenu = defaultOrganizeGroupingMenu,
+			organizeGroupingMenu,
 		},
 	} = table
 	const [searchValue, setSearchValue] = useState('')
 	const [hoveredColumn, setHoveredColumn] =
 		useState<Table_Column<TData> | null>(null)
-	const allColumns = organizeGroupingMenu(getAllColumns())
 
-	const [groupedList, ungroupedList] = splitArrayItems(allColumns, (col) =>
-		col.getIsGrouped()
-	)
-
-	const [suggestedList, areSuggestedShown] = useMemo(() => {
-		if (searchValue) {
-			return [
-				ungroupedList.filter((col) =>
-					col.columnDef.header.toLowerCase().includes(searchValue)
-				),
-				false,
-			]
-		}
-
-		if (suggestedColumns?.grouping) {
-			const suggested = ungroupedList.filter(({ id }) =>
-				suggestedColumns.grouping?.includes(id)
+	const { grouping } = getState() // this updates memo below
+	const { groupedColumns, ungroupedColumns, areSuggestedShown } =
+		useMemo(() => {
+			const allColumns = getOrderedColumns(
+				getAllColumns(),
+				defaultOrganizeGroupingMenu,
+				organizeGroupingMenu
 			)
 
-			if (suggested.length) return [suggested, true]
-		}
+			const [groupedColumns, ungroupedColumns] = splitArrayItems(
+				allColumns,
+				(col) => grouping.includes(getColumnId(col))
+			)
 
-		return [ungroupedList, false]
-	}, [searchValue, suggestedColumns?.grouping, ungroupedList])
+			let result: Table_Column<TData>[]
+			let areSuggestedShown = false
+
+			if (searchValue)
+				result = ungroupedColumns.filter((col) =>
+					col.columnDef.header.toLowerCase().includes(searchValue)
+				)
+			else
+				[result, areSuggestedShown] = getSuggestedColumns(
+					ungroupedColumns,
+					suggestedColumns?.grouping
+				)
+
+			return {
+				groupedColumns: sortByStringArray(
+					groupedColumns,
+					grouping,
+					getColumnId
+				),
+				ungroupedColumns: result,
+				areSuggestedShown,
+			}
+		}, [
+			grouping,
+			getAllColumns,
+			organizeGroupingMenu,
+			searchValue,
+			suggestedColumns?.grouping,
+		])
 
 	const handleCloseClick = () => setAnchorEl(null)
 
@@ -107,8 +128,8 @@ export const GroupingMenu = <TData extends Record<string, any> = {}>({
 		>
 			<Box sx={{ marginTop: '12px' }}>
 				{searchValue ? (
-					suggestedList.length ? (
-						suggestedList.map((column) => (
+					ungroupedColumns.length > 0 ? (
+						ungroupedColumns.map((column) => (
 							<MenuItem
 								column={column}
 								key={column.id}
@@ -131,7 +152,7 @@ export const GroupingMenu = <TData extends Record<string, any> = {}>({
 					)
 				) : (
 					<>
-						{Boolean(groupedList.length) && (
+						{groupedColumns.length > 0 && (
 							<>
 								<Box
 									sx={{
@@ -146,11 +167,11 @@ export const GroupingMenu = <TData extends Record<string, any> = {}>({
 									<ButtonLink onClick={removeAllGroup}>Remove all</ButtonLink>
 								</Box>
 
-								{groupedList.map((column) => (
+								{groupedColumns.map((column) => (
 									<MenuItem
 										column={column as Table_Column<TData>}
 										key={(column as Table_Column<TData>).id}
-										enableDrag={groupedList.length > 1}
+										enableDrag={groupedColumns.length > 1}
 										hoveredColumn={hoveredColumn}
 										onColumnOrderChange={onColumnOrderChanged}
 										setHoveredColumn={setHoveredColumn}
@@ -161,9 +182,9 @@ export const GroupingMenu = <TData extends Record<string, any> = {}>({
 							</>
 						)}
 
-						{Boolean(suggestedList.length) && (
+						{ungroupedColumns.length > 0 && (
 							<>
-								{(Boolean(groupedList.length) || areSuggestedShown) && (
+								{(groupedColumns.length > 0 || areSuggestedShown) && (
 									<ListTitle sx={{ padding: '0 24px', margin: '20px 0 ' }}>
 										{areSuggestedShown
 											? localization.suggested
@@ -171,7 +192,7 @@ export const GroupingMenu = <TData extends Record<string, any> = {}>({
 									</ListTitle>
 								)}
 
-								{suggestedList.map((column) => (
+								{ungroupedColumns.map((column) => (
 									<MenuItem
 										column={column}
 										key={column.id}
