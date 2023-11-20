@@ -126,7 +126,7 @@ export const TopToolbar = <TData extends Record<string, any> = object>({
 					)
 				)}
 			</Box>
-			{enablePagination &&
+			{enablePagination === 'pages' &&
 				['top', 'both'].includes(positionPagination ?? '') && (
 					<TablePagination table={table} position="top" />
 				)}

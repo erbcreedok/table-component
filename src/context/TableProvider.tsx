@@ -86,6 +86,7 @@ export const TableProvider = <TData extends Record<string, any> = {}>({
 	sortingFns,
 	columns,
 	theme,
+	onInfiniteScrollLoad,
 	...rest
 }: TableComponentProps<TData> & {
 	children?: ReactNode | null
@@ -137,6 +138,15 @@ export const TableProvider = <TData extends Record<string, any> = {}>({
 	)
 
 	if (enablePagination === false && manualPagination === undefined) {
+		manualPagination = true
+	}
+
+	if (enablePagination === true) {
+		enablePagination = 'pages'
+	}
+
+	if (onInfiniteScrollLoad) {
+		enablePagination = 'scroll'
 		manualPagination = true
 	}
 
@@ -215,6 +225,7 @@ export const TableProvider = <TData extends Record<string, any> = {}>({
 		sortingFns: _sortingFns,
 		columns: _columns,
 		theme: theme ?? defaultTheme,
+		onInfiniteScrollLoad,
 		...rest,
 	} as TableComponentProps<{}> & { localization: Table_Localization }
 

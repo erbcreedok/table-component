@@ -1099,7 +1099,7 @@ export type TableComponentProps<TData extends Record<string, any> = {}> = Omit<
 	enableFullScreenToggle?: boolean
 	enableGlobalFilterModes?: boolean
 	enableGlobalFilterRankedResults?: boolean
-	enablePagination?: boolean
+	enablePagination?: boolean | 'pages' | 'scroll'
 	enableRowActions?: boolean
 	enableRowDragging?: boolean | ((row: Table_Row<TData>) => boolean)
 	enableRowNumbers?: boolean
@@ -1159,6 +1159,7 @@ export type TableComponentProps<TData extends Record<string, any> = {}> = Omit<
 	hideRowSelectionColumn?: boolean
 	hideTableHead?: boolean
 	icons?: Partial<Table_Icons>
+	infiniteScrollIntersectorStyles?: Record<string, any>
 	initialState?: Partial<Table_TableState<TData>>
 	innerTable?: boolean
 	innerTableTitle?: string
@@ -1494,6 +1495,7 @@ export type TableComponentProps<TData extends Record<string, any> = {}> = Omit<
 		event?: any
 		value?: any
 	}) => void
+	onInfiniteScrollLoad?: ({ table }: { table: TableInstance<TData> }) => void
 	organizeColumnsMenu?(columns: Table_Column<TData>[]): Table_Column<TData>[]
 	organizeGroupingMenu?:
 		| readonly string[]
@@ -1591,6 +1593,7 @@ export type TableComponentProps<TData extends Record<string, any> = {}> = Omit<
 	rowCount?: number
 	rowNumberMode?: 'original' | 'static'
 	selectAllMode?: 'all' | 'page'
+	showBottomProggressBar?: boolean
 	state?: Partial<Table_TableState<TData>>
 	summaryRowCell?: (args: {
 		table: TableInstance<TData>
