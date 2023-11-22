@@ -286,7 +286,7 @@ export type TableInstance<TData extends Record<string, any> = {}> = Omit<
 	getPresets: () => Preset[]
 	savePresets: (presets: Preset[]) => void
 	getDefaultPresets: () => Preset[]
-	showSearchData: (searchId: string | string[] | null) => void
+	setSearchData: (data: SearchData<TData>) => void
 	setHighlightHeadCellId: (colId: string | null) => void
 	options: TableComponentProps<TData> & {
 		icons: Table_Icons
@@ -337,6 +337,8 @@ export type TableInstance<TData extends Record<string, any> = {}> = Omit<
 
 export type FieldError = string | null
 
+export type SearchData<TData extends TableData = TableData> = TData[] | null
+
 export type Table_TableState<TData extends Record<string, any> = {}> =
 	TableState & {
 		columnFilterFns: Record<string, Table_FilterOption>
@@ -353,13 +355,13 @@ export type Table_TableState<TData extends Record<string, any> = {}> =
 		hoveredRow: HoveredRowState<TData>
 		isFullScreen: boolean
 		isLoading: boolean
+		searchData: SearchData<TData>
 		showAlertBanner: boolean
 		showColumnFilters: boolean
 		showGlobalFilter: boolean
 		showProgressBars: boolean
 		showSkeletons: boolean
 		showToolbarDropZone: boolean
-		searchId: string | null
 		highlightHeadCellId: string | null
 		groupCollapsed: GroupCollapsed
 		stickyHorizontalScrollbarHeight: number
@@ -1099,7 +1101,7 @@ export type TableComponentProps<TData extends Record<string, any> = {}> = Omit<
 	enableFullScreenToggle?: boolean
 	enableGlobalFilterModes?: boolean
 	enableGlobalFilterRankedResults?: boolean
-	enablePagination?: boolean
+	enablePagination?: boolean | 'pages' | 'scroll'
 	enableRowActions?: boolean
 	enableRowDragging?: boolean | ((row: Table_Row<TData>) => boolean)
 	enableRowNumbers?: boolean
@@ -1159,6 +1161,7 @@ export type TableComponentProps<TData extends Record<string, any> = {}> = Omit<
 	hideRowSelectionColumn?: boolean
 	hideTableHead?: boolean
 	icons?: Partial<Table_Icons>
+	infiniteScrollIntersectorStyles?: Record<string, any>
 	initialState?: Partial<Table_TableState<TData>>
 	innerTable?: boolean
 	innerTableTitle?: string
@@ -1482,7 +1485,6 @@ export type TableComponentProps<TData extends Record<string, any> = {}> = Omit<
 	onGetPresets?: () => Preset[]
 	onSavePresets?: (presets: Preset[]) => void
 	onGetDefaultPresets?: (state?: PresetState) => Preset[]
-	onSearchData?: () => void
 	onNativeEvent?: ({
 		el,
 		type,
@@ -1494,6 +1496,7 @@ export type TableComponentProps<TData extends Record<string, any> = {}> = Omit<
 		event?: any
 		value?: any
 	}) => void
+	onInfiniteScrollLoad?: ({ table }: { table: TableInstance<TData> }) => void
 	organizeColumnsMenu?(columns: Table_Column<TData>[]): Table_Column<TData>[]
 	organizeGroupingMenu?:
 		| readonly string[]
@@ -1591,6 +1594,7 @@ export type TableComponentProps<TData extends Record<string, any> = {}> = Omit<
 	rowCount?: number
 	rowNumberMode?: 'original' | 'static'
 	selectAllMode?: 'all' | 'page'
+	showBottomProggressBar?: boolean
 	state?: Partial<Table_TableState<TData>>
 	summaryRowCell?: (args: {
 		table: TableInstance<TData>

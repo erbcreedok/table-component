@@ -5,6 +5,7 @@ import React, {
 	KeyboardEvent,
 	MouseEventHandler,
 	useEffect,
+	useMemo,
 	useRef,
 	useState,
 } from 'react'
@@ -32,6 +33,7 @@ import {
 	TextColor,
 } from '../components/styles'
 import { useDelay } from '../hooks/useDelay'
+import { defaultGetSubRows } from '../utils/defaultGetSubRows'
 import { getValueFromObj } from '../utils/getValueFromObj'
 import { getPascalCase } from '../utils/getPascalCase'
 import { withNativeEvent } from '../utils/withNativeEvent'
@@ -122,11 +124,11 @@ export const HeaderSearch = <T extends TableData>({
 	const anchorElRef = useRef<HTMLDivElement>(null)
 	const [isSearch, setIsSearch] = useState(false)
 	const [input, setInput] = useState('')
-	const [filtered, setFiltered] = useState<T[]>([])
 	const searchValue = useDelay(input)
 	const {
-		getRowModel,
 		options: {
+			getSubRows,
+			data,
 			icons: { SearchIcon, CloseIcon },
 		},
 	} = table
@@ -140,12 +142,37 @@ export const HeaderSearch = <T extends TableData>({
 		/>
 	)
 
+	const filtered = useMemo(() => {
+		if (searchValue.length >= minLengthSearch) {
+			const getSubrows = getSubRows ?? defaultGetSubRows
+			const flatten = (arr: typeof data) => {
+				const handleItem = (item: typeof data[0], index: number) => {
+					const subrows = getSubrows(item, index)
+					if (subrows) {
+						return [item, ...flatten(subrows)]
+					}
+
+					return [item]
+				}
+
+				return arr.map(handleItem).flat()
+			}
+
+			return getFilteredData({
+				tableData: flatten(data),
+				value: searchValue.toLowerCase(),
+				path: searchPath,
+			})
+		}
+
+		return []
+	}, [data, getFilteredData, minLengthSearch, searchPath, searchValue])
+
 	const clearSearch = () => {
 		setIsSearch(false)
 		setInput('')
-		setFiltered([])
 		setShowPopper(false)
-		table.showSearchData(null)
+		table.setSearchData(null)
 	}
 
 	const toggleSearch = (e) => {
@@ -163,31 +190,14 @@ export const HeaderSearch = <T extends TableData>({
 		setShowPopper(true)
 	}
 
-	useEffect(() => {
-		if (searchValue.length >= minLengthSearch) {
-			const filteredData = getRowModel().rows.map((row) => row.original)
-
-			setFiltered(
-				getFilteredData({
-					tableData: filteredData,
-					value: searchValue.toLowerCase(),
-					path: searchPath,
-				})
-			)
-		} else {
-			setFiltered([])
-		}
-	}, [minLengthSearch, searchPath, searchValue])
-
 	const handleEnterKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
 		if (event.key === 'Enter' && input.length > 0) {
 			event.stopPropagation()
-			table.showSearchData(filtered.map((item) => item.id))
-			setFiltered([])
+			table.setSearchData(filtered)
 			setShowPopper(false)
 		} else {
 			event.stopPropagation()
-			table.showSearchData(null)
+			table.setSearchData(null)
 		}
 	}
 
@@ -282,8 +292,7 @@ export const HeaderSearch = <T extends TableData>({
 								onClick={(event) => {
 									event.stopPropagation()
 									setInput(getValueFromObj<string>(item, searchPath, input))
-									table.showSearchData(item.id)
-									setFiltered([])
+									table.setSearchData([item])
 									setShowPopper(false)
 								}}
 							/>

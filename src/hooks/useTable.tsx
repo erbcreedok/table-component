@@ -10,6 +10,7 @@ import {
 	VisibilityState,
 	SortingState,
 	ColumnOrderState,
+	noop,
 } from '@tanstack/react-table'
 import React, { useCallback, useMemo, useRef, useState } from 'react'
 
@@ -46,6 +47,7 @@ import { getExpandedRowModel } from '../utils/getExpandedRowModel'
 import { getGroupedRowModel } from '../utils/getGroupedRowModel'
 import { getSortedRowModel } from '../utils/getSortedRowModel'
 import { showRowActionsColumn } from '../utils/showRowActionsColumn'
+import { defaultGetSubRows } from '../utils/defaultGetSubRows'
 
 export const useTable = <TData extends TableData = TableData>(
 	config: TableComponentProps<TData> & { localization: Table_Localization }
@@ -145,7 +147,7 @@ export const useTable = <TData extends TableData = TableData>(
 	const [sorting, setSorting] = useState<SortingState>(
 		initialState.sorting ?? []
 	)
-	const [searchId, setSearchId] = useState<string | string[] | null>(null)
+	const [searchData, setSearchData] = useState<TData[] | null>(null)
 	const [highlightHeadCellId, setHighlightHeadCellId] = useState<string | null>(
 		null
 	)
@@ -234,39 +236,30 @@ export const useTable = <TData extends TableData = TableData>(
 	)
 
 	const data: TData[] = useMemo(() => {
-		const tableData =
-			(config.state?.isLoading || config.state?.showSkeletons) &&
-			!config.data.length
-				? [
-						...Array(
-							config.state?.pagination?.pageSize ||
-								initialState?.pagination?.pageSize ||
-								10
-						).fill(null),
-				  ].map(() =>
-						Object.assign(
-							{},
-							...getAllLeafColumnDefs(config.columns).map((col) => ({
-								[getColumnId(col)]: null,
-							}))
-						)
-				  )
-				: config.data
+		const tableData = searchData || config.data
 
-		return searchId
-			? tableData.filter((item) => {
-					if (Array.isArray(searchId)) {
-						return searchId.includes(item.id)
-					}
-
-					return item.id === searchId
-			  })
+		return (config.state?.isLoading || config.state?.showSkeletons) &&
+			!tableData
+			? [
+					...Array(
+						config.state?.pagination?.pageSize ||
+							initialState?.pagination?.pageSize ||
+							10
+					).fill(null),
+			  ].map(() =>
+					Object.assign(
+						{},
+						...getAllLeafColumnDefs(config.columns).map((col) => ({
+							[getColumnId(col)]: null,
+						}))
+					)
+			  )
 			: tableData
 	}, [
 		config.data,
 		config.state?.isLoading,
 		config.state?.showSkeletons,
-		searchId,
+		searchData,
 	])
 
 	const setMergedGrouping = useCallback((setter) => {
@@ -320,14 +313,6 @@ export const useTable = <TData extends TableData = TableData>(
 		return [getDefaultPreset(initialState)]
 	}, [])
 
-	const searchData = (id: string | string[] | null) => {
-		setSearchId(id)
-
-		if (config.onSearchData) {
-			config.onSearchData()
-		}
-	}
-
 	const highlightCellId = (id: string | null) => {
 		setHighlightHeadCellId(id)
 	}
@@ -354,7 +339,7 @@ export const useTable = <TData extends TableData = TableData>(
 		showGlobalFilter,
 		showToolbarDropZone,
 		sorting,
-		searchId,
+		searchData,
 		highlightHeadCellId,
 		stickyHorizontalScrollbarHeight,
 		...config.state,
@@ -383,7 +368,7 @@ export const useTable = <TData extends TableData = TableData>(
 			getPaginationRowModel: getPaginationRowModel(),
 			getSortedRowModel: getSortedRowModel(),
 			getFacetedUniqueValues: getFacetedUniqueValues(),
-			getSubRows: (row) => row?.subRows,
+			getSubRows: searchData ? noop : defaultGetSubRows,
 			onColumnFiltersChange: setColumnFilters,
 			onColumnOrderChange: setColumnOrder,
 			onRowSelectionChange: setRowSelection,
@@ -437,7 +422,7 @@ export const useTable = <TData extends TableData = TableData>(
 		getPresets: config.onGetPresets ?? getPresets,
 		savePresets: config.onSavePresets ?? savePresets,
 		getDefaultPresets,
-		showSearchData: searchData,
+		setSearchData,
 		setHighlightHeadCellId: highlightCellId,
 		CustomRow: config.CustomRow,
 		setStickyHorizontalScrollbarHeight,

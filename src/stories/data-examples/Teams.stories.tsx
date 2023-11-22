@@ -154,6 +154,7 @@ type TeamsTableConfigs = Omit<TableComponentProps<TeamMember>, 'data'> &
 		enableLoremIpsumColumn?: boolean
 		columnSubtitles: Record<string, string>
 		rowsCount: number
+		enableInfiniteScroll?: boolean
 	}
 
 type TeamsTableExample = Omit<TeamsTableConfigs, 'data' | 'columns'>
@@ -357,9 +358,11 @@ const TeamsTable: Story<TeamsTableConfigs> = (args) => {
 		initialState = {},
 		rowsCount = 100,
 		multirowHeader,
+		enableInfiniteScroll,
 		...rest
 	} = args
 	const [data, setData] = useState(propsData || getTeamMembers(rowsCount))
+	const [isDataLoading, setIsDataLoading] = useState(false)
 
 	const setNewRow = (row, values) => {
 		const newData = [...data]
@@ -402,6 +405,16 @@ const TeamsTable: Story<TeamsTableConfigs> = (args) => {
 			rows: rowsToSave,
 			values: newGroupingData ?? {},
 		})
+	}
+
+	const handleLoadData = () => {
+		const newData = getTeamMembers(25)
+
+		setIsDataLoading(true)
+		setTimeout(() => {
+			setIsDataLoading(false)
+			setData([...data, ...newData])
+		}, 5000);
 	}
 
 	return (
@@ -458,6 +471,8 @@ const TeamsTable: Story<TeamsTableConfigs> = (args) => {
 				return true
 			}}
 			onNativeEvent={(props) => console.log(props)}
+			onInfiniteScrollLoad={enableInfiniteScroll ? handleLoadData : undefined}
+			showBottomProggressBar={enableInfiniteScroll ? isDataLoading : undefined}
 			{...getTablePresetProps('teamsDefaultTable')}
 			{...rest}
 		/>
@@ -948,6 +963,13 @@ const meta: Meta = {
 		e2eLabels: {
 			control: { type: 'object' },
 			description: `manage data-testid attributes`,
+		},
+		enableInfiniteScroll: {
+			control: { type: 'boolean' },
+			defaultValue: false,
+			description:
+				'***THIS IS NOT A PROP***\n' +
+				'Enables infinite scroll example',
 		},
 	},
 }
