@@ -51,9 +51,9 @@ export const TableHeadCellSortLabel: FC<Props> = ({ header, table }) => {
 					},
 				}}
 				IconComponent={getSortingIconConstructor({
-					table,
-					sortingFn: column.getSortingFn(),
+					column,
 					isAsc: isSorted === 'asc',
+					table,
 				})}
 			/>
 		</Tooltip>

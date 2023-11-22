@@ -252,15 +252,15 @@ const MenuItem = <TData extends Record<string, any> = {}>({
 }: MenuItemProps<TData>) => {
 	const { table } = useTableContext()
 	const ascSortingText = getSortingText({
-		table,
-		sortingFn: column.getSortingFn(),
+		column,
 		isAsc: true,
+		table,
 		withSortWord: false,
 	})
 	const descSortingText = getSortingText({
-		table,
-		sortingFn: column.getSortingFn(),
+		column,
 		isAsc: false,
+		table,
 		withSortWord: false,
 	})
 

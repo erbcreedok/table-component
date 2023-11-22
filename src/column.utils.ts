@@ -116,27 +116,27 @@ export const prepareColumns = <TData extends Record<string, any> = {}>({
 					columnFilterFns[columnDef.id]
 			}
 
-			// assign sortingFns
-			if (Object.keys(sortingFns).includes(columnDef.sortingFn as string)) {
-				// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-				// @ts-ignore
-				columnDef.sortingFn = sortingFns[columnDef.sortingFn]
-			} else if (!columnDef.sortingFn) {
-				if (
-					columnDef.dataType &&
-					['numeric', 'date', 'formula'].includes(columnDef.dataType)
-				) {
+			if (!columnDef.sortingFn && columnDef.dataType) {
+				if (['numeric', 'date', 'formula'].includes(columnDef.dataType)) {
 					columnDef.sortingFn = 'basic'
 				}
 
 				if (
-					columnDef.dataType &&
 					['textual', 'single-select', 'multi-select'].includes(
-						columnDef?.dataType
+						columnDef.dataType
 					)
 				) {
 					columnDef.sortingFn = 'text'
 				}
+			}
+
+			// assign sortingFns
+			if (
+				typeof columnDef.sortingFn === 'string' &&
+				Object.keys(sortingFns).includes(columnDef.sortingFn)
+			) {
+				columnDef.sortingFn =
+					sortingFns[columnDef.sortingFn as keyof typeof sortingFns]
 			}
 		} else if (columnDef.columnDefType === 'display') {
 			return {

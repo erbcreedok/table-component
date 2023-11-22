@@ -50,6 +50,26 @@ export const QuickSortMenuItemOptions: FC<Props> = ({
 			<CheckIcon />
 		</Box>
 	)
+	const ascText = getSortingText({
+		column,
+		table,
+		isAsc: true,
+	})
+	const descText = getSortingText({
+		table,
+		column,
+		isAsc: false,
+	})
+	const ascIcon = getSortingIcon({
+		table,
+		column,
+		isAsc: true,
+	})
+	const descIcon = getSortingIcon({
+		table,
+		column,
+		isAsc: false,
+	})
 
 	return (
 		<>
@@ -59,13 +79,7 @@ export const QuickSortMenuItemOptions: FC<Props> = ({
 					{
 						el: `ColumnHeaderMenu_${getPascalCase(
 							column.columnDef.header
-						)}_${getPascalCase(
-							getSortingText({
-								table,
-								sortingFn: column.getSortingFn(),
-								isAsc: true,
-							})
-						)}`,
+						)}_${getPascalCase(ascText)}`,
 						type: 'click',
 					},
 					table
@@ -74,18 +88,8 @@ export const QuickSortMenuItemOptions: FC<Props> = ({
 				{...getTestAttributes(e2eLabels, 'columnMenuSortAsc')}
 			>
 				<Box sx={commonListItemStyles}>
-					<ListItemIcon>
-						{getSortingIcon({
-							table,
-							sortingFn: column.getSortingFn(),
-							isAsc: true,
-						})}
-					</ListItemIcon>
-					{getSortingText({
-						table,
-						sortingFn: column.getSortingFn(),
-						isAsc: true,
-					})}
+					<ListItemIcon>{ascIcon}</ListItemIcon>
+					{ascText}
 					{column.getIsSorted() === 'asc' && selectedChevron}
 				</Box>
 			</MenuItem>
@@ -97,13 +101,7 @@ export const QuickSortMenuItemOptions: FC<Props> = ({
 					{
 						el: `ColumnHeaderMenu_${getPascalCase(
 							column.columnDef.header
-						)}_${getPascalCase(
-							getSortingText({
-								table,
-								sortingFn: column.getSortingFn(),
-								isAsc: false,
-							})
-						)}`,
+						)}_${getPascalCase(descText)}`,
 						type: 'click',
 					},
 					table
@@ -112,18 +110,8 @@ export const QuickSortMenuItemOptions: FC<Props> = ({
 				{...getTestAttributes(e2eLabels, 'columnMenuSortDesc')}
 			>
 				<Box sx={commonListItemStyles}>
-					<ListItemIcon>
-						{getSortingIcon({
-							table,
-							sortingFn: column.getSortingFn(),
-							isAsc: false,
-						})}
-					</ListItemIcon>
-					{getSortingText({
-						table,
-						sortingFn: column.getSortingFn(),
-						isAsc: false,
-					})}
+					<ListItemIcon>{descIcon}</ListItemIcon>
+					{descText}
 					{column.getIsSorted() === 'desc' && selectedChevron}
 				</Box>
 			</MenuItem>

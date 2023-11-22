@@ -27,15 +27,15 @@ export const SortingButtons = <TData extends Record<string, any> = {}>(
 	const { column, hideUnselected } = props
 	const sorting = column?.getIsSorted()
 	const ascSortingText = getSortingText({
-		table,
-		sortingFn: column.getSortingFn(),
+		column,
 		isAsc: true,
+		table,
 		withSortWord: false,
 	})
 	const descSortingText = getSortingText({
-		table,
-		sortingFn: column.getSortingFn(),
+		column,
 		isAsc: false,
+		table,
 		withSortWord: false,
 	})
 
@@ -95,12 +95,12 @@ export const SortingButtons = <TData extends Record<string, any> = {}>(
 					size="small"
 				>
 					{getSortingIcon({
-						table,
-						sortingFn: column.getSortingFn(),
+						column,
 						isAsc: true,
 						sortingIconProps: {
 							sx: { width: 18, height: 18 },
 						},
+						table,
 					})}
 				</IconButton>
 				<IconButton
@@ -127,12 +127,12 @@ export const SortingButtons = <TData extends Record<string, any> = {}>(
 					size="small"
 				>
 					{getSortingIcon({
-						table,
-						sortingFn: column.getSortingFn(),
+						column,
 						isAsc: false,
 						sortingIconProps: {
 							sx: { width: 18, height: 18 },
 						},
+						table,
 					})}
 				</IconButton>
 			</ConditionalBox>

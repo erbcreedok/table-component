@@ -64,6 +64,14 @@ import {
 import { SelectCheckbox } from './inputs/SelectCheckbox'
 import { useMultiSticky } from './hooks/useMultiSticky'
 import { getColumnsFilteredByDisplay } from './utils/getFilteredByDisplay'
+import {
+	getColumnSortingType,
+	getSortingIcon,
+	getSortingIconConstructor,
+	getSortingText,
+	isNumericSorting,
+	isTextSorting,
+} from './utils/getSortingInfo'
 
 export * from './hooks/useEditField'
 export default TableComponent
@@ -136,4 +144,10 @@ export {
 	useMultiSticky,
 	useTableContext,
 	getColumnsFilteredByDisplay,
+	getColumnSortingType,
+	getSortingIcon,
+	getSortingIconConstructor,
+	getSortingText,
+	isNumericSorting,
+	isTextSorting,
 }

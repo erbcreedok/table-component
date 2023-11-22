@@ -234,12 +234,12 @@ export interface Table_RowModel<TData extends Record<string, any> = {}> {
 	rowsById: { [key: string]: Table_Row<TData> }
 }
 
-export type OpenedDetailPanel<TData extends TableData> = {
+export type OpenedDetailPanel<TData extends TableData = TableData> = {
 	cell: Table_Cell<TData>
 	row: Table_Row<TData>
 }
 
-export type TableInstance<TData extends Record<string, any> = {}> = Omit<
+export type TableInstance<TData extends TableData = TableData> = Omit<
 	Table<TData>,
 	| 'getAllColumns'
 	| 'getAllFlatColumns'
@@ -339,7 +339,7 @@ export type FieldError = string | null
 
 export type SearchData<TData extends TableData = TableData> = TData[] | null
 
-export type Table_TableState<TData extends Record<string, any> = {}> =
+export type Table_TableState<TData extends TableData = TableData> =
 	TableState & {
 		columnFilterFns: Record<string, Table_FilterOption>
 		draggingColumn: Table_Column<TData> | null
@@ -395,7 +395,7 @@ export type MultirowHeader = {
 	}[]
 }[]
 
-export type MultirowColumnsGroup<TData extends Record<string, any> = {}> = {
+export type MultirowColumnsGroup<TData extends TableData = TableData> = {
 	columns: Table_Column<TData>[]
 	text: string
 	depth?: number
@@ -445,16 +445,39 @@ export type TableColumnEditProps<TData extends TableData> = {
 	Edit?: TableFunctionalProp<ReactNode, TData>
 }
 
-export type EnableEditingArgs<TData extends Record<string, any> = {}> = {
+export type EnableEditingArgs<TData extends TableData = TableData> = {
 	table: TableInstance<TData>
 	row: Table_Row<TData>
 }
 
-export type EnableEditingOption<TData extends Record<string, any> = {}> =
+export type EnableEditingOption<TData extends TableData = TableData> =
 	| boolean
 	| ((args: EnableEditingArgs<TData>) => boolean)
 
-export type Table_ColumnDef<TData extends Record<string, any> = {}> = Omit<
+export type SortingType = 'textual' | 'numeric' | 'custom'
+export type GetSortingNode<
+	TData extends TableData = TableData,
+	Args = unknown
+> = (
+	args: {
+		table: TableInstance<TData>
+		column: Table_Column<TData>
+		isAsc: boolean
+	} & Args
+) => ReactNode | string | null
+
+export type TableSortingConfigs<TData extends TableData = TableData> = {
+	getSortingIcon?: GetSortingNode<TData, { sortingIconProps?: any }>
+	getSortingIconConstructor?: GetSortingNode<TData>
+	getSortingText?: GetSortingNode<TData, { withSortWord?: boolean }>
+}
+
+export type ColumnSortingConfigs<TData extends TableData = TableData> = {
+	sortingType?: SortingType
+	sortingFn?: Table_SortingFn<TData>
+} & TableSortingConfigs<TData>
+
+export type Table_ColumnDef<TData extends TableData = TableData> = Omit<
 	ColumnDef<TData, unknown>,
 	| 'accessorKey'
 	| 'aggregatedCell'
@@ -467,7 +490,8 @@ export type Table_ColumnDef<TData extends Record<string, any> = {}> = Omit<
 	| 'id'
 	| 'sortingFn'
 > &
-	TableColumnEditProps<TData> & {
+	TableColumnEditProps<TData> &
+	ColumnSortingConfigs<TData> & {
 		AggregatedCell?: ({
 			cell,
 			column,
@@ -783,7 +807,6 @@ export type Table_ColumnDef<TData extends Record<string, any> = {}> = Omit<
 			onSelectFilterMode: (filterMode: Table_FilterOption) => void
 			table: TableInstance<TData>
 		}) => ReactNode[]
-		sortingFn?: Table_SortingFn<TData>
 		subtitle?: string
 		validator?: ({
 			value,
@@ -806,18 +829,20 @@ export type Table_ColumnDef<TData extends Record<string, any> = {}> = Omit<
 		notDisplayed?: boolean
 	}
 
-export type Table_DefinedColumnDef<TData extends Record<string, any> = {}> =
-	Omit<Table_ColumnDef<TData>, 'id' | 'defaultDisplayColumn'> & {
-		defaultDisplayColumn: Partial<Table_ColumnDef<TData>>
-		id: string
-		displayDataKey: string
-		_filterFn: Table_FilterOption
-		cellAction?: string | (({ row, table }) => void)
-		cellActionIcon?: any
-		filterTypeLabel?: string
-	}
+export type Table_DefinedColumnDef<TData extends TableData = TableData> = Omit<
+	Table_ColumnDef<TData>,
+	'id' | 'defaultDisplayColumn'
+> & {
+	defaultDisplayColumn: Partial<Table_ColumnDef<TData>>
+	id: string
+	displayDataKey: string
+	_filterFn: Table_FilterOption
+	cellAction?: string | (({ row, table }) => void)
+	cellActionIcon?: any
+	filterTypeLabel?: string
+}
 
-export type Table_Column<TData extends Record<string, any> = {}> = Omit<
+export type Table_Column<TData extends TableData = TableData> = Omit<
 	Column<TData, unknown>,
 	'header' | 'footer' | 'columns' | 'columnDef' | 'filterFn'
 > & {
@@ -828,21 +853,21 @@ export type Table_Column<TData extends Record<string, any> = {}> = Omit<
 	header: string
 }
 
-export type Table_Header<TData extends Record<string, any> = {}> = Omit<
+export type Table_Header<TData extends TableData = TableData> = Omit<
 	Header<TData, unknown>,
 	'column'
 > & {
 	column: Table_Column<TData>
 }
 
-export type Table_HeaderGroup<TData extends Record<string, any> = {}> = Omit<
+export type Table_HeaderGroup<TData extends TableData = TableData> = Omit<
 	HeaderGroup<TData>,
 	'headers'
 > & {
 	headers: Table_Header<TData>[]
 }
 
-export type Table_Row<TData extends Record<string, any> = {}> = Omit<
+export type Table_Row<TData extends TableData = TableData> = Omit<
 	Row<TData>,
 	'getVisibleCells' | 'getAllCells' | 'subRows' | '_valuesCache'
 > & {
@@ -856,7 +881,7 @@ export type Table_Row<TData extends Record<string, any> = {}> = Omit<
 	getParent(): Table_Row<TData> | undefined
 }
 
-export type Table_Cell<TData extends Record<string, any> = {}> = Omit<
+export type Table_Cell<TData extends TableData = TableData> = Omit<
 	Cell<TData, unknown>,
 	'column' | 'row'
 > & {
@@ -866,7 +891,7 @@ export type Table_Cell<TData extends Record<string, any> = {}> = Omit<
 
 export type Table_AggregationOption = string & keyof typeof Table_AggregationFns
 
-export type Table_AggregationFn<TData extends Record<string, any> = {}> =
+export type Table_AggregationFn<TData extends TableData = TableData> =
 	| AggregationFn<TData>
 	| Table_AggregationOption
 
@@ -874,7 +899,7 @@ export type Table_SortingOption = LiteralUnion<
 	string & keyof typeof Table_SortingFns
 >
 
-export type Table_SortingFn<TData extends Record<string, any> = {}> =
+export type Table_SortingFn<TData extends TableData = TableData> =
 	| SortingFn<TData>
 	| Table_SortingOption
 
@@ -882,7 +907,7 @@ export type Table_FilterOption = LiteralUnion<
 	string & keyof typeof Table_FilterFns
 >
 
-export type Table_FilterFn<TData extends Record<string, any> = {}> =
+export type Table_FilterFn<TData extends TableData = TableData> =
 	| FilterFn<TData>
 	| Table_FilterOption
 
@@ -907,7 +932,7 @@ export type Table_DisplayColumnIds =
 	| 'table-row-expand'
 	| 'table-util-column'
 
-export type Table_Actions<TData extends Record<string, any> = {}> =
+export type Table_Actions<TData extends TableData = TableData> =
 	BulkActionButtonProps<TData>
 
 export enum ExpandByClick {
@@ -999,7 +1024,7 @@ export interface E2ELabelsOption {
  * See the full props list on the official docs site:
  * @link https://www.material-react-table.com/docs/api/props
  */
-export type TableComponentProps<TData extends Record<string, any> = {}> = Omit<
+export type TableComponentProps<TData extends TableData = TableData> = Omit<
 	Partial<TableOptions<TData>>,
 	| 'columns'
 	| 'data'
@@ -1010,638 +1035,639 @@ export type TableComponentProps<TData extends Record<string, any> = {}> = Omit<
 	| 'globalFilterFn'
 	| 'initialState'
 	| 'state'
-> & {
-	columnFilterModeOptions?: Array<
-		LiteralUnion<string & Table_FilterOption>
-	> | null
-	/**
-	 * The columns to display in the table. `accessorKey`s or `accessorFn`s must match keys in the `data` prop.
-	 *
-	 * See more info on creating columns on the official docs site:
-	 * @link https://www.material-react-table.com/docs/guides/data-columns
-	 * @link https://www.material-react-table.com/docs/guides/display-columns
-	 *
-	 * See all Columns Options on the official docs site:
-	 * @link https://www.material-react-table.com/docs/api/column-options
-	 */
-	columns: Table_ColumnDef<TData>[]
-	/**
-	 * The columns to be suggested in sidebars.
-	 * Contains list of column accessorKey.
-	 */
-	suggestedColumns?: {
-		filtering?: readonly string[]
-		grouping?: readonly string[]
-		sorting?: readonly string[]
-	}
-	/**
-	 * Pass your data as an array of objects. Objects can theoretically be any shape, but it's best to keep them consistent.
-	 *
-	 * See the usage guide for more info on creating columns and data:
-	 * @link https://www.material-react-table.com/docs/getting-started/usage
-	 */
-	data: TData[]
-	bulkActions?: Table_Actions<TData>[]
-	bulkActionProps?: TableBulkActionsProps<TData>
-	cellGroupedPlaceholderText?: string
-	cellPlaceholderText?: string
-	/**
-	 * Instead of specifying a bunch of the same options for each column, you can just change an option in the `defaultColumn` prop to change a default option for all columns.
-	 */
-	defaultColumn?: Partial<Table_ColumnDef<TData>>
-	/**
-	 * Change the default options for display columns.
-	 */
-	defaultDisplayColumn?: Partial<Table_ColumnDef<TData>>
-	detailPanelBorderColor?: string
-	displayColumnDefOptions?: Partial<{
-		[key in Table_DisplayColumnIds]: Partial<Table_ColumnDef>
-	}>
-	editingMode?: 'table' | 'modal' | 'row' | 'cell'
-	enableAggregationRow?: boolean
-	enableBulkActions?: boolean
-	enableBulkActionsCaptions?: boolean | 'auto'
-	enableBulkActionsSelect?: boolean
-	enableMergedGrouping?: boolean
-	enableBottomToolbar?: boolean
-	enableClickToCopy?: boolean
-	enableColumnActions?: boolean
-	enableColumnDragging?: boolean
-	enableColumnFilterModes?: boolean
-	enableColumnOrdering?: boolean
-	enableColumnVirtualization?: boolean
-	enableDensityToggle?: boolean
-	enableDragScrolling?: boolean | 'horizontal' | 'vertical'
-	enableEditing?: EnableEditingOption<TData>
-	enableExpandAll?: boolean
-	enableDetailedPanel?: boolean
-	expandByClick?: ExpandByClick
-	expandPaddingSize?: number
-	notClickableCells?: string[]
-	tablePlugSlot?: React.ReactNode
-	noResultsFoundSlot?: React.ReactNode
-	noRecordsToDisplaySlot?: React.ReactNode
-	isTablePlugSlotActive?: boolean
-	validateHoveredRow?: ValidateHoveredRowProp<TData>
-	getRowDragValuesChangeMessage?: GetRowDragValuesChangeMessageProp<TData>
-	cellStyleRules?: Record<
-		string,
-		{
-			executeStyleCondition: (params: {
-				cell: Table_Cell
-				row: Table_Row
-				column: Table_Column
-				table: TData
-				isCurrentCellClicked?: boolean
-				isCurrentRowDetailOpened?: boolean
-				isEditing?: boolean
-			}) => object | undefined
-		}
-	>
-	enableFullScreenToggle?: boolean
-	enableGlobalFilterModes?: boolean
-	enableGlobalFilterRankedResults?: boolean
-	enablePagination?: boolean | 'pages' | 'scroll'
-	enableRowActions?: boolean
-	enableRowDragging?: boolean | ((row: Table_Row<TData>) => boolean)
-	enableRowNumbers?: boolean
-	enableRowSelection?: boolean | ((row: Table_Row<TData>) => boolean)
-	enableRowVirtualization?: boolean
-	enableSelectAll?: boolean
-	enableStatusBar?: boolean
-	enableStickyScrollbars?: {
-		horizontal?: boolean
+> &
+	TableSortingConfigs<TData> & {
+		columnFilterModeOptions?: Array<
+			LiteralUnion<string & Table_FilterOption>
+		> | null
 		/**
-		 * todo
-		 * position must relative
-		 * @default window
+		 * The columns to display in the table. `accessorKey`s or `accessorFn`s must match keys in the `data` prop.
+		 *
+		 * See more info on creating columns on the official docs site:
+		 * @link https://www.material-react-table.com/docs/guides/data-columns
+		 * @link https://www.material-react-table.com/docs/guides/display-columns
+		 *
+		 * See all Columns Options on the official docs site:
+		 * @link https://www.material-react-table.com/docs/api/column-options
 		 */
-		// parent: HTMLElement | null | undefined
+		columns: Table_ColumnDef<TData>[]
+		/**
+		 * The columns to be suggested in sidebars.
+		 * Contains list of column accessorKey.
+		 */
+		suggestedColumns?: {
+			filtering?: readonly string[]
+			grouping?: readonly string[]
+			sorting?: readonly string[]
+		}
+		/**
+		 * Pass your data as an array of objects. Objects can theoretically be any shape, but it's best to keep them consistent.
+		 *
+		 * See the usage guide for more info on creating columns and data:
+		 * @link https://www.material-react-table.com/docs/getting-started/usage
+		 */
+		data: TData[]
+		bulkActions?: Table_Actions<TData>[]
+		bulkActionProps?: TableBulkActionsProps<TData>
+		cellGroupedPlaceholderText?: string
+		cellPlaceholderText?: string
+		/**
+		 * Instead of specifying a bunch of the same options for each column, you can just change an option in the `defaultColumn` prop to change a default option for all columns.
+		 */
+		defaultColumn?: Partial<Table_ColumnDef<TData>>
+		/**
+		 * Change the default options for display columns.
+		 */
+		defaultDisplayColumn?: Partial<Table_ColumnDef<TData>>
+		detailPanelBorderColor?: string
+		displayColumnDefOptions?: Partial<{
+			[key in Table_DisplayColumnIds]: Partial<Table_ColumnDef>
+		}>
+		editingMode?: 'table' | 'modal' | 'row' | 'cell'
+		enableAggregationRow?: boolean
+		enableBulkActions?: boolean
+		enableBulkActionsCaptions?: boolean | 'auto'
+		enableBulkActionsSelect?: boolean
+		enableMergedGrouping?: boolean
+		enableBottomToolbar?: boolean
+		enableClickToCopy?: boolean
+		enableColumnActions?: boolean
+		enableColumnDragging?: boolean
+		enableColumnFilterModes?: boolean
+		enableColumnOrdering?: boolean
+		enableColumnVirtualization?: boolean
+		enableDensityToggle?: boolean
+		enableDragScrolling?: boolean | 'horizontal' | 'vertical'
+		enableEditing?: EnableEditingOption<TData>
+		enableExpandAll?: boolean
+		enableDetailedPanel?: boolean
+		expandByClick?: ExpandByClick
+		expandPaddingSize?: number
+		notClickableCells?: string[]
+		tablePlugSlot?: React.ReactNode
+		noResultsFoundSlot?: React.ReactNode
+		noRecordsToDisplaySlot?: React.ReactNode
+		isTablePlugSlotActive?: boolean
+		validateHoveredRow?: ValidateHoveredRowProp<TData>
+		getRowDragValuesChangeMessage?: GetRowDragValuesChangeMessageProp<TData>
+		cellStyleRules?: Record<
+			string,
+			{
+				executeStyleCondition: (params: {
+					cell: Table_Cell
+					row: Table_Row
+					column: Table_Column
+					table: TData
+					isCurrentCellClicked?: boolean
+					isCurrentRowDetailOpened?: boolean
+					isEditing?: boolean
+				}) => object | undefined
+			}
+		>
+		enableFullScreenToggle?: boolean
+		enableGlobalFilterModes?: boolean
+		enableGlobalFilterRankedResults?: boolean
+		enablePagination?: boolean | 'pages' | 'scroll'
+		enableRowActions?: boolean
+		enableRowDragging?: boolean | ((row: Table_Row<TData>) => boolean)
+		enableRowNumbers?: boolean
+		enableRowSelection?: boolean | ((row: Table_Row<TData>) => boolean)
+		enableRowVirtualization?: boolean
+		enableSelectAll?: boolean
+		enableStatusBar?: boolean
+		enableStickyScrollbars?: {
+			horizontal?: boolean
+			/**
+			 * todo
+			 * position must relative
+			 * @default window
+			 */
+			// parent: HTMLElement | null | undefined
+		}
+		enableStickyFooter?: boolean
+		enableStickyHeader?: boolean
+		enableSummaryRow?: boolean
+		enableTableFooter?: boolean
+		enableTableHead?: boolean
+		enableToolbarInternalActions?: boolean
+		enableTopToolbar?: boolean
+		expandRowsFn?: (dataRow: TData) => TData[]
+		getGroupRowCount?: (props: {
+			groupId?: string
+			groupRow?: Table_Row<TData>
+			table: TableInstance<TData>
+		}) => ReactNode
+		getRowId?: (
+			originalRow: TData,
+			index: number,
+			parentRow: Table_Row<TData>
+		) => string
+		getIsUnitTreeItem?: (rowOriginal: TData) => boolean
+		getIsColumnAllGroupsCollapsed?: (
+			props: GetIsColumnAllGroupsCollapsedProps<TData>
+		) => boolean
+		getIsGroupCollapsed?: (props: GetIsGroupCollapsedProps<TData>) => boolean
+		globalFilterFn?: Table_FilterOption
+		globalFilterModeOptions?: Table_FilterOption[] | null
+		groupBorder?: string | { left: string; top: string }
+		handleRowsDrop?: ({
+			hoveredRow,
+			draggingRows,
+			grouping,
+			table,
+		}: {
+			hoveredRow: HoveredRowState<TData>
+			draggingRows: Table_Row<TData>[]
+			grouping: GroupingState
+			table: TableInstance<TData>
+		}) => Promise<void> | void
+		hideEditRowAction?: boolean
+		hideExpandColumn?: boolean
+		hideSummaryRowInEmptyTable?: boolean
+		hideRowSelectionColumn?: boolean
+		hideTableHead?: boolean
+		icons?: Partial<Table_Icons>
+		infiniteScrollIntersectorStyles?: Record<string, any>
+		initialState?: Partial<Table_TableState<TData>>
+		innerTable?: boolean
+		innerTableTitle?: string
+		isRowGroupable?: ({
+			row,
+			table,
+		}: {
+			row: Table_Row<TData>
+			table: TableInstance<TData>
+		}) => boolean
+		/**
+		 * Changes which kind of CSS layout is used to render the table. `semantic` uses default semantic HTML elements, while `grid` adds CSS grid and flexbox styles
+		 */
+		layoutMode?: 'semantic' | 'grid'
+		/**
+		 * Pass in either a locale imported from `material-react-table/locales/*` or a custom locale object.
+		 *
+		 * See the localization (i18n) guide for more info:
+		 * @link https://www.material-react-table.com/docs/guides/localization
+		 */
+		localization?: Partial<Table_Localization>
+		/**
+		 * Memoize cells, rows, or the entire table body to potentially improve render performance.
+		 *
+		 * @warning This will break some dynamic rendering features. See the memoization guide for more info:
+		 * @link https://www.material-react-table.com/docs/guides/memoize-components
+		 */
+		memoMode?: 'cells' | 'rows' | 'table-body'
+		muiBottomToolbarProps?:
+			| ToolbarProps
+			| (({ table }: { table: TableInstance<TData> }) => ToolbarProps)
+		muiEditInputProps?: TableFunctionalProp<InputProps, TData>
+		muiEditSelectProps?: TableFunctionalProp<SelectProps, TData>
+		muiEditDayPickerInputProps?: TableFunctionalProp<DayPickerInputProps, TData>
+		muiExpandAllButtonProps?:
+			| IconButtonProps
+			| (({ table }: { table: TableInstance<TData> }) => IconButtonProps)
+		muiExpandButtonProps?:
+			| IconButtonProps
+			| (({
+					row,
+					table,
+			  }: {
+					table: TableInstance<TData>
+					row: Table_Row<TData>
+			  }) => IconButtonProps)
+		muiLinearProgressProps?:
+			| LinearProgressProps
+			| (({
+					isTopToolbar,
+					table,
+			  }: {
+					isTopToolbar: boolean
+					table: TableInstance<TData>
+			  }) => LinearProgressProps)
+		muiSearchTextFieldProps?:
+			| TextFieldProps
+			| (({ table }: { table: TableInstance<TData> }) => TextFieldProps)
+		muiSelectAllCheckboxProps?:
+			| CheckboxProps
+			| (({ table }: { table: TableInstance<TData> }) => CheckboxProps)
+		muiSelectCheckboxProps?:
+			| (CheckboxProps | RadioProps)
+			| (({
+					table,
+					row,
+			  }: {
+					table: TableInstance<TData>
+					row: Table_Row<TData>
+			  }) => CheckboxProps | RadioProps)
+		muiTableBodyCellCopyButtonProps?:
+			| ButtonProps
+			| (({
+					cell,
+					column,
+					row,
+					table,
+			  }: {
+					cell: Table_Cell<TData>
+					column: Table_Column<TData>
+					row: Table_Row<TData>
+					table: TableInstance<TData>
+			  }) => ButtonProps)
+		muiTableBodyCellProps?:
+			| TableCellProps
+			| (({
+					cell,
+					column,
+					row,
+					table,
+			  }: {
+					cell: Table_Cell<TData>
+					column: Table_Column<TData>
+					row: Table_Row<TData>
+					table: TableInstance<TData>
+			  }) => TableCellProps)
+		muiTableBodyCellWrapperProps?:
+			| BoxProps
+			| (({
+					cell,
+					column,
+					row,
+					table,
+			  }: {
+					cell: Table_Cell<TData>
+					column: Table_Column<TData>
+					row: Table_Row<TData>
+					table: TableInstance<TData>
+			  }) => BoxProps)
+		muiTableBodyCellSkeletonProps?:
+			| SkeletonProps
+			| (({
+					cell,
+					column,
+					row,
+					table,
+			  }: {
+					cell: Table_Cell<TData>
+					column: Table_Column<TData>
+					row: Table_Row<TData>
+					table: TableInstance<TData>
+			  }) => SkeletonProps)
+		muiTableBodyProps?:
+			| TableBodyProps
+			| (({ table }: { table: TableInstance<TData> }) => TableBodyProps)
+		muiTableBodyRowDragHandleProps?:
+			| IconButtonProps
+			| MuiTableBodyRowDragHandleFnProps<TData>
+		muiTableBodyRowProps?:
+			| TableRowProps
+			| (({
+					isDetailPanel = false,
+					row,
+					table,
+			  }: {
+					isDetailPanel?: boolean
+					row: Table_Row<TData>
+					table: TableInstance<TData>
+			  }) => TableRowProps)
+		muiTableContainerProps?:
+			| TableContainerProps
+			| (({ table }: { table: TableInstance<TData> }) => TableContainerProps)
+		muiTableDetailPanelProps?:
+			| TableCellProps
+			| (({
+					table,
+					row,
+			  }: {
+					table: TableInstance<TData>
+					row: Table_Row<TData>
+			  }) => TableCellProps)
+		muiTableFooterCellProps?:
+			| TableCellProps
+			| (({
+					table,
+					column,
+			  }: {
+					table: TableInstance<TData>
+					column: Table_Column<TData>
+			  }) => TableCellProps)
+		muiTableFooterProps?:
+			| TableFooterProps
+			| (({ table }: { table: TableInstance<TData> }) => TableFooterProps)
+		muiTableFooterRowProps?:
+			| TableRowProps
+			| (({
+					table,
+					footerGroup,
+			  }: {
+					table: TableInstance<TData>
+					footerGroup: Table_HeaderGroup<TData>
+			  }) => TableRowProps)
+		muiTableHeadCellColumnActionsButtonProps?:
+			| IconButtonProps
+			| (({
+					table,
+					column,
+			  }: {
+					table: TableInstance<TData>
+					column: Table_Column<TData>
+			  }) => IconButtonProps)
+		muiTableHeadCellDragHandleProps?:
+			| IconButtonProps
+			| (({
+					table,
+					column,
+			  }: {
+					table: TableInstance<TData>
+					column: Table_Column<TData>
+			  }) => IconButtonProps)
+		muiTableHeadCellFilterCheckboxProps?:
+			| CheckboxProps
+			| (({
+					column,
+					table,
+			  }: {
+					column: Table_Column<TData>
+					table: TableInstance<TData>
+			  }) => CheckboxProps)
+		muiTableHeadCellFilterTextFieldProps?:
+			| TextFieldProps
+			| (({
+					table,
+					column,
+					rangeFilterIndex,
+			  }: {
+					table: TableInstance<TData>
+					column: Table_Column<TData>
+					rangeFilterIndex?: number
+			  }) => TextFieldProps)
+		muiTableHeadCellProps?:
+			| TableCellProps
+			| (({
+					table,
+					column,
+			  }: {
+					table: TableInstance<TData>
+					column: Table_Column<TData>
+			  }) => TableCellProps)
+		muiTableHeadCellWrapperProps?:
+			| BoxProps
+			| (({
+					table,
+					column,
+			  }: {
+					table: TableInstance<TData>
+					column: Table_Column<TData>
+			  }) => BoxProps)
+		muiTableHeadProps?:
+			| TableHeadProps
+			| (({ table }: { table: TableInstance<TData> }) => TableHeadProps)
+		muiTableHeadRowProps?:
+			| TableRowProps
+			| (({
+					table,
+					headerGroup,
+			  }: {
+					table: TableInstance<TData>
+					headerGroup: Table_HeaderGroup<TData>
+			  }) => TableRowProps)
+		muiTablePaginationProps?:
+			| Partial<TablePaginationProps>
+			| (({
+					table,
+			  }: {
+					table: TableInstance<TData>
+			  }) => Partial<TablePaginationProps>)
+		muiTablePaperProps?:
+			| PaperProps
+			| (({ table }: { table: TableInstance<TData> }) => PaperProps)
+		muiTableProps?:
+			| TableProps
+			| (({ table }: { table: TableInstance<TData> }) => TableProps)
+		muiTableStatusBarWrapperProps?:
+			| TableStatusBarWrapperProps
+			| (({
+					table,
+			  }: {
+					table: TableInstance<TData>
+			  }) => TableStatusBarWrapperProps)
+		muiToolbarAlertBannerChipProps?:
+			| ChipProps
+			| (({ table }: { table: TableInstance<TData> }) => ChipProps)
+		muiToolbarAlertBannerProps?:
+			| AlertProps
+			| (({ table }: { table: TableInstance<TData> }) => AlertProps)
+		muiTopToolbarProps?:
+			| ToolbarProps
+			| (({ table }: { table: TableInstance<TData> }) => ToolbarProps)
+		multirowHeader?: MultirowHeader
+		multirowColumnsDisplayDepth?: number
+		onDraggingColumnChange?: OnChangeFn<Table_Column<TData> | null>
+		onDraggingRowsChange?: OnChangeFn<Table_Row<TData>[]>
+		onEditingCellChange?: OnChangeFn<Table_Cell<TData> | null>
+		onEditingCellSave?: ({
+			exitEditingMode,
+			cell,
+			table,
+			value,
+			error,
+		}: {
+			exitEditingMode: () => void
+			cell: Table_Cell<TData>
+			table: TableInstance<TData>
+			value: any
+			error: FieldError
+		}) => Promise<void> | void
+		onEditingRowCancel?: ({
+			row,
+			table,
+		}: {
+			row: Table_Row<TData>
+			table: TableInstance<TData>
+		}) => void
+		onEditingRowsSave?: ({
+			exitEditingMode,
+			rows,
+			table,
+			values,
+		}: {
+			exitEditingMode: () => void
+			rows: Table_Row<TData> | Table_Row<TData>[]
+			table: TableInstance<TData>
+			values: Record<LiteralUnion<string & DeepKeys<TData>>, any> | {}
+		}) => Promise<void> | void
+		onEditingRowChange?: OnChangeFn<Table_Row<TData> | null>
+		onColumnFilterFnsChange?: OnChangeFn<{ [key: string]: Table_FilterOption }>
+		onGlobalFilterFnChange?: OnChangeFn<Table_FilterOption>
+		onHoveredColumnChange?: OnChangeFn<Table_Column<TData> | null>
+		onHoveredRowChange?: OnChangeFn<HoveredRowState<TData> | null>
+		onGroupCollapsedChange?: OnChangeFn<GroupCollapsed>
+		onGroupCollapsedToggle?: (props: OnGroupCollapsedToggleProps<TData>) => void
+		onGroupCollapsedToggleAll?: (
+			props: OnGroupCollapsedToggleAllProps<TData>
+		) => void
+		onIsFullScreenChange?: OnChangeFn<boolean>
+		onShowAlertBannerChange?: OnChangeFn<boolean>
+		onShowFiltersChange?: OnChangeFn<boolean>
+		onShowGlobalFilterChange?: OnChangeFn<boolean>
+		onShowToolbarDropZoneChange?: OnChangeFn<boolean>
+		onGetPresets?: () => Preset[]
+		onSavePresets?: (presets: Preset[]) => void
+		onGetDefaultPresets?: (state?: PresetState) => Preset[]
+		onNativeEvent?: ({
+			el,
+			type,
+			event,
+			value,
+		}: {
+			el: any
+			type: 'click' | 'keypress' | 'hover' | 'dragstart' | 'dragend'
+			event?: any
+			value?: any
+		}) => void
+		onInfiniteScrollLoad?: ({ table }: { table: TableInstance<TData> }) => void
+		organizeColumnsMenu?(columns: Table_Column<TData>[]): Table_Column<TData>[]
+		organizeGroupingMenu?:
+			| readonly string[]
+			| ValueTransformer<readonly Table_Column<TData>[]>
+		organizeSortingMenu?:
+			| readonly string[]
+			| ValueTransformer<readonly Table_Column<TData>[]>
+		organizeFilteringMenu?:
+			| readonly string[]
+			| ValueTransformer<readonly Table_Column<TData>[]>
+		positionActionsColumn?: 'first' | 'last'
+		positionExpandColumn?: 'first' | 'last'
+		positionGlobalFilter?: 'left' | 'right' | 'none'
+		positionPagination?: 'bottom' | 'top' | 'both' | 'none'
+		positionToolbarAlertBanner?: 'bottom' | 'top' | 'none'
+		positionToolbarDropZone?: 'bottom' | 'top' | 'none' | 'both'
+		renderBottomToolbar?:
+			| ReactNode
+			| (({ table }: { table: TableInstance<TData> }) => ReactNode)
+		renderBottomToolbarCustomActions?: ({
+			table,
+		}: {
+			table: TableInstance<TData>
+		}) => ReactNode
+		renderColumnActionsMenuItems?: ({
+			column,
+			closeMenu,
+			table,
+		}: {
+			column: Table_Column<TData>
+			closeMenu: () => void
+			table: TableInstance<TData>
+		}) => ReactNode[]
+		renderColumnFilterModeMenuItems?: ({
+			column,
+			internalFilterOptions,
+			onSelectFilterMode,
+			table,
+		}: {
+			column: Table_Column<TData>
+			internalFilterOptions: Table_InternalFilterOption[]
+			onSelectFilterMode: (filterMode: Table_FilterOption) => void
+			table: TableInstance<TData>
+		}) => ReactNode[]
+		renderDetailPanel?: ({
+			row,
+			table,
+		}: {
+			row: Table_Row<TData>
+			table: TableInstance<TData>
+		}) => ReactNode
+		renderEditMenuItem?: RenderEditMenuItem<TData>
+		renderGlobalFilterModeMenuItems?: ({
+			internalFilterOptions,
+			onSelectFilterMode,
+			table,
+		}: {
+			internalFilterOptions: Table_InternalFilterOption[]
+			onSelectFilterMode: (filterMode: Table_FilterOption) => void
+			table: TableInstance<TData>
+		}) => ReactNode[]
+		renderRowActionMenuItems?: ({
+			closeMenu,
+			row,
+			table,
+		}: {
+			closeMenu: () => void
+			row: Table_Row<TData>
+			table: TableInstance<TData>
+		}) => ReactNode[]
+		renderRowActions?: ({
+			cell,
+			row,
+			table,
+		}: {
+			cell: Table_Cell<TData>
+			row: Table_Row<TData>
+			table: TableInstance<TData>
+		}) => ReactNode
+		renderToolbarInternalActions?: ({
+			table,
+			originalChildren,
+		}: {
+			table: TableInstance<TData>
+			originalChildren?: ReactNode
+		}) => ReactNode
+		renderTopToolbar?:
+			| ReactNode
+			| (({ table }: { table: TableInstance<TData> }) => ReactNode)
+		renderTopToolbarCustomActions?: ({
+			table,
+		}: {
+			table: TableInstance<TData>
+		}) => ReactNode
+		rowCount?: number
+		rowNumberMode?: 'original' | 'static'
+		selectAllMode?: 'all' | 'page'
+		showBottomProggressBar?: boolean
+		state?: Partial<Table_TableState<TData>>
+		summaryRowCell?: (args: {
+			table: TableInstance<TData>
+			column: Table_Column<TData>
+			defaultStyles: Record<string, any>
+		}) => React.ReactNode
+		ColumnActionsFiltersMenu?: FC<Table_ColumnActionsFiltersMenuProps<TData>>
+		columnVirtualizerInstanceRef?: MutableRefObject<Virtualizer<
+			HTMLDivElement,
+			HTMLTableCellElement
+		> | null>
+		columnVirtualizerProps?:
+			| Partial<VirtualizerOptions<HTMLDivElement, HTMLTableCellElement>>
+			| (({
+					table,
+			  }: {
+					table: TableInstance<TData>
+			  }) => Partial<VirtualizerOptions<HTMLDivElement, HTMLTableCellElement>>)
+		rowVirtualizerInstanceRef?: MutableRefObject<Virtualizer<
+			HTMLDivElement,
+			HTMLTableRowElement
+		> | null>
+		rowVirtualizerProps?:
+			| Partial<VirtualizerOptions<HTMLDivElement, HTMLTableRowElement>>
+			| (({
+					table,
+			  }: {
+					table: TableInstance<TData>
+			  }) => Partial<VirtualizerOptions<HTMLDivElement, HTMLTableRowElement>>)
+		tableInstanceRef?: MutableRefObject<TableInstance<TData> | null>
+		toolbarProps?: Partial<TableToolbarProps<TData>>
+		uppercaseHeader?: boolean
+		/**
+		 * @deprecated Use `rowVirtualizerInstanceRef` instead
+		 */
+		virtualizerInstanceRef?: any
+		/**
+		 * @deprecated Use `rowVirtualizerProps` instead
+		 */
+		virtualizerProps?: any
+		detailedRowBackgroundColor?: string
+		CustomRow?: FC<TableBodyRowProps>
+		theme?: Theme
+		e2eLabels?: E2ELabelsOption
 	}
-	enableStickyFooter?: boolean
-	enableStickyHeader?: boolean
-	enableSummaryRow?: boolean
-	enableTableFooter?: boolean
-	enableTableHead?: boolean
-	enableToolbarInternalActions?: boolean
-	enableTopToolbar?: boolean
-	expandRowsFn?: (dataRow: TData) => TData[]
-	getGroupRowCount?: (props: {
-		groupId?: string
-		groupRow?: Table_Row<TData>
-		table: TableInstance<TData>
-	}) => ReactNode
-	getRowId?: (
-		originalRow: TData,
-		index: number,
-		parentRow: Table_Row<TData>
-	) => string
-	getIsUnitTreeItem?: (rowOriginal: TData) => boolean
-	getIsColumnAllGroupsCollapsed?: (
-		props: GetIsColumnAllGroupsCollapsedProps<TData>
-	) => boolean
-	getIsGroupCollapsed?: (props: GetIsGroupCollapsedProps<TData>) => boolean
-	globalFilterFn?: Table_FilterOption
-	globalFilterModeOptions?: Table_FilterOption[] | null
-	groupBorder?: string | { left: string; top: string }
-	handleRowsDrop?: ({
-		hoveredRow,
-		draggingRows,
-		grouping,
-		table,
-	}: {
-		hoveredRow: HoveredRowState<TData>
-		draggingRows: Table_Row<TData>[]
-		grouping: GroupingState
-		table: TableInstance<TData>
-	}) => Promise<void> | void
-	hideEditRowAction?: boolean
-	hideExpandColumn?: boolean
-	hideSummaryRowInEmptyTable?: boolean
-	hideRowSelectionColumn?: boolean
-	hideTableHead?: boolean
-	icons?: Partial<Table_Icons>
-	infiniteScrollIntersectorStyles?: Record<string, any>
-	initialState?: Partial<Table_TableState<TData>>
-	innerTable?: boolean
-	innerTableTitle?: string
-	isRowGroupable?: ({
-		row,
-		table,
-	}: {
-		row: Table_Row<TData>
-		table: TableInstance<TData>
-	}) => boolean
-	/**
-	 * Changes which kind of CSS layout is used to render the table. `semantic` uses default semantic HTML elements, while `grid` adds CSS grid and flexbox styles
-	 */
-	layoutMode?: 'semantic' | 'grid'
-	/**
-	 * Pass in either a locale imported from `material-react-table/locales/*` or a custom locale object.
-	 *
-	 * See the localization (i18n) guide for more info:
-	 * @link https://www.material-react-table.com/docs/guides/localization
-	 */
-	localization?: Partial<Table_Localization>
-	/**
-	 * Memoize cells, rows, or the entire table body to potentially improve render performance.
-	 *
-	 * @warning This will break some dynamic rendering features. See the memoization guide for more info:
-	 * @link https://www.material-react-table.com/docs/guides/memoize-components
-	 */
-	memoMode?: 'cells' | 'rows' | 'table-body'
-	muiBottomToolbarProps?:
-		| ToolbarProps
-		| (({ table }: { table: TableInstance<TData> }) => ToolbarProps)
-	muiEditInputProps?: TableFunctionalProp<InputProps, TData>
-	muiEditSelectProps?: TableFunctionalProp<SelectProps, TData>
-	muiEditDayPickerInputProps?: TableFunctionalProp<DayPickerInputProps, TData>
-	muiExpandAllButtonProps?:
-		| IconButtonProps
-		| (({ table }: { table: TableInstance<TData> }) => IconButtonProps)
-	muiExpandButtonProps?:
-		| IconButtonProps
-		| (({
-				row,
-				table,
-		  }: {
-				table: TableInstance<TData>
-				row: Table_Row<TData>
-		  }) => IconButtonProps)
-	muiLinearProgressProps?:
-		| LinearProgressProps
-		| (({
-				isTopToolbar,
-				table,
-		  }: {
-				isTopToolbar: boolean
-				table: TableInstance<TData>
-		  }) => LinearProgressProps)
-	muiSearchTextFieldProps?:
-		| TextFieldProps
-		| (({ table }: { table: TableInstance<TData> }) => TextFieldProps)
-	muiSelectAllCheckboxProps?:
-		| CheckboxProps
-		| (({ table }: { table: TableInstance<TData> }) => CheckboxProps)
-	muiSelectCheckboxProps?:
-		| (CheckboxProps | RadioProps)
-		| (({
-				table,
-				row,
-		  }: {
-				table: TableInstance<TData>
-				row: Table_Row<TData>
-		  }) => CheckboxProps | RadioProps)
-	muiTableBodyCellCopyButtonProps?:
-		| ButtonProps
-		| (({
-				cell,
-				column,
-				row,
-				table,
-		  }: {
-				cell: Table_Cell<TData>
-				column: Table_Column<TData>
-				row: Table_Row<TData>
-				table: TableInstance<TData>
-		  }) => ButtonProps)
-	muiTableBodyCellProps?:
-		| TableCellProps
-		| (({
-				cell,
-				column,
-				row,
-				table,
-		  }: {
-				cell: Table_Cell<TData>
-				column: Table_Column<TData>
-				row: Table_Row<TData>
-				table: TableInstance<TData>
-		  }) => TableCellProps)
-	muiTableBodyCellWrapperProps?:
-		| BoxProps
-		| (({
-				cell,
-				column,
-				row,
-				table,
-		  }: {
-				cell: Table_Cell<TData>
-				column: Table_Column<TData>
-				row: Table_Row<TData>
-				table: TableInstance<TData>
-		  }) => BoxProps)
-	muiTableBodyCellSkeletonProps?:
-		| SkeletonProps
-		| (({
-				cell,
-				column,
-				row,
-				table,
-		  }: {
-				cell: Table_Cell<TData>
-				column: Table_Column<TData>
-				row: Table_Row<TData>
-				table: TableInstance<TData>
-		  }) => SkeletonProps)
-	muiTableBodyProps?:
-		| TableBodyProps
-		| (({ table }: { table: TableInstance<TData> }) => TableBodyProps)
-	muiTableBodyRowDragHandleProps?:
-		| IconButtonProps
-		| MuiTableBodyRowDragHandleFnProps<TData>
-	muiTableBodyRowProps?:
-		| TableRowProps
-		| (({
-				isDetailPanel = false,
-				row,
-				table,
-		  }: {
-				isDetailPanel?: boolean
-				row: Table_Row<TData>
-				table: TableInstance<TData>
-		  }) => TableRowProps)
-	muiTableContainerProps?:
-		| TableContainerProps
-		| (({ table }: { table: TableInstance<TData> }) => TableContainerProps)
-	muiTableDetailPanelProps?:
-		| TableCellProps
-		| (({
-				table,
-				row,
-		  }: {
-				table: TableInstance<TData>
-				row: Table_Row<TData>
-		  }) => TableCellProps)
-	muiTableFooterCellProps?:
-		| TableCellProps
-		| (({
-				table,
-				column,
-		  }: {
-				table: TableInstance<TData>
-				column: Table_Column<TData>
-		  }) => TableCellProps)
-	muiTableFooterProps?:
-		| TableFooterProps
-		| (({ table }: { table: TableInstance<TData> }) => TableFooterProps)
-	muiTableFooterRowProps?:
-		| TableRowProps
-		| (({
-				table,
-				footerGroup,
-		  }: {
-				table: TableInstance<TData>
-				footerGroup: Table_HeaderGroup<TData>
-		  }) => TableRowProps)
-	muiTableHeadCellColumnActionsButtonProps?:
-		| IconButtonProps
-		| (({
-				table,
-				column,
-		  }: {
-				table: TableInstance<TData>
-				column: Table_Column<TData>
-		  }) => IconButtonProps)
-	muiTableHeadCellDragHandleProps?:
-		| IconButtonProps
-		| (({
-				table,
-				column,
-		  }: {
-				table: TableInstance<TData>
-				column: Table_Column<TData>
-		  }) => IconButtonProps)
-	muiTableHeadCellFilterCheckboxProps?:
-		| CheckboxProps
-		| (({
-				column,
-				table,
-		  }: {
-				column: Table_Column<TData>
-				table: TableInstance<TData>
-		  }) => CheckboxProps)
-	muiTableHeadCellFilterTextFieldProps?:
-		| TextFieldProps
-		| (({
-				table,
-				column,
-				rangeFilterIndex,
-		  }: {
-				table: TableInstance<TData>
-				column: Table_Column<TData>
-				rangeFilterIndex?: number
-		  }) => TextFieldProps)
-	muiTableHeadCellProps?:
-		| TableCellProps
-		| (({
-				table,
-				column,
-		  }: {
-				table: TableInstance<TData>
-				column: Table_Column<TData>
-		  }) => TableCellProps)
-	muiTableHeadCellWrapperProps?:
-		| BoxProps
-		| (({
-				table,
-				column,
-		  }: {
-				table: TableInstance<TData>
-				column: Table_Column<TData>
-		  }) => BoxProps)
-	muiTableHeadProps?:
-		| TableHeadProps
-		| (({ table }: { table: TableInstance<TData> }) => TableHeadProps)
-	muiTableHeadRowProps?:
-		| TableRowProps
-		| (({
-				table,
-				headerGroup,
-		  }: {
-				table: TableInstance<TData>
-				headerGroup: Table_HeaderGroup<TData>
-		  }) => TableRowProps)
-	muiTablePaginationProps?:
-		| Partial<TablePaginationProps>
-		| (({
-				table,
-		  }: {
-				table: TableInstance<TData>
-		  }) => Partial<TablePaginationProps>)
-	muiTablePaperProps?:
-		| PaperProps
-		| (({ table }: { table: TableInstance<TData> }) => PaperProps)
-	muiTableProps?:
-		| TableProps
-		| (({ table }: { table: TableInstance<TData> }) => TableProps)
-	muiTableStatusBarWrapperProps?:
-		| TableStatusBarWrapperProps
-		| (({
-				table,
-		  }: {
-				table: TableInstance<TData>
-		  }) => TableStatusBarWrapperProps)
-	muiToolbarAlertBannerChipProps?:
-		| ChipProps
-		| (({ table }: { table: TableInstance<TData> }) => ChipProps)
-	muiToolbarAlertBannerProps?:
-		| AlertProps
-		| (({ table }: { table: TableInstance<TData> }) => AlertProps)
-	muiTopToolbarProps?:
-		| ToolbarProps
-		| (({ table }: { table: TableInstance<TData> }) => ToolbarProps)
-	multirowHeader?: MultirowHeader
-	multirowColumnsDisplayDepth?: number
-	onDraggingColumnChange?: OnChangeFn<Table_Column<TData> | null>
-	onDraggingRowsChange?: OnChangeFn<Table_Row<TData>[]>
-	onEditingCellChange?: OnChangeFn<Table_Cell<TData> | null>
-	onEditingCellSave?: ({
-		exitEditingMode,
-		cell,
-		table,
-		value,
-		error,
-	}: {
-		exitEditingMode: () => void
-		cell: Table_Cell<TData>
-		table: TableInstance<TData>
-		value: any
-		error: FieldError
-	}) => Promise<void> | void
-	onEditingRowCancel?: ({
-		row,
-		table,
-	}: {
-		row: Table_Row<TData>
-		table: TableInstance<TData>
-	}) => void
-	onEditingRowsSave?: ({
-		exitEditingMode,
-		rows,
-		table,
-		values,
-	}: {
-		exitEditingMode: () => void
-		rows: Table_Row<TData> | Table_Row<TData>[]
-		table: TableInstance<TData>
-		values: Record<LiteralUnion<string & DeepKeys<TData>>, any> | {}
-	}) => Promise<void> | void
-	onEditingRowChange?: OnChangeFn<Table_Row<TData> | null>
-	onColumnFilterFnsChange?: OnChangeFn<{ [key: string]: Table_FilterOption }>
-	onGlobalFilterFnChange?: OnChangeFn<Table_FilterOption>
-	onHoveredColumnChange?: OnChangeFn<Table_Column<TData> | null>
-	onHoveredRowChange?: OnChangeFn<HoveredRowState<TData> | null>
-	onGroupCollapsedChange?: OnChangeFn<GroupCollapsed>
-	onGroupCollapsedToggle?: (props: OnGroupCollapsedToggleProps<TData>) => void
-	onGroupCollapsedToggleAll?: (
-		props: OnGroupCollapsedToggleAllProps<TData>
-	) => void
-	onIsFullScreenChange?: OnChangeFn<boolean>
-	onShowAlertBannerChange?: OnChangeFn<boolean>
-	onShowFiltersChange?: OnChangeFn<boolean>
-	onShowGlobalFilterChange?: OnChangeFn<boolean>
-	onShowToolbarDropZoneChange?: OnChangeFn<boolean>
-	onGetPresets?: () => Preset[]
-	onSavePresets?: (presets: Preset[]) => void
-	onGetDefaultPresets?: (state?: PresetState) => Preset[]
-	onNativeEvent?: ({
-		el,
-		type,
-		event,
-		value,
-	}: {
-		el: any
-		type: 'click' | 'keypress' | 'hover' | 'dragstart' | 'dragend'
-		event?: any
-		value?: any
-	}) => void
-	onInfiniteScrollLoad?: ({ table }: { table: TableInstance<TData> }) => void
-	organizeColumnsMenu?(columns: Table_Column<TData>[]): Table_Column<TData>[]
-	organizeGroupingMenu?:
-		| readonly string[]
-		| ValueTransformer<readonly Table_Column<TData>[]>
-	organizeSortingMenu?:
-		| readonly string[]
-		| ValueTransformer<readonly Table_Column<TData>[]>
-	organizeFilteringMenu?:
-		| readonly string[]
-		| ValueTransformer<readonly Table_Column<TData>[]>
-	positionActionsColumn?: 'first' | 'last'
-	positionExpandColumn?: 'first' | 'last'
-	positionGlobalFilter?: 'left' | 'right' | 'none'
-	positionPagination?: 'bottom' | 'top' | 'both' | 'none'
-	positionToolbarAlertBanner?: 'bottom' | 'top' | 'none'
-	positionToolbarDropZone?: 'bottom' | 'top' | 'none' | 'both'
-	renderBottomToolbar?:
-		| ReactNode
-		| (({ table }: { table: TableInstance<TData> }) => ReactNode)
-	renderBottomToolbarCustomActions?: ({
-		table,
-	}: {
-		table: TableInstance<TData>
-	}) => ReactNode
-	renderColumnActionsMenuItems?: ({
-		column,
-		closeMenu,
-		table,
-	}: {
-		column: Table_Column<TData>
-		closeMenu: () => void
-		table: TableInstance<TData>
-	}) => ReactNode[]
-	renderColumnFilterModeMenuItems?: ({
-		column,
-		internalFilterOptions,
-		onSelectFilterMode,
-		table,
-	}: {
-		column: Table_Column<TData>
-		internalFilterOptions: Table_InternalFilterOption[]
-		onSelectFilterMode: (filterMode: Table_FilterOption) => void
-		table: TableInstance<TData>
-	}) => ReactNode[]
-	renderDetailPanel?: ({
-		row,
-		table,
-	}: {
-		row: Table_Row<TData>
-		table: TableInstance<TData>
-	}) => ReactNode
-	renderEditMenuItem?: RenderEditMenuItem<TData>
-	renderGlobalFilterModeMenuItems?: ({
-		internalFilterOptions,
-		onSelectFilterMode,
-		table,
-	}: {
-		internalFilterOptions: Table_InternalFilterOption[]
-		onSelectFilterMode: (filterMode: Table_FilterOption) => void
-		table: TableInstance<TData>
-	}) => ReactNode[]
-	renderRowActionMenuItems?: ({
-		closeMenu,
-		row,
-		table,
-	}: {
-		closeMenu: () => void
-		row: Table_Row<TData>
-		table: TableInstance<TData>
-	}) => ReactNode[]
-	renderRowActions?: ({
-		cell,
-		row,
-		table,
-	}: {
-		cell: Table_Cell<TData>
-		row: Table_Row<TData>
-		table: TableInstance<TData>
-	}) => ReactNode
-	renderToolbarInternalActions?: ({
-		table,
-		originalChildren,
-	}: {
-		table: TableInstance<TData>
-		originalChildren?: ReactNode
-	}) => ReactNode
-	renderTopToolbar?:
-		| ReactNode
-		| (({ table }: { table: TableInstance<TData> }) => ReactNode)
-	renderTopToolbarCustomActions?: ({
-		table,
-	}: {
-		table: TableInstance<TData>
-	}) => ReactNode
-	rowCount?: number
-	rowNumberMode?: 'original' | 'static'
-	selectAllMode?: 'all' | 'page'
-	showBottomProggressBar?: boolean
-	state?: Partial<Table_TableState<TData>>
-	summaryRowCell?: (args: {
-		table: TableInstance<TData>
-		column: Table_Column<TData>
-		defaultStyles: Record<string, any>
-	}) => React.ReactNode
-	ColumnActionsFiltersMenu?: FC<Table_ColumnActionsFiltersMenuProps<TData>>
-	columnVirtualizerInstanceRef?: MutableRefObject<Virtualizer<
-		HTMLDivElement,
-		HTMLTableCellElement
-	> | null>
-	columnVirtualizerProps?:
-		| Partial<VirtualizerOptions<HTMLDivElement, HTMLTableCellElement>>
-		| (({
-				table,
-		  }: {
-				table: TableInstance<TData>
-		  }) => Partial<VirtualizerOptions<HTMLDivElement, HTMLTableCellElement>>)
-	rowVirtualizerInstanceRef?: MutableRefObject<Virtualizer<
-		HTMLDivElement,
-		HTMLTableRowElement
-	> | null>
-	rowVirtualizerProps?:
-		| Partial<VirtualizerOptions<HTMLDivElement, HTMLTableRowElement>>
-		| (({
-				table,
-		  }: {
-				table: TableInstance<TData>
-		  }) => Partial<VirtualizerOptions<HTMLDivElement, HTMLTableRowElement>>)
-	tableInstanceRef?: MutableRefObject<TableInstance<TData> | null>
-	toolbarProps?: Partial<TableToolbarProps<TData>>
-	uppercaseHeader?: boolean
-	/**
-	 * @deprecated Use `rowVirtualizerInstanceRef` instead
-	 */
-	virtualizerInstanceRef?: any
-	/**
-	 * @deprecated Use `rowVirtualizerProps` instead
-	 */
-	virtualizerProps?: any
-	detailedRowBackgroundColor?: string
-	CustomRow?: FC<TableBodyRowProps>
-	theme?: Theme
-	e2eLabels?: E2ELabelsOption
-}
 
-const TableComponent = <TData extends Record<string, any> = {}>(
+const TableComponent = <TData extends TableData = TableData>(
 	props: TableComponentProps<TData>
 ) => {
 	return (

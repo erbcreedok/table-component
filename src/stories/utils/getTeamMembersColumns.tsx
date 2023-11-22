@@ -435,6 +435,7 @@ export const getTeamMembersColumns = () => {
 			editVariant: 'number',
 			minValue: -100,
 			maxValue: 100000,
+			sortingType: 'numeric',
 			validator: ({ value }) => {
 				if (Number(value) % 5 !== 0) {
 					return 'Only multiples of 5 are allowed'
