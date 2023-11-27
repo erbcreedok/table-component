@@ -5,14 +5,17 @@ import {
 	VirtualItem,
 } from '@tanstack/react-virtual'
 import MuiTableBody from '@mui/material/TableBody'
+import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
 
 import { HoveredRowLine } from '../components/HoveredRowLine'
 import { RowVirtualizerWrapper } from '../components/RowVirtualizerWrapper'
+import { LinearProgressBar } from '../toolbar/LinearProgressBar'
 import { rankGlobalFuzzy } from '../sortingFns'
 import type { Table_Row, TableInstance } from '..'
 import { isColumnDisplayed } from '../utils/getFilteredByDisplay'
 import { getValueOrFunctionHandler } from '../utils/getValueOrFunctionHandler'
+import { useIntersectionObserver } from '../hooks/useIntersectionObserver'
 
 import {
 	Memo_TableBodyRow,
@@ -55,6 +58,9 @@ export const TableBody: FC<Props> = ({
 			virtualizerInstanceRef,
 			virtualizerProps,
 			getIsUnitTreeItem,
+			onInfiniteScrollLoad,
+			showBottomProggressBar,
+			infiniteScrollIntersectorStyles,
 		},
 		refs: { tableContainerRef, tablePaperRef },
 		CustomRow,
@@ -79,7 +85,7 @@ export const TableBody: FC<Props> = ({
 			const rankedRows = [...getPrePaginationRowModel().rows].sort((a, b) =>
 				rankGlobalFuzzy(a, b)
 			)
-			if (enablePagination && !manualPagination) {
+			if (enablePagination === 'pages' && !manualPagination) {
 				const start = pagination.pageIndex * pagination.pageSize
 
 				return rankedRows.slice(start, start + pagination.pageSize)
@@ -91,13 +97,25 @@ export const TableBody: FC<Props> = ({
 		return getRowModel().rows
 	}, [
 		enableGlobalFilterRankedResults,
-		(enableGlobalFilterRankedResults && globalFilter) || !enablePagination
+		(enableGlobalFilterRankedResults && globalFilter) ||
+		enablePagination !== 'pages'
 			? getPrePaginationRowModel().rows
 			: getRowModel().rows,
 		globalFilter,
 		pagination.pageIndex,
 		pagination.pageSize,
 	])
+
+	const { ref: intersectorRef } =
+		useIntersectionObserver<HTMLTableSectionElement>({
+			isEnabled: enablePagination === 'scroll',
+			options: { threshold: 0 },
+			onIntersectionChange: (isIntersecting) => {
+				if (onInfiniteScrollLoad && isIntersecting) {
+					onInfiniteScrollLoad({ table })
+				}
+			},
+		})
 
 	const rowVirtualizer:
 		| Virtualizer<HTMLDivElement, HTMLTableRowElement>
@@ -318,7 +336,22 @@ export const TableBody: FC<Props> = ({
 						))}
 				</>
 			)}
+			<Box
+				style={{
+					height: '4px',
+					width: '100%',
+					position: 'absolute',
+					bottom: '300px',
+					...infiniteScrollIntersectorStyles,
+				}}
+				ref={intersectorRef}
+			/>
 			<HoveredRowLine />
+			<LinearProgressBar
+				table={table}
+				isShown={showBottomProggressBar}
+				isTopToolbar
+			/>
 		</MuiTableBody>
 	)
 }

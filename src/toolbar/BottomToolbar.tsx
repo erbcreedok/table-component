@@ -102,7 +102,7 @@ export const BottomToolbar = <TData extends Record<string, any> = {}>({
 						top: 0,
 					}}
 				>
-					{enablePagination &&
+					{enablePagination === 'pages' &&
 						['bottom', 'both'].includes(positionPagination ?? '') && (
 							<TablePagination table={table} position="bottom" />
 						)}

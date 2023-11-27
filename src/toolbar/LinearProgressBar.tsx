@@ -6,11 +6,13 @@ import type { TableInstance } from '..'
 
 interface Props<TData extends Record<string, any> = object> {
 	isTopToolbar: boolean
+	isShown?: boolean
 	table: TableInstance<TData>
 }
 
 export const LinearProgressBar = <TData extends Record<string, any> = object>({
 	isTopToolbar,
+	isShown,
 	table,
 }: Props<TData>) => {
 	const {
@@ -26,7 +28,7 @@ export const LinearProgressBar = <TData extends Record<string, any> = object>({
 
 	return (
 		<Collapse
-			in={isLoading || showProgressBars}
+			in={isShown || isLoading || showProgressBars}
 			mountOnEnter
 			unmountOnExit
 			sx={{
