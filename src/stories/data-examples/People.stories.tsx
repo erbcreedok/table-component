@@ -181,6 +181,7 @@ export const PeopleTable: Story<TableComponentProps> = () => {
 				expandByClick={ExpandByClick.CellAction}
 				muiTableStatusBarWrapperProps={{ sx: { p: '9px 15px' } }}
 				enableRowVirtualization
+				enableStickyHeader
 				cellStyleRules={{
 					performance: {
 						executeStyleCondition: ({ cell, column, isCurrentCellClicked }) => {
