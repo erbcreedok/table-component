@@ -108,8 +108,13 @@ const multiHeader = [
 					'riskOfLeaving',
 					'successionStatus',
 					'location',
-					'hiredAt',
 				],
+				columnActions: [
+					{
+						text: 'Hide column',
+						onClick: 'hideColumn',
+					},
+				]
 			},
 		],
 	},
@@ -121,10 +126,22 @@ const multiHeader = [
 				text: 'WORKLOAD 1',
 				shorthandText: 'WL1',
 				columnIds: ['impact', 'performance'],
+				columnActions: [
+					{
+						text: 'Hide column',
+						onClick: 'hideColumn',
+					},
+				]
 			},
 			{
 				text: 'WORKLOAD 2',
-				columnIds: ['riskOfLeaving', 'successionStatus', 'location', 'hiredAt'],
+				columnIds: ['riskOfLeaving', 'successionStatus', 'location'],
+				columnActions: [
+					{
+						text: 'Hide column',
+						onClick: 'hideColumn',
+					},
+				]
 			},
 		],
 	},
@@ -135,15 +152,33 @@ const multiHeader = [
 			{
 				text: 'WORKLOAD 1_2',
 				columnIds: ['impact', 'performance'],
+				columnActions: [
+					{
+						text: 'Hide column',
+						onClick: 'hideColumn',
+					},
+				]
 			},
 			{
 				text: 'WORKLOAD 2_1',
 				shorthandText: 'WL2.1',
 				columnIds: ['riskOfLeaving', 'successionStatus'],
+				columnActions: [
+					{
+						text: 'Hide column',
+						onClick: 'hideColumn',
+					},
+				]
 			},
 			{
 				text: 'WORKLOAD 2_2',
-				columnIds: ['location', 'hiredAt'],
+				columnIds: ['location'],
+				columnActions: [
+					{
+						text: 'Hide column',
+						onClick: 'hideColumn',
+					},
+				]
 			},
 		],
 	},

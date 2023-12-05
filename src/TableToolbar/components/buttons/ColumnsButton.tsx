@@ -7,6 +7,7 @@ import type { TableInstance } from '../../../index'
 import { ToolbarIconButton } from '../../../components/ToolbarIconButton'
 import { IconsColor } from '../../../components/styles'
 import { ColumnsMenu } from '../menus/ColumnsMenu/ColumnsMenu'
+import { ColumnsMultirowMenu } from '../menus/ColumnsMultirowMenu/ColumnsMultirowMenu'
 import { withNativeEvent } from '../../../utils/withNativeEvent'
 
 interface Props<TData extends Record<string, any> = {}>
@@ -24,6 +25,7 @@ export const ColumnsButton = <TData extends Record<string, any> = {}>({
 	const {
 		options: {
 			icons: { ColumnsIcon },
+			multirowHeader,
 			localization,
 		},
 	} = table
@@ -66,11 +68,21 @@ export const ColumnsButton = <TData extends Record<string, any> = {}>({
 			</Tooltip>
 
 			{anchorEl && (
-				<ColumnsMenu
-					anchorEl={anchorEl}
-					setAnchorEl={setAnchorEl}
-					table={table}
-				/>
+				<>
+					{multirowHeader ? (
+						<ColumnsMultirowMenu
+							anchorEl={anchorEl}
+							setAnchorEl={setAnchorEl}
+							table={table}
+						/>
+					) : (
+						<ColumnsMenu
+							anchorEl={anchorEl}
+							setAnchorEl={setAnchorEl}
+							table={table}
+						/>
+					)}
+				</>
 			)}
 		</>
 	)
