@@ -1,20 +1,15 @@
 import React, { useRef, useEffect } from 'react'
 import TableRow, { TableRowProps } from '@mui/material/TableRow'
-import TableCell from '@mui/material/TableCell'
 import type { VirtualItem } from '@tanstack/react-virtual'
 
 import { ColumnVirtualizerWrapper, getColumnsFilteredByDisplay } from '..'
-import type {
-	Table_Row,
-	TableInstance,
-	MultirowHeader,
-	Table_Column,
-	MultirowColumn,
-} from '..'
+import type { Table_Row, TableInstance, MultirowHeader, Table_Column } from '..'
 import type { StickyElement } from '../hooks/useMultiSticky'
 import { Colors, TextColor } from '../components/styles'
-import { getColumnId, getTotalRight } from '../column.utils'
 import { mapVirtualItems } from '../utils/mapVirtualItems'
+import { makeMultirowColumns } from '../utils/makeMultirowColumns'
+
+import { TableHeadMultiRowCell } from './TableHeadMultiRowCell'
 
 const sharedCellStyles = {
 	background: Colors.Gray10,
@@ -76,14 +71,6 @@ export const TableHeadMultiRow = ({
 	}, [rowsRef.current, registerSticky])
 
 	const getMultirowColumns = (multiHeaderRow) => {
-		const columnIdsText = multiHeaderRow.columns.reduce((result, current) => {
-			const obj = result
-			current.columnIds.forEach((id) => {
-				obj[id] = current.shorthandText ?? current.text
-			})
-
-			return obj
-		}, {})
 		const columns: Table_Column[] = mapVirtualItems(
 			getColumnsFilteredByDisplay([
 				...table.getLeftVisibleLeafColumns(),
@@ -92,69 +79,10 @@ export const TableHeadMultiRow = ({
 			]),
 			virtualColumns
 		).map(([col]) => col)
-		const multirowColumns = columns.reduce((result, column) => {
-			const isGrouped = column.getIsGrouped()
-			const isPinned = column.getIsPinned()
-			const text = columnIdsText[getColumnId(column)]
-			let id = text ?? 'none'
-			let leftPinnedPosition: number | undefined
-			let rightPinnedPosition: number | undefined
-			if (isGrouped) {
-				id = `${id}-grouped`
-			}
-			if (isPinned) {
-				id = `${id}-pinned:${isPinned}`
-				if (isPinned === 'left') {
-					leftPinnedPosition = column.getStart('left')
-				}
-				if (isPinned === 'right') {
-					rightPinnedPosition = getTotalRight(table, column)
-				}
-			}
-			const current = {
-				id,
-				text,
-				isGrouped,
-				isPinned,
-				leftPinnedPosition,
-				rightPinnedPosition,
-				colSpan: 1,
-			}
-			if (!result.length) {
-				result.push(current)
 
-				return result
-			}
-			const prev = result[result.length - 1]
+		const multirowColumns = makeMultirowColumns(columns, multiHeaderRow, table)
 
-			if (id === prev.id) {
-				prev.colSpan += 1
-				if (prev.isPinned === 'right' && prev.rightPinnedPosition) {
-					prev.rightPinnedPosition = getTotalRight(table, column)
-				}
-			} else {
-				result.push(current)
-			}
-
-			return result
-		}, [] as MultirowColumn[])
-
-		const uniqueIdsCount = {}
-
-		// handle duplicate ids
-		return multirowColumns.map((multirowColumn) => {
-			if (!uniqueIdsCount[multirowColumn.id]) {
-				uniqueIdsCount[multirowColumn.id] = 0
-			}
-			uniqueIdsCount[multirowColumn.id] += 1
-			if (uniqueIdsCount[multirowColumn.id] > 1) {
-				multirowColumn.id = `${multirowColumn.id}-${
-					uniqueIdsCount[multirowColumn.id]
-				}`
-			}
-
-			return multirowColumn
-		})
+		return multirowColumns
 	}
 
 	const getRowStyles = (theme, row, stickyId) => {
@@ -200,23 +128,12 @@ export const TableHeadMultiRow = ({
 							>
 								<ColumnVirtualizerWrapper sx={sharedCellStyles}>
 									{multirowColumns.map((cell) => (
-										<TableCell
+										<TableHeadMultiRowCell
 											key={cell.id}
-											sx={{
-												...cellStyles,
-												...(cell.isPinned
-													? {
-															position: 'sticky',
-															left: cell.leftPinnedPosition,
-															right: cell.rightPinnedPosition,
-															zIndex: 3,
-													  }
-													: {}),
-											}}
-											colSpan={cell.colSpan}
-										>
-											{cell.text}
-										</TableCell>
+											cell={cell}
+											cellStyles={cellStyles}
+											table={table}
+										/>
 									))}
 								</ColumnVirtualizerWrapper>
 							</TableRow>

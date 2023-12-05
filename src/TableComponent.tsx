@@ -58,6 +58,7 @@ import {
 } from './components/TableBulkActions'
 import { TableProvider } from './context/TableProvider'
 import { Table_FilterFns } from './filterFns'
+import { multirowActions } from './head/constants'
 import { Table_Icons } from './icons'
 import { DayPickerInputProps } from './inputs/DayPickerInput'
 import { InputProps } from './inputs/Input'
@@ -164,6 +165,7 @@ export interface Table_Localization {
 	max: string
 	min: string
 	move: string
+	multirowColumnActions: string
 	noOptions: string
 	noRecordsToDisplay: string
 	noResultsFound: string
@@ -376,6 +378,24 @@ export type SelectOption = {
 	value: any
 }
 
+export type MultirowColumnActionClickHandler<
+	TData extends TableData = TableData
+> = (props: {
+	multirowColumn: MultirowColumn
+	table: TableInstance<TData>
+	columns: Table_Column<TData>[]
+	event: React.MouseEvent
+}) => void
+
+export type MultirowColumnActionClickFns<TData extends TableData = TableData> =
+	| MultirowColumnActionClickHandler<TData>
+	| keyof typeof multirowActions
+
+export type MultirowColumnAction = {
+	text: string
+	onClick: MultirowColumnActionClickFns
+}
+
 export type MultirowColumn = {
 	id: string
 	text: string
@@ -384,9 +404,11 @@ export type MultirowColumn = {
 	isPinned: false | 'left' | 'right'
 	leftPinnedPosition?: number
 	rightPinnedPosition?: number
+	multirowColumnActions: MultirowColumnAction[] | null
+	colIds: string[]
 }
 
-export type MultirowHeader = {
+export type MultirowHeaderRow = {
 	additionalRowContent?: (
 		table: TableInstance<{}>,
 		cellsPropsArray: MultirowColumn[]
@@ -395,9 +417,13 @@ export type MultirowHeader = {
 	depth: number
 	columns: {
 		text: string
+		shorthandText?: string
 		columnIds: string[]
+		columnActions?: MultirowColumnAction[]
 	}[]
-}[]
+}
+
+export type MultirowHeader = MultirowHeaderRow[]
 
 export type MultirowColumnsGroup<TData extends TableData = TableData> = {
 	columns: Table_Column<TData>[]

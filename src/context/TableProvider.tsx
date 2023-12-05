@@ -89,6 +89,7 @@ export const TableProvider = <TData extends Record<string, any> = {}>({
 	columns,
 	theme,
 	onInfiniteScrollLoad,
+	multirowColumnsDisplayDepth,
 	...rest
 }: TableComponentProps<TData> & {
 	children?: ReactNode | null
@@ -166,7 +167,7 @@ export const TableProvider = <TData extends Record<string, any> = {}>({
 		enableRowSelection = true
 	}
 
-	const _hierarchyTreeConfig = useMemo(() => {
+	const hierarchyTreeConfig = useMemo(() => {
 		if (rest.getIsUnitTreeItem && !rest.hierarchyTreeConfig) {
 			return {
 				isHierarchyItem: rest.getIsUnitTreeItem,
@@ -175,6 +176,10 @@ export const TableProvider = <TData extends Record<string, any> = {}>({
 
 		return rest.hierarchyTreeConfig
 	}, [rest.getIsUnitTreeItem, rest.hierarchyTreeConfig])
+
+	if (!multirowColumnsDisplayDepth) {
+		multirowColumnsDisplayDepth = 1
+	}
 
 	const props = {
 		aggregationFns: _aggregationFns,
@@ -217,7 +222,7 @@ export const TableProvider = <TData extends Record<string, any> = {}>({
 		expandPaddingSize,
 		filterFns: _filterFns,
 		groupBorder,
-		hierarchyTreeConfig: _hierarchyTreeConfig,
+		hierarchyTreeConfig,
 		icons: _icons,
 		innerTable,
 		innerTableTitle,
@@ -240,6 +245,7 @@ export const TableProvider = <TData extends Record<string, any> = {}>({
 		columns: _columns,
 		theme: theme ?? defaultTheme,
 		onInfiniteScrollLoad,
+		multirowColumnsDisplayDepth,
 		...rest,
 	} as TableComponentProps<{}> & { localization: Table_Localization }
 

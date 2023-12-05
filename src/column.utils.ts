@@ -170,6 +170,24 @@ export const reorderColumn = <TData extends Record<string, any> = {}>(
 	return [...columnOrder]
 }
 
+export const reorderColumnSet = <TData extends Record<string, any> = {}>(
+	draggedColumns: Table_Column<TData>[],
+	targetColumns: Table_Column<TData>[],
+	columnOrder: ColumnOrderState
+): ColumnOrderState => {
+	const newColumnOrder = [...columnOrder]
+	newColumnOrder.splice(
+		columnOrder.indexOf(targetColumns[targetColumns.length - 1].id),
+		0,
+		columnOrder.splice(
+			columnOrder.indexOf(draggedColumns[0].id),
+			draggedColumns.length
+		)[draggedColumns.length]
+	)
+
+	return newColumnOrder
+}
+
 export const showExpandColumn = <TData extends Record<string, any> = {}>(
 	props: TableComponentProps<TData>
 ) =>
@@ -255,7 +273,10 @@ export const getIsFirstRightPinnedColumn = (column: Table_Column) => {
 	return column.getIsPinned() === 'right' && column.getPinnedIndex() === 0
 }
 
-export const getTotalRight = (table: TableInstance, column: Table_Column) => {
+export const getTotalRight = <TData extends Record<string, any> = {}>(
+	table: TableInstance,
+	column: Table_Column<TData>
+) => {
 	return table.getRightTotalSize() - column.getSize() - column.getStart('right')
 }
 
