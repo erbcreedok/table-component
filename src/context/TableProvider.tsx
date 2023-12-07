@@ -8,6 +8,7 @@ import {
 	Table_DefaultColumn,
 	Table_DefaultDisplayColumn,
 } from '../column.utils'
+import { HierarchyTreeConfig } from '../components/HierarchyRow'
 import { Table_FilterFns } from '../filterFns'
 import { useTable } from '../hooks/useTable'
 import { Default_Icons } from '../icons'
@@ -19,6 +20,7 @@ import {
 } from '../TableComponent'
 import { createTheme } from '../theme/createTheme'
 import { DEFAULT_EXPAND_PADDING } from '../utilColumns'
+import { defaultSetSubRows } from '../utils/defaultGetSubRows'
 
 import { TableContext } from './TableContext'
 
@@ -164,6 +166,16 @@ export const TableProvider = <TData extends Record<string, any> = {}>({
 		enableRowSelection = true
 	}
 
+	const _hierarchyTreeConfig = useMemo(() => {
+		if (rest.getIsUnitTreeItem && !rest.hierarchyTreeConfig) {
+			return {
+				isHierarchyItem: rest.getIsUnitTreeItem,
+			} as HierarchyTreeConfig<TData>
+		}
+
+		return rest.hierarchyTreeConfig
+	}, [rest.getIsUnitTreeItem, rest.hierarchyTreeConfig])
+
 	const props = {
 		aggregationFns: _aggregationFns,
 		autoResetExpanded,
@@ -205,6 +217,7 @@ export const TableProvider = <TData extends Record<string, any> = {}>({
 		expandPaddingSize,
 		filterFns: _filterFns,
 		groupBorder,
+		hierarchyTreeConfig: _hierarchyTreeConfig,
 		icons: _icons,
 		innerTable,
 		innerTableTitle,
@@ -221,6 +234,7 @@ export const TableProvider = <TData extends Record<string, any> = {}>({
 		positionToolbarAlertBanner,
 		positionToolbarDropZone,
 		rowNumberMode,
+		setSubRows: rest.setSubRows ?? defaultSetSubRows<{}>,
 		selectAllMode,
 		sortingFns: _sortingFns,
 		columns: _columns,

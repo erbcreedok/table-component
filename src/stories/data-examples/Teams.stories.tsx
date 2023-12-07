@@ -1,4 +1,5 @@
 import { Box } from '@mui/material'
+import Button from "@mui/material/Button";
 import { Meta, Story } from '@storybook/react'
 import ModeIcon from '@mui/icons-material/Mode'
 import LinearProgress from '@mui/material/LinearProgress'
@@ -8,16 +9,13 @@ import {
 	VisibilityState,
 	SortingState,
 } from '@tanstack/react-table'
-import React, { useCallback, useState } from 'react'
+import React, { useState } from 'react'
 import { getColumnId } from '../../column.utils'
 import { LocationRight } from '../../icons/LocationRight'
 import { LockedIcon } from '../../icons/LockedIcon'
 import { TrashIcon } from '../../icons/TrashIcon'
 import TableComponent, {
-	GetRowDragValuesChangeMessageProp,
-	MuiTableBodyRowDragHandleFnProps,
 	Table_ColumnDef,
-	Table_Row,
 	TableComponentProps,
 	TableInstance,
 	utilColumns,
@@ -32,12 +30,11 @@ import { getDndTargetGroupingUpdateValues } from '../utils/getDndTargetGroupingU
 import {
 	getExpandingTeamMembers,
 	getTeamMembers,
-	getUnitTreeItems,
 	isUnitTreeItem,
 } from '../utils/getTeamMembers'
 import { getTeamMembersColumns } from '../utils/getTeamMembersColumns'
-import { reorderMembersInUnits } from '../utils/reorderMembersInUnits'
 import { getDefaultRowActionMenuItems } from '../utils/rowActionMenuItems'
+import { useHierarchyProps } from '../utils/useHierarchyProps'
 import { ColumnActionsFiltersMenu } from './components/ColumnActionsFiltersMenu'
 import { UnitRow } from './components/UnitRow'
 
@@ -414,7 +411,7 @@ const TeamsTable: Story<TeamsTableConfigs> = (args) => {
 		setTimeout(() => {
 			setIsDataLoading(false)
 			setData([...data, ...newData])
-		}, 5000);
+		}, 5000)
 	}
 
 	return (
@@ -496,63 +493,12 @@ export const TeamsTableSubtree: Story<TeamsTableExample> = (args) => (
 	/>
 )
 
-export const HierarchyGroupTableExample: Story = (args) => {
-	const [data, setData] = useState(getUnitTreeItems(3, 10))
-	const getRowDragValuesChangeMessage = useCallback<
-		GetRowDragValuesChangeMessageProp<UnitTreeItem>
-	>(({ current, hoveredRow, draggingRows }) => {
-		if (!hoveredRow) return current
-		const getIsSameUnit = (
-			rowA: Table_Row<UnitTreeItem>,
-			rowB: Table_Row<UnitTreeItem>
-		) => rowA.original.getParent() === rowB.original.getParent()
-		const isSameUnit = draggingRows.every((row) =>
-			getIsSameUnit(row, hoveredRow.row)
-		)
-
-		if (!isSameUnit) {
-			return [
-				{
-					label: 'Unit',
-					value: hoveredRow.row.original.getParent()?.name ?? 'N/A',
-				},
-				...current,
-			]
-		}
-		return current
-	}, [])
-	const muiTableBodyRowDragHandleProps = useCallback<
-		MuiTableBodyRowDragHandleFnProps<UnitTreeItem>
-	>(
-		({ table }) => ({
-			onDragEnd: () => {
-				const { draggingRows, hoveredRow, grouping } = table.getState()
-				if (
-					hoveredRow?.row &&
-					'original' in hoveredRow.row &&
-					draggingRows.length > 0
-				) {
-					// Modify draggingRows original values to take values from the grouped columns of hoveredRow
-					const targetValues = hoveredRow.row.original
-					draggingRows.forEach((draggingRow) => {
-						for (const columnId of grouping) {
-							draggingRow.original[columnId] = targetValues[columnId]
-						}
-					})
-
-					setData(
-						reorderMembersInUnits(
-							draggingRows.map((row) => row.original),
-							hoveredRow.row.original,
-							data,
-							hoveredRow.position
-						)
-					)
-				}
-			},
-		}),
-		[]
-	)
+export const HierarchyWithCustomRowExample: Story = (args) => {
+	const {
+		data,
+		muiTableBodyRowDragHandleProps,
+		getRowDragValuesChangeMessage,
+	} = useHierarchyProps()
 
 	return (
 		<>
@@ -571,6 +517,44 @@ export const HierarchyGroupTableExample: Story = (args) => {
 				hideTableHead
 				filterFromLeafRows
 				getIsUnitTreeItem={isUnitTreeItem}
+				{...getTablePresetProps('teamsDefaultTable')}
+				muiTableBodyRowDragHandleProps={muiTableBodyRowDragHandleProps}
+				getRowDragValuesChangeMessage={getRowDragValuesChangeMessage}
+			/>
+		</>
+	)
+}
+
+export const HierarchyWithConfigExample: Story = (args) => {
+	const {
+		data,
+		muiTableBodyRowDragHandleProps,
+		getRowDragValuesChangeMessage,
+	} = useHierarchyProps()
+	const [isHierarchyEnabled, setHierarchyEnabled] = useState(true)
+
+	return (
+		<>
+			<Button sx={{ mb: 2 }} onClick={() => setHierarchyEnabled((old) => !old)}>
+				Toggle hierarchy view
+			</Button>
+			<TableComponent
+				columns={
+					(args.enableColumnVirtualization
+						? manyColumns
+						: columns) as unknown as Table_ColumnDef<UnitTreeItem>[]
+				}
+				data={data}
+				groupBorder={{ left: '6px solid white', top: '6px solid white' }}
+				{...args}
+				enableExpanding
+				hideExpandColumn
+				hideTableHead
+				filterFromLeafRows
+				hierarchyTreeConfig={{
+					isHierarchyItem: isUnitTreeItem,
+					enableHierarchyTree: isHierarchyEnabled,
+				}}
 				{...getTablePresetProps('teamsDefaultTable')}
 				muiTableBodyRowDragHandleProps={muiTableBodyRowDragHandleProps}
 				getRowDragValuesChangeMessage={getRowDragValuesChangeMessage}
@@ -680,7 +664,7 @@ const meta: Meta = {
 				disabled: false,
 				horizontal: 'horizontal',
 				vertical: 'vertical',
-			}
+			},
 		},
 		enableEditing: {
 			control: 'boolean',
@@ -968,8 +952,7 @@ const meta: Meta = {
 			control: { type: 'boolean' },
 			defaultValue: false,
 			description:
-				'***THIS IS NOT A PROP***\n' +
-				'Enables infinite scroll example',
+				'***THIS IS NOT A PROP***\n' + 'Enables infinite scroll example',
 		},
 	},
 }

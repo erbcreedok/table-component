@@ -51,6 +51,7 @@ import type { VirtualizerOptions, Virtualizer } from '@tanstack/react-virtual'
 
 import { Table_AggregationFns } from './aggregationFns'
 import { TableBodyRowProps } from './body/TableBodyRow'
+import { HierarchyTreeConfig } from './components/HierarchyRow'
 import {
 	BulkActionButtonProps,
 	TableBulkActionsProps,
@@ -292,7 +293,6 @@ export type TableInstance<TData extends TableData = TableData> = Omit<
 		icons: Table_Icons
 		localization: Table_Localization
 		enableAggregationRow?: boolean
-		enableMergedGrouping?: boolean
 	}
 	refs: {
 		bottomToolbarRef: MutableRefObject<HTMLDivElement>
@@ -1088,7 +1088,6 @@ export type TableComponentProps<TData extends TableData = TableData> = Omit<
 		enableBulkActions?: boolean
 		enableBulkActionsCaptions?: boolean | 'auto'
 		enableBulkActionsSelect?: boolean
-		enableMergedGrouping?: boolean
 		enableBottomToolbar?: boolean
 		enableClickToCopy?: boolean
 		enableColumnActions?: boolean
@@ -1162,6 +1161,9 @@ export type TableComponentProps<TData extends TableData = TableData> = Omit<
 			index: number,
 			parentRow: Table_Row<TData>
 		) => string
+		/**
+		 * @deprecated Use `hierarchyTreeConfig.isHierarchyRow` instead
+		 */
 		getIsUnitTreeItem?: (rowOriginal: TData) => boolean
 		getIsColumnAllGroupsCollapsed?: (
 			props: GetIsColumnAllGroupsCollapsedProps<TData>
@@ -1186,6 +1188,7 @@ export type TableComponentProps<TData extends TableData = TableData> = Omit<
 		hideSummaryRowInEmptyTable?: boolean
 		hideRowSelectionColumn?: boolean
 		hideTableHead?: boolean
+		hierarchyTreeConfig?: HierarchyTreeConfig<TData>
 		icons?: Partial<Table_Icons>
 		infiniteScrollIntersectorStyles?: Record<string, any>
 		initialState?: Partial<Table_TableState<TData>>
@@ -1620,6 +1623,7 @@ export type TableComponentProps<TData extends TableData = TableData> = Omit<
 		rowCount?: number
 		rowNumberMode?: 'original' | 'static'
 		selectAllMode?: 'all' | 'page'
+		setSubRows?: (row: TData, subRows: TData[]) => TData
 		showBottomProggressBar?: boolean
 		state?: Partial<Table_TableState<TData>>
 		summaryRowCell?: (args: {

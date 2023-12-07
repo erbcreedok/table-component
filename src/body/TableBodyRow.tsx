@@ -11,7 +11,7 @@ import { EmptyCell } from '../components/EmptyCell'
 import { useComputedMeasureElement } from '../hooks/useComputedMeasureElement'
 import { getCellGroupBorders } from '../utils/getGroupBorders'
 import { getCellsFilteredByDisplay } from '../utils/getFilteredByDisplay'
-import type { Table_Cell, Table_Row, TableInstance } from '..'
+import type { Table_Cell, Table_Row, TableData, TableInstance } from '..'
 import { getColumnId } from '../column.utils'
 import { Colors } from '../components/styles'
 import { getSubRowIndex } from '../utils/getSubRowIndex'
@@ -21,15 +21,15 @@ import { setHoveredRow } from '../utils/setHoveredRow'
 import { Memo_TableBodyCell, TableBodyCell } from './TableBodyCell'
 import { TableDetailPanel } from './TableDetailPanel'
 
-export interface TableBodyRowProps {
+export interface TableBodyRowProps<TData extends TableData = TableData> {
 	columnVirtualizer?: Virtualizer<HTMLDivElement, HTMLTableCellElement>
 	domIndex: number
 	measureElement?: (element: HTMLTableRowElement) => void
 	numRows: number
-	row: Table_Row
+	row: Table_Row<TData>
 	rowIndex: number
 	rowNumber: number
-	table: TableInstance
+	table: TableInstance<TData>
 	virtualColumns?: VirtualItem[]
 	virtualRow?: VirtualItem
 	isSummaryRow?: boolean

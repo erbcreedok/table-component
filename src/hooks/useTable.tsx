@@ -42,6 +42,7 @@ import {
 	TableInstance,
 } from '../TableComponent'
 import { getUtilColumn, utilColumns } from '../utilColumns'
+import { flatHierarchyTree } from '../utils/flatHierarchyTree'
 import { getCoreRowModel } from '../utils/getCoreRowModel'
 import { getExpandedRowModel } from '../utils/getExpandedRowModel'
 import { getGroupedRowModel } from '../utils/getGroupedRowModel'
@@ -155,6 +156,11 @@ export const useTable = <TData extends TableData = TableData>(
 	const [stickyHorizontalScrollbarHeight, setStickyHorizontalScrollbarHeight] =
 		useState(0)
 
+	const hideHierarchyTree =
+		config.hierarchyTreeConfig &&
+		!(config.hierarchyTreeConfig.enableHierarchyTree ?? true)
+	const isHierarchyItem = config.hierarchyTreeConfig?.isHierarchyItem
+
 	const displayColumns = useMemo(
 		() =>
 			(
@@ -238,28 +244,44 @@ export const useTable = <TData extends TableData = TableData>(
 	const data: TData[] = useMemo(() => {
 		const tableData = searchData || config.data
 
-		return (config.state?.isLoading || config.state?.showSkeletons) &&
-			!tableData
-			? [
-					...Array(
-						config.state?.pagination?.pageSize ||
-							initialState?.pagination?.pageSize ||
-							10
-					).fill(null),
-			  ].map(() =>
-					Object.assign(
-						{},
-						...getAllLeafColumnDefs(config.columns).map((col) => ({
-							[getColumnId(col)]: null,
-						}))
-					)
-			  )
-			: tableData
+		if (
+			(config.state?.isLoading || config.state?.showSkeletons) &&
+			(!tableData || !tableData.length)
+		) {
+			return [
+				...Array(
+					config.state?.pagination?.pageSize ||
+						initialState?.pagination?.pageSize ||
+						10
+				).fill(null),
+			].map(() =>
+				Object.assign(
+					{},
+					...getAllLeafColumnDefs(config.columns).map((col) => ({
+						[getColumnId(col)]: null,
+					}))
+				)
+			)
+		}
+		if (isHierarchyItem && hideHierarchyTree) {
+			return flatHierarchyTree(
+				tableData,
+				isHierarchyItem,
+				config.getSubRows,
+				config.setSubRows
+			)
+		}
+
+		return tableData
 	}, [
+		config.getSubRows,
+		config.setSubRows,
 		config.data,
 		config.state?.isLoading,
 		config.state?.showSkeletons,
 		searchData,
+		hideHierarchyTree,
+		isHierarchyItem,
 	])
 
 	const setMergedGrouping = useCallback((setter) => {
@@ -347,11 +369,9 @@ export const useTable = <TData extends TableData = TableData>(
 
 	const isGroupableRow = useCallback(
 		(row: Table_Row<TData>) => {
-			return config.getIsUnitTreeItem
-				? !config.getIsUnitTreeItem(row.original)
-				: true
+			return isHierarchyItem ? !isHierarchyItem(row.original) : true
 		},
-		[config.getIsUnitTreeItem]
+		[isHierarchyItem]
 	)
 
 	// eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -403,6 +423,7 @@ export const useTable = <TData extends TableData = TableData>(
 			tablePaperRef,
 			topToolbarRef,
 		},
+		isHierarchyItem,
 		setColumnFilterFns: config.onColumnFilterFnsChange ?? setColumnFilterFns,
 		setDraggingColumn: config.onDraggingColumnChange ?? setDraggingColumn,
 		setDraggingRows: config.onDraggingRowsChange ?? setDraggingRows,

@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-pascal-case */
 import React, { FC, memo, useMemo } from 'react'
 import {
 	useVirtualizer,
@@ -8,6 +9,7 @@ import MuiTableBody from '@mui/material/TableBody'
 import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
 
+import { HierarchyRow, Memo_HierarchyRow } from '../components/HierarchyRow'
 import { HoveredRowLine } from '../components/HoveredRowLine'
 import { RowVirtualizerWrapper } from '../components/RowVirtualizerWrapper'
 import { LinearProgressBar } from '../toolbar/LinearProgressBar'
@@ -42,6 +44,7 @@ export const TableBody: FC<Props> = ({
 			enableGlobalFilterRankedResults,
 			enablePagination,
 			enableRowVirtualization,
+			hierarchyTreeConfig,
 			layoutMode,
 			localization,
 			manualFiltering,
@@ -57,7 +60,6 @@ export const TableBody: FC<Props> = ({
 			isTablePlugSlotActive,
 			virtualizerInstanceRef,
 			virtualizerProps,
-			getIsUnitTreeItem,
 			onInfiniteScrollLoad,
 			showBottomProggressBar,
 			infiniteScrollIntersectorStyles,
@@ -153,6 +155,7 @@ export const TableBody: FC<Props> = ({
 		: undefined
 
 	const rowsOrVirtualRows = virtualRows ?? rows
+	const isHierarchyItem = hierarchyTreeConfig?.isHierarchyItem
 
 	const rowProps = useMemo(() => {
 		const increment =
@@ -165,7 +168,7 @@ export const TableBody: FC<Props> = ({
 			const row = rowVirtualizer
 				? rows[rowOrVirtualRow.index]
 				: (rowOrVirtualRow as Table_Row)
-			if (getIsUnitTreeItem?.(row.original)) {
+			if (isHierarchyItem?.(row.original)) {
 				domIndex = -1
 			}
 			const rowNumber = increment + domIndex
@@ -207,6 +210,7 @@ export const TableBody: FC<Props> = ({
 			} as TableBodyRowProps
 		})
 	}, [
+		isHierarchyItem,
 		rowsOrVirtualRows,
 		rowVirtualizer,
 		rows,
@@ -323,11 +327,17 @@ export const TableBody: FC<Props> = ({
 										groupingProps: rowsGroupingProps[props.row.id],
 									}
 
+									if (CustomRow) return <CustomRow {...computedProps} />
+									if (hierarchyTreeConfig) {
+										return memoMode === 'rows' ? (
+											<Memo_HierarchyRow {...computedProps} />
+										) : (
+											<HierarchyRow {...computedProps} />
+										)
+									}
+
 									return memoMode === 'rows' ? (
-										// eslint-disable-next-line react/jsx-pascal-case
 										<Memo_TableBodyRow {...computedProps} />
-									) : CustomRow ? (
-										<CustomRow {...computedProps} />
 									) : (
 										<TableBodyRow {...computedProps} />
 									)
