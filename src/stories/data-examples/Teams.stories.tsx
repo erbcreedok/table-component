@@ -1,5 +1,5 @@
 import { Box } from '@mui/material'
-import Button from "@mui/material/Button";
+import Button from '@mui/material/Button'
 import { Meta, Story } from '@storybook/react'
 import ModeIcon from '@mui/icons-material/Mode'
 import LinearProgress from '@mui/material/LinearProgress'
@@ -568,7 +568,7 @@ const meta: Meta = {
 	argTypes: {
 		bulkActions: {
 			control: 'object',
-			defaultValue: [
+			defaultValue: ({ table }) => [
 				{
 					icon: <LockedIcon />,
 					text: 'Lock',
@@ -578,6 +578,9 @@ const meta: Meta = {
 				{
 					icon: <LocationRight />,
 					text: 'Change location',
+					disabled:
+						Object.values(table.getState().rowSelection).filter(Boolean)
+							.length < 2,
 					onClick: (props) => console.log('change location', props),
 				},
 				{

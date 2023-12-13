@@ -10,6 +10,7 @@ import { SelectCheckbox } from '../../inputs/SelectCheckbox'
 import { TableInstance } from '../../TableComponent'
 import { getColorAlpha } from '../../utils/getColorAlpha'
 import { getTestAttributes } from '../../utils/getTestAttributes'
+import { getValueOrFunctionHandler } from '../../utils/getValueOrFunctionHandler'
 import { withNativeEvent } from '../../utils/withNativeEvent'
 import { Colors, IconsColor } from '../styles'
 import { Tooltip } from '../Tooltip'
@@ -41,7 +42,7 @@ export const TableBulkActions = ({
 		options: {
 			enableBulkActionsCaptions: enableCaptions,
 			localization,
-			bulkActions,
+			bulkActions: _bulkActions,
 			enableBulkActionsSelect,
 			icons: { CloseIcon },
 			e2eLabels,
@@ -49,6 +50,7 @@ export const TableBulkActions = ({
 		refs: { bulkActionsRef },
 	} = table
 
+	const bulkActions = getValueOrFunctionHandler(_bulkActions)({ table })
 	const { stickyHorizontalScrollbarHeight } = getState()
 
 	const { innerRef, outerRef, computedEnableCaptions } =

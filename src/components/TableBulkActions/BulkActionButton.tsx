@@ -67,6 +67,9 @@ export const BulkActionButton = (props: BulkActionButtonProps) => {
 					'&:hover': {
 						background: Colors.Dark,
 					},
+					'&:disabled': {
+						opacity: 0.5,
+					},
 					...(sx instanceof Function ? sx(theme) : (sx as any)),
 				})}
 				onClick={withNativeEvent(

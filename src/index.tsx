@@ -3,6 +3,7 @@ import {
 	ColumnVirtualizerWrapperProps,
 } from './components/ColumnVirtualizerWrapper'
 import { Flex } from './components/Flex'
+import { HierarchyRow } from './components/HierarchyRow'
 import { MenuItemBase } from './components/Menu'
 import { DateInput } from './inputs/DateInput'
 import {
@@ -111,6 +112,7 @@ export {
 	GroupedCellBase,
 	HeaderBase,
 	HeaderSearch,
+	HierarchyRow,
 	Input,
 	MenuItemBase,
 	QuickFilters,

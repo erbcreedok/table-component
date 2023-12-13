@@ -83,6 +83,10 @@ type LiteralUnion<T extends U, U = string> = T | (U & Record<never, never>)
 
 export type TableData = Record<string, any>
 
+export type FunctionProps<ReturnType, Arguments> =
+	| ReturnType
+	| ((arg: Arguments) => ReturnType)
+
 export type GroupCollapsed = Record<string, boolean | undefined>
 export type {
 	TableToolbarProps,
@@ -425,9 +429,10 @@ export type TableCellDataProps<TData extends TableData> = {
 	row: Table_Row<TData>
 	table: TableInstance<TData>
 }
-export type TableFunctionalProp<Prop, TData extends TableData> =
-	| Partial<Prop>
-	| ((args: TableCellDataProps<TData>) => Partial<Prop>)
+export type TableFunctionalProp<Prop, TData extends TableData> = FunctionProps<
+	Partial<Prop>,
+	TableCellDataProps<TData>
+>
 
 export type TableColumnEditProps<TData extends TableData> = {
 	editVariant?:
@@ -1067,7 +1072,10 @@ export type TableComponentProps<TData extends TableData = TableData> = Omit<
 		 * @link https://www.material-react-table.com/docs/getting-started/usage
 		 */
 		data: TData[]
-		bulkActions?: Table_Actions<TData>[]
+		bulkActions?: FunctionProps<
+			Table_Actions<TData>[],
+			{ table: TableInstance<TData> }
+		>
 		bulkActionProps?: TableBulkActionsProps<TData>
 		cellGroupedPlaceholderText?: string
 		cellPlaceholderText?: string
