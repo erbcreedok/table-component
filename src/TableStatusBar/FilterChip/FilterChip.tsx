@@ -1,7 +1,7 @@
 import { useMemo } from 'react'
 
 import { TableData, TableInstance } from '../../TableComponent'
-import { CommonChipWithPopover } from '../CommonChipWithPopover/CommonChipWithPopover'
+import { CommonChipWithPopoverAndContext } from '../CommonChipWithPopover/CommonChipWithPopover'
 
 import { FilterChipDropdownContent } from './FilterChipDropdownContent'
 import { getFilterChipText } from './getFilterChipText'
@@ -27,11 +27,10 @@ export const FilterChip = <TData extends TableData>({
 
 	return (
 		<div>
-			<CommonChipWithPopover
+			<CommonChipWithPopoverAndContext
 				text={text}
 				title={`${currentFilterHeader}: `}
 				dropdownContent={DropdownContent}
-				table={table}
 			/>
 		</div>
 	)

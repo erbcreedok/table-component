@@ -15,6 +15,7 @@ import {
 	TableData,
 	TableInstance,
 } from '../TableComponent'
+import { ConditionalBox } from '../components/ConditionalBox'
 import { getColumnFilterOptions } from '../utils/getColumnFilterOptions'
 import { splitFilterOptions } from '../utils/splitFilterOptions'
 
@@ -44,15 +45,18 @@ const Option: FC<BoxProps> = ({ children, sx, ...rest }) => (
 )
 
 export type FilterMultiselectProps<TData extends TableData = TableData> = {
-	column: Table_Column<TData>
-	table: TableInstance<TData>
+	column?: Table_Column<TData>
+	table?: TableInstance<TData>
 	onChange: (value: SelectOption[]) => void
 	value: string[]
 	autoFocus?: boolean
 	options?: SelectOption[]
 	loading?: boolean
 	loadingText?: string
+	noOptionsText?: string
+	selectAllText?: string
 }
+
 export const FilterMultiselect = <TData extends TableData>({
 	column,
 	table,
@@ -60,14 +64,16 @@ export const FilterMultiselect = <TData extends TableData>({
 	value = [],
 	autoFocus,
 	options: _options,
+	noOptionsText = 'No options',
+	selectAllText = 'Select all',
 	...rest
 }: FilterMultiselectProps<TData>) => {
 	const [isOpen, setIsOpen] = useState(autoFocus)
-	const {
-		options: { localization },
-	} = table
 	const options = useMemo(
-		() => _options ?? getColumnFilterOptions(column, table),
+		() =>
+			_options ??
+			(column && table && getColumnFilterOptions(column, table)) ??
+			[],
 		[column, table, _options]
 	)
 	const { selectedOptions, notSelectedOptions } = useMemo(
@@ -148,7 +154,11 @@ export const FilterMultiselect = <TData extends TableData>({
 					setInputValue(newInputValue)
 				}}
 				onOpen={() => setIsOpen(true)}
-				noOptionsText={<Typography>{localization.noOptions}</Typography>}
+				noOptionsText={
+					<Typography>
+						{!table ? noOptionsText : table.options.localization.noOptions}
+					</Typography>
+				}
 				renderInput={(params) => (
 					<TextField
 						{...params}
@@ -166,20 +176,25 @@ export const FilterMultiselect = <TData extends TableData>({
 				)}
 				PaperComponent={({ children }) => (
 					<Paper sx={{ backgroundColor: '#fff' }}>
-						<>
+						<ConditionalBox
+							condition={!table || !column}
+							onMouseDown={(e) => e.preventDefault()}
+						>
 							{filteredOptions.current.length ? (
 								<>
 									<Option
-										sx={{ m: '9px 0', px: '25px' }}
+										sx={{ m: '9px 0', px: '25px', zIndex: 1000 }}
 										onClick={handleSelectAll}
 									>
-										{localization.selectAll}
+										{!table
+											? selectAllText
+											: table.options.localization.selectAll}
 									</Option>
 									<Divider sx={{ width: '100%' }} />
 								</>
 							) : null}
 							{children}
-						</>
+						</ConditionalBox>
 					</Paper>
 				)}
 				{...rest}

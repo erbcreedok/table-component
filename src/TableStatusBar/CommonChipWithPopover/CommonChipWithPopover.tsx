@@ -1,23 +1,36 @@
-import React, { cloneElement, useMemo, useState } from 'react'
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
+import React, { cloneElement, useMemo, useState, MouseEvent } from 'react'
 import { Box, Chip, Popover, Typography } from '@mui/material'
 
 import { TextColor } from '../../components/styles'
 import { Tooltip } from '../../components/Tooltip'
-import { TableInstance } from '../../TableComponent'
+import { useTableContext } from '../../context/useTableContext'
 
-type CommonChipWithPopoverProps<TData extends Record<string, any>> = {
+type CommonChipWithPopoverProps = {
 	text: string
 	textAlignSelf?: string
 	icon?: JSX.Element
 	title?: JSX.Element | string
-	dropdownContent: JSX.Element
+	dropdownContent?: JSX.Element
 	setIsOpen?: (isOpen: boolean) => void
-	table: TableInstance | TableInstance<TData>
+	onClick?: (event: MouseEvent) => void
+	renderExpandMoreIcon?: (isOpen: boolean) => JSX.Element
 }
 
-export const CommonChipWithPopover = <TData extends Record<string, any>>(
-	props: CommonChipWithPopoverProps<TData>
-) => {
+const defaultRenderExpandMoreIcon =
+	(Icon = ExpandMoreIcon) =>
+	(isOpen) =>
+		(
+			<Icon
+				sx={{
+					transform: isOpen ? 'rotate(180deg)' : undefined,
+					transition: '0.2s',
+				}}
+				height={12}
+			/>
+		)
+
+export const CommonChipWithPopover = (props: CommonChipWithPopoverProps) => {
 	const {
 		textAlignSelf,
 		text,
@@ -25,18 +38,21 @@ export const CommonChipWithPopover = <TData extends Record<string, any>>(
 		icon,
 		dropdownContent,
 		setIsOpen,
-		table,
+		onClick,
+		renderExpandMoreIcon = defaultRenderExpandMoreIcon(),
 	} = props
 
 	const [open, setOpen] = useState(false)
-	const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null)
-	const {
-		options: {
-			icons: { ExpandMoreIcon },
-		},
-	} = table
+	const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null)
 
-	const handleOpenClose = (event: any) => {
+	const handleChipClick = (event: MouseEvent<HTMLElement>) => {
+		onClick?.(event)
+		if (dropdownContent) {
+			handleOpenClose(event)
+		}
+	}
+
+	const handleOpenClose = (event: MouseEvent<HTMLElement>) => {
 		setAnchorEl(event.currentTarget)
 		setOpen(!open)
 		setIsOpen?.(!open)
@@ -74,7 +90,7 @@ export const CommonChipWithPopover = <TData extends Record<string, any>>(
 						display: 'flex',
 						alignItems: 'center',
 						maxWidth: 215,
-						mr: '-9px',
+						mr: dropdownContent ? '-9px' : 0,
 					}}
 				>
 					{Boolean(computedIcon) && computedIcon}
@@ -103,13 +119,7 @@ export const CommonChipWithPopover = <TData extends Record<string, any>>(
 					>
 						{text}
 					</Typography>
-					<ExpandMoreIcon
-						sx={{
-							transform: open ? 'rotate(180deg)' : undefined,
-							transition: '0.2s',
-						}}
-						height={12}
-					/>
+					{dropdownContent && renderExpandMoreIcon?.(open)}
 				</Box>
 			}
 		/>
@@ -117,7 +127,7 @@ export const CommonChipWithPopover = <TData extends Record<string, any>>(
 
 	return (
 		<div>
-			<Box onClick={handleOpenClose}>
+			<Box onClick={handleChipClick}>
 				{text.length > 20 ? (
 					<Tooltip title={text} placement="top">
 						{ChipContent}
@@ -127,18 +137,39 @@ export const CommonChipWithPopover = <TData extends Record<string, any>>(
 				)}
 			</Box>
 
-			<Popover
-				id={id}
-				open={open}
-				anchorEl={anchorEl}
-				onClose={handleOpenClose}
-				anchorOrigin={{
-					vertical: 'bottom',
-					horizontal: 'left',
-				}}
-			>
-				{dropdownContent}
-			</Popover>
+			{dropdownContent && (
+				<Popover
+					id={id}
+					open={open}
+					anchorEl={anchorEl}
+					onClose={handleOpenClose}
+					anchorOrigin={{
+						vertical: 'bottom',
+						horizontal: 'left',
+					}}
+				>
+					{dropdownContent}
+				</Popover>
+			)}
 		</div>
+	)
+}
+
+export const CommonChipWithPopoverAndContext = (
+	props: CommonChipWithPopoverProps
+) => {
+	const {
+		table: {
+			options: {
+				icons: { ExpandMoreIcon },
+			},
+		},
+	} = useTableContext()
+
+	return (
+		<CommonChipWithPopover
+			renderExpandMoreIcon={defaultRenderExpandMoreIcon(ExpandMoreIcon)}
+			{...props}
+		/>
 	)
 }

@@ -4,7 +4,7 @@ import {
 } from './components/ColumnVirtualizerWrapper'
 import { Flex } from './components/Flex'
 import { HierarchyRow } from './components/HierarchyRow'
-import { MenuItemBase } from './components/Menu'
+import { Menu, MenuItemBase } from './components/Menu'
 import { DateInput } from './inputs/DateInput'
 import {
 	DayPicker,
@@ -50,7 +50,7 @@ import { TableProvider } from './context/TableProvider'
 import { useTableContext } from './context/useTableContext'
 import { HeaderSearch, type HeaderSearchOptionProps } from './head/HeaderSearch'
 import { HeaderBase } from './head/HeaderBase'
-import { Sidebar } from './components/Sidebar'
+import { Sidebar, SidebarTemplate } from './components/Sidebar'
 import { TableBodyRow, type TableBodyRowProps } from './body/TableBodyRow'
 import { GroupedCellBase } from './components/GroupedCellBase'
 import { ExpandButton } from './buttons/ExpandButton'
@@ -73,6 +73,12 @@ import {
 	isNumericSorting,
 	isTextSorting,
 } from './utils/getSortingInfo'
+import { TooltipButton } from './components/TooltipButton'
+import {
+	EmbeddedSelect,
+	EmbeddedSelectOptionType,
+} from './components/EmbeddedSelect'
+import { CommonChipWithPopover } from './TableStatusBar/CommonChipWithPopover/CommonChipWithPopover'
 
 export * from './hooks/useEditField'
 export default TableComponent
@@ -114,6 +120,7 @@ export {
 	HeaderSearch,
 	HierarchyRow,
 	Input,
+	Menu,
 	MenuItemBase,
 	QuickFilters,
 	type QuickFiltersProps,
@@ -121,6 +128,7 @@ export {
 	Select,
 	SelectCheckbox,
 	Sidebar,
+	SidebarTemplate,
 	ShowHideColumnsButton,
 	TableBodyRow,
 	TableHeadRow,
@@ -152,4 +160,8 @@ export {
 	getSortingText,
 	isNumericSorting,
 	isTextSorting,
+	TooltipButton,
+	EmbeddedSelect,
+	type EmbeddedSelectOptionType,
+	CommonChipWithPopover,
 }

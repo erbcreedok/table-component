@@ -1,7 +1,7 @@
 import { Box } from '@mui/material'
 import React, { FC, useEffect, useMemo, useState } from 'react'
 
-import { CommonChipWithPopover } from '../CommonChipWithPopover/CommonChipWithPopover'
+import { CommonChipWithPopoverAndContext } from '../CommonChipWithPopover/CommonChipWithPopover'
 import { DropdownContentHeader } from '../../components/DropdownContent/DropdownContentHeader'
 import { DropdownContentSearch } from '../../components/DropdownContent/DropdownContentSearch'
 import { useGroupingControls } from '../filter-bar-hooks/useGroupingControls'
@@ -93,8 +93,7 @@ export const GroupingChip: FC<GroupingChipProps> = (props) => {
 	}
 
 	return (
-		<CommonChipWithPopover
-			table={table}
+		<CommonChipWithPopoverAndContext
 			icon={<GroupingIcon />}
 			text={groupingChipText}
 			dropdownContent={DropdownContent}

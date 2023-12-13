@@ -3,7 +3,7 @@ import { Box } from '@mui/material'
 
 import { TableInstance } from 'src'
 
-import { CommonChipWithPopover } from '../CommonChipWithPopover/CommonChipWithPopover'
+import { CommonChipWithPopoverAndContext } from '../CommonChipWithPopover/CommonChipWithPopover'
 import { DropdownContentHeader } from '../../components/DropdownContent/DropdownContentHeader'
 import { DropdownContentSearch } from '../../components/DropdownContent/DropdownContentSearch'
 import { useSortingControls } from '../filter-bar-hooks/useSortingControls'
@@ -127,8 +127,7 @@ export const SortingChip = <TData extends Record<string, any> = {}>(
 	}
 
 	return (
-		<CommonChipWithPopover
-			table={table}
+		<CommonChipWithPopoverAndContext
 			text={getSortingChipText()}
 			icon={
 				sortedList?.length > 1 ? (

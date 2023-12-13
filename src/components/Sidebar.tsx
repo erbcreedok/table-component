@@ -6,9 +6,8 @@ import Drawer from '@mui/material/Drawer'
 import { SidebarHeaderComponent } from './SidebarHeader'
 import { SidebarSearchComponent } from './SidebarSearch'
 
-interface Props {
-	open: boolean
-	onClose(): void
+interface SidebarTemplateProps {
+	onClose?(): void
 	topPanel?: ReactNode
 	/** @deprecated use topPanel */
 	withHeader?: boolean
@@ -24,14 +23,18 @@ interface Props {
 	subHeader?: string | ReactElement | null
 	styles?: Record<string, any>
 	children?: ReactNode
-	innerTableSidebar?: boolean
 	innerTable?: boolean
+}
+interface SidebarProps extends SidebarTemplateProps {
+	onClose(): void
+	open: boolean
+	children?: ReactNode
+	innerTableSidebar?: boolean
 	PaperProps?: PaperProps
 }
 
-export const Sidebar = ({
-	open,
-	onClose,
+export const SidebarTemplate = ({
+	onClose = () => null,
 	topPanel,
 	withHeader = false,
 	withSearch = false,
@@ -40,11 +43,43 @@ export const Sidebar = ({
 	headerTitle = '',
 	subHeader,
 	styles = { minWidth: 400, maxWidth: '80vw' },
-	innerTableSidebar,
 	children,
 	innerTable,
-	PaperProps,
-}: Props) => {
+}: SidebarTemplateProps) => {
+	return (
+		<Box sx={{ ...styles, ...(innerTable ? { maxHeight: '100%' } : {}) }}>
+			{withHeader && (
+				<SidebarHeaderComponent
+					title={headerTitle}
+					subHeader={subHeader}
+					onClick={onClose}
+				/>
+			)}
+			{withSearch && (
+				<SidebarSearchComponent
+					onChange={onSearchChange}
+					onClear={onSearchClear}
+				/>
+			)}
+			{topPanel}
+			<Box
+				sx={{
+					maxHeight: `calc(100% - ${withSearch ? '116' : '65'}px)`,
+					boxSizing: 'border-box',
+					display: innerTable ? 'flex' : 'block',
+					width: '100%',
+					overflow: 'hidden',
+					position: 'relative',
+				}}
+			>
+				{children}
+			</Box>
+		</Box>
+	)
+}
+
+export const Sidebar = (props: SidebarProps) => {
+	const { open, onClose, innerTableSidebar, children, PaperProps } = props
 	const innerTableDrawerStyles = {
 		[`& > .${backdropClasses.root}`]: {
 			backgroundColor: 'transparent',
@@ -63,34 +98,7 @@ export const Sidebar = ({
 			sx={innerTableSidebar ? innerTableDrawerStyles : null}
 			PaperProps={PaperProps}
 		>
-			<Box sx={{ ...styles, ...(innerTable ? { maxHeight: '100%' } : {}) }}>
-				{withHeader && (
-					<SidebarHeaderComponent
-						title={headerTitle}
-						subHeader={subHeader}
-						onClick={onClose}
-					/>
-				)}
-				{withSearch && (
-					<SidebarSearchComponent
-						onChange={onSearchChange}
-						onClear={onSearchClear}
-					/>
-				)}
-				{topPanel}
-				<Box
-					sx={{
-						maxHeight: `calc(100% - ${withSearch ? '116' : '65'}px)`,
-						boxSizing: 'border-box',
-						display: innerTable ? 'flex' : 'block',
-						width: '100%',
-						overflow: 'hidden',
-						position: 'relative',
-					}}
-				>
-					{children}
-				</Box>
-			</Box>
+			<SidebarTemplate {...props}>{children}</SidebarTemplate>
 		</Drawer>
 	)
 }
