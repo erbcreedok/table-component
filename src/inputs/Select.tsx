@@ -97,6 +97,7 @@ export const Select = <
 			options={options}
 			value={value as AutocompleteValue<T, Multiple, boolean, false>}
 			{...props}
+			disableCloseOnSelect={props.multiple}
 			sx={mergeSx(
 				{
 					[`.${autocompleteClasses.endAdornment}`]: {
