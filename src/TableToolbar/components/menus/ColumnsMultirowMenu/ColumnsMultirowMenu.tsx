@@ -20,6 +20,7 @@ import {
 } from '../../../../column.utils'
 import { Sidebar } from '../../../../components/Sidebar'
 import { Colors, TextColor } from '../../../../components/styles'
+import { getValidColumnOrder } from '../../../../utils/getValidColumnOrder'
 import { splitArrayItems } from '../../../../utils/splitArrayItems'
 import { getColumnsFilteredByDisplay } from '../../../../utils/getFilteredByDisplay'
 import { getTestAttributes } from '../../../../utils/getTestAttributes'
@@ -165,11 +166,15 @@ export const ColumnsMultirowMenu = <TData extends TableData = {}>({
 				)
 			} else {
 				setColumnOrder((columnOrder) =>
-					reorderColumn(draggedColumn, targetColumn, columnOrder)
+					reorderColumn(
+						draggedColumn,
+						targetColumn,
+						getValidColumnOrder(table.options, columnOrder)
+					)
 				)
 			}
 		},
-		[setColumnOrder, setGrouping]
+		[setColumnOrder, setGrouping, table.options]
 	)
 
 	const onColumnSetOrderChange = useCallback(
@@ -183,11 +188,15 @@ export const ColumnsMultirowMenu = <TData extends TableData = {}>({
 				)
 			} else {
 				setColumnOrder((columnOrder) =>
-					reorderColumnSet(draggedColumns, targetColumns, columnOrder)
+					reorderColumnSet(
+						draggedColumns,
+						targetColumns,
+						getValidColumnOrder(table.options, columnOrder)
+					)
 				)
 			}
 		},
-		[setColumnOrder, setGrouping]
+		[setColumnOrder, setGrouping, table.options]
 	)
 
 	const findParent = useCallback(
