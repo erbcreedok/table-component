@@ -5,7 +5,7 @@ import {
 	Table_Row,
 } from '../../TableComponent'
 import { UnitTreeItem } from '../types/TeamMember'
-import { getUnitTreeItems } from './getTeamMembers'
+import { getUnitTreeItems, isUnitTreeItem } from './getTeamMembers'
 import { reorderMembersInUnits } from './reorderMembersInUnits'
 
 export const useHierarchyProps = () => {
@@ -21,6 +21,17 @@ export const useHierarchyProps = () => {
 		const isSameUnit = draggingRows.every((row) =>
 			getIsSameUnit(row, hoveredRow.row)
 		)
+		const isUnit = isUnitTreeItem(hoveredRow.row.original)
+
+		if (isUnit) {
+			return [
+				{
+					label: 'Unit',
+					value: hoveredRow.row.original.name,
+				},
+				...current,
+			]
+		}
 
 		if (!isSameUnit) {
 			return [

@@ -115,7 +115,8 @@ export const getUnitTreeItems = (
 				`${prefix}${i + 1}.`
 			),
 			subRows: [
-				...(depth > 1
+				// second row of the first unit is empty
+				...(depth > 1 && `${prefix}${i + 1}` !== '1.1.2'
 					? getTeamMembers(
 							Math.round(Math.random() * cLength),
 							`${prefix}${i + 1}.`

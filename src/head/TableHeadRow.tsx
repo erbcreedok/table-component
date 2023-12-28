@@ -13,9 +13,9 @@ import type { StickyElement } from '../hooks/useMultiSticky'
 import { Colors } from '../components/styles'
 import { getHeaderGroupBorders } from '../utils/getGroupBorders'
 import { getIsColumnAllGroupsCollapsedDefault } from '../utils/getIsColumnAllGroupsCollapsed'
+import { handleTableHeadDragEnter } from '../utils/handleTableHeadDragEnter'
 import { mapVirtualItems } from '../utils/mapVirtualItems'
 import { onGroupCollapsedToggleAllDefault } from '../utils/onGroupCollapseToggleAll'
-import { setHoveredRow } from '../utils/setHoveredRow'
 import { getTestAttributes } from '../utils/getTestAttributes'
 
 import { TableHeadCell, TableHeadCellProps } from './TableHeadCell'
@@ -54,7 +54,6 @@ export const TableHeadRow = ({
 	const ref = useRef<HTMLTableRowElement | null>(null)
 	const {
 		options: {
-			enableRowDragging,
 			layoutMode,
 			muiTableHeadRowProps,
 			multirowHeader,
@@ -62,9 +61,7 @@ export const TableHeadRow = ({
 			getIsColumnAllGroupsCollapsed,
 			e2eLabels,
 		},
-		getState,
 	} = table
-	const { draggingRows } = getState()
 
 	useEffect(() => {
 		if (ref.current) {
@@ -78,23 +75,7 @@ export const TableHeadRow = ({
 			: muiTableHeadRowProps
 
 	const handleDragEnter = () => {
-		if (enableRowDragging && draggingRows.length > 0) {
-			let row
-			if (!parentRow) {
-				row = table.getPaginationRowModel().flatRows[0]
-			} else if (parentRow.subRows) {
-				row = parentRow.subRows[0]
-			}
-			if (row) {
-				setHoveredRow(table)({
-					row,
-					position: 'top',
-					rowRef: ref,
-				})
-			} else {
-				setHoveredRow(table)(null)
-			}
-		}
+		handleTableHeadDragEnter(table, ref, parentRow)
 	}
 
 	const getOnToggleGroupCollapse = useCallback(

@@ -1,6 +1,6 @@
 import { styled } from '@mui/material'
 import Box from '@mui/material/Box'
-import React, { FC, memo, useCallback } from 'react'
+import React, { FC, memo, useCallback, useRef } from 'react'
 
 import { TableBodyRow, TableBodyRowProps } from '../body/TableBodyRow'
 import { ExpandButton } from '../buttons/ExpandButton'
@@ -11,6 +11,7 @@ import { useMultiSticky } from '../hooks/useMultiSticky'
 import { Table_Row, TableData, TableInstance } from '../TableComponent'
 import { getHeaderGroupFilteredByDisplay } from '../utils/getFilteredByDisplay'
 import { getValueOrFunctionHandler } from '../utils/getValueOrFunctionHandler'
+import { handleTableHeadDragEnter } from '../utils/handleTableHeadDragEnter'
 
 import { Colors } from './styles'
 
@@ -47,6 +48,7 @@ export const HierarchyRow = (props: TableBodyRowProps) => {
 		getPaginationRowModel,
 		options: { enableStickyHeader, hierarchyTreeConfig, multirowHeader },
 	} = table
+	const ref = useRef<HTMLTableRowElement | null>(null)
 	const {
 		isHierarchyItem,
 		showTableHeader: _showTableHeader,
@@ -87,6 +89,10 @@ export const HierarchyRow = (props: TableBodyRowProps) => {
 		)
 	)
 
+	const handleDragEnter = () => {
+		handleTableHeadDragEnter(table, ref, row, true)
+	}
+
 	const unitRow = hierarchyItem ? (
 		HierarchyRow ? (
 			<HierarchyRow {...props} />
@@ -94,7 +100,13 @@ export const HierarchyRow = (props: TableBodyRowProps) => {
 			<tr
 				className="table-hierarchy-row"
 				data-index={virtualRow?.index}
-				ref={computedMeasureElement}
+				ref={(node) => {
+					if (node) {
+						ref.current = node
+						computedMeasureElement?.(node)
+					}
+				}}
+				onDragEnter={handleDragEnter}
 			>
 				<td
 					className="table-hierarchy-cell"
