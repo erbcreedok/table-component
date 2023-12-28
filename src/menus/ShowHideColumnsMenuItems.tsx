@@ -16,6 +16,7 @@ import { ColumnPinningButtons } from '../buttons/ColumnPinningButtons'
 import { GrabHandleButton } from '../buttons/GrabHandleButton'
 import { reorderColumn } from '../column.utils'
 import type { Table_Column, TableInstance } from '..'
+import { getValidColumnOrder } from '../utils/getValidColumnOrder'
 
 interface Props<TData extends Record<string, any> = {}> {
 	allColumns: Table_Column<TData>[]
@@ -78,7 +79,13 @@ export const ShowHideColumnsMenuItems = <
 		setIsDragging(false)
 		setHoveredColumn(null)
 		if (hoveredColumn) {
-			setColumnOrder(reorderColumn(column, hoveredColumn, columnOrder))
+			setColumnOrder(
+				reorderColumn(
+					column,
+					hoveredColumn,
+					getValidColumnOrder(table.options, columnOrder)
+				)
+			)
 		}
 	}
 

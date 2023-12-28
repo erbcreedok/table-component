@@ -12,6 +12,7 @@ import { reorderColumn } from '../column.utils'
 import type { Table_Column, TableInstance } from '..'
 import { Colors } from '../components/styles'
 import { useHoverEffects } from '../hooks/useHoverEffects'
+import { getValidColumnOrder } from '../utils/getValidColumnOrder'
 
 interface Props {
 	anchorEl: ComponentProps<typeof Popper>['anchorEl']
@@ -87,7 +88,11 @@ export const TableHeadCellGrabHandle: FC<Props> = ({
 		) {
 			if (!column.getIsGrouped()) {
 				setColumnOrder((columnOrder) =>
-					reorderColumn(column, hoveredColumn as Table_Column, columnOrder)
+					reorderColumn(
+						column,
+						hoveredColumn as Table_Column,
+						getValidColumnOrder(table.options, columnOrder)
+					)
 				)
 			} else if (
 				'getIsGrouped' in hoveredColumn &&

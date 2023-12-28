@@ -18,6 +18,7 @@ import { Sidebar } from '../../../../components/Sidebar'
 import { TreeAngle } from '../../../../components/TreeAngle'
 import { ConditionalBox } from '../../../../components/ConditionalBox'
 import { Colors, TextColor } from '../../../../components/styles'
+import { getValidColumnOrder } from '../../../../utils/getValidColumnOrder'
 import { splitArrayItems } from '../../../../utils/splitArrayItems'
 import { getMultirowDepthMatchingColumns } from '../../../../utils/getMultirowDepthMatchingColumns'
 import { makeMultiheaderGroups } from '../../../../utils/makeMultiheaderGroups'
@@ -153,11 +154,15 @@ export const ColumnsMenu = <TData extends TableData = {}>({
 				)
 			} else {
 				setColumnOrder((columnOrder) =>
-					reorderColumn(draggedColumn, targetColumn, columnOrder)
+					reorderColumn(
+						draggedColumn,
+						targetColumn,
+						getValidColumnOrder(table.options, columnOrder)
+					)
 				)
 			}
 		},
-		[setColumnOrder, setGrouping]
+		[table.options, setColumnOrder, setGrouping]
 	)
 
 	const getMultirowHeaderGroups = useCallback(

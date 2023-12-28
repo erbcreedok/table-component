@@ -1,3 +1,5 @@
+import { TableData, TableInstance } from '../../../../TableComponent'
+import { getValidColumnOrder } from '../../../../utils/getValidColumnOrder'
 import { PresetState } from '../PresetButton'
 
 const getIsArrayTheSame = (firstState, secondState) =>
@@ -57,9 +59,10 @@ const getIsVisibilityTheSame = (presetVisibility, tableVisibility) => {
 	return getIsArrayTheSame(hiddenPresetColumns, hiddenTableColumns)
 }
 
-export const getIsStateTheSame = (
+export const getIsStateTheSame = <TData extends TableData = TableData>(
 	presetState: PresetState,
-	tableState: PresetState
+	tableState: PresetState,
+	table: TableInstance<TData>
 ) => {
 	const {
 		columnOrder: presetColumnOrder,
@@ -78,8 +81,8 @@ export const getIsStateTheSame = (
 	} = tableState
 
 	const isOrderTheSame = getIsArrayTheSame(
-		presetColumnOrder ?? [],
-		tableColumnOrder ?? []
+		getValidColumnOrder(table.options, presetColumnOrder),
+		getValidColumnOrder(table.options, tableColumnOrder)
 	)
 	// grouping is working not properly, because after ungroup -> group by,
 	// new column("mrt-row-expand") is pushed to the beggining of the columnOrder array

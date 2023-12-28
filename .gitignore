@@ -3,6 +3,7 @@ log/
 .idea/
 .vscode/
 .awcache/
+.fleet
 .env
 .env.local
 .npmrc

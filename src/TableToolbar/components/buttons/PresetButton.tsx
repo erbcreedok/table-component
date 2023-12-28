@@ -13,6 +13,7 @@ import { Tooltip } from '../../../components/Tooltip'
 import { createTheme } from '../../../index'
 import type { TableInstance } from '../../../index'
 import { NotificationDot } from '../../../components/NotificationDot'
+import { getValidColumnOrder } from '../../../utils/getValidColumnOrder'
 import { PresetMenu } from '../menus/PresetMenu/PresetMenu'
 import { PresetNotification } from '../menus/PresetMenu/components/PresetNotification'
 import { useTableContext } from '../../../context/useTableContext'
@@ -86,7 +87,7 @@ export const PresetButton = <TData extends Record<string, any> = {}>({
 		columnFilters,
 		columnVisibility,
 	}: PresetState) => {
-		setColumnOrder(columnOrder ?? [])
+		setColumnOrder(getValidColumnOrder(table.options, columnOrder))
 		setGrouping(() => grouping ?? [])
 		setSorting(sorting ?? [])
 		setColumnFilters(columnFilters ?? [])
@@ -118,7 +119,9 @@ export const PresetButton = <TData extends Record<string, any> = {}>({
 
 	useEffect(() => {
 		if (checkedPreset) {
-			setIsStateTheSame(getIsStateTheSame(checkedPreset?.state, tableState))
+			setIsStateTheSame(
+				getIsStateTheSame(checkedPreset?.state, tableState, table)
+			)
 		}
 	}, [checkedPreset, tableState, presets])
 
