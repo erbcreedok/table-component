@@ -824,7 +824,6 @@ export type Table_ColumnDef<TData extends TableData = TableData> = Omit<
 			row: Table_Row<TData>
 			cell: Table_Cell<TData>
 		}) => boolean | string
-		errorExplanation?: string
 		cellGroupedPlaceholderText?: string
 		cellPlaceholderText?: string
 		lineClamp?: number | boolean

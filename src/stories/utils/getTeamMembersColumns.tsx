@@ -385,6 +385,14 @@ export const getTeamMembersColumns = () => {
 			GroupedCell: ColoredGroupedCell,
 			Header: HeaderBase,
 			enableColumnOrdering: true,
+			editVariant: 'text',
+			validator: ({ value }) => {
+				if (!value) {
+					return 'Location is required'
+				}
+
+				return true
+			},
 		},
 		{
 			header: 'Hired At',

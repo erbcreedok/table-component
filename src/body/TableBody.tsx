@@ -1,5 +1,5 @@
 /* eslint-disable react/jsx-pascal-case */
-import React, { FC, memo, useMemo } from 'react'
+import React, { FC, memo, useMemo, useEffect } from 'react'
 import {
 	useVirtualizer,
 	Virtualizer,
@@ -40,6 +40,7 @@ export const TableBody: FC<Props> = ({
 		getRowModel,
 		getPrePaginationRowModel,
 		getState,
+		resetRowSelection,
 		options: {
 			enableGlobalFilterRankedResults,
 			enablePagination,
@@ -67,14 +68,30 @@ export const TableBody: FC<Props> = ({
 		refs: { tableContainerRef, tablePaperRef },
 		CustomRow,
 	} = table
-	const { columnFilters, globalFilter, pagination, sorting, groupCollapsed } =
-		getState()
+	const {
+		columnFilters,
+		globalFilter,
+		pagination,
+		sorting,
+		groupCollapsed,
+		editingCell,
+		editingRow,
+	} = getState()
 
 	const tableBodyProps = getValueOrFunctionHandler(muiTableBodyProps)({ table })
 
 	const vProps_old = getValueOrFunctionHandler(virtualizerProps)({ table })
 
 	const vProps = getValueOrFunctionHandler(rowVirtualizerProps)({ table })
+
+	// deselect all rows when cell or row editing has been started
+	useEffect(() => {
+		const isEditing = Boolean(editingCell?.id || editingRow?.id)
+
+		if (isEditing) {
+			resetRowSelection()
+		}
+	}, [editingCell, editingRow, resetRowSelection])
 
 	const rows = useMemo(() => {
 		if (
