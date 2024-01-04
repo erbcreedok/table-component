@@ -149,7 +149,7 @@ export const getSortingText = <TData extends Record<string, any> = {}>({
 	const {
 		options: { localization },
 	} = table
-	let sortTypeText = isAsc ? localization.firstLast : localization.lastFirst
+	let sortTypeText = isAsc ? localization.lastFirst : localization.firstLast
 	const sortingType = getColumnSortingType(
 		column,
 		table.options.sortingFns ?? {}
