@@ -326,10 +326,6 @@ export const TableHeadCell: FC<TableHeadCellProps> = ({
 									className="Mui-TableHeadCell-Content-Labels"
 									sx={{
 										alignItems: 'center',
-										cursor:
-											column.getCanSort() && columnDefType !== 'group'
-												? 'pointer'
-												: undefined,
 										display: 'flex',
 										flexGrow: 1,
 										flexDirection:
