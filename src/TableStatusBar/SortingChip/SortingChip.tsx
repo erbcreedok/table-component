@@ -55,7 +55,7 @@ export const SortingChip = <TData extends Record<string, any> = {}>(
 	const firstSorting = sorting?.find((item) => sortedList[0]?.id === item.id)
 
 	const handleClearAll = () => {
-		resetSorting()
+		resetSorting(true)
 	}
 
 	const onClearClick = () => {

@@ -63,9 +63,9 @@ export const TableStatusBar = <TData extends Record<string, any> = {}>({
 	const barRef = useRef<HTMLDivElement>(null)
 
 	const handleClearAll = () => {
-		resetGrouping()
-		resetSorting()
-		resetColumnFilters()
+		resetGrouping(true)
+		resetSorting(true)
+		resetColumnFilters(true)
 	}
 
 	const { lineProps: mLineProps, ...mProps } = {
