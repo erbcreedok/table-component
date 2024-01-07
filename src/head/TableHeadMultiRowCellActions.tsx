@@ -9,6 +9,7 @@ import React, {
 	useState,
 } from 'react'
 import MenuItem from '@mui/material/MenuItem'
+import ListItemIcon from '@mui/material/ListItemIcon'
 import Box from '@mui/material/Box'
 
 import { getColumnsFilteredByDisplay } from '..'
@@ -43,7 +44,10 @@ export const TableHeadMultiRowCellActions: FC<Props> = ({
 	cell,
 }) => {
 	const {
-		options: { localization },
+		options: {
+			localization,
+			icons: { EyeCrossedIcon },
+		},
 	} = table
 
 	const [visible, setVisible] = useState(false)
@@ -111,7 +115,12 @@ export const TableHeadMultiRowCellActions: FC<Props> = ({
 						onClick={(event) => handleMenuItemClick(onClick, event)}
 						sx={commonMenuItemStyles}
 					>
-						<Box sx={commonListItemStyles}>{text}</Box>
+						<Box sx={commonListItemStyles}>
+							<ListItemIcon>
+								<EyeCrossedIcon />
+							</ListItemIcon>
+							{text}
+						</Box>
 					</MenuItem>
 				))}
 			</Menu>
