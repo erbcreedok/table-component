@@ -38,7 +38,7 @@ export const EditSelectField = <TData extends TableData>({
 	const handleChange: SelectProps['onChange'] = (event, value, ...rest) => {
 		muiSelectProps.onChange?.(event, value, ...rest)
 		const computedValue = Array.isArray(value)
-			? value.map(({ value }) => value)
+			? value.map((el) => el.value ?? el)
 			: value?.value
 		setValue(computedValue)
 	}

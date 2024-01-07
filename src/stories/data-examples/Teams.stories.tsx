@@ -83,6 +83,23 @@ const manyColumns: Table_ColumnDef<TeamMember>[] = [
 	{
 		header: 'Pet Type',
 		accessorKey: 'petType',
+		dataType: 'multi-select',
+		filterVariant: 'multi-select',
+		editVariant: 'multi-select',
+		editSelectOptions: [
+			'Cat',
+			'Dog',
+			'Rabbit',
+			'Fish',
+			'Other',
+		],
+		filterSelectOptions: [
+			'Cat',
+			'Dog',
+			'Rabbit',
+			'Fish',
+			'Other',
+		],
 	},
 ]
 const multiHeader = [

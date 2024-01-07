@@ -11,6 +11,7 @@ const successionStatuses = [
 	'Successors in place',
 	null,
 ]
+const petType = ['Cat', 'Dog', 'Rabbit', 'Fish', 'Other']
 
 export const getUsers = (length = 200, prefix = '') =>
 	[...Array(length)].map((_, index) => ({
@@ -51,7 +52,7 @@ export const getTeamMember = (user?: User) => ({
 	favoriteQuote: faker.lorem.sentence(),
 	favoriteColor: faker.internet.color(),
 	petName: faker.animal.cat(),
-	petType: faker.animal.type(),
+	petType: [getRandomFromArray(petType)],
 })
 
 export const getTeamMembers = (length = 200, prefix = ''): TeamMember[] =>
@@ -74,7 +75,7 @@ export const getTeamMembers = (length = 200, prefix = ''): TeamMember[] =>
 		favoriteQuote: faker.lorem.sentence(),
 		favoriteColor: faker.internet.color(),
 		petName: faker.animal.cat(),
-		petType: faker.animal.type(),
+		petType: [getRandomFromArray(petType)],
 	}))
 
 export const getExpandingTeamMembers = (

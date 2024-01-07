@@ -22,7 +22,7 @@ export type TeamMember = {
 	favoriteQuote: string,
 	favoriteColor: string,
 	petName: string,
-	petType: string,
+	petType: string[],
 }
 
 export type UnitTreeItem = {

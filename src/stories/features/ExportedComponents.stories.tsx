@@ -17,17 +17,11 @@ import {
 	SidebarTemplate,
 } from '../../index'
 
-const meta: Meta = {
-  title: 'Features/ExportedComponents Examples',
-};
-
 const rainbow = keyframes`
 	0% { background-position: 0% 50% }
 	50% { background-position: 100% 50% }
 	100% { background-position: 0% 50% }
 `
-
-export default meta;
 
 export const TooltipButtonExported = () => (
 	<Box>
@@ -201,3 +195,9 @@ export const SidebarTemplateExported = () => {
 		</SidebarTemplate>
 	)
 }
+
+const meta: Meta = {
+	title: 'Features/ExportedComponents Examples',
+};
+
+export default meta;
