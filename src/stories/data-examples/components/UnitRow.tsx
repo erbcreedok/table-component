@@ -1,6 +1,6 @@
 import { styled } from '@mui/material'
 import Box from '@mui/material/Box'
-import React, { useCallback } from 'react'
+import React, { useCallback, useRef } from 'react'
 import { TableBodyRow, TableBodyRowProps } from '../../../body/TableBodyRow'
 import { ExpandButton } from '../../../buttons/ExpandButton'
 import { TableHeadMultiRow } from '../../../head/TableHeadMultiRow'
@@ -8,6 +8,7 @@ import { TableHeadRow } from '../../../head/TableHeadRow'
 import { useComputedMeasureElement } from '../../../hooks/useComputedMeasureElement'
 import { useMultiSticky } from '../../../hooks/useMultiSticky'
 import { getHeaderGroupFilteredByDisplay } from '../../../utils/getFilteredByDisplay'
+import { handleTableHeadDragEnter } from '../../../utils/handleTableHeadDragEnter'
 import { isUnitTreeItem } from '../../utils/getTeamMembers'
 
 const Wrapper = styled(Box)`
@@ -37,6 +38,7 @@ export const UnitRow = <TData extends Record<string, any> = {}>(
 		getPaginationRowModel,
 		options: { enableStickyHeader, multirowHeader },
 	} = table
+	const ref = useRef<HTMLTableRowElement | null>(null)
 	const { isFullScreen } = table.getState()
 	const { registerSticky, stickyElements } = useMultiSticky()
 
@@ -62,11 +64,21 @@ export const UnitRow = <TData extends Record<string, any> = {}>(
 		)
 	)
 
+	const handleDragEnter = () => {
+		handleTableHeadDragEnter(table, ref, row, true)
+	}
+
 	const unitRow = unit ? (
 		<tr
 			className="unit-row"
 			data-index={virtualRow?.index}
-			ref={computedMeasureElement}
+			ref={(node) => {
+				if (node) {
+					ref.current = node
+					computedMeasureElement?.(node)
+				}
+			}}
+			onDragEnter={handleDragEnter}
 		>
 			<td
 				className="unit-cell"
