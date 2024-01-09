@@ -19,7 +19,7 @@ import {
 import { withNativeEvent } from '../../../../utils/withNativeEvent'
 import { getPascalCase } from '../../../../utils/getPascalCase'
 
-interface Props<TData extends TableData> {
+export interface ColumnsMenuItemProps<TData extends TableData = TableData> {
 	column: Table_Column<TData>
 	hoveredColumn: Table_Column<TData> | null
 	draggingColumn: Table_Column<TData> | null
@@ -35,7 +35,7 @@ interface Props<TData extends TableData> {
 	renderTreeAngle?: boolean
 }
 
-export const ColumnsMenuItem = <TData extends TableData = {}>({
+export const ColumnsMenuItem = <TData extends TableData = TableData>({
 	hoveredColumn,
 	draggingColumn,
 	setHoveredColumn,
@@ -46,7 +46,7 @@ export const ColumnsMenuItem = <TData extends TableData = {}>({
 	onColumnOrderChange,
 	isLastInList,
 	renderTreeAngle,
-}: Props<TData>) => {
+}: ColumnsMenuItemProps<TData>) => {
 	const {
 		options: {
 			enableColumnOrdering,

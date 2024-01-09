@@ -170,20 +170,21 @@ export const reorderColumn = <TData extends Record<string, any> = {}>(
 	return [...columnOrder]
 }
 
-export const reorderColumnSet = <TData extends Record<string, any> = {}>(
+export const reorderColumnSet = <TData extends Record<string, any>>(
 	draggedColumns: Table_Column<TData>[],
 	targetColumns: Table_Column<TData>[],
 	columnOrder: ColumnOrderState
 ): ColumnOrderState => {
 	const newColumnOrder = [...columnOrder]
-	newColumnOrder.splice(
-		columnOrder.indexOf(targetColumns[targetColumns.length - 1].id),
-		0,
-		columnOrder.splice(
-			columnOrder.indexOf(draggedColumns[0].id),
-			draggedColumns.length
-		)[draggedColumns.length]
+	const draggedColumnIndex = columnOrder.indexOf(draggedColumns[0].id)
+	const removedElements = newColumnOrder.splice(
+		draggedColumnIndex,
+		draggedColumns.length
 	)
+	const newTargetColumnIndex =
+		newColumnOrder.indexOf(targetColumns[targetColumns.length - 1].id) + 1
+
+	newColumnOrder.splice(newTargetColumnIndex, 0, ...removedElements)
 
 	return newColumnOrder
 }

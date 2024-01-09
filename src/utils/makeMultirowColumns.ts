@@ -40,10 +40,6 @@ export const makeMultirowColumns = <TData extends TableData = {}>(
 		let leftPinnedPosition: number | undefined
 		let rightPinnedPosition: number | undefined
 
-		if (isGrouped) {
-			id = `${id}-grouped`
-		}
-
 		if (isPinned) {
 			id = `${id}-pinned:${isPinned}`
 			if (isPinned === 'left') {
