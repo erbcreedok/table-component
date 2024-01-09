@@ -5,6 +5,7 @@ import {
 	outlinedInputClasses,
 } from '@mui/material'
 import Autocomplete from '@mui/material/Autocomplete'
+import Typography from '@mui/material/Typography'
 import { AutocompleteRenderGetTagProps } from '@mui/material/Autocomplete/Autocomplete'
 import { ChipTypeMap } from '@mui/material/Chip'
 import { PartialKeys } from '@tanstack/table-core'
@@ -80,9 +81,18 @@ export const Select = <
 		table: {
 			options: {
 				icons: { ChevronDownIcon, CloseIcon },
+				localization,
 			},
 		},
 	} = useTableContext()
+
+	const getMultipltOptions = () => {
+		if (Array.isArray(value)) {
+			return options.filter((opt) => !value?.includes(opt.value))
+		}
+
+		return options
+	}
 
 	return (
 		<Autocomplete<T, Multiple, boolean, false>
@@ -94,10 +104,11 @@ export const Select = <
 			renderInput={(params) => <Input {...inputProps} {...params} />}
 			isOptionEqualToValue={isOptionEqualToValue}
 			renderTags={renderTags}
-			options={options}
+			options={props.multiple ? getMultipltOptions() : options}
 			value={value as AutocompleteValue<T, Multiple, boolean, false>}
 			{...props}
 			disableCloseOnSelect={props.multiple}
+			noOptionsText={<Typography>{localization.noOptions}</Typography>}
 			sx={mergeSx(
 				{
 					[`.${autocompleteClasses.endAdornment}`]: {
