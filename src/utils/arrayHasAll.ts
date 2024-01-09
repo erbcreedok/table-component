@@ -1,7 +1,4 @@
-export const arrayHasAll = (whereArr, whatArr) => {
-	return whatArr.reduce((result, el) => {
-		if (whereArr.indexOf(el) === -1) return false
-
-		return true
-	})
-}
+export const arrayHasAll = (
+	whereArr?: unknown[] | null,
+	whatArr?: unknown[] | null
+) => whatArr?.every((i) => whereArr?.includes(i))

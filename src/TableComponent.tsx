@@ -405,6 +405,7 @@ export type MultirowColumnAction = {
 export type MultirowColumn = {
 	id: string
 	text: string
+	shorthandText?: string
 	colSpan: number
 	isGrouped: boolean
 	isPinned: false | 'left' | 'right'

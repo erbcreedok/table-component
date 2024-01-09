@@ -5,6 +5,7 @@ import MenuItem from '@mui/material/MenuItem'
 import Typography from '@mui/material/Typography'
 
 import type { Table_Column, TableData, TableInstance } from '../../../../index'
+import { arrayHasAll } from '../../../../utils/arrayHasAll'
 import { GrabHandleButton } from '../../buttons/GrabHandleButton'
 import { TableSwitch } from '../../../../components/TableSwitch'
 import { Tooltip } from '../../../../components/Tooltip'
@@ -14,38 +15,46 @@ import {
 	IconsColor,
 	Colors,
 } from '../../../../components/styles'
-import { arrayHasAll } from '../../../../utils/arrayHasAll'
 
-interface Props<TData extends TableData> {
-	columnsGroup: Table_Column<TData>[]
-	columnsGroupText: string
+import { MultirowColumnParent } from './multirowMenu.types'
+
+export interface ColumnsMultirowMenuGroupItemProps<
+	TData extends TableData = TableData
+> {
+	group: MultirowColumnParent<TData>
 	table: TableInstance<TData>
-	hoveredColumns: Table_Column<TData>[] | null
-	draggingColumns: Table_Column<TData>[] | null
-	setHoveredColumns: Dispatch<SetStateAction<Table_Column<TData>[] | null>>
-	setDraggingColumns: Dispatch<SetStateAction<Table_Column<TData>[] | null>>
-	onColumnOrderChange?(
-		draggedColumns: Table_Column<TData>[],
-		targetColumn: Table_Column<TData>[]
+	parent?: any
+	hoveredGroup?: MultirowColumnParent<TData> | null
+	draggingGroup?: MultirowColumnParent<TData> | null
+	setHoveredGroup?: Dispatch<SetStateAction<MultirowColumnParent<TData> | null>>
+	setDraggingGroup?: Dispatch<
+		SetStateAction<MultirowColumnParent<TData> | null>
+	>
+	onColumnGroupOrderChange?(
+		draggedGroup: MultirowColumnParent<TData>,
+		targetGroup: MultirowColumnParent<TData>
 	): void
 	enableDrag?: boolean
 	drawAngle?: boolean
 	depth?: number
 }
 
-export const ColumnsMultirowMenuGroupItem = <TData extends TableData = {}>({
-	columnsGroup,
-	columnsGroupText,
+export const ColumnsMultirowMenuGroupItem = <
+	TData extends TableData = TableData
+>({
+	group,
 	table,
 	drawAngle,
-	hoveredColumns,
-	draggingColumns,
-	setHoveredColumns,
-	setDraggingColumns,
-	onColumnOrderChange,
+	hoveredGroup,
+	draggingGroup,
+	setHoveredGroup,
+	setDraggingGroup,
+	onColumnGroupOrderChange,
 	enableDrag,
 	depth,
-}: Props<TData>) => {
+}: ColumnsMultirowMenuGroupItemProps<TData>) => {
+	const columnsGroup = group.columns ?? []
+	const columnsGroupText = group.shorthandText ?? group.text ?? ''
 	const {
 		options: {
 			enableHiding,
@@ -63,9 +72,8 @@ export const ColumnsMultirowMenuGroupItem = <TData extends TableData = {}>({
 		columnsGroup.every((col) => col.columnDef.enableColumnOrdering) ||
 		enableColumnOrdering
 
-	const isDragging = draggingColumns
-		? arrayHasAll(columnsGroup, draggingColumns)
-		: false
+	const isDragging = group.id === draggingGroup?.id
+	const isHoveredGroup = group.id === hoveredGroup?.id
 
 	const menuItemRef = useRef<HTMLElement>(null)
 
@@ -76,21 +84,25 @@ export const ColumnsMultirowMenuGroupItem = <TData extends TableData = {}>({
 	}
 
 	const handleDragStart = (e: DragEvent<HTMLButtonElement>) => {
-		setDraggingColumns(columnsGroup)
+		setDraggingGroup?.(group)
 		e.dataTransfer.setDragImage(menuItemRef.current as HTMLElement, 0, 0)
 	}
 
 	const handleDragEnd = () => {
-		setDraggingColumns(null)
-		setHoveredColumns(null)
-		if (hoveredColumns) {
-			onColumnOrderChange?.(columnsGroup, hoveredColumns)
+		setDraggingGroup?.(null)
+		setHoveredGroup?.(null)
+		if (hoveredGroup) {
+			onColumnGroupOrderChange?.(group, hoveredGroup)
 		}
 	}
 
 	const handleDragEnter = () => {
-		if (!isDragging && columnOrderingEnabled) {
-			setHoveredColumns(columnsGroup)
+		if (
+			!isDragging &&
+			columnOrderingEnabled &&
+			group.parent === draggingGroup?.parent
+		) {
+			setHoveredGroup?.(group)
 		}
 	}
 
@@ -108,8 +120,9 @@ export const ColumnsMultirowMenuGroupItem = <TData extends TableData = {}>({
 					filter: isDragging
 						? 'filter: drop-shadow(0px 4px 22px rgba(29, 30, 38, 0.15))'
 						: 'none',
-					borderBottom: 'none',
-
+					borderBottom: isHoveredGroup
+						? `1px solid ${Colors.LightBlue}`
+						: 'none',
 					py: '6px',
 					height: 36,
 					'&:hover': {

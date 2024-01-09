@@ -1023,11 +1023,12 @@ const meta: Meta = {
 		multirowColumnsDisplayDepth: {
 			control: { type: 'select' },
 			defaultValue: '1',
-			options: ['1', '2', '3'],
+			options: ['1', '2', '3', '4'],
 			mapping: {
 				'1': 1,
 				'2': 2,
 				'3': 3,
+				'4': 4,
 			},
 		},
 		noRecordsToDisplaySlot: {
