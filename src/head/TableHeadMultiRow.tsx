@@ -6,7 +6,7 @@ import { ColumnVirtualizerWrapper, getColumnsFilteredByDisplay } from '..'
 import type { Table_Row, TableInstance, MultirowHeader, Table_Column } from '..'
 import type { StickyElement } from '../hooks/useMultiSticky'
 import { Colors, TextColor } from '../components/styles'
-import { mapVirtualItems } from '../utils/mapVirtualItems'
+import { mapVirtualItems } from '../utils/virtual'
 import { makeMultirowColumns } from '../utils/makeMultirowColumns'
 
 import { TableHeadMultiRowCell } from './TableHeadMultiRowCell'

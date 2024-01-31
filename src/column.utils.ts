@@ -266,7 +266,8 @@ export const getIsLastLeftPinnedColumn = (
 ) => {
 	return (
 		column.getIsPinned() === 'left' &&
-		table.getLeftLeafHeaders().length - 1 === column.getPinnedIndex()
+		table.getLeftVisibleLeafColumns().at(-1)?.getPinnedIndex() ===
+			column.getPinnedIndex()
 	)
 }
 
