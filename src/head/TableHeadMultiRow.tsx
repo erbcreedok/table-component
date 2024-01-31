@@ -14,7 +14,12 @@ import type {
 import type { StickyElement } from '../hooks/useMultiSticky'
 import { Colors, TextColor } from '../components/styles'
 import { getColumnId, getTotalRight } from '../column.utils'
-import { mapVirtualItems } from '../utils/mapVirtualItems'
+import { mapVirtualItems } from '../utils/virtual'
+// import { mapVirtualItems } from '../utils/mapVirtualItems'
+
+// import { makeMultirowColumns } from '../utils/makeMultirowColumns'
+
+// import { TableHeadMultiRowCell } from './TableHeadMultiRowCell'
 
 const sharedCellStyles = {
 	background: Colors.Gray10,
