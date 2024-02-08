@@ -6,7 +6,7 @@ import { DEFAULT_EXPAND_PADDING, utilColumns } from '../utilColumns'
 import { getHeadersFilteredByDisplay } from '../utils/getFilteredByDisplay'
 import { getColumnWidth, getTotalRight } from '../column.utils'
 import { Table_HeaderGroup, TableInstance } from '../TableComponent'
-import { mapVirtualItems } from '../utils/virtual'
+import { mapVirtualItems } from '../utils/mapVirtualItems'
 
 type TableHeadInvisibleProps = {
 	measureElement?: (element: HTMLTableCellElement) => void

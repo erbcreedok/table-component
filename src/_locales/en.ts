@@ -69,7 +69,6 @@ export const Table_Localization_EN: Table_Localization = {
 	max: 'Max',
 	min: 'Min',
 	move: 'Move',
-	multirowColumnActions: 'Multirow column actions',
 	noOptions: 'No options',
 	noRecordsToDisplay: 'No records to display',
 	noResultsFound: 'No results found',

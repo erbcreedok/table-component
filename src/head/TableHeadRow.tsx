@@ -14,7 +14,7 @@ import { Colors } from '../components/styles'
 import { getHeaderGroupBorders } from '../utils/getGroupBorders'
 import { getIsColumnAllGroupsCollapsedDefault } from '../utils/getIsColumnAllGroupsCollapsed'
 import { handleTableHeadDragEnter } from '../utils/handleTableHeadDragEnter'
-import { mapVirtualItems } from '../utils/virtual'
+import { mapVirtualItems } from '../utils/mapVirtualItems'
 import { onGroupCollapsedToggleAllDefault } from '../utils/onGroupCollapseToggleAll'
 import { getTestAttributes } from '../utils/getTestAttributes'
 

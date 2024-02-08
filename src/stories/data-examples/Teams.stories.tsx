@@ -115,13 +115,8 @@ const multiHeader = [
 					'riskOfLeaving',
 					'successionStatus',
 					'location',
+					'hiredAt',
 				],
-				columnActions: [
-					{
-						text: 'Hide column',
-						onClick: 'hideColumn',
-					},
-				]
 			},
 		],
 	},
@@ -133,22 +128,10 @@ const multiHeader = [
 				text: 'WORKLOAD 1',
 				shorthandText: 'WL1',
 				columnIds: ['impact', 'performance'],
-				columnActions: [
-					{
-						text: 'Hide column',
-						onClick: 'hideColumn',
-					},
-				]
 			},
 			{
 				text: 'WORKLOAD 2',
-				columnIds: ['riskOfLeaving', 'successionStatus', 'location'],
-				columnActions: [
-					{
-						text: 'Hide column',
-						onClick: 'hideColumn',
-					},
-				]
+				columnIds: ['riskOfLeaving', 'successionStatus', 'location', 'hiredAt'],
 			},
 		],
 	},
@@ -159,33 +142,15 @@ const multiHeader = [
 			{
 				text: 'WORKLOAD 1_2',
 				columnIds: ['impact', 'performance'],
-				columnActions: [
-					{
-						text: 'Hide column',
-						onClick: 'hideColumn',
-					},
-				]
 			},
 			{
 				text: 'WORKLOAD 2_1',
 				shorthandText: 'WL2.1',
 				columnIds: ['riskOfLeaving', 'successionStatus'],
-				columnActions: [
-					{
-						text: 'Hide column',
-						onClick: 'hideColumn',
-					},
-				]
 			},
 			{
 				text: 'WORKLOAD 2_2',
-				columnIds: ['location'],
-				columnActions: [
-					{
-						text: 'Hide column',
-						onClick: 'hideColumn',
-					},
-				]
+				columnIds: ['location', 'hiredAt'],
 			},
 		],
 	},
@@ -930,12 +895,11 @@ const meta: Meta = {
 		multirowColumnsDisplayDepth: {
 			control: { type: 'select' },
 			defaultValue: '1',
-			options: ['1', '2', '3', '4'],
+			options: ['1', '2', '3'],
 			mapping: {
 				'1': 1,
 				'2': 2,
 				'3': 3,
-				'4': 4,
 			},
 		},
 		noRecordsToDisplaySlot: {
