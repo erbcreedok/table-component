@@ -4,6 +4,7 @@ import Tooltip from '@mui/material/Tooltip'
 
 import { Table_Cell, TableInstance } from '..'
 import { TextColor } from '../components/styles'
+import { getIsMockRow } from '../utils/getIsMockRow'
 
 import { TableBodyRowGrabHandle } from './TableBodyRowGrabHandle'
 
@@ -37,7 +38,9 @@ export const TableBodyCellUtility: FC<Props> = ({
 	const { column, row } = cell
 	const { columnDef } = column
 
+	const isMock = getIsMockRow(row)
 	const isRowNumbersOnly =
+		isMock ||
 		hideRowSelectionColumn ||
 		!enableRowSelection ||
 		!enableSelectAll ||
@@ -79,7 +82,7 @@ export const TableBodyCellUtility: FC<Props> = ({
 					</Box>
 				</Tooltip>
 			)}
-			{isDraggableCell ? (
+			{isDraggableCell && !isMock ? (
 				<TableBodyRowGrabHandle
 					cell={cell}
 					rowRef={rowRef}

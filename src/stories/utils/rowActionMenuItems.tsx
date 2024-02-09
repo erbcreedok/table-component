@@ -1,13 +1,20 @@
 import AccountCircleIcon from '@mui/icons-material/AccountCircle'
 import DeleteIcon from '@mui/icons-material/Delete'
 import ShareIcon from '@mui/icons-material/Share'
+import GroupIcon from '@mui/icons-material/Group'
 import React from 'react'
 import { MenuItemBase } from '../../components/Menu'
-import { Table_Row } from '../../TableComponent'
+import { Table_Row, TableInstance } from '../../TableComponent'
 
 type ActionMenuItemProps = {
 	onClick?: (action: string) => void
 }
+type GetDefaultRowActionMenuItemsProps<TData extends Record<string, any> = {}> =
+	{
+		closeMenu?: () => void
+		row: Table_Row<TData>
+		table: TableInstance<TData>
+	}
 
 export const ViewProfileActionMenuItem = ({ onClick }: ActionMenuItemProps) => (
 	<MenuItemBase
@@ -38,12 +45,40 @@ export const ShareActionMenuItem = ({ onClick }: ActionMenuItemProps) => (
 		Share
 	</MenuItemBase>
 )
+export const ShowGroupedColumnValuesMenuItem = <
+	TData extends Record<string, any> = {}
+>({
+	table,
+	row,
+	closeMenu,
+}: GetDefaultRowActionMenuItemsProps<TData>) => (
+	<MenuItemBase
+		size="small"
+		icon={<GroupIcon />}
+		onClick={() => {
+			const { grouping } = table.getState()
+			console.log(
+				grouping.reduce((acc, columnId) => {
+					acc[columnId] = row.getValue(columnId)
 
-type GetDefaultRowActionMenuItemsProps<TData extends Record<string, any> = {}> = {
-	closeMenu?: () => void
-	row: Table_Row<TData>
-}
-export const getDefaultRowActionMenuItems = <TData extends Record<string, any> = {}>({ closeMenu, row }: GetDefaultRowActionMenuItemsProps<TData>) => {
+					return acc
+				}, {}),
+				row.original
+			)
+			closeMenu?.()
+		}}
+	>
+		Show grouped column values
+	</MenuItemBase>
+)
+
+export const getDefaultRowActionMenuItems = <
+	TData extends Record<string, any> = {}
+>({
+	closeMenu,
+	row,
+	table,
+}: GetDefaultRowActionMenuItemsProps<TData>) => {
 	const onClick = (action: string) => {
 		console.info(action, row)
 		closeMenu?.()
@@ -51,6 +86,12 @@ export const getDefaultRowActionMenuItems = <TData extends Record<string, any> =
 	return [
 		<ViewProfileActionMenuItem key="view-profile" onClick={onClick} />,
 		<RemoveActionMenuItem key="remove" onClick={onClick} />,
-		<ShareActionMenuItem key="share" onClick={onClick} />
+		<ShareActionMenuItem key="share" onClick={onClick} />,
+		<ShowGroupedColumnValuesMenuItem
+			key="showGrouoed"
+			table={table}
+			row={row}
+			closeMenu={closeMenu}
+		/>,
 	]
 }

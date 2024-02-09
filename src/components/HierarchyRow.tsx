@@ -120,7 +120,12 @@ export const HierarchyRow = (props: TableBodyRowProps) => {
 						<HierarchyComponent {...props} />
 					) : (
 						<Wrapper sx={{ pl: `${(row.depth + 2) * 12}px` }}>
-							<ExpandButton sx={{ mx: '-8px' }} row={row} table={table} />
+							<ExpandButton
+								sx={{ mx: '-8px' }}
+								row={row}
+								table={table}
+								filled={{ collapse: true }}
+							/>
 							<div
 								style={{
 									color: Colors.Dark,

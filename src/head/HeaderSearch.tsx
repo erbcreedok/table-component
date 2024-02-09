@@ -22,6 +22,7 @@ import { Flex } from '../components/Flex'
 import {
 	Table_Column,
 	Table_Header,
+	Table_Row,
 	TableData,
 	TableInstance,
 } from '../TableComponent'
@@ -32,7 +33,7 @@ import {
 	TextColor,
 } from '../components/styles'
 import { useDelay } from '../hooks/useDelay'
-import { defaultGetSubRows } from '../utils/defaultGetSubRows'
+import { fillRowsWithParents } from '../utils/fillRowsWithParents'
 import { getValueFromObj } from '../utils/getValueFromObj'
 import { getPascalCase } from '../utils/getPascalCase'
 import { withNativeEvent } from '../utils/withNativeEvent'
@@ -40,6 +41,15 @@ import { useOnClickOutside } from '../hooks/useOnClickOutside'
 
 import { HeaderBase } from './HeaderBase'
 
+type GetFilteredDataArgs<TData extends TableData> = {
+	rows: Table_Row<TData>[]
+	flatRows: Table_Row<TData>[]
+	value: string
+	path: string
+}
+type GetFilteredDataFn<TData extends TableData> = (
+	args: GetFilteredDataArgs<TData>
+) => Table_Row<TData>[]
 type Props<TData extends TableData> = {
 	column: Table_Column<TData>
 	header: Table_Header<TData>
@@ -48,11 +58,7 @@ type Props<TData extends TableData> = {
 	placeholder: string
 	minLengthSearch?: number
 	targetUnitId?: string
-	getFilteredData?(args: {
-		tableData: TData[]
-		value: string
-		path: string
-	}): TData[]
+	getFilteredData?: GetFilteredDataFn<TData>
 	keepSearchValueOnClickOutside?: boolean
 	renderOption?: FC<HeaderSearchOptionProps<TData>>
 }
@@ -108,17 +114,23 @@ export const HeaderSearchOptionDefault = <TData extends TableData>({
 	</Typography>
 )
 
+const getFlatFilteredData = <T extends TableData>({
+	flatRows,
+	value,
+	path,
+}: GetFilteredDataArgs<T>) => {
+	return flatRows.filter((item) =>
+		getValueFromObj(item.original, path, '')?.toLowerCase().includes(value)
+	)
+}
+
 export const HeaderSearch = <T extends TableData>({
 	column,
 	table,
 	searchPath,
 	placeholder,
 	minLengthSearch = 1,
-	getFilteredData = ({ tableData, value, path }) => {
-		return tableData.filter((item) =>
-			getValueFromObj(item, path, '')?.toLowerCase().includes(value)
-		)
-	},
+	getFilteredData = getFlatFilteredData,
 	keepSearchValueOnClickOutside,
 	renderOption: Option = HeaderSearchOptionDefault,
 }: Props<T>) => {
@@ -131,8 +143,8 @@ export const HeaderSearch = <T extends TableData>({
 	const searchValue = useDelay(input)
 	const {
 		options: {
-			getSubRows,
 			data,
+			enableFlatSearch,
 			icons: { SearchIcon, CloseIcon },
 		},
 	} = table
@@ -148,22 +160,11 @@ export const HeaderSearch = <T extends TableData>({
 
 	const filtered = useMemo(() => {
 		if (searchValue.length >= minLengthSearch) {
-			const getSubrows = getSubRows ?? defaultGetSubRows
-			const flatten = (arr: typeof data) => {
-				const handleItem = (item: typeof data[0], index: number) => {
-					const subrows = getSubrows(item, index)
-					if (subrows) {
-						return [item, ...flatten(subrows)]
-					}
-
-					return [item]
-				}
-
-				return arr.map(handleItem).flat()
-			}
+			const { flatRows, rows } = table.getCoreRowModel()
 
 			return getFilteredData({
-				tableData: flatten(data),
+				flatRows: flatRows as Table_Row<T>[],
+				rows: rows as Table_Row<T>[],
 				value: searchValue.toLowerCase(),
 				path: searchPath,
 			})
@@ -197,7 +198,15 @@ export const HeaderSearch = <T extends TableData>({
 	const handleEnterKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
 		if (event.key === 'Enter' && input.length > 0) {
 			event.stopPropagation()
-			table.setSearchData(filtered)
+			table.setSearchData(
+				enableFlatSearch
+					? filtered.map((row) => ({
+							...row,
+							subRows: [],
+							getCanExpand: () => false,
+					  }))
+					: fillRowsWithParents(filtered)
+			)
 			setShowPopper(false)
 		} else {
 			event.stopPropagation()
@@ -302,7 +311,7 @@ export const HeaderSearch = <T extends TableData>({
 						{filtered.map((item) => (
 							<Option
 								key={item.id}
-								item={item}
+								item={item.original}
 								searchPath={searchPath}
 								input={input}
 								onClick={(event) => {

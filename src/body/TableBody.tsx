@@ -344,19 +344,37 @@ export const TableBody: FC<Props> = ({
 										groupingProps: rowsGroupingProps[props.row.id],
 									}
 
-									if (CustomRow) return <CustomRow {...computedProps} />
+									if (CustomRow)
+										return (
+											<CustomRow
+												key={computedProps.row.id}
+												{...computedProps}
+											/>
+										)
 									if (hierarchyTreeConfig) {
 										return memoMode === 'rows' ? (
-											<Memo_HierarchyRow {...computedProps} />
+											<Memo_HierarchyRow
+												key={computedProps.row.id}
+												{...computedProps}
+											/>
 										) : (
-											<HierarchyRow {...computedProps} />
+											<HierarchyRow
+												key={computedProps.row.id}
+												{...computedProps}
+											/>
 										)
 									}
 
 									return memoMode === 'rows' ? (
-										<Memo_TableBodyRow {...computedProps} />
+										<Memo_TableBodyRow
+											key={computedProps.row.id}
+											{...computedProps}
+										/>
 									) : (
-										<TableBodyRow {...computedProps} />
+										<TableBodyRow
+											key={computedProps.row.id}
+											{...computedProps}
+										/>
 									)
 								})}
 							</RowVirtualizerWrapper>

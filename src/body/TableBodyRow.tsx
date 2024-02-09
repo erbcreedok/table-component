@@ -14,6 +14,7 @@ import { getCellsFilteredByDisplay } from '../utils/getFilteredByDisplay'
 import type { Table_Cell, Table_Row, TableData, TableInstance } from '..'
 import { getColumnId } from '../column.utils'
 import { Colors } from '../components/styles'
+import { getIsMockRow } from '../utils/getIsMockRow'
 import { getSubRowIndex } from '../utils/getSubRowIndex'
 import { mapVirtualItems } from '../utils/virtual'
 import { setHoveredRow } from '../utils/setHoveredRow'
@@ -77,11 +78,12 @@ export const TableBodyRow: FC<TableBodyRowProps> = ({
 		openedDetailedPanels,
 	} = getState()
 	const isEditingRow = !!editingRow && editingRow?.id === row.id
+	const isMockRow = getIsMockRow(row)
 
 	const tableRowProps =
 		muiTableBodyRowProps instanceof Function
 			? muiTableBodyRowProps({ row, table })
-			: muiTableBodyRowProps
+			: muiTableBodyRowProps ?? {}
 
 	const currentHoveredRow = useMemo(
 		() => ({
@@ -94,6 +96,11 @@ export const TableBodyRow: FC<TableBodyRowProps> = ({
 	const handleDragEnter = () => {
 		clearTimeout(rowDragEnterTimeoutRef.current)
 		rowDragEnterTimeoutRef.current = setTimeout(() => {
+			if (isMockRow) {
+				setHoveredRow(table)(null)
+
+				return
+			}
 			if (enableRowDragging && draggingRows.length > 0) {
 				setHoveredRow(table)({ ...currentHoveredRow, rowRef })
 			}
@@ -246,6 +253,11 @@ export const TableBodyRow: FC<TableBodyRowProps> = ({
 							[`&.${tableRowClasses.hover}:hover`]: {
 								backgroundColor: Colors.Gray10,
 							},
+							...(isMockRow
+								? {
+										backgroundColor: Colors.LightestGray,
+								  }
+								: {}),
 							'&:hover td': {
 								backgroundColor:
 									tableRowProps?.hover !== false && getIsSomeColumnsPinned()

@@ -8,6 +8,7 @@ import {
 	TableData,
 	TableInstance,
 } from './TableComponent'
+import { getIsMockRow } from './utils/getIsMockRow'
 
 export const utilColumns = {
 	expand: 'table-row-expand',
@@ -31,7 +32,7 @@ const UtilColumnCell = <TData extends TableData>({
 
 	return (
 		<>
-			{!hideRowSelectionColumn && enableRowSelection ? (
+			{!hideRowSelectionColumn && enableRowSelection && !getIsMockRow(row) ? (
 				<SelectCheckbox row={row} table={table} />
 			) : null}
 		</>

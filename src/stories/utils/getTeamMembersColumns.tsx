@@ -44,7 +44,8 @@ const getBackgroundColors = createGetColors(getTeamsCellBackgroundSet())
 
 export const ColoredGroupedCell: typeof GroupedCellBase = (props) => {
 	const columnId = props.cell.column.id
-	const value = props.cell.getValue()
+	const groupId = props.row.groupIds[columnId]
+	const value = props.row.groupRows[groupId]?.getValue(columnId)
 
 	return (
 		<GroupedCellBase

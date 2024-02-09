@@ -32,6 +32,7 @@ import { utilColumns } from '../utilColumns'
 import { getFunctionWithArgs } from '../utils/getFunctionWithArgs'
 import { getColorAlpha } from '../utils/getColorAlpha'
 import { GroupBorders } from '../utils/getGroupBorders'
+import { getIsMockRow } from '../utils/getIsMockRow'
 import { getValueOrFunctionHandler } from '../utils/getValueOrFunctionHandler'
 import { mergeSx } from '../utils/mergeSx'
 import { isEditingEnabled } from '../utils/isEditingEnabled'
@@ -86,6 +87,7 @@ export const TableBodyCell = ({
 			enableRowNumbers,
 			enableRowDragging,
 			layoutMode,
+			mockRowStyles,
 			muiTableBodyCellProps,
 			muiTableBodyCellSkeletonProps,
 			muiTableBodyCellWrapperProps,
@@ -319,6 +321,9 @@ export const TableBodyCell = ({
 		!!openedDetailedPanels[row.id] &&
 		isCurrentCellDetailOpened
 
+	const isMockCell =
+		getIsMockRow(row) && !isGroupedCell && !isExpandColumn && !isUtilColumn
+
 	const getTableCellStyles = (theme) => ({
 		alignItems: layoutMode === 'grid' ? 'center' : undefined,
 		cursor: isEditable && editingMode === 'cell' ? 'pointer' : 'inherit',
@@ -327,6 +332,7 @@ export const TableBodyCell = ({
 		overflow: 'hidden',
 		verticalAlign: 'middle',
 		position: 'relative',
+		...(isMockCell ? mockRowStyles : {}),
 		p: isGroupedCell ? '0.5rem 0.75rem' : '0',
 		px: 0,
 		pl: isExpandColumn ? `${row.depth * expandPaddingSize}px` : undefined,
@@ -509,9 +515,7 @@ export const TableBodyCell = ({
 						rowNumber={rowNumber}
 						enableRowNumbers={enableRowNumbers}
 					/>
-				) : columnDefType === 'display' && isExpandColumn ? (
-					columnDef.Cell?.({ cell, column, row, table })
-				) : isEditing ? (
+				) : isEditing && !isMockCell ? (
 					<EditCellField cell={cell} table={table} />
 				) : (enableClickToCopy || columnDef.enableClickToCopy) &&
 				  columnDef.enableClickToCopy !== false ? (

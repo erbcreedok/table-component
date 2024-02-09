@@ -310,11 +310,12 @@ export const getCommonCellStyles = ({
 		column.getIsPinned() === 'left'
 			? `${column.getStart('left')}px`
 			: undefined,
-	opacity:
-		table.getState().draggingColumn?.id === column.id ||
-		table.getState().hoveredColumn?.id === column.id
-			? 0.5
-			: 1,
+	...(table.getState().draggingColumn?.id === column.id ||
+	table.getState().hoveredColumn?.id === column.id
+		? {
+				opacity: 0.5,
+		  }
+		: {}),
 	position:
 		column.getIsPinned() && column.columnDef.columnDefType !== 'group'
 			? 'sticky'

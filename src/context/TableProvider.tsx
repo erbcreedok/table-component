@@ -22,7 +22,7 @@ import { createTheme } from '../theme/createTheme'
 import { DEFAULT_EXPAND_PADDING } from '../utilColumns'
 import { defaultSetSubRows } from '../utils/defaultGetSubRows'
 
-import { TableContext } from './TableContext'
+import { TableContext, TableContextType } from './TableContext'
 
 const defaultTheme = createTheme({})
 
@@ -77,6 +77,7 @@ export const TableProvider = <TData extends Record<string, any> = {}>({
 	manualGrouping,
 	manualPagination,
 	manualSorting,
+	mockRowStyles = { opacity: 0.5 },
 	positionActionsColumn = 'first',
 	positionExpandColumn = 'first',
 	positionGlobalFilter = 'right',
@@ -227,6 +228,7 @@ export const TableProvider = <TData extends Record<string, any> = {}>({
 		manualGrouping,
 		manualPagination,
 		manualSorting,
+		mockRowStyles,
 		positionActionsColumn,
 		positionExpandColumn,
 		positionGlobalFilter,
@@ -241,9 +243,9 @@ export const TableProvider = <TData extends Record<string, any> = {}>({
 		theme: theme ?? defaultTheme,
 		onInfiniteScrollLoad,
 		...rest,
-	} as TableComponentProps<{}> & { localization: Table_Localization }
+	} as TableComponentProps<TData> & { localization: Table_Localization }
 
-	const tableContext = useTable(props)
+	const tableContext = useTable(props) as unknown as TableContextType<{}>
 
 	return (
 		<ThemeProvider theme={theme ?? defaultTheme}>

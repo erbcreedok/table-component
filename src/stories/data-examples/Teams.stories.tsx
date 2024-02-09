@@ -9,12 +9,13 @@ import {
 	VisibilityState,
 	SortingState,
 } from '@tanstack/react-table'
-import React, { useState } from 'react'
+import React, { useCallback, useState } from 'react'
 import { getColumnId } from '../../column.utils'
 import { LocationRight } from '../../icons/LocationRight'
 import { LockedIcon } from '../../icons/LockedIcon'
 import { TrashIcon } from '../../icons/TrashIcon'
 import TableComponent, {
+	MuiTableBodyRowDragHandleFnProps,
 	Table_ColumnDef,
 	TableComponentProps,
 	TableInstance,
@@ -33,12 +34,12 @@ import {
 	isUnitTreeItem,
 } from '../utils/getTeamMembers'
 import { getTeamMembersColumns } from '../utils/getTeamMembersColumns'
+import { insertTeamMemberRows } from '../utils/insertTeamMemberRows'
 import { getDefaultRowActionMenuItems } from '../utils/rowActionMenuItems'
 import { useHierarchyProps } from '../utils/useHierarchyProps'
 import { ColumnActionsFiltersMenu } from './components/ColumnActionsFiltersMenu'
 import { UnitRow } from './components/UnitRow'
 
-const dataTree = getExpandingTeamMembers(5, '', 3)
 const columns = getTeamMembersColumns()
 const manyColumns: Table_ColumnDef<TeamMember>[] = [
 	...columns,
@@ -86,20 +87,8 @@ const manyColumns: Table_ColumnDef<TeamMember>[] = [
 		dataType: 'multi-select',
 		filterVariant: 'multi-select',
 		editVariant: 'multi-select',
-		editSelectOptions: [
-			'Cat',
-			'Dog',
-			'Rabbit',
-			'Fish',
-			'Other',
-		],
-		filterSelectOptions: [
-			'Cat',
-			'Dog',
-			'Rabbit',
-			'Fish',
-			'Other',
-		],
+		editSelectOptions: ['Cat', 'Dog', 'Rabbit', 'Fish', 'Other'],
+		filterSelectOptions: ['Cat', 'Dog', 'Rabbit', 'Fish', 'Other'],
 	},
 ]
 const multiHeader = [
@@ -158,6 +147,8 @@ const multiHeader = [
 
 type TeamsTableConfigs = Omit<TableComponentProps<TeamMember>, 'data'> &
 	Partial<TableComponentProps<TeamMember>> & {
+		data: TeamMember[]
+		setData: (data: TeamMember[]) => void
 		bulkActions?: object[]
 		disableHidingFor?: string[]
 		disableSortingFor?: string[]
@@ -167,7 +158,6 @@ type TeamsTableConfigs = Omit<TableComponentProps<TeamMember>, 'data'> &
 		defaultColumnFilterFns?: string[]
 		enableLoremIpsumColumn?: boolean
 		columnSubtitles: Record<string, string>
-		rowsCount: number
 		enableInfiniteScroll?: boolean
 	}
 
@@ -362,25 +352,26 @@ const SummaryRowExampleCellValue = (props) => {
 	)
 }
 
+const defaultRowsCount = 100
+
 const TeamsTable: Story<TeamsTableConfigs> = (args) => {
 	const {
-		data: propsData,
 		columns,
 		defaultSorting,
 		defaultColumnOrder,
 		defaultColumnVisibility,
 		initialState = {},
-		rowsCount = 100,
 		multirowHeader,
 		enableInfiniteScroll,
+		data,
+		setData,
 		...rest
 	} = args
-	const [data, setData] = useState(propsData || getTeamMembers(rowsCount))
 	const [isDataLoading, setIsDataLoading] = useState(false)
 
 	const setNewRow = (row, values) => {
 		const newData = [...data]
-		const newRow = newData[row.index]
+		const newRow = row.original
 		Object.entries(values).forEach(([key, value]) => {
 			if (key === 'teamMember') {
 				newRow.member = value as User
@@ -391,7 +382,6 @@ const TeamsTable: Story<TeamsTableConfigs> = (args) => {
 				newRow[key] = value
 			}
 		})
-		newData[row.index] = newRow
 		setData(newData)
 	}
 
@@ -450,6 +440,7 @@ const TeamsTable: Story<TeamsTableConfigs> = (args) => {
 				setNewRow(cell.row, { [cell.column.id]: value })
 				exitEditingMode()
 			}}
+			filterFromLeafRows
 			handleRowsDrop={handleRowsDrop}
 			renderRowActionMenuItems={getDefaultRowActionMenuItems}
 			ColumnActionsFiltersMenu={ColumnActionsFiltersMenu}
@@ -494,21 +485,56 @@ const TeamsTable: Story<TeamsTableConfigs> = (args) => {
 }
 
 export const TeamsTableDefault: Story<TeamsTableExample> = (args) => {
-	return <TeamsTable columns={columns} {...args} />
+	const [data, setData] = useState(getTeamMembers(defaultRowsCount))
+
+	return (
+		<TeamsTable columns={columns} {...args} data={data} setData={setData} />
+	)
 }
 export const TeamsTableWithManyColumns: Story<TeamsTableExample> = (args) => {
-	return <TeamsTable columns={manyColumns} {...args} />
+	const [data, setData] = useState(getTeamMembers(defaultRowsCount))
+
+	return (
+		<TeamsTable columns={manyColumns} {...args} data={data} setData={setData} />
+	)
 }
 
-export const TeamsTableSubtree: Story<TeamsTableExample> = (args) => (
-	<TeamsTable
-		columns={columns}
-		data={dataTree}
-		groupBorder={{ left: '6px solid white', top: '6px solid white' }}
-		{...args}
-		enableExpanding
-	/>
-)
+export const TeamsTableSubtree: Story<TeamsTableExample> = (args) => {
+	const [dataTree, setDataTree] = useState(getExpandingTeamMembers(3, '', 2))
+
+	const muiTableBodyRowDragHandleProps = useCallback<
+		MuiTableBodyRowDragHandleFnProps<TeamMember>
+	>(
+		({ table }) => ({
+			onDragEnd: () => {
+				const { draggingRows, hoveredRow } = table.getState()
+
+				if (hoveredRow && draggingRows.length > 0) {
+					const newDataTree = insertTeamMemberRows(
+						draggingRows.map((row) => row.original),
+						hoveredRow.row.original,
+						hoveredRow.position,
+						dataTree
+					)
+					setDataTree(newDataTree)
+				}
+			},
+		}),
+		[dataTree]
+	)
+
+	return (
+		<TeamsTable
+			columns={columns}
+			groupBorder={{ left: '6px solid white', top: '6px solid white' }}
+			{...args}
+			data={dataTree}
+			setData={setDataTree}
+			enableExpanding
+			muiTableBodyRowDragHandleProps={muiTableBodyRowDragHandleProps}
+		/>
+	)
+}
 
 export const HierarchyWithCustomRowExample: Story = (args) => {
 	const {
@@ -689,6 +715,10 @@ const meta: Meta = {
 		enableEditing: {
 			control: 'boolean',
 			defaultValue: true,
+		},
+		enableFlatSearch: {
+			control: 'boolean',
+			defaultValue: false,
 		},
 		enableSorting: {
 			control: 'boolean',

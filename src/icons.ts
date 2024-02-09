@@ -39,6 +39,7 @@ import { DragIcon } from './icons/DragIcon'
 import { GroupIcon } from './icons/GroupIcon'
 import { GroupingIcon } from './icons/GroupingIcon'
 import { ExpandIcon } from './icons/ExpandIcon'
+import { ExpandFilledIcon } from './icons/ExpandFilledIcon'
 import { EyeIcon } from './icons/EyeIcon'
 import { EyeCrossedIcon } from './icons/EyeCrossedIcon'
 import { FiltersIcon } from './icons/FiltersIcon'
@@ -89,6 +90,7 @@ export interface Table_Icons {
 	DynamicFeedIcon: any
 	EditIcon: any
 	ExpandIcon: any
+	ExpandFilledIcon: any
 	ExpandLessIcon: any
 	ExpandMoreIcon: any
 	EyeIcon: any
@@ -156,6 +158,7 @@ export const Default_Icons: Table_Icons = {
 	DynamicFeedIcon,
 	EditIcon,
 	ExpandIcon,
+	ExpandFilledIcon,
 	ExpandLessIcon,
 	ExpandMoreIcon,
 	EyeIcon,

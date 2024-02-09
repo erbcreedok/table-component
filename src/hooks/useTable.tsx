@@ -1,6 +1,5 @@
 import {
 	getFacetedRowModel,
-	getFilteredRowModel,
 	getPaginationRowModel,
 	getFacetedUniqueValues,
 	GroupingState,
@@ -45,6 +44,7 @@ import { getUtilColumn, utilColumns } from '../utilColumns'
 import { flatHierarchyTree } from '../utils/flatHierarchyTree'
 import { getCoreRowModel } from '../utils/getCoreRowModel'
 import { getExpandedRowModel } from '../utils/getExpandedRowModel'
+import { getFilteredRowModel } from '../utils/getFilteredRowModel'
 import { getGroupedRowModel } from '../utils/getGroupedRowModel'
 import { getSortedRowModel } from '../utils/getSortedRowModel'
 import { showRowActionsColumn } from '../utils/showRowActionsColumn'
@@ -242,7 +242,7 @@ export const useTable = <TData extends TableData = TableData>(
 	)
 
 	const data: TData[] = useMemo(() => {
-		const tableData = searchData || config.data
+		const tableData = config.data
 
 		if (
 			(config.state?.isLoading || config.state?.showSkeletons) &&
@@ -279,7 +279,6 @@ export const useTable = <TData extends TableData = TableData>(
 		config.data,
 		config.state?.isLoading,
 		config.state?.showSkeletons,
-		searchData,
 		hideHierarchyTree,
 		isHierarchyItem,
 	])
@@ -376,8 +375,8 @@ export const useTable = <TData extends TableData = TableData>(
 
 	// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 	// @ts-ignore
-	const table = {
-		...useReactTable({
+	const table = Object.assign(
+		useReactTable({
 			getCoreRowModel: getCoreRowModel(),
 			getExpandedRowModel: getExpandedRowModel(),
 			getFacetedRowModel: getFacetedRowModel(),
@@ -411,43 +410,46 @@ export const useTable = <TData extends TableData = TableData>(
 			},
 			state: state as TableState,
 		}),
-		refs: {
-			bottomToolbarRef,
-			bulkActionsRef,
-			editInputRefs,
-			filterInputRefs,
-			searchInputRef,
-			rowDragEnterTimeoutRef,
-			tableContainerRef,
-			tableHeadCellRefs,
-			tablePaperRef,
-			topToolbarRef,
-		},
-		isHierarchyItem,
-		setColumnFilterFns: config.onColumnFilterFnsChange ?? setColumnFilterFns,
-		setDraggingColumn: config.onDraggingColumnChange ?? setDraggingColumn,
-		setDraggingRows: config.onDraggingRowsChange ?? setDraggingRows,
-		setEditingCell: config.onEditingCellChange ?? setEditingCell,
-		setEditingRow: config.onEditingRowChange ?? setEditingRow,
-		setGlobalFilterFn: config.onGlobalFilterFnChange ?? setGlobalFilterFn,
-		setGroupCollapsed: config.onGroupCollapsedChange ?? setGroupCollapsed,
-		setHoveredColumn: config.onHoveredColumnChange ?? setHoveredColumn,
-		setHoveredRow: config.onHoveredRowChange ?? setHoveredRow,
-		setOpenedDetailedPanels,
-		setIsFullScreen: config.onIsFullScreenChange ?? setIsFullScreen,
-		setShowAlertBanner: config.onShowAlertBannerChange ?? setShowAlertBanner,
-		setShowFilters: config.onShowFiltersChange ?? setShowFilters,
-		setShowGlobalFilter: config.onShowGlobalFilterChange ?? setShowGlobalFilter,
-		setShowToolbarDropZone:
-			config.onShowToolbarDropZoneChange ?? setShowToolbarDropZone,
-		getPresets: config.onGetPresets ?? getPresets,
-		savePresets: config.onSavePresets ?? savePresets,
-		getDefaultPresets,
-		setSearchData,
-		setHighlightHeadCellId: highlightCellId,
-		CustomRow: config.CustomRow,
-		setStickyHorizontalScrollbarHeight,
-	} as TableInstance<TData>
+		{
+			refs: {
+				bottomToolbarRef,
+				bulkActionsRef,
+				editInputRefs,
+				filterInputRefs,
+				searchInputRef,
+				rowDragEnterTimeoutRef,
+				tableContainerRef,
+				tableHeadCellRefs,
+				tablePaperRef,
+				topToolbarRef,
+			},
+			isHierarchyItem,
+			setColumnFilterFns: config.onColumnFilterFnsChange ?? setColumnFilterFns,
+			setDraggingColumn: config.onDraggingColumnChange ?? setDraggingColumn,
+			setDraggingRows: config.onDraggingRowsChange ?? setDraggingRows,
+			setEditingCell: config.onEditingCellChange ?? setEditingCell,
+			setEditingRow: config.onEditingRowChange ?? setEditingRow,
+			setGlobalFilterFn: config.onGlobalFilterFnChange ?? setGlobalFilterFn,
+			setGroupCollapsed: config.onGroupCollapsedChange ?? setGroupCollapsed,
+			setHoveredColumn: config.onHoveredColumnChange ?? setHoveredColumn,
+			setHoveredRow: config.onHoveredRowChange ?? setHoveredRow,
+			setOpenedDetailedPanels,
+			setIsFullScreen: config.onIsFullScreenChange ?? setIsFullScreen,
+			setShowAlertBanner: config.onShowAlertBannerChange ?? setShowAlertBanner,
+			setShowFilters: config.onShowFiltersChange ?? setShowFilters,
+			setShowGlobalFilter:
+				config.onShowGlobalFilterChange ?? setShowGlobalFilter,
+			setShowToolbarDropZone:
+				config.onShowToolbarDropZoneChange ?? setShowToolbarDropZone,
+			getPresets: config.onGetPresets ?? getPresets,
+			savePresets: config.onSavePresets ?? savePresets,
+			getDefaultPresets,
+			setSearchData,
+			setHighlightHeadCellId: highlightCellId,
+			CustomRow: config.CustomRow,
+			setStickyHorizontalScrollbarHeight,
+		}
+	) as TableInstance<TData>
 
 	if (config.tableInstanceRef) {
 		config.tableInstanceRef.current = table

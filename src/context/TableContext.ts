@@ -11,6 +11,7 @@ import {
 	Table_FilterOption,
 	Table_Row,
 	TableComponentProps,
+	TableData,
 	TableInstance,
 } from '../TableComponent'
 
@@ -36,10 +37,10 @@ export type TableComponentState<TData extends Record<string, any> = {}> =
 		stickyHorizontalScrollbarHeight: number
 	}
 
-export type TableContextType = {
-	table: TableInstance
-	state: TableComponentState
-	config: TableComponentProps
+export type TableContextType<TData extends TableData = TableData> = {
+	table: TableInstance<TData>
+	state: TableComponentState<TData>
+	config: TableComponentProps<TData>
 }
 export const TableContext = createContext<TableContextType>(
 	{} as TableContextType

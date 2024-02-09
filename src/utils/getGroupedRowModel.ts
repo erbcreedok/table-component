@@ -9,6 +9,38 @@ import {
 	TableInstance,
 } from '../TableComponent'
 
+import { flattenRows } from './flattenRows'
+
+declare module '@tanstack/table-core' {
+	interface Row<TData extends RowData = RowData> {
+		groupIds: Record<string, string>
+		groupRows: Record<string, Row<TData>>
+		getParent: () => Row<TData> | undefined
+		isMock?: boolean
+	}
+}
+
+function createMockRow<TData extends RowData>(
+	row: Row<TData>,
+	groupId: string,
+	table: Table<TData>
+) {
+	const _row = createRow<TData>(
+		table,
+		`mock-${groupId}-${row.id}`,
+		row.original,
+		row.index,
+		row.depth,
+		[]
+	)
+	Object.assign(_row, {
+		isMock: true,
+		getParent: row.getParent,
+	})
+
+	return _row
+}
+
 function groupBy<TData extends RowData>(rows: Row<TData>[], columnId: string) {
 	const groupMap = new Map<any, Row<TData>[]>()
 
@@ -60,7 +92,11 @@ export function getGroupedRowModel<
 					// string - for not grouped parent rows
 					// [string, unknown] - for grouped parent rows
 					// first value is columnId, second is groupedValue
-					parentPath: (string | [string, unknown])[] = []
+					parentPath: (string | [string, unknown])[] = [],
+					parentGroupValues: {
+						groupIds: Record<string, string>
+						groupRows: Record<string, Row<TData>>
+					} = { groupIds: {}, groupRows: {} }
 				) => {
 					let groupableRows: Row<TData>[] = []
 					let notGroupableRows: Row<TData>[] = []
@@ -79,10 +115,12 @@ export function getGroupedRowModel<
 						if (row.subRows && row.getIsExpanded() && row.subRows.length > 0) {
 							return {
 								...row,
-								subRows: groupUpRecursively(row.subRows, depth, [
-									...parentPath,
-									row.id,
-								]),
+								subRows: groupUpRecursively(
+									row.subRows,
+									depth,
+									[...parentPath, row.id],
+									parentGroupValues
+								),
 							}
 						}
 
@@ -92,14 +130,8 @@ export function getGroupedRowModel<
 					// Stop grouping and simply rewrite thd depth and row relationships
 					if (depth >= existingGrouping.length) {
 						return groupableRows.map((row) => {
-							row.depth = depth
-
 							groupedFlatRows.push(row)
 							groupedRowsById[row.id] = row
-
-							if (row.subRows) {
-								row.subRows = groupUpRecursively(row.subRows, depth + 1)
-							}
 
 							return row
 						})
@@ -108,15 +140,15 @@ export function getGroupedRowModel<
 					const columnId = existingGrouping[depth]
 
 					// Group the rows together for this level
-					const rowGroupsMap = groupBy(
-						groupableRows.flatMap((row) => [
-							{ ...row, subRows: [] },
-							...(row.subRows ?? []),
-						]),
-						columnId
+					const flattenGroupableRows = flattenRows(groupableRows).map(
+						(row) => ({
+							...row,
+							subRows: [],
+						})
 					)
+					const rowGroupsMap = groupBy(flattenGroupableRows, columnId)
 
-					// Peform aggregations for each group
+					// Perform aggregations for each group
 					const aggregatedGroupedRows = Array.from(rowGroupsMap.entries()).map(
 						([groupingValue, groupedRows], index) => {
 							const path = [
@@ -124,37 +156,60 @@ export function getGroupedRowModel<
 								[columnId, groupingValue] as [string, unknown],
 							]
 							const id = JSON.stringify(path)
-
-							groupedRows.forEach((row) => {
-								if (row.subRows) {
-									row.subRows = groupUpRecursively(row.subRows, depth, path)
-								}
-							})
-
-							const localRows = groupUpRecursively(groupedRows, depth + 1, path)
-
+							const existingRows = new Map<string, Row<TData>>()
+							const groupedTree: Row<TData>[] = []
 							const groupRow = createRow(
 								table,
 								id,
 								groupedRows[0].original,
 								index,
-								depth,
-								localRows
+								depth
 							)
-							localRows.forEach((row) =>
-								Object.assign(row, {
-									groupIds: {
-										...row.groupIds,
-										[columnId]: id,
-									},
-									groupRows: {
-										...row.groupRows,
-										[id]: groupRow,
-									},
-								})
-							)
+							const groupValues = {
+								groupIds: { ...parentGroupValues.groupIds, [columnId]: id },
+								groupRows: { ...parentGroupValues.groupRows, [id]: groupRow },
+							}
 
-							return localRows
+							const localRows = groupUpRecursively(
+								groupedRows,
+								depth + 1,
+								path,
+								groupValues
+							)
+							Object.assign(groupRow, { subRows: localRows })
+							localRows.forEach((row) => {
+								row.groupIds = row.groupIds ?? {}
+								row.groupRows = row.groupRows ?? {}
+								Object.assign(row.groupIds, groupValues.groupIds)
+								Object.assign(row.groupRows, groupValues.groupRows)
+							})
+							const traverse = (row: Row<TData>) => {
+								const parent = row.getParent()
+								const isParentGroupable = parent
+									? !!opt?.isGroupableRow?.(parent as any)
+									: true
+								if (!parent || !isParentGroupable) {
+									existingRows.set(row.id, row)
+									groupedTree.push(row)
+								} else {
+									if (!existingRows.has(parent.id)) {
+										const mockParent = createMockRow(parent, id, table)
+										groupedRowsById[mockParent.id] = mockParent
+										mockParent.groupIds = groupValues.groupIds
+										mockParent.groupRows = groupValues.groupRows
+										existingRows.set(parent.id, mockParent)
+										traverse(mockParent)
+									}
+									const currentParent = existingRows.get(parent.id)
+									if (currentParent && currentParent.subRows) {
+										currentParent.subRows.push(row)
+										existingRows.set(row.id, row)
+									}
+								}
+							}
+							localRows.forEach(traverse)
+
+							return groupedTree
 						}
 					)
 

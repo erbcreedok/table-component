@@ -89,7 +89,12 @@ export const UnitRow = <TData extends Record<string, any> = {}>(
 				}
 			>
 				<Wrapper sx={{ pl: `${(row.depth + 2) * 12}px` }}>
-					<ExpandButton sx={{ mx: '-8px' }} row={row} table={table} />
+					<ExpandButton
+						sx={{ mx: '-8px' }}
+						row={row}
+						table={table}
+						filled={{ collapse: true }}
+					/>
 					<div
 						style={{ color: '#303240', fontSize: '14px', lineHeight: '18px' }}
 					>

@@ -341,7 +341,9 @@ export type TableInstance<TData extends TableData = TableData> = Omit<
 
 export type FieldError = string | null
 
-export type SearchData<TData extends TableData = TableData> = TData[] | null
+export type SearchData<TData extends TableData = TableData> =
+	| Table_Row<TData>[]
+	| null
 
 export type Table_TableState<TData extends TableData = TableData> =
 	TableState & {
@@ -513,11 +515,13 @@ export type Table_ColumnDef<TData extends TableData = TableData> = Omit<
 			column,
 			row,
 			table,
+			children,
 		}: {
 			cell: Table_Cell<TData>
 			column: Table_Column<TData>
 			row: Table_Row<TData>
 			table: TableInstance<TData>
+			children?: ReactNode
 		}) => ReactNode
 		Filter?: ({
 			column,
@@ -873,7 +877,7 @@ export type Table_HeaderGroup<TData extends TableData = TableData> = Omit<
 
 export type Table_Row<TData extends TableData = TableData> = Omit<
 	Row<TData>,
-	'getVisibleCells' | 'getAllCells' | 'subRows' | '_valuesCache'
+	'getVisibleCells' | 'getAllCells' | 'subRows' | '_valuesCache' | 'getParent'
 > & {
 	getAllCells: () => Table_Cell<TData>[]
 	getVisibleCells: () => Table_Cell<TData>[]
@@ -883,6 +887,7 @@ export type Table_Row<TData extends TableData = TableData> = Omit<
 	groupRows?: Record<string, Table_Row<TData>>
 	collapsedColumnIndex?: number
 	getParent(): Table_Row<TData> | undefined
+	isMock?: boolean
 }
 
 export type Table_Cell<TData extends TableData = TableData> = Omit<
@@ -1107,6 +1112,7 @@ export type TableComponentProps<TData extends TableData = TableData> = Omit<
 		enableEditing?: EnableEditingOption<TData>
 		enableExpandAll?: boolean
 		enableDetailedPanel?: boolean
+		enableFlatSearch?: boolean
 		expandByClick?: ExpandByClick
 		expandPaddingSize?: number
 		notClickableCells?: string[]
@@ -1116,6 +1122,7 @@ export type TableComponentProps<TData extends TableData = TableData> = Omit<
 		isTablePlugSlotActive?: boolean
 		validateHoveredRow?: ValidateHoveredRowProp<TData>
 		getRowDragValuesChangeMessage?: GetRowDragValuesChangeMessageProp<TData>
+		mockRowStyles?: Record<string, unknown>
 		cellStyleRules?: Record<
 			string,
 			{

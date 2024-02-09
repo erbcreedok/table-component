@@ -7,6 +7,7 @@ import Radio from '@mui/material/Radio'
 import type { Theme } from '@mui/material/styles'
 
 import type { Table_Row, TableData, TableInstance } from '..'
+import { getIsMockRow } from '../utils/getIsMockRow'
 import { withNativeEvent } from '../utils/withNativeEvent'
 
 type Props<TData extends TableData> = {
@@ -92,7 +93,9 @@ export const SelectCheckbox = <TData extends TableData>({
 						? parentRow.subRows?.forEach((row) => {
 								row.toggleSelected(false)
 						  })
-						: parentRow.subRows?.map((row) => row.getToggleSelectedHandler()(e))
+						: parentRow.subRows?.map(
+								(row) => !getIsMockRow(row) && row.toggleSelected()
+						  )
 			  )
 			: row
 			? withNativeEvent<ChangeEvent<HTMLInputElement>, TData>(

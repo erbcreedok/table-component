@@ -9,21 +9,38 @@ type Props<TData extends TableData = TableData> = {
 	row: Table_Row<TData>
 	table: TableInstance<TData>
 	sx?: IconButtonProps['sx']
+	filled?:
+		| boolean
+		| {
+				expand?: boolean
+				collapse?: boolean
+		  }
 }
 
 export const ExpandButton = <TData extends TableData = TableData>({
 	row,
 	table,
 	sx,
+	filled = false,
 }: Props<TData>) => {
 	const {
 		options: {
-			icons: { ExpandIcon, CollapseFilledIcon },
+			icons: { ExpandFilledIcon, ExpandIcon, CollapseFilledIcon, CollapseIcon },
 			localization,
 			muiExpandButtonProps,
 			renderDetailPanel,
 		},
 	} = table
+	const ComputedExpandIcon = (
+		typeof filled === 'object' ? filled.expand : filled
+	)
+		? ExpandFilledIcon
+		: ExpandIcon
+	const ComputedCollapseIcon = (
+		typeof filled === 'object' ? filled.collapse : filled
+	)
+		? CollapseFilledIcon
+		: CollapseIcon
 
 	const iconButtonProps =
 		muiExpandButtonProps instanceof Function
@@ -69,16 +86,16 @@ export const ExpandButton = <TData extends TableData = TableData>({
 					title={undefined}
 				>
 					{!canExpand ? null : renderDetailPanel ? (
-						<ExpandIcon
+						<ComputedExpandIcon
 							style={{
 								transform: `rotate(${isExpanded ? -180 : -90}deg)`,
 								transition: 'transform 150ms',
 							}}
 						/>
 					) : !isExpanded ? (
-						<ExpandIcon />
+						<ComputedExpandIcon />
 					) : (
-						<CollapseFilledIcon />
+						<ComputedCollapseIcon />
 					)}
 				</IconButton>
 			</span>

@@ -8,14 +8,24 @@ import {
 	memo,
 } from '@tanstack/table-core'
 
-export function getCoreRowModel<TData extends RowData>(): (
-	table: Table<TData>
-) => () => RowModel<TData> {
+import { TableInstance } from '../TableComponent'
+
+import { flattenRows } from './flattenRows'
+
+export function getCoreRowModel<TData extends RowData>(options?: {
+	getIsMock?: (data: TData) => boolean
+}): (table: Table<TData>) => () => RowModel<TData> {
 	return (table) =>
 		memo(
-			() => [table.options.data],
+			() => [
+				table.options.data,
+				(table as TableInstance).getState().searchData as unknown as
+					| Row<TData>[]
+					| null,
+			],
 			(
-				data
+				data,
+				searchData
 			): {
 				rows: Row<TData>[]
 				flatRows: Row<TData>[]
@@ -25,6 +35,19 @@ export function getCoreRowModel<TData extends RowData>(): (
 					rows: [],
 					flatRows: [],
 					rowsById: {},
+				}
+
+				if (searchData) {
+					const flatRows = flattenRows<TData>(searchData)
+					rowModel.rows = searchData
+					rowModel.flatRows = flatRows
+					rowModel.rowsById = flatRows.reduce((acc, row) => {
+						acc[row.id] = row
+
+						return acc
+					}, rowModel.rowsById)
+
+					return rowModel
 				}
 
 				const accessRows = (
@@ -50,6 +73,9 @@ export function getCoreRowModel<TData extends RowData>(): (
 							i,
 							depth
 						)
+						Object.assign(row, {
+							getParent: () => parent,
+						})
 
 						// Keep track of every row in a flat array
 						rowModel.flatRows.push(row)
@@ -67,10 +93,6 @@ export function getCoreRowModel<TData extends RowData>(): (
 								row.subRows = accessRows(row.originalSubRows, depth + 1, row)
 							}
 						}
-
-						Object.assign(row, {
-							getParent: () => parent,
-						})
 					}
 
 					return rows
