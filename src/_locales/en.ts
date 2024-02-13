@@ -102,7 +102,7 @@ export const Table_Localization_EN: Table_Localization = {
 	descending: 'Descending',
 	AZ: 'A-Z',
 	ZA: 'Z-A',
-	firstLast: 'First–Last',
+	firstLast: 'First-Last',
 	lastFirst: 'Last-First',
 	sortByColumnAsc: 'Sort by {column} ascending',
 	sortByColumnDesc: 'Sort by {column} descending',

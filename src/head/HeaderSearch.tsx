@@ -4,7 +4,6 @@ import React, {
 	FC,
 	KeyboardEvent,
 	MouseEventHandler,
-	useEffect,
 	useMemo,
 	useRef,
 	useState,
@@ -37,6 +36,7 @@ import { defaultGetSubRows } from '../utils/defaultGetSubRows'
 import { getValueFromObj } from '../utils/getValueFromObj'
 import { getPascalCase } from '../utils/getPascalCase'
 import { withNativeEvent } from '../utils/withNativeEvent'
+import { useOnClickOutside } from '../hooks/useOnClickOutside'
 
 import { HeaderBase } from './HeaderBase'
 
@@ -53,6 +53,7 @@ type Props<TData extends TableData> = {
 		value: string
 		path: string
 	}): TData[]
+	keepSearchValueOnClickOutside?: boolean
 	renderOption?: FC<HeaderSearchOptionProps<TData>>
 }
 
@@ -118,10 +119,13 @@ export const HeaderSearch = <T extends TableData>({
 			getValueFromObj(item, path, '')?.toLowerCase().includes(value)
 		)
 	},
+	keepSearchValueOnClickOutside,
 	renderOption: Option = HeaderSearchOptionDefault,
 }: Props<T>) => {
 	const [showPopper, setShowPopper] = useState(false)
 	const anchorElRef = useRef<HTMLDivElement>(null)
+	const popperRef = useRef<HTMLDivElement>(null)
+
 	const [isSearch, setIsSearch] = useState(false)
 	const [input, setInput] = useState('')
 	const searchValue = useDelay(input)
@@ -201,6 +205,16 @@ export const HeaderSearch = <T extends TableData>({
 		}
 	}
 
+	const handleClickOutside = () => {
+		if (keepSearchValueOnClickOutside) {
+			setShowPopper(false)
+		} else {
+			clearSearch()
+		}
+	}
+
+	useOnClickOutside([anchorElRef, popperRef], handleClickOutside)
+
 	return (
 		<Flex
 			ref={anchorElRef}
@@ -219,6 +233,7 @@ export const HeaderSearch = <T extends TableData>({
 						classes={{ root: 'search-input' }}
 						InputProps={{
 							onBlur: () => searchValue.length === 0 && clearSearch(),
+							onFocus: () => searchValue.length > 0 && setShowPopper(true),
 							startAdornment: (
 								<InputAdornment
 									position="start"
@@ -268,6 +283,7 @@ export const HeaderSearch = <T extends TableData>({
 						open={showPopper}
 						anchorEl={anchorElRef.current}
 						placement="bottom-start"
+						ref={popperRef}
 						sx={{
 							zIndex: 2,
 							borderRadius: '6px',
