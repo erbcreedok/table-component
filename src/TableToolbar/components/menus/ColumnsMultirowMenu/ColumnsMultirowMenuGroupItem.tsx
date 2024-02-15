@@ -36,7 +36,9 @@ export interface ColumnsMultirowMenuGroupItemProps<
 	): void
 	enableDrag?: boolean
 	drawAngle?: boolean
+	drawVerticalLine?: boolean
 	depth?: number
+	itemIndex?: number
 }
 
 export const ColumnsMultirowMenuGroupItem = <
@@ -46,6 +48,8 @@ export const ColumnsMultirowMenuGroupItem = <
 	table,
 	drawAngle,
 	hoveredGroup,
+	drawVerticalLine,
+	itemIndex,
 	draggingGroup,
 	setHoveredGroup,
 	setDraggingGroup,
@@ -124,7 +128,7 @@ export const ColumnsMultirowMenuGroupItem = <
 						? `1px solid ${Colors.LightBlue}`
 						: 'none',
 					py: '6px',
-					height: 36,
+					height: 33,
 					'&:hover': {
 						backgroundColor: 'unset',
 					},
@@ -136,6 +140,19 @@ export const ColumnsMultirowMenuGroupItem = <
 					},
 				})}
 			>
+				{/* vertical gray line */}
+				{drawVerticalLine && depth && (itemIndex === 0 || itemIndex) && (
+					<Box
+						sx={{
+							position: 'absolute',
+							width: '1px',
+							height: itemIndex > 0 ? '38px' : '24px',
+							left: `${(depth - 1) * 24 + 2}px`,
+							bottom: '18px',
+							borderLeft: `1px solid ${Colors.Gray}`,
+						}}
+					/>
+				)}
 				<Box
 					sx={{
 						display: 'flex',

@@ -15,6 +15,7 @@ import { MultiRowTreeItem, MultiRowTreeItemProps } from './MultiRowTreeItem'
 
 export type MultiRowTreeProps<TData extends TableData = TableData> = {
 	multirowGroups: (MultirowColumnParent<TData> | MultirowColumn)[]
+	multirowColumnsDisplayDepth: number
 } & Omit<ColumnsMenuItemProps<TData>, 'column'> &
 	Omit<MultiRowTreeItemProps<TData>, 'depth' | 'groups'>
 
@@ -78,7 +79,7 @@ const makeParentsTree = <TData extends TableData = TableData>(
 export const MultiRowTree = <TData extends TableData = TableData>(
 	props: MultiRowTreeProps<TData>
 ) => {
-	const { multirowGroups, ...rest } = props
+	const { multirowGroups, multirowColumnsDisplayDepth, ...rest } = props
 	const parentsTree = useMemo(
 		() => makeParentsTree<TData>(multirowGroups),
 		[multirowGroups]
@@ -97,6 +98,7 @@ export const MultiRowTree = <TData extends TableData = TableData>(
 					<MultiRowTreeItem
 						key={group.id}
 						depth={1}
+						multirowColumnsDisplayDepth={multirowColumnsDisplayDepth}
 						groups={[group]}
 						{...rest}
 					/>

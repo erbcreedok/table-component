@@ -111,7 +111,7 @@ const multiHeader = [
 				],
 				columnActions: [
 					{
-						text: 'Hide column',
+						text: 'Hide group of columns',
 						onClick: 'hideColumn',
 					},
 				]
@@ -128,7 +128,7 @@ const multiHeader = [
 				columnIds: ['impact', 'performance'],
 				columnActions: [
 					{
-						text: 'Hide column',
+						text: 'Hide group of columns',
 						onClick: 'hideColumn',
 					},
 				]
@@ -138,7 +138,7 @@ const multiHeader = [
 				columnIds: ['riskOfLeaving', 'successionStatus', 'location'],
 				columnActions: [
 					{
-						text: 'Hide column',
+						text: 'Hide group of columns',
 						onClick: 'hideColumn',
 					},
 				]
@@ -154,7 +154,7 @@ const multiHeader = [
 				columnIds: ['impact', 'performance'],
 				columnActions: [
 					{
-						text: 'Hide column',
+						text: 'Hide group of columns',
 						onClick: 'hideColumn',
 					},
 				]
@@ -165,7 +165,7 @@ const multiHeader = [
 				columnIds: ['riskOfLeaving', 'successionStatus'],
 				columnActions: [
 					{
-						text: 'Hide column',
+						text: 'Hide group of columns',
 						onClick: 'hideColumn',
 					},
 				]
@@ -175,7 +175,7 @@ const multiHeader = [
 				columnIds: ['location'],
 				columnActions: [
 					{
-						text: 'Hide column',
+						text: 'Hide group of columns',
 						onClick: 'hideColumn',
 					},
 				]

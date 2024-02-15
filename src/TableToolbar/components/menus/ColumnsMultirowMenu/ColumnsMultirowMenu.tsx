@@ -495,6 +495,7 @@ export const ColumnsMultirowMenu = <TData extends TableData = {}>({
 								multirowGroups={ungroupedHeaderGroups}
 								table={table}
 								enableDrag
+								multirowColumnsDisplayDepth={multirowColumnsDisplayDepth ?? 1}
 								{...draggingProps}
 							/>
 						)}
@@ -515,6 +516,9 @@ export const ColumnsMultirowMenu = <TData extends TableData = {}>({
 										multirowGroups={hiddenHeaderGroups}
 										table={table}
 										enableDrag
+										multirowColumnsDisplayDepth={
+											multirowColumnsDisplayDepth ?? 1
+										}
 										{...draggingProps}
 									/>
 								)}
