@@ -120,14 +120,14 @@ export const getTeamMembersColumns = () => {
 					<Flex
 						center="y"
 						gap="0.75rem"
-						style={{ minWidth: '100%', padding: '0 0.575rem' }}
+						sx={{ flexGrow: 1, maxWidth: '100%' }}
 					>
 						<Avatar
 							sx={{ width: 36, height: 36 }}
 							src={user.avatarUrl}
 							alt={user.fullName}
 						/>
-						<Flex column style={{ overflow: 'hidden' }}>
+						<Flex column sx={{ overflow: 'hidden' }}>
 							<TextEllipsis
 								style={{ fontSize: '0.875rem' }}
 								title={user.fullName}
@@ -135,7 +135,7 @@ export const getTeamMembersColumns = () => {
 								{user.fullName}
 							</TextEllipsis>
 							<TextEllipsis
-								style={{
+								sx={{
 									color: '#6C6F80',
 									fontSize: '0.75rem',
 									fontWeight: '400',

@@ -140,12 +140,13 @@ export function getGroupedRowModel<
 					const columnId = existingGrouping[depth]
 
 					// Group the rows together for this level
-					const flattenGroupableRows = flattenRows(groupableRows).map(
-						(row) => ({
+					const flattenGroupableRows = flattenRows(groupableRows).map((row) => {
+						return {
 							...row,
 							subRows: [],
-						})
-					)
+							getCanExpand: () => false,
+						}
+					})
 					const rowGroupsMap = groupBy(flattenGroupableRows, columnId)
 
 					// Perform aggregations for each group
@@ -203,6 +204,7 @@ export function getGroupedRowModel<
 									const currentParent = existingRows.get(parent.id)
 									if (currentParent && currentParent.subRows) {
 										currentParent.subRows.push(row)
+										currentParent.getCanExpand = () => true
 										existingRows.set(row.id, row)
 									}
 								}

@@ -26,6 +26,7 @@ import {
 	CustomNoResultsFound,
 } from '../components/CustomNoResultsFound'
 import { TeamMember, UnitTreeItem, User } from '../types/TeamMember'
+import { getIndexedExpandableColumn } from "../utils/getIndexedExpandableColumn";
 import { getTablePresetProps } from '../utils/getTablePresetProps'
 import { getDndTargetGroupingUpdateValues } from '../utils/getDndTargetGroupingUpdateValues'
 import {
@@ -500,7 +501,7 @@ export const TeamsTableWithManyColumns: Story<TeamsTableExample> = (args) => {
 }
 
 export const TeamsTableSubtree: Story<TeamsTableExample> = (args) => {
-	const [dataTree, setDataTree] = useState(getExpandingTeamMembers(3, '', 2))
+	const [dataTree, setDataTree] = useState([...getTeamMembers(1, '0'), ...getExpandingTeamMembers(3, '', 2)])
 
 	const muiTableBodyRowDragHandleProps = useCallback<
 		MuiTableBodyRowDragHandleFnProps<TeamMember>
@@ -514,7 +515,8 @@ export const TeamsTableSubtree: Story<TeamsTableExample> = (args) => {
 						draggingRows.map((row) => row.original),
 						hoveredRow.row.original,
 						hoveredRow.position,
-						dataTree
+						dataTree,
+						hoveredRow.asChild
 					)
 					setDataTree(newDataTree)
 				}
@@ -777,6 +779,27 @@ const meta: Meta = {
 		enableTableHead: {
 			control: 'boolean',
 			defaultValue: true,
+		},
+		expandableColumnButtonPosition: {
+			options: ['left', 'right'],
+			control: {
+				type: 'radio',
+			},
+			description: 'Defines position of and Expand button',
+		},
+		getExpandableColumn: {
+			control: { type: 'select' },
+			defaultValue: 'teamMember',
+			description: 'Defines column with Expand button',
+			options: ['default', '2nd column', ...columns.map(getColumnId), 'last column'],
+			mapping: columns.reduce((acc, col) => ({
+				...acc,
+				[getColumnId(col)]: getColumnId(col),
+			}), {
+				'1st column': undefined,
+				'2nd column': getIndexedExpandableColumn(1),
+				'last column': getIndexedExpandableColumn(-1)
+			}),
 		},
 		hideRowSelectionColumn: {
 			control: 'boolean',

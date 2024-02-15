@@ -1,15 +1,17 @@
 import React from 'react'
-import IconButton from '@mui/material/IconButton'
+import IconButton, { IconButtonProps } from '@mui/material/IconButton'
 import Tooltip from '@mui/material/Tooltip'
 
 import type { TableData, TableInstance } from '..'
 
 type Props<TData extends TableData = TableData> = {
 	table: TableInstance<TData>
-}
+} & IconButtonProps
 
 export const ExpandAllButton = <TData extends TableData = TableData>({
 	table,
+	onClick,
+	...rest
 }: Props<TData>) => {
 	const {
 		getIsAllRowsExpanded,
@@ -50,7 +52,10 @@ export const ExpandAllButton = <TData extends TableData = TableData>({
 					disabled={
 						isLoading || (!renderDetailPanel && !getCanSomeRowsExpand())
 					}
-					onClick={() => toggleAllRowsExpanded(!isAllRowsExpanded)}
+					onClick={(...rest) => {
+						toggleAllRowsExpanded(!isAllRowsExpanded)
+						onClick?.(...rest)
+					}}
 					{...iconButtonProps}
 					sx={(theme) => ({
 						height: '2.25rem',
@@ -61,6 +66,7 @@ export const ExpandAllButton = <TData extends TableData = TableData>({
 							: (iconButtonProps?.sx as any)),
 					})}
 					title={undefined}
+					{...rest}
 				>
 					{isAllRowsExpanded || getIsSomeRowsExpanded() ? (
 						<ExpandIcon />

@@ -103,10 +103,14 @@ export const TableBodyRowGrabHandle: FC<Props> = ({
 			return
 		}
 
-		handleRowsDrop?.({ hoveredRow, draggingRows, grouping, table })
-		iconButtonProps?.onDragEnd?.(event)
-		table.setRowSelection(() => ({}))
-		table.setSorting(() => [])
+		try {
+			handleRowsDrop?.({ hoveredRow, draggingRows, grouping, table })
+			iconButtonProps?.onDragEnd?.(event)
+			table.setRowSelection(() => ({}))
+			table.setSorting(() => [])
+		} catch (e) {
+			console.error(e)
+		}
 		clearDrag()
 	}
 

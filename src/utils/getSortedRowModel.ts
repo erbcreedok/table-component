@@ -88,11 +88,13 @@ export function getSortedRowModel<TData extends RowData>(): (
 					})
 
 					// If there are sub-rows, sort them
-					sortedData.forEach((row) => {
-						sortedFlatRows.push(row)
+					sortedData.forEach((row, i) => {
+						const newRow = { ...row }
+						sortedFlatRows.push(newRow)
 						if (row.subRows?.length) {
-							row.subRows = sortData(row.subRows)
+							newRow.subRows = sortData(row.subRows)
 						}
+						sortedData[i] = newRow
 					})
 
 					return sortedData

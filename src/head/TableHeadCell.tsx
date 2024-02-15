@@ -1,4 +1,5 @@
 import IconButton from '@mui/material/IconButton'
+import { noop } from '@tanstack/react-table'
 import React, {
 	FC,
 	MouseEventHandler,
@@ -18,16 +19,14 @@ import { HeaderBase, utilColumns } from '..'
 import { Tooltip } from '../components/Tooltip'
 import { useHoverEffects } from '../hooks/useHoverEffects'
 import { GroupBorders } from '../utils/getGroupBorders'
-import {
-	getColumnId,
-	getCommonCellStyles,
-	Table_DefaultColumn,
-} from '../column.utils'
+import { getCommonCellStyles, Table_DefaultColumn } from '../column.utils'
 import type { Table_Header, Table_Row, TableInstance } from '..'
 import { Colors, groupDividerBorder } from '../components/styles'
 import { getValueOrFunctionHandler } from '../utils/getValueOrFunctionHandler'
 import { mergeSx } from '../utils/mergeSx'
+import { withStopPropagation } from '../utils/withStopPropagation'
 
+import { ExpandableAllColumnButton } from './ExpandableAllColumnButton'
 import { TableHeadCellActionsButton } from './TableHeadCellActionsButton'
 import { TableHeadCellFilterLabel } from './TableHeadCellFilterLabel'
 import { TableHeadCellGrabHandle } from './TableHeadCellGrabHandle'
@@ -60,13 +59,16 @@ export const TableHeadCell: FC<TableHeadCellProps> = ({
 }) => {
 	const theme = useTheme()
 	const {
+		constants: { expandableColumn },
 		getState,
 		options: {
 			enableColumnActions,
 			enableColumnDragging,
 			enableColumnOrdering,
+			enableExpandAll,
 			enableGrouping,
 			enableMultiSort,
+			expandableColumnButtonPosition = 'left',
 			muiTableHeadCellProps,
 			muiTableHeadCellWrapperProps,
 			uppercaseHeader,
@@ -83,11 +85,13 @@ export const TableHeadCell: FC<TableHeadCellProps> = ({
 	const { column } = header
 	const { columnDef } = column
 	const { columnDefType, emptyHeader } = columnDef
-	const columnId = getColumnId(columnDef)
 	const { hovered, hoverProps } = useHoverEffects()
 	const [grabHandleVisible, setGrabHandleVisible] = useState(false)
-	const isUtilColumn = utilColumns.column === getColumnId(columnDef)
-	const isExpandColumn = utilColumns.expand === getColumnId(columnDef)
+	const isUtilColumn = utilColumns.column === column.id
+	const isExpandColumn = utilColumns.expand === column.id
+	const isExpandableColumn =
+		expandableColumn && expandableColumn.id === column.id
+	const showExpandAllButton = isExpandableColumn && enableExpandAll
 
 	const mTableHeadCellProps = getValueOrFunctionHandler(muiTableHeadCellProps)({
 		column,
@@ -207,12 +211,14 @@ export const TableHeadCell: FC<TableHeadCellProps> = ({
 		}
 	}, [column.id, tableHeadCellRefs])
 
-	const isLastGroupedColumn = grouping[grouping.length - 1] === columnId
+	const isLastGroupedColumn = grouping[grouping.length - 1] === column.id
 
 	const toggleGroupCollapsed: MouseEventHandler = (event) => {
 		event.stopPropagation()
 		onToggleGroupCollapse?.(!groupsExpanded)
 	}
+	const depthPaddingAttr =
+		expandableColumnButtonPosition === 'right' ? 'pr' : 'pl'
 
 	return (
 		<TableHeadCellActionsButton
@@ -245,6 +251,7 @@ export const TableHeadCell: FC<TableHeadCellProps> = ({
 							p: '0',
 							pb: columnDefType === 'display' ? 0 : '0.1rem',
 							pt: '0.1rem',
+							[depthPaddingAttr]: showExpandAllButton ? '24px' : 0,
 							userSelect:
 								enableMultiSort && column.getCanSort() ? 'none' : undefined,
 							verticalAlign: 'middle',
@@ -313,7 +320,6 @@ export const TableHeadCell: FC<TableHeadCellProps> = ({
 												: column.getCanResize()
 												? 'space-between'
 												: 'flex-start',
-										position: 'relative',
 										mx: 'auto',
 										width: isUtilColumn
 											? '100%'
@@ -322,6 +328,13 @@ export const TableHeadCell: FC<TableHeadCellProps> = ({
 									wrapperProps.sx
 								)}
 							>
+								{showExpandAllButton &&
+									expandableColumnButtonPosition === 'left' && (
+										<ExpandableAllColumnButton
+											table={table}
+											onClick={withStopPropagation(noop)}
+										/>
+									)}
 								<Box
 									className="Mui-TableHeadCell-Content-Labels"
 									sx={{
@@ -331,6 +344,7 @@ export const TableHeadCell: FC<TableHeadCellProps> = ({
 										flexDirection:
 											tableCellProps?.align === 'right' ? 'row-reverse' : 'row',
 										overflow: columnDefType === 'data' ? 'hidden' : undefined,
+										position: 'relative',
 										pl:
 											tableCellProps?.align === 'center'
 												? `${headerPL}rem`
@@ -395,6 +409,14 @@ export const TableHeadCell: FC<TableHeadCellProps> = ({
 										)}
 									</Box>
 								</Box>
+								{showExpandAllButton &&
+									expandableColumnButtonPosition === 'right' && (
+										<ExpandableAllColumnButton
+											table={table}
+											onClick={withStopPropagation(noop)}
+											position="right"
+										/>
+									)}
 							</Box>
 						)}
 						{column.getCanResize() && (

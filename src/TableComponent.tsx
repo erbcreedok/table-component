@@ -268,6 +268,9 @@ export type TableInstance<TData extends TableData = TableData> = Omit<
 	| 'getState'
 	| 'options'
 > & {
+	constants: {
+		expandableColumn: Table_Column<TData> | null
+	}
 	getAllColumns: () => Table_Column<TData>[]
 	getAllFlatColumns: () => Table_Column<TData>[]
 	getAllLeafColumns: () => Table_Column<TData>[]
@@ -302,6 +305,7 @@ export type TableInstance<TData extends TableData = TableData> = Omit<
 		bottomToolbarRef: MutableRefObject<HTMLDivElement>
 		bulkActionsRef: MutableRefObject<HTMLDivElement>
 		editInputRefs: MutableRefObject<Record<string, HTMLInputElement>>
+		expandRowTimeoutRef: MutableRefObject<NodeJS.Timeout>
 		filterInputRefs: MutableRefObject<Record<string, HTMLInputElement>>
 		searchInputRef: MutableRefObject<HTMLInputElement>
 		rowDragEnterTimeoutRef: MutableRefObject<NodeJS.Timeout>
@@ -951,6 +955,7 @@ export enum ExpandByClick {
 
 export type HoveredRowState<TData extends TableData> = {
 	row: Table_Row<TData>
+	asChild?: boolean
 	position: 'bottom' | 'top'
 	rowRef: MutableRefObject<HTMLTableRowElement | null>
 } | null
@@ -1115,6 +1120,7 @@ export type TableComponentProps<TData extends TableData = TableData> = Omit<
 		enableFlatSearch?: boolean
 		expandByClick?: ExpandByClick
 		expandPaddingSize?: number
+		expandableColumnButtonPosition?: 'left' | 'right'
 		notClickableCells?: string[]
 		tablePlugSlot?: React.ReactNode
 		noResultsFoundSlot?: React.ReactNode
@@ -1165,6 +1171,12 @@ export type TableComponentProps<TData extends TableData = TableData> = Omit<
 		enableToolbarInternalActions?: boolean
 		enableTopToolbar?: boolean
 		expandRowsFn?: (dataRow: TData) => TData[]
+		getExpandableColumn:
+			| string
+			| ((
+					columns: Table_Column<TData>[],
+					table: TableInstance<TData>
+			  ) => Table_Column<TData> | null)
 		getGroupRowCount?: (props: {
 			groupId?: string
 			groupRow?: Table_Row<TData>

@@ -43,7 +43,9 @@ import {
 import { getUtilColumn, utilColumns } from '../utilColumns'
 import { flatHierarchyTree } from '../utils/flatHierarchyTree'
 import { getCoreRowModel } from '../utils/getCoreRowModel'
+import { getExpandableColumn } from '../utils/getExpandableColumn'
 import { getExpandedRowModel } from '../utils/getExpandedRowModel'
+import { getColumnsFilteredByDisplay } from '../utils/getFilteredByDisplay'
 import { getFilteredRowModel } from '../utils/getFilteredRowModel'
 import { getGroupedRowModel } from '../utils/getGroupedRowModel'
 import { getSortedRowModel } from '../utils/getSortedRowModel'
@@ -63,6 +65,7 @@ export const useTable = <TData extends TableData = TableData>(
 	const topToolbarRef = useRef<HTMLDivElement>(null)
 	const bulkActionsRef = useRef<HTMLDivElement>(null)
 	const rowDragEnterTimeoutRef = useRef<NodeJS.Timeout>()
+	const expandRowTimeoutRef = useRef<NodeJS.Timeout>()
 
 	const initialState: Partial<Table_TableState<TData>> = useMemo(() => {
 		const initState = config.initialState ?? {}
@@ -415,6 +418,7 @@ export const useTable = <TData extends TableData = TableData>(
 				bottomToolbarRef,
 				bulkActionsRef,
 				editInputRefs,
+				expandRowTimeoutRef,
 				filterInputRefs,
 				searchInputRef,
 				rowDragEnterTimeoutRef,
@@ -423,6 +427,7 @@ export const useTable = <TData extends TableData = TableData>(
 				tablePaperRef,
 				topToolbarRef,
 			},
+			constants: {},
 			isHierarchyItem,
 			setColumnFilterFns: config.onColumnFilterFnsChange ?? setColumnFilterFns,
 			setDraggingColumn: config.onDraggingColumnChange ?? setDraggingColumn,
@@ -441,6 +446,7 @@ export const useTable = <TData extends TableData = TableData>(
 				config.onShowGlobalFilterChange ?? setShowGlobalFilter,
 			setShowToolbarDropZone:
 				config.onShowToolbarDropZoneChange ?? setShowToolbarDropZone,
+			expandableColumn: null,
 			getPresets: config.onGetPresets ?? getPresets,
 			savePresets: config.onSavePresets ?? savePresets,
 			getDefaultPresets,
@@ -454,6 +460,16 @@ export const useTable = <TData extends TableData = TableData>(
 	if (config.tableInstanceRef) {
 		config.tableInstanceRef.current = table
 	}
+
+	const visibleLeafColumns = getColumnsFilteredByDisplay(
+		table.getAllLeafColumns()
+	)
+	table.constants.expandableColumn = useMemo(
+		() => (table ? getExpandableColumn(visibleLeafColumns, table) : null),
+		// recalculate expandable row, if column order changes
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+		[visibleLeafColumns, table, table.options.enableExpanding]
+	)
 
 	return { state, table, config }
 }

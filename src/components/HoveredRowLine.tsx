@@ -8,6 +8,8 @@ import { Colors } from './styles'
 export const HoveredRowLine = () => {
 	const {
 		table: {
+			constants: { expandableColumn },
+			options: { enableExpanding },
 			getState,
 			refs: { tableHeadCellRefs },
 		},
@@ -19,14 +21,21 @@ export const HoveredRowLine = () => {
 		const lastGroupingColumn = grouping[grouping.length - 1]
 		const lastColumnEl = tableHeadCellRefs.current[lastGroupingColumn]
 		if (!lastColumnEl) return 0
-		const { left, width } = lastColumnEl.getBoundingClientRect()
+		const { right } = lastColumnEl.getBoundingClientRect()
 
-		return left + width
+		return right
+	}
+	const getDepthOffset = () => {
+		const expandColumnEl = expandableColumn?.id
+			? tableHeadCellRefs.current[expandableColumn?.id]
+			: undefined
+		if (!expandColumnEl || !hoveredRow) return 0
+		const { left } = expandColumnEl.getBoundingClientRect()
+
+		return left + (hoveredRow.asChild ? hoveredRow.row.depth * 12 + 30 : 0)
 	}
 
 	if (!hoveredRow) return null
-
-	const groupedColumnsOffset = getGroupedColOffset()
 
 	const {
 		top = 0,
@@ -35,14 +44,16 @@ export const HoveredRowLine = () => {
 		height = 0,
 	} = hoveredRow?.rowRef.current?.getBoundingClientRect() ?? {}
 
+	const offset = enableExpanding ? getDepthOffset() : getGroupedColOffset()
+
 	return (
 		<Portal>
 			<Box
 				sx={{
 					position: 'absolute',
 					top: top + height,
-					width: width - groupedColumnsOffset,
-					left: groupedColumnsOffset || left,
+					width: width - offset,
+					left: offset || left,
 					height: '1px',
 					backgroundColor: Colors.LightBlue,
 				}}

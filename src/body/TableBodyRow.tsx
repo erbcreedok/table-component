@@ -1,5 +1,14 @@
 import { tableRowClasses } from '@mui/material'
-import { FC, memo, useCallback, useMemo, useRef, useEffect } from 'react'
+import { noop } from '@tanstack/react-table'
+import {
+	FC,
+	memo,
+	SyntheticEvent,
+	useCallback,
+	useMemo,
+	useRef,
+	useEffect,
+} from 'react'
 import MuiTableRow from '@mui/material/TableRow'
 import { lighten } from '@mui/material/styles'
 import type { VirtualItem, Virtualizer } from '@tanstack/react-virtual'
@@ -16,8 +25,8 @@ import { getColumnId } from '../column.utils'
 import { Colors } from '../components/styles'
 import { getIsMockRow } from '../utils/getIsMockRow'
 import { getSubRowIndex } from '../utils/getSubRowIndex'
-import { mapVirtualItems } from '../utils/virtual'
 import { setHoveredRow } from '../utils/setHoveredRow'
+import { mapVirtualItems } from '../utils/virtual'
 
 import { Memo_TableBodyCell, TableBodyCell } from './TableBodyCell'
 import { TableDetailPanel } from './TableDetailPanel'
@@ -59,15 +68,16 @@ export const TableBodyRow: FC<TableBodyRowProps> = ({
 		getIsSomeColumnsPinned,
 		getState,
 		options: {
+			enableExpanding,
+			enableRowDragging,
 			enableTableHead,
 			editingMode,
-			enableRowDragging,
 			layoutMode,
 			memoMode,
 			muiTableBodyRowProps,
 			renderDetailPanel,
 		},
-		refs: { rowDragEnterTimeoutRef },
+		refs: { rowDragEnterTimeoutRef, expandRowTimeoutRef },
 	} = table
 	const {
 		draggingColumn,
@@ -76,6 +86,7 @@ export const TableBodyRow: FC<TableBodyRowProps> = ({
 		editingRow,
 		columnVisibility,
 		openedDetailedPanels,
+		hoveredRow,
 	} = getState()
 	const isEditingRow = !!editingRow && editingRow?.id === row.id
 	const isMockRow = getIsMockRow(row)
@@ -85,7 +96,14 @@ export const TableBodyRow: FC<TableBodyRowProps> = ({
 			? muiTableBodyRowProps({ row, table })
 			: muiTableBodyRowProps ?? {}
 
-	const currentHoveredRow = useMemo(
+	const rowRef = useRef<HTMLTableRowElement | null>(null)
+	const panelRef = useRef<HTMLTableRowElement | null>(null)
+	const lastDragPositionRef = useRef({ x: 0, y: 0 })
+
+	const isDraggingRow = draggingRows.some((dRow) => dRow?.id === row.id)
+	const isHoveredRow = row.id === hoveredRow?.row?.id
+
+	const newHoveredRow = useMemo(
 		() => ({
 			row,
 			position: 'bottom' as const,
@@ -93,26 +111,62 @@ export const TableBodyRow: FC<TableBodyRowProps> = ({
 		[row]
 	)
 
-	const handleDragEnter = () => {
+	const handleDragEnter = useCallback(() => {
 		clearTimeout(rowDragEnterTimeoutRef.current)
+		clearTimeout(expandRowTimeoutRef.current)
+		if (isHoveredRow) return
 		rowDragEnterTimeoutRef.current = setTimeout(() => {
-			if (isMockRow) {
+			if (isMockRow || isDraggingRow) {
 				setHoveredRow(table)(null)
 
 				return
 			}
 			if (enableRowDragging && draggingRows.length > 0) {
-				setHoveredRow(table)({ ...currentHoveredRow, rowRef })
+				setHoveredRow(table)({ ...newHoveredRow, rowRef })
 			}
 		}, 500)
-	}
+		if (enableExpanding && row.getCanExpand() && !row.getIsExpanded()) {
+			expandRowTimeoutRef.current = setTimeout(() => {
+				row.toggleExpanded(true)
+			}, 1500)
+		}
+	}, [
+		rowDragEnterTimeoutRef,
+		expandRowTimeoutRef,
+		isHoveredRow,
+		enableExpanding,
+		row,
+		isMockRow,
+		isDraggingRow,
+		enableRowDragging,
+		draggingRows.length,
+		table,
+		newHoveredRow,
+	])
 
-	const rowRef = useRef<HTMLTableRowElement | null>(null)
-	const panelRef = useRef<HTMLTableRowElement | null>(null)
-
-	const isDraggingRow = useMemo(
-		() => draggingRows.some((dRow) => dRow?.id === row.id),
-		[draggingRows, row.id]
+	const handleDragMove = useCallback(
+		(e: SyntheticEvent<HTMLTableRowElement, DragEvent>) => {
+			if (!hoveredRow || !isHoveredRow || !rowRef.current) return
+			const asChildOffset = rowRef.current.getBoundingClientRect().bottom - 20
+			const asChild = e.nativeEvent.clientY > asChildOffset
+			if (!!hoveredRow.asChild === asChild) return
+			setHoveredRow(table)({ ...hoveredRow, asChild })
+		},
+		[hoveredRow, isHoveredRow, table]
+	)
+	const handleDragOver = useCallback(
+		(e: SyntheticEvent<HTMLTableRowElement, DragEvent>) => {
+			const { x: lastX, y: lastY } = lastDragPositionRef.current
+			const { x, y } = e.nativeEvent
+			const deltaX = x - lastX
+			const deltaY = y - lastY
+			if (Math.abs(deltaX) > 0 || Math.abs(deltaY) > 0) {
+				handleDragMove(e)
+			}
+			lastDragPositionRef.current.x = e.nativeEvent.clientX
+			lastDragPositionRef.current.y = e.nativeEvent.clientY
+		},
+		[handleDragMove]
 	)
 
 	const { collapsedColumnIndex } = row
@@ -232,8 +286,9 @@ export const TableBodyRow: FC<TableBodyRowProps> = ({
 					<MuiTableRow
 						data-index={virtualRow?.index}
 						hover
-						onDragEnter={handleDragEnter}
 						selected={row.getIsSelected()}
+						onDragEnter={!isHoveredRow ? handleDragEnter : noop}
+						onDragOver={enableExpanding && isHoveredRow ? handleDragOver : noop}
 						ref={(node: HTMLTableRowElement) => {
 							if (node) {
 								ref(node)

@@ -8,20 +8,20 @@ import { IconsColor } from '../components/styles'
 type Props<TData extends TableData = TableData> = {
 	row: Table_Row<TData>
 	table: TableInstance<TData>
-	sx?: IconButtonProps['sx']
 	filled?:
 		| boolean
 		| {
 				expand?: boolean
 				collapse?: boolean
 		  }
-}
+} & IconButtonProps
 
 export const ExpandButton = <TData extends TableData = TableData>({
 	row,
 	table,
 	sx,
 	filled = false,
+	...rest
 }: Props<TData>) => {
 	const {
 		options: {
@@ -84,6 +84,7 @@ export const ExpandButton = <TData extends TableData = TableData>({
 						...(sx instanceof Function ? sx(theme) : (sx as any)),
 					})}
 					title={undefined}
+					{...rest}
 				>
 					{!canExpand ? null : renderDetailPanel ? (
 						<ComputedExpandIcon

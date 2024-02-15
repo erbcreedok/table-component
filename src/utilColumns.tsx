@@ -16,6 +16,8 @@ export const utilColumns = {
 	column: 'table-util-column',
 } as const
 
+export const utilColumnsList: string[] = Object.values(utilColumns)
+
 export const DEFAULT_EXPAND_PADDING = 12
 
 type UtilColumnCellProps<TData extends TableData> = {

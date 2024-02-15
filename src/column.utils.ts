@@ -172,11 +172,7 @@ export const reorderColumn = <TData extends Record<string, any> = {}>(
 
 export const showExpandColumn = <TData extends Record<string, any> = {}>(
 	props: TableComponentProps<TData>
-) =>
-	!!(
-		(props.enableExpanding || props.renderDetailPanel) &&
-		!props.hideExpandColumn
-	)
+) => props.renderDetailPanel && !props.hideExpandColumn
 
 export const getLeadingDisplayColumnIds = <
 	TData extends Record<string, any> = {}

@@ -37,6 +37,7 @@ import { getValueOrFunctionHandler } from '../utils/getValueOrFunctionHandler'
 import { mergeSx } from '../utils/mergeSx'
 import { isEditingEnabled } from '../utils/isEditingEnabled'
 
+import { ExpandableColumnButton } from './ExpandableColumnButton'
 import { TableBodyCellValue } from './TableBodyCellValue'
 import { TableBodyCellUtility } from './TableBodyCellUtility'
 
@@ -75,6 +76,7 @@ export const TableBodyCell = ({
 }: Props) => {
 	const theme = useTheme()
 	const {
+		constants: { expandableColumn },
 		getState,
 		options: {
 			detailedRowBackgroundColor,
@@ -86,6 +88,7 @@ export const TableBodyCell = ({
 			enableGrouping,
 			enableRowNumbers,
 			enableRowDragging,
+			expandableColumnButtonPosition = 'left',
 			layoutMode,
 			mockRowStyles,
 			muiTableBodyCellProps,
@@ -303,6 +306,9 @@ export const TableBodyCell = ({
 
 	const isUtilColumn = column.id === utilColumns.column
 	const isExpandColumn = column.id === utilColumns.expand
+	const isExpandableColumn =
+		expandableColumn && expandableColumn.id === column.id
+	const isExpandButtonRTL = expandableColumnButtonPosition === 'right'
 	const isCurrentRowSelected = row.getIsSelected()
 	const isAnyRowSelected = table.getSelectedRowModel().flatRows.length > 0
 	const hideCheckBoxSpan =
@@ -324,6 +330,9 @@ export const TableBodyCell = ({
 	const isMockCell =
 		getIsMockRow(row) && !isGroupedCell && !isExpandColumn && !isUtilColumn
 
+	const depthPaddingAttr =
+		expandableColumnButtonPosition === 'right' ? 'pr' : 'pl'
+
 	const getTableCellStyles = (theme) => ({
 		alignItems: layoutMode === 'grid' ? 'center' : undefined,
 		cursor: isEditable && editingMode === 'cell' ? 'pointer' : 'inherit',
@@ -335,7 +344,10 @@ export const TableBodyCell = ({
 		...(isMockCell ? mockRowStyles : {}),
 		p: isGroupedCell ? '0.5rem 0.75rem' : '0',
 		px: 0,
-		pl: isExpandColumn ? `${row.depth * expandPaddingSize}px` : undefined,
+		[depthPaddingAttr]:
+			isExpandColumn || isExpandableColumn
+				? `${row.depth * expandPaddingSize + (isExpandableColumn ? 24 : 0)}px`
+				: undefined,
 		textOverflow: columnDefType !== 'display' ? 'ellipsis' : undefined,
 		whiteSpace: 'normal',
 		zIndex: draggingColumn?.id === column.id ? 2 : column.getIsPinned() ? 1 : 0,
@@ -496,6 +508,9 @@ export const TableBodyCell = ({
 					wrapperProps.sx
 				)}
 			>
+				{isExpandableColumn && !isExpandButtonRTL && (
+					<ExpandableColumnButton row={row} table={table} />
+				)}
 				{isGroupedCell ? (
 					<TableBodyCellValue cell={cell} row={row} table={table} />
 				) : cell.getIsPlaceholder() ? null : isLoading || showSkeletons ? (
@@ -526,6 +541,9 @@ export const TableBodyCell = ({
 					<TableBodyCellValue cell={cell} table={table} row={row} />
 				)}
 				{isGroupedCell ? null : cellActionButton}
+				{isExpandableColumn && isExpandButtonRTL && (
+					<ExpandableColumnButton row={row} table={table} position="right" />
+				)}
 			</Box>
 		</MuiTableCell>
 	)
