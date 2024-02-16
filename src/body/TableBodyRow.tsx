@@ -1,5 +1,5 @@
 import { tableRowClasses } from '@mui/material'
-import { FC, memo, useCallback, useMemo, useRef } from 'react'
+import { FC, memo, useCallback, useMemo, useRef, useEffect } from 'react'
 import MuiTableRow from '@mui/material/TableRow'
 import { lighten } from '@mui/material/styles'
 import type { VirtualItem, Virtualizer } from '@tanstack/react-virtual'
@@ -68,7 +68,14 @@ export const TableBodyRow: FC<TableBodyRowProps> = ({
 		},
 		refs: { rowDragEnterTimeoutRef },
 	} = table
-	const { draggingColumn, draggingRows, editingCell, editingRow } = getState()
+	const {
+		draggingColumn,
+		draggingRows,
+		editingCell,
+		editingRow,
+		columnVisibility,
+		openedDetailedPanels,
+	} = getState()
 	const isEditingRow = !!editingRow && editingRow?.id === row.id
 
 	const tableRowProps =
@@ -188,6 +195,24 @@ export const TableBodyRow: FC<TableBodyRowProps> = ({
 		),
 		refreshMode: 'debounce',
 	})
+
+	// handle row's detail panel collapse when corresponding column is being hidden
+	useEffect(() => {
+		const isRowCellHidden = () => {
+			const expandedCell = openedDetailedPanels?.[row.id].cell.column.id
+
+			return expandedCell && columnVisibility[expandedCell] === false
+		}
+
+		if (row.getIsExpanded()) {
+			if (isRowCellHidden()) {
+				const filteredClickedCells = { ...openedDetailedPanels }
+				delete filteredClickedCells[row.id]
+				table.setOpenedDetailedPanels(filteredClickedCells)
+				row.toggleExpanded(false)
+			}
+		}
+	}, [columnVisibility])
 
 	return (
 		<EditingRowActionButtons
