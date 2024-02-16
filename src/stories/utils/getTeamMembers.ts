@@ -81,15 +81,17 @@ export const getTeamMembers = (length = 200, prefix = ''): TeamMember[] =>
 export const getExpandingTeamMembers = (
 	length = 200,
 	prefix = '',
-	depthLimit = 1
+	depthLimit = 1,
+	childrenLength: number = 3,
 ): TeamMember[] => {
 	const members = getTeamMembers(length, prefix)
 	if (depthLimit > 0) {
 		for (let i = 0; i < length; i++) {
 			members[i].subRows = getExpandingTeamMembers(
-				3,
+				childrenLength,
 				`${prefix}${i + 1}.`,
-				depthLimit - 1
+				depthLimit - 1,
+				childrenLength,
 			)
 		}
 	}

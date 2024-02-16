@@ -47,7 +47,12 @@ export const SidebarTemplate = ({
 	innerTable,
 }: SidebarTemplateProps) => {
 	return (
-		<Box sx={{ ...styles, ...(innerTable ? { maxHeight: '100%' } : {}) }}>
+		<Box
+			sx={{
+				...styles,
+				...(innerTable ? { maxHeight: '100%', flexGrow: 1 } : {}),
+			}}
+		>
 			{withHeader && (
 				<SidebarHeaderComponent
 					title={headerTitle}

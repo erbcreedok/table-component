@@ -54,7 +54,7 @@ const data: Row[] = [...Array(100)].map(() => ({
 
 export const ColumnActionsEnabledDefault: Story<
   TableComponentProps
-> = () => <TableComponent columns={columns} data={data} renderRowActionMenuItems={getDefaultRowActionMenuItems} enableRowActions />;
+> = () => <TableComponent columns={columns} data={data} renderRowActionMenuItems={getDefaultRowActionMenuItems()} enableRowActions />;
 
 export const ColumnActionsDisabled: Story<TableComponentProps> = () => (
   <TableComponent

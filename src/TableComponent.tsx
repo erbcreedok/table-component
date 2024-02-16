@@ -1171,7 +1171,7 @@ export type TableComponentProps<TData extends TableData = TableData> = Omit<
 		enableToolbarInternalActions?: boolean
 		enableTopToolbar?: boolean
 		expandRowsFn?: (dataRow: TData) => TData[]
-		getExpandableColumn:
+		getExpandableColumn?:
 			| string
 			| ((
 					columns: Table_Column<TData>[],

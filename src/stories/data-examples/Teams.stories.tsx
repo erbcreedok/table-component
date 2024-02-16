@@ -16,6 +16,7 @@ import { LockedIcon } from '../../icons/LockedIcon'
 import { TrashIcon } from '../../icons/TrashIcon'
 import TableComponent, {
 	MuiTableBodyRowDragHandleFnProps,
+	Sidebar,
 	Table_ColumnDef,
 	TableComponentProps,
 	TableInstance,
@@ -26,7 +27,8 @@ import {
 	CustomNoResultsFound,
 } from '../components/CustomNoResultsFound'
 import { TeamMember, UnitTreeItem, User } from '../types/TeamMember'
-import { getIndexedExpandableColumn } from "../utils/getIndexedExpandableColumn";
+import { Colors } from "../utils/constants"
+import { getIndexedExpandableColumn } from "../utils/getIndexedExpandableColumn"
 import { getTablePresetProps } from '../utils/getTablePresetProps'
 import { getDndTargetGroupingUpdateValues } from '../utils/getDndTargetGroupingUpdateValues'
 import {
@@ -36,9 +38,10 @@ import {
 } from '../utils/getTeamMembers'
 import { getTeamMembersColumns } from '../utils/getTeamMembersColumns'
 import { insertTeamMemberRows } from '../utils/insertTeamMemberRows'
-import { getDefaultRowActionMenuItems } from '../utils/rowActionMenuItems'
+import { getDefaultRowActionMenuItems, OpenSidebarMenuItem } from '../utils/rowActionMenuItems'
 import { useHierarchyProps } from '../utils/useHierarchyProps'
 import { ColumnActionsFiltersMenu } from './components/ColumnActionsFiltersMenu'
+import { CUSTOM_FIRST_ROW_MEMBERS_CONFIG } from "./components/constants";
 import { UnitRow } from './components/UnitRow'
 
 const columns = getTeamMembersColumns()
@@ -369,6 +372,8 @@ const TeamsTable: Story<TeamsTableConfigs> = (args) => {
 		...rest
 	} = args
 	const [isDataLoading, setIsDataLoading] = useState(false)
+	const [isInnerTableOpen, setIsInnerTableOpen] = useState(false)
+	const [innerData] = useState(getExpandingTeamMembers(3, '', 3, 2))
 
 	const setNewRow = (row, values) => {
 		const newData = [...data]
@@ -423,65 +428,99 @@ const TeamsTable: Story<TeamsTableConfigs> = (args) => {
 	}
 
 	return (
-		<TableComponent
-			data={data}
-			multirowHeader={multirowHeader}
-			columns={getPropsHandledColumns(columns, args)}
-			groupBorder={{ left: '6px solid white', top: '6px solid white' }}
-			initialState={{
-				sorting: defaultSorting ?? [],
-				columnOrder: defaultColumnOrder,
-				columnVisibility: defaultColumnVisibility,
-				...initialState,
-			}}
-			onEditingRowsSave={handleSaveRows}
-			onEditingCellSave={({ cell, value, error, exitEditingMode }) => {
-				console.log(value, error, cell)
-				if (error) return
-				setNewRow(cell.row, { [cell.column.id]: value })
-				exitEditingMode()
-			}}
-			filterFromLeafRows
-			handleRowsDrop={handleRowsDrop}
-			renderRowActionMenuItems={getDefaultRowActionMenuItems}
-			ColumnActionsFiltersMenu={ColumnActionsFiltersMenu}
-			summaryRowCell={(props) => <SummaryRowExampleCellValue {...props} />}
-			muiTableBodyRowDragHandleProps={({ table }) => ({
-				onDragEnd: () => {
-					const { draggingRows, hoveredRow } = table.getState()
-					if (hoveredRow && draggingRows.length > 0) {
-						const filteredData = data.filter(
-							(data, index) =>
-								!draggingRows.some((draggingRow) => draggingRow.index === index)
-						)
-						filteredData.splice(
-							filteredData.indexOf(hoveredRow.row.original) +
-								(hoveredRow.position === 'bottom' ? 1 : 0),
-							0,
-							...draggingRows.map((row) => row.original)
-						)
-						setData(filteredData)
+		<>
+			<Sidebar
+				open={isInnerTableOpen}
+				onClose={() => setIsInnerTableOpen(false)}
+				withHeader
+				headerTitle="Team member ex. inner table"
+				innerTable
+			>
+				<TableComponent
+					innerTable
+					data={innerData}
+					columns={columns}
+					enableRowNumbers={false}
+					enableBottomToolbar={false}
+					enableExpanding
+					enableStickyHeader
+					enableGrouping
+					filterFromLeafRows
+					initialState={{
+						showColumnFilters: true,
+					}}
+					muiTableContainerProps={{ sx: { border: `1px solid ${Colors.lightGrey}` } }}
+					{...getTablePresetProps('teamsInnerTablePreset')}
+				/>
+			</Sidebar>
+			<TableComponent
+				data={data}
+				multirowHeader={multirowHeader}
+				columns={getPropsHandledColumns(columns, args)}
+				groupBorder={{ left: '6px solid white', top: '6px solid white' }}
+				initialState={{
+					sorting: defaultSorting ?? [],
+					columnOrder: defaultColumnOrder,
+					columnVisibility: defaultColumnVisibility,
+					...initialState,
+				}}
+				onEditingRowsSave={handleSaveRows}
+				onEditingCellSave={({ cell, value, error, exitEditingMode }) => {
+					console.log(value, error, cell)
+					if (error) return
+					setNewRow(cell.row, { [cell.column.id]: value })
+					exitEditingMode()
+				}}
+				filterFromLeafRows
+				handleRowsDrop={handleRowsDrop}
+				renderRowActionMenuItems={getDefaultRowActionMenuItems((closeMenu) => [
+					<OpenSidebarMenuItem
+						key="open_sidebar"
+						onClick={() => {
+							setIsInnerTableOpen(true)
+							closeMenu?.()
+						}}
+					/>,
+				])}
+				ColumnActionsFiltersMenu={ColumnActionsFiltersMenu}
+				summaryRowCell={(props) => <SummaryRowExampleCellValue {...props} />}
+				muiTableBodyRowDragHandleProps={({ table }) => ({
+					onDragEnd: () => {
+						const { draggingRows, hoveredRow } = table.getState()
+						if (hoveredRow && draggingRows.length > 0) {
+							const filteredData = data.filter(
+								(data, index) =>
+									!draggingRows.some((draggingRow) => draggingRow.index === index)
+							)
+							filteredData.splice(
+								filteredData.indexOf(hoveredRow.row.original) +
+									(hoveredRow.position === 'bottom' ? 1 : 0),
+								0,
+								...draggingRows.map((row) => row.original)
+							)
+							setData(filteredData)
+						}
+					},
+				})}
+				validateHoveredRow={({ row }, table) => {
+					const { grouping } = table.getState()
+					if (grouping.length === 0) return true
+					if (row?.original.impact === 'Medium') {
+						return {
+							text: 'Rows group cannot be changed to "Impact: Medium"',
+							type: 'danger',
+						}
 					}
-				},
-			})}
-			validateHoveredRow={({ row }, table) => {
-				const { grouping } = table.getState()
-				if (grouping.length === 0) return true
-				if (row?.original.impact === 'Medium') {
-					return {
-						text: 'Rows group cannot be changed to "Impact: Medium"',
-						type: 'danger',
-					}
-				}
 
-				return true
-			}}
-			onNativeEvent={(props) => console.log(props)}
-			onInfiniteScrollLoad={enableInfiniteScroll ? handleLoadData : undefined}
-			showBottomProggressBar={enableInfiniteScroll ? isDataLoading : undefined}
-			{...getTablePresetProps('teamsDefaultTable')}
-			{...rest}
-		/>
+					return true
+				}}
+				onNativeEvent={(props) => console.log(props)}
+				onInfiniteScrollLoad={enableInfiniteScroll ? handleLoadData : undefined}
+				showBottomProggressBar={enableInfiniteScroll ? isDataLoading : undefined}
+				{...getTablePresetProps('teamsDefaultTable')}
+				{...rest}
+			/>
+		</>
 	)
 }
 
@@ -500,8 +539,8 @@ export const TeamsTableWithManyColumns: Story<TeamsTableExample> = (args) => {
 	)
 }
 
-export const TeamsTableSubtree: Story<TeamsTableExample> = (args) => {
-	const [dataTree, setDataTree] = useState([...getTeamMembers(1, '0'), ...getExpandingTeamMembers(3, '', 2)])
+export const TeamsTableSubtree: Story<TeamsTableExample> = ({ customFirstRow, ...args }) => {
+	const [dataTree, setDataTree] = useState([...customFirstRow, ...getExpandingTeamMembers(3, '', 2)])
 
 	const muiTableBodyRowDragHandleProps = useCallback<
 		MuiTableBodyRowDragHandleFnProps<TeamMember>
@@ -641,6 +680,7 @@ const meta: Meta = {
 				},
 			],
 		},
+		customFirstRow: CUSTOM_FIRST_ROW_MEMBERS_CONFIG,
 		enableBulkActionsSelect: {
 			control: 'boolean',
 		},

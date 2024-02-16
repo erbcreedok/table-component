@@ -15,3 +15,4 @@ log/
 build/
 locales/
 storybook-static/
+/qodana.yaml

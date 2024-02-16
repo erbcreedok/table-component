@@ -69,9 +69,9 @@ export const ExpandAllButton = <TData extends TableData = TableData>({
 					{...rest}
 				>
 					{isAllRowsExpanded || getIsSomeRowsExpanded() ? (
-						<ExpandIcon />
-					) : (
 						<CollapseIcon />
+					) : (
+						<ExpandIcon />
 					)}
 				</IconButton>
 			</span>
