@@ -1,11 +1,17 @@
 import React from 'react'
 import { Meta, Story } from '@storybook/react'
-import TableComponent, { Table_ColumnDef, TableComponentProps } from '../../'
+import TableComponent, {
+	Table_ColumnDef,
+	TableBodyRow,
+	TableComponentProps,
+} from '../../'
 import { faker } from '@faker-js/faker'
 
 const meta: Meta = {
 	title: 'Features/Virtualization',
 }
+
+const CustomRow = (props) => <TableBodyRow {...props} />
 
 export default meta
 
@@ -95,6 +101,21 @@ export const EnableRowVirtualization: Story<TableComponentProps> = () => (
 		enableRowNumbers
 		enableRowVirtualization
 		enableBottomToolbar={false}
+	/>
+)
+
+export const EnableRowVirtualizationWithCustomRow: Story<
+	TableComponentProps
+> = () => (
+	<TableComponent
+		columns={longColumns}
+		data={longData}
+		enablePagination={false}
+		enableRowNumbers
+		enableRowVirtualization
+		enableBottomToolbar={false}
+		CustomRow={CustomRow}
+		memoMode="rows"
 	/>
 )
 

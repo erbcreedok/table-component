@@ -290,6 +290,15 @@ export const TableBody: FC<Props> = ({
 		? virtualColumns.length
 		: table.getVisibleLeafColumns().filter(isColumnDisplayed).length
 
+	const MemoizedCustomRow = useMemo(() => {
+		if (!CustomRow) return null
+
+		return React.memo(
+			CustomRow,
+			(prev, next) => prev.row === next.row && prev.rowIndex === next.rowIndex
+		)
+	}, [CustomRow])
+
 	return (
 		<MuiTableBody
 			{...tableBodyProps}
@@ -345,7 +354,12 @@ export const TableBody: FC<Props> = ({
 									}
 
 									if (CustomRow)
-										return (
+										return memoMode === 'rows' && MemoizedCustomRow ? (
+											<MemoizedCustomRow
+												key={computedProps.row.id}
+												{...computedProps}
+											/>
+										) : (
 											<CustomRow
 												key={computedProps.row.id}
 												{...computedProps}
