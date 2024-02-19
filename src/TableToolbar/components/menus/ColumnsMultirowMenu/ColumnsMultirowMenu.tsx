@@ -425,7 +425,6 @@ export const ColumnsMultirowMenu = <TData extends TableData = {}>({
 						sx={{
 							display: 'flex',
 							flexDirection: 'column',
-							maxHeight: 'calc(100vh - 180px)',
 							flexWrap: 'wrap',
 							overflowX: 'auto',
 							'&::-webkit-scrollbar': { height: 3, WebkitAppearance: 'none' },
