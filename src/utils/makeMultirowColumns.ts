@@ -50,6 +50,11 @@ export const makeMultirowColumns = <TData extends TableData = {}>(
 			}
 		}
 
+		const originalColIds =
+			multiHeaderRow.columns.find(
+				(col) => col.text === text || col.shorthandText === text
+			)?.columnIds ?? []
+
 		const current = {
 			id,
 			text,
@@ -60,6 +65,8 @@ export const makeMultirowColumns = <TData extends TableData = {}>(
 			colSpan: 1,
 			multirowColumnActions: multirowColumnActions[text],
 			colIds: [column.id],
+			depth: multiHeaderRow.depth,
+			originalColIds,
 		}
 
 		if (!result.length) {

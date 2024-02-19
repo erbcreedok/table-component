@@ -34,6 +34,7 @@ type Props = {
 	anchorElRef: MutableRefObject<HTMLElement | null>
 	table: TableInstance
 	cell: MultirowColumn
+	multirowColumnsDisplayDepth: number
 }
 
 export const TableHeadMultiRowCellActions: FC<Props> = ({
@@ -42,6 +43,7 @@ export const TableHeadMultiRowCellActions: FC<Props> = ({
 	anchorElRef,
 	table,
 	cell,
+	multirowColumnsDisplayDepth,
 }) => {
 	const {
 		options: {
@@ -79,7 +81,7 @@ export const TableHeadMultiRowCellActions: FC<Props> = ({
 	const handleMenuItemClick = useCallback(
 		(onClick: MultirowColumnAction['onClick'], event: MouseEvent) => {
 			if (onClick === multirowActions.hideColumn) {
-				hideColumns(cell.colIds, table)
+				hideColumns(cell.originalColIds, table)
 			} else if (typeof onClick === 'function') {
 				onClick({
 					multirowColumn: cell,
@@ -99,31 +101,33 @@ export const TableHeadMultiRowCellActions: FC<Props> = ({
 	return (
 		<>
 			{children(props)}
-			<Menu
-				anchorEl={anchorEl}
-				open={Boolean(anchorEl)}
-				onClose={() => setVisible(false)}
-				PaperProps={{
-					sx: {
-						margin: '6px 0',
-					},
-				}}
-			>
-				{actions?.map(({ text, onClick }) => (
-					<MenuItem
-						key={text}
-						onClick={(event) => handleMenuItemClick(onClick, event)}
-						sx={commonMenuItemStyles}
-					>
-						<Box sx={commonListItemStyles}>
-							<ListItemIcon>
-								<EyeCrossedIcon />
-							</ListItemIcon>
-							{text}
-						</Box>
-					</MenuItem>
-				))}
-			</Menu>
+			{multirowColumnsDisplayDepth === cell.depth && (
+				<Menu
+					anchorEl={anchorEl}
+					open={Boolean(anchorEl)}
+					onClose={() => setVisible(false)}
+					PaperProps={{
+						sx: {
+							margin: '6px 0',
+						},
+					}}
+				>
+					{actions?.map(({ text, onClick }) => (
+						<MenuItem
+							key={text}
+							onClick={(event) => handleMenuItemClick(onClick, event)}
+							sx={commonMenuItemStyles}
+						>
+							<Box sx={commonListItemStyles}>
+								<ListItemIcon>
+									<EyeCrossedIcon />
+								</ListItemIcon>
+								{text}
+							</Box>
+						</MenuItem>
+					))}
+				</Menu>
+			)}
 		</>
 	)
 }

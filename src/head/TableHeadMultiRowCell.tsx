@@ -9,12 +9,14 @@ type Props = {
 	cell: MultirowColumn
 	cellStyles: Record<string, any>
 	table: TableInstance
+	multirowColumnsDisplayDepth: number
 }
 
 export const TableHeadMultiRowCell: FC<Props> = ({
 	cell,
 	cellStyles,
 	table,
+	multirowColumnsDisplayDepth,
 }) => {
 	const localRef = useRef<HTMLTableCellElement>(null)
 
@@ -25,6 +27,7 @@ export const TableHeadMultiRowCell: FC<Props> = ({
 			table={table}
 			actions={cell.multirowColumnActions}
 			cell={cell}
+			multirowColumnsDisplayDepth={multirowColumnsDisplayDepth}
 		>
 			{({ onClick }) => (
 				<TableCell
@@ -40,7 +43,11 @@ export const TableHeadMultiRowCell: FC<Props> = ({
 									zIndex: 3,
 							  }
 							: {}),
-						cursor: cell.multirowColumnActions ? 'pointer' : undefined,
+						cursor:
+							cell.multirowColumnActions &&
+							multirowColumnsDisplayDepth === cell.depth
+								? 'pointer'
+								: undefined,
 					}}
 					colSpan={cell.colSpan}
 				>

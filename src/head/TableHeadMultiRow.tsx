@@ -57,7 +57,7 @@ export const TableHeadMultiRow = ({
 }: Props) => {
 	const rowsRef = useRef<HTMLTableRowElement[]>([])
 	const {
-		options: { layoutMode, muiTableHeadRowProps },
+		options: { layoutMode, muiTableHeadRowProps, multirowColumnsDisplayDepth },
 	} = table
 
 	useEffect(() => {
@@ -133,6 +133,9 @@ export const TableHeadMultiRow = ({
 											cell={cell}
 											cellStyles={cellStyles}
 											table={table}
+											multirowColumnsDisplayDepth={
+												multirowColumnsDisplayDepth ?? 1
+											}
 										/>
 									))}
 								</ColumnVirtualizerWrapper>

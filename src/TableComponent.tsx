@@ -413,6 +413,8 @@ export type MultirowColumn = {
 	rightPinnedPosition?: number
 	multirowColumnActions: MultirowColumnAction[] | null
 	colIds: string[]
+	depth: number
+	originalColIds: string[]
 }
 
 export type MultirowHeaderRow = {
