@@ -165,6 +165,7 @@ export const ColumnsMenu = <TData extends TableData = {}>({
 							flexDirection: 'column',
 							flexWrap: 'wrap',
 							overflowX: 'auto',
+							maxHeight: 'calc(100vh - 134px)',
 							'&::-webkit-scrollbar': { height: 3, WebkitAppearance: 'none' },
 							'&::-webkit-scrollbar-thumb': {
 								borderRadius: 6,
