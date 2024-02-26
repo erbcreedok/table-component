@@ -5,6 +5,7 @@ import { CommonChipWithPopoverAndContext } from '../CommonChipWithPopover/Common
 import { DropdownContentHeader } from '../../components/DropdownContent/DropdownContentHeader'
 import { DropdownContentSearch } from '../../components/DropdownContent/DropdownContentSearch'
 import { useGroupingControls } from '../filter-bar-hooks/useGroupingControls'
+import { resetGroupingWithMultirow } from '../../utils/resetGroupingWithMultirow'
 
 import { SelectedGroupsList } from './GroupingChipList/SelectedGroupsList'
 import { GroupSearchResult } from './GroupingChipSearch/GroupSearchResult'
@@ -18,7 +19,6 @@ export const GroupingChip: FC<GroupingChipProps> = (props) => {
 
 	const {
 		getState,
-		resetGrouping,
 		options: {
 			icons: { GroupingIcon },
 			localization,
@@ -37,6 +37,10 @@ export const GroupingChip: FC<GroupingChipProps> = (props) => {
 
 	const onClearClick = () => {
 		setSelectedSearchedItems([])
+	}
+
+	const resetGrouping = () => {
+		resetGroupingWithMultirow(table)
 	}
 
 	const DropdownContent = (

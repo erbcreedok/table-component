@@ -1,23 +1,32 @@
 import {
-	Table_Cell,
+	Table_CellOrEmpty,
 	Table_Column,
-	Table_Header,
+	Table_ColumnOrEmpty,
+	Table_HeaderOrEmpty,
 	TableData,
 } from '../TableComponent'
 
 import { sortArrayBy } from './sortArrayBy'
 import { MappedVirtualItem } from './virtual'
 
-export const getColumnFromHeader = <TData extends TableData = TableData>([
+export const getColumnFromHeaderOrCell = <TData extends TableData = TableData>([
 	col,
-]: MappedVirtualItem<Table_Header<TData>>) => col.column
-export const getColumnFromCell = <TData extends TableData = TableData>([
-	col,
-]: MappedVirtualItem<Table_Cell<TData>>) => col.column
+]: MappedVirtualItem<
+	Table_HeaderOrEmpty<TData> | Table_CellOrEmpty<TData>
+>) => {
+	if (col.empty) {
+		return col
+	}
+
+	return col.column
+}
 
 const getCompareValue = <TData extends TableData = TableData>(
-	column: Table_Column<TData>
+	column: Table_ColumnOrEmpty<TData>
 ) => {
+	if (column.empty) {
+		return 0
+	}
 	if (column.getIsGrouped()) {
 		return -2 + column.getGroupedIndex() * 0.001
 	}
@@ -28,14 +37,14 @@ const getCompareValue = <TData extends TableData = TableData>(
 	return 0
 }
 export const sortMappedVirtualHeaders = <TData extends TableData>(
-	array: MappedVirtualItem<Table_Header<TData>>[]
+	array: MappedVirtualItem<Table_HeaderOrEmpty<TData>>[]
 ) => {
-	return sortArrayBy(array, getColumnFromHeader, getCompareValue)
+	return sortArrayBy(array, getColumnFromHeaderOrCell, getCompareValue)
 }
 export const sortMappedVirtualCells = <TData extends TableData>(
-	array: MappedVirtualItem<Table_Cell<TData>>[]
+	array: MappedVirtualItem<Table_CellOrEmpty<TData>>[]
 ) => {
-	return sortArrayBy(array, getColumnFromCell, getCompareValue)
+	return sortArrayBy(array, getColumnFromHeaderOrCell, getCompareValue)
 }
 export const sortColumns = <TData extends TableData>(
 	array: Table_Column<TData>[]

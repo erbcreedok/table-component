@@ -180,6 +180,7 @@ const multiHeader = [
 						onClick: 'hideColumn',
 					},
 				],
+				collapsed: true,
 			},
 			{
 				text: 'WORKLOAD 2_2',
@@ -427,7 +428,9 @@ const TeamsTable: Story<TeamsTableConfigs> = (args) => {
 	const [columns, setColumns] = useState(initialColumns)
 	const [isDataLoading, setIsDataLoading] = useState(false)
 	const [isInnerTableOpen, setIsInnerTableOpen] = useState(false)
-	const [innerData, setInnerData] = useState(getExpandingTeamMembers(3, '', 3, 2))
+	const [innerData, setInnerData] = useState(
+		getExpandingTeamMembers(3, '', 3, 2)
+	)
 	const { handleAddRow, handleEditRow, updateRow } = useEditingProps([
 		data,
 		setData,
@@ -470,6 +473,8 @@ const TeamsTable: Story<TeamsTableConfigs> = (args) => {
 				<TableComponent
 					innerTable
 					data={innerData}
+					multirowHeader={multirowHeader}
+					enableMultirowExpandCollapse={rest.enableMultirowExpandCollapse}
 					columns={columns}
 					setColumns={setColumns}
 					enableRowNumbers={false}
@@ -944,6 +949,10 @@ const meta: Meta = {
 			},
 			control: { type: 'select' },
 			defaultValue: 'disabled',
+		},
+		enableMultirowExpandCollapse: {
+			control: 'boolean',
+			defaultValue: false,
 		},
 		expandableColumnButtonPosition: {
 			options: ['left', 'right'],

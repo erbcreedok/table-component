@@ -8,8 +8,10 @@ import {
 } from '..'
 import { getColumnId, getTotalRight } from '../column.utils'
 
+import type { EmptyColumn } from './getNonCollapsedColumns'
+
 export const makeMultirowColumns = <TData extends TableData = {}>(
-	columns: Table_Column<TData>[],
+	columns: ((Table_Column<TData> & { empty?: false }) | EmptyColumn)[],
 	multiHeaderRow: MultirowHeaderRow,
 	table: TableInstance,
 	filterMultirowCanHide = false
@@ -33,65 +35,79 @@ export const makeMultirowColumns = <TData extends TableData = {}>(
 			return obj
 		}, {})
 
-	const multirowColumns = columns.reduce((result, column) => {
-		const isGrouped = column.getIsGrouped()
-		const isPinned = column.getIsPinned()
-		const text = columnIdsText[getColumnId(column)]
-		const id = text ?? 'none'
-		let leftPinnedPosition: number | undefined
-		let rightPinnedPosition: number | undefined
+	const multirowColumns = columns
+		.reduce((result, column) => {
+			if (column.empty) {
+				const columns = column.collapsedColumns.map(
+					(id) =>
+						table
+							.getAllColumns()
+							.find((el) => el.id === id) as Table_Column<TData>
+				)
 
-		if (isPinned) {
-			if (isPinned === 'left') {
-				leftPinnedPosition = column.getStart('left')
+				result.push(...columns)
+			} else {
+				result.push(column)
 			}
-			if (isPinned === 'right') {
-				rightPinnedPosition = getTotalRight(table, column)
-			}
-		}
-
-		const originalColIds =
-			multiHeaderRow.columns.find(
-				(col) => col.text === text || col.shorthandText === text
-			)?.columnIds ?? []
-
-		const current = {
-			id,
-			text,
-			isGrouped,
-			isPinned,
-			leftPinnedPosition,
-			rightPinnedPosition,
-			colSpan: 1,
-			multirowColumnActions: multirowColumnActions[text],
-			colIds: [column.id],
-			depth: multiHeaderRow.depth,
-			originalColIds,
-		}
-
-		if (filterMultirowCanHide && text && !column.getCanHide()) {
-			return result
-		}
-
-		if (!result.length) {
-			result.push(current)
 
 			return result
-		}
-		const prev = result[result.length - 1]
+		}, [] as Table_Column<TData>[])
+		.reduce((result, column) => {
+			const isGrouped = column.getIsGrouped()
+			const isPinned = column.getIsPinned()
+			const text = columnIdsText[getColumnId(column)]
+			let id = text ?? 'none'
+			let leftPinnedPosition: number | undefined
+			let rightPinnedPosition: number | undefined
 
-		if (id === prev.id) {
-			prev.colSpan += 1
-			prev.colIds = [...prev?.colIds, column.id]
-			if (prev.isPinned === 'right' && prev.rightPinnedPosition) {
-				prev.rightPinnedPosition = getTotalRight(table, column)
+			if (isPinned) {
+				id = `${id}-pinned:${isPinned}`
+				if (isPinned === 'left') {
+					leftPinnedPosition = column.getStart('left')
+				}
+				if (isPinned === 'right') {
+					rightPinnedPosition = getTotalRight(table, column)
+				}
 			}
-		} else {
-			result.push(current)
-		}
 
-		return result
-	}, [] as MultirowColumn[])
+			const originalColIds =
+				multiHeaderRow.columns.find(
+					(col) => col.text === text || col.shorthandText === text
+				)?.columnIds ?? []
+
+			const current = {
+				id,
+				text,
+				isGrouped,
+				isPinned,
+				leftPinnedPosition,
+				rightPinnedPosition,
+				colSpan: 1,
+				multirowColumnActions: multirowColumnActions[text],
+				colIds: [column.id],
+				depth: multiHeaderRow.depth,
+				originalColIds,
+			}
+
+			if (!result.length) {
+				result.push(current)
+
+				return result
+			}
+			const prev = result[result.length - 1]
+
+			if (id === prev.id) {
+				prev.colSpan += 1
+				prev.colIds = [...prev?.colIds, column.id]
+				if (prev.isPinned === 'right' && prev.rightPinnedPosition) {
+					prev.rightPinnedPosition = getTotalRight(table, column)
+				}
+			} else {
+				result.push(current)
+			}
+
+			return result
+		}, [] as MultirowColumn[])
 
 	const uniqueIdsCount = {}
 

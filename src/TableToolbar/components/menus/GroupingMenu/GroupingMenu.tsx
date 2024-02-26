@@ -18,6 +18,7 @@ import { SidebarSearch } from '../../../../components/SidebarSearch'
 import { getOrderedColumns } from '../../../../utils/getOrderedColumns'
 import { getSuggestedColumns } from '../../../../utils/getSuggestedColumns'
 import { sortByStringArray } from '../../../../utils/sortByStringArray'
+import { resetGroupingWithMultirow } from '../../../../utils/resetGroupingWithMultirow'
 
 interface Props<TData extends Record<string, any> = {}> {
 	anchorEl: HTMLElement | null
@@ -41,7 +42,6 @@ export const GroupingMenu = <TData extends Record<string, any> = {}>({
 	const {
 		getState,
 		getAllColumns,
-		resetGrouping,
 		setGrouping,
 		options: {
 			innerTable,
@@ -101,7 +101,7 @@ export const GroupingMenu = <TData extends Record<string, any> = {}>({
 	const handleCloseClick = () => setAnchorEl(null)
 
 	const removeAllGroup = () => {
-		resetGrouping()
+		resetGroupingWithMultirow(table)
 	}
 
 	const onColumnOrderChanged = (

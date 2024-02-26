@@ -88,6 +88,25 @@ export const useTableInitialization = <TData extends Record<string, any>>(
 		return props.hierarchyTreeConfig
 	}, [props.getIsUnitTreeItem, props.hierarchyTreeConfig])
 
+	const defaultCollapsedMultiRow = useMemo(() => {
+		if (!props.enableMultirowExpandCollapse) {
+			return []
+		}
+
+		return props.multirowHeader?.reduce((acc, curr) => {
+			const collapsedColumns = curr.columns
+				.filter((el) => el.collapsed)
+				.map((el) => ({
+					id: el?.shorthandText ?? el.text,
+					colIds: el.columnIds,
+				}))
+
+			acc.push(...collapsedColumns)
+
+			return acc
+		}, [] as { id: string; colIds: string[] }[])
+	}, [props.multirowHeader, props.enableMultirowExpandCollapse])
+
 	if (props.enablePagination !== true && props.manualPagination === undefined) {
 		props.manualPagination = true
 	}
@@ -118,6 +137,7 @@ export const useTableInitialization = <TData extends Record<string, any>>(
 		columns,
 		defaultColumn,
 		defaultDisplayColumn,
+		defaultCollapsedMultiRow,
 		enableGroupSelection: props.enableBulkActions || !!props.enableRowSelection,
 		enablePagination:
 			props.enablePagination === true ? 'pages' : props.enablePagination,

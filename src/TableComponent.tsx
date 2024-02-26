@@ -87,6 +87,7 @@ import type { GetIsColumnAllGroupsCollapsedProps } from './utils/getIsColumnAllG
 import type { GetIsGroupCollapsedProps } from './utils/getIsGroupCollapsed'
 import type { OnGroupCollapsedToggleProps } from './utils/onGroupCollapsedToggle'
 import type { OnGroupCollapsedToggleAllProps } from './utils/onGroupCollapseToggleAll'
+import type { EmptyColumn } from './utils/getNonCollapsedColumns'
 
 /**
  * Most of this file is just TypeScript types
@@ -384,8 +385,13 @@ export type TableInstance<TData extends TableData = TableData> = Omit<
 		setShowGlobalFilter: Dispatch<SetStateAction<boolean>>
 		setShowToolbarDropZone: Dispatch<SetStateAction<boolean>>
 		setStickyHorizontalScrollbarHeight: Dispatch<SetStateAction<number>>
+		setCollapsedMultirow: Dispatch<
+			SetStateAction<{ id: string; colIds: string[] }[]>
+		>
 		CustomRow?: FC<TableBodyRowProps>
 	}
+
+export type FieldError = string | null
 
 export type SearchData<TData extends TableData = TableData> =
 	| Table_Row<TData>[]
@@ -416,6 +422,11 @@ export type Table_TableState<TData extends TableData = TableData> =
 		highlightHeadCellId: string | null
 		groupCollapsed: GroupCollapsed
 		stickyHorizontalScrollbarHeight: number
+		collapsedMultirow: {
+			id: string
+			colIds: string[]
+			originalColIds: string[]
+		}[]
 	}
 
 export type SelectOption = {
@@ -468,6 +479,7 @@ export type MultirowHeaderRow = {
 		shorthandText?: string
 		columnIds: string[]
 		columnActions?: MultirowColumnAction[]
+		collapsed?: boolean
 	}[]
 }
 
@@ -979,6 +991,10 @@ export type Table_Column<TData extends TableData = TableData> = Omit<
 	header: string
 }
 
+export type Table_ColumnOrEmpty<TData extends TableData = TableData> =
+	| (Table_Column<TData> & { empty?: false })
+	| EmptyColumn
+
 export type Table_Header<TData extends TableData = TableData> = Omit<
 	Header<TData, unknown>,
 	'column'
@@ -986,12 +1002,21 @@ export type Table_Header<TData extends TableData = TableData> = Omit<
 	column: Table_Column<TData>
 }
 
+export type Table_HeaderOrEmpty<TData extends TableData = TableData> =
+	| (Table_Header<TData> & { empty?: false })
+	| EmptyColumn
+
 export type Table_HeaderGroup<TData extends TableData = TableData> = Omit<
 	HeaderGroup<TData>,
 	'headers'
 > & {
 	headers: Table_Header<TData>[]
 }
+
+export type Table_HeaderGroupOrEmpty<TData extends TableData = TableData> =
+	Omit<Table_HeaderGroup<TData>, 'headers'> & {
+		headers: Table_HeaderOrEmpty<TData>[]
+	}
 
 export type Table_Row<TData extends TableData = TableData> = Omit<
 	Row<TData>,
@@ -1015,6 +1040,10 @@ export type Table_Cell<TData extends TableData = TableData> = Omit<
 	column: Table_Column<TData>
 	row: Table_Row<TData>
 }
+
+export type Table_CellOrEmpty<TData extends TableData = TableData> =
+	| (Table_Cell<TData> & { empty?: false })
+	| EmptyColumn
 
 export type Table_AggregationOption = string & keyof typeof Table_AggregationFns
 
@@ -1284,6 +1313,7 @@ export type TableComponentProps<TData extends TableData = TableData> = Omit<
 		enableFullScreenToggle?: boolean
 		enableGlobalFilterModes?: boolean
 		enableGlobalFilterRankedResults?: boolean
+		enableMultirowExpandCollapse?: boolean
 		enablePagination?: boolean | 'pages' | 'scroll'
 		enableRowActions?: boolean
 		enableRowDragging?: boolean | ((row: Table_Row<TData>) => boolean)
@@ -1839,6 +1869,7 @@ export type TableComponentProps<TData extends TableData = TableData> = Omit<
 		CustomRow?: FC<TableBodyRowProps>
 		theme?: Theme
 		e2eLabels?: E2ELabelsOption
+		defaultCollapsedMultiRow?: { id: string; colIds: string[] }[]
 	}
 
 export type TableComponentPropsDefined<TData extends TableData = TableData> =

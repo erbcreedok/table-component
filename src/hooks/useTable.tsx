@@ -169,6 +169,9 @@ export const useTable = <TData extends TableData = TableData>(
 	const [groupCollapsed, setGroupCollapsed] = useState<GroupCollapsed>({})
 	const [stickyHorizontalScrollbarHeight, setStickyHorizontalScrollbarHeight] =
 		useState(0)
+	const [collapsedMultirow, setCollapsedMultirow] = useState(
+		config.defaultCollapsedMultiRow ?? []
+	)
 
 	const hideHierarchyTree =
 		config.hierarchyTreeConfig &&
@@ -344,6 +347,7 @@ export const useTable = <TData extends TableData = TableData>(
 		searchData,
 		highlightHeadCellId,
 		stickyHorizontalScrollbarHeight,
+		collapsedMultirow,
 		...config.state,
 	} as Table_TableState<TData>
 
@@ -384,6 +388,18 @@ export const useTable = <TData extends TableData = TableData>(
 				let newGrouping = setter
 				if (newGrouping instanceof Function) {
 					newGrouping = setter(old)
+				}
+				for (const groupedColumn of newGrouping) {
+					const collapsedMultirowExcludeIndex = collapsedMultirow.findIndex(
+						(mult) => mult.colIds.includes(groupedColumn)
+					)
+
+					if (collapsedMultirowExcludeIndex !== -1) {
+						const newCollapsedMultirowData = [...collapsedMultirow]
+						newCollapsedMultirowData.splice(collapsedMultirowExcludeIndex, 1)
+
+						setCollapsedMultirow(newCollapsedMultirowData)
+					}
 				}
 				_setColumnSizing(newGrouping)
 				const currentSetColumnPinning =
@@ -500,6 +516,7 @@ export const useTable = <TData extends TableData = TableData>(
 			setHighlightHeadCellId: highlightCellId,
 			CustomRow: config.CustomRow,
 			setStickyHorizontalScrollbarHeight,
+			setCollapsedMultirow,
 		}
 	) as TableInstance<TData>
 

@@ -24,6 +24,7 @@ export const Default_Table_Props = {
 	enableGroupCollapsing: false,
 	enableGroupCount: true,
 	enableHiding: true,
+	enableMultirowExpandCollapse: false,
 	enableMultiRowSelection: true,
 	enableMultiSort: true,
 	enablePinning: false,

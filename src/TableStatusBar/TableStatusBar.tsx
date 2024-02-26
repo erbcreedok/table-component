@@ -13,6 +13,7 @@ import type { TableInstance } from '../index'
 import { mergeMuiProps } from '../utils/mergeMuiProps'
 import { withNativeEvent } from '../utils/withNativeEvent'
 import { getValueOrFunctionHandler } from '../utils/getValueOrFunctionHandler'
+import { resetGroupingWithMultirow } from '../utils/resetGroupingWithMultirow'
 
 import { GroupingChip } from './GroupingChip/GroupingChip'
 import { SortingChip } from './SortingChip/SortingChip'
@@ -67,7 +68,6 @@ export const TableStatusBar = <TData extends Record<string, any> = {}>({
 		getState,
 		resetSorting,
 		resetColumnFilters,
-		resetGrouping,
 		options: { muiTableStatusBarWrapperProps },
 	} = table
 
@@ -76,7 +76,7 @@ export const TableStatusBar = <TData extends Record<string, any> = {}>({
 	const barRef = useRef<HTMLDivElement>(null)
 
 	const handleClearAll = () => {
-		resetGrouping(true)
+		resetGroupingWithMultirow(table)
 		resetSorting(true)
 		resetColumnFilters(true)
 	}

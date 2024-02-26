@@ -44,6 +44,7 @@ export interface TableHeadCellProps {
 	disableToggleGroupCollapse?: boolean
 	groupsExpanded?: boolean
 	onToggleGroupCollapse?: (expanded?: boolean) => void
+	isDisplayed?: boolean
 }
 
 export const TableHeadCell: FC<TableHeadCellProps> = ({
@@ -56,6 +57,7 @@ export const TableHeadCell: FC<TableHeadCellProps> = ({
 	disableToggleGroupCollapse,
 	groupsExpanded,
 	onToggleGroupCollapse,
+	isDisplayed,
 }) => {
 	const theme = useTheme()
 	const {
@@ -301,6 +303,9 @@ export const TableHeadCell: FC<TableHeadCellProps> = ({
 							...draggingBorders,
 							...(highlightHeadCellId === column.id && {
 								border: `1px solid ${Colors.LightBlue}`,
+							}),
+							...(isDisplayed === false && {
+								dispay: 'none',
 							}),
 						})}
 					>

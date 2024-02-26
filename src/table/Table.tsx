@@ -15,9 +15,15 @@ import { TableHead } from '../head/TableHead'
 import { Memo_TableBody, TableBody } from '../body/TableBody'
 import { TableBodyRow } from '../body/TableBodyRow'
 import { TableFooter } from '../footer/TableFooter'
-import { Table_ColumnDef, Table_Row, TableInstance } from '..'
+import {
+	Table_ColumnDef,
+	Table_Row,
+	TableInstance,
+	getColumnsFilteredByDisplay,
+} from '..'
 import { TableHeadInvisible } from '../head/TableHeadInvisible'
 import { isColumnDisplayed } from '../utils/getFilteredByDisplay'
+import { getNonCollapsedColumns } from '../utils/getNonCollapsedColumns'
 
 interface Props {
 	table: TableInstance
@@ -49,6 +55,7 @@ export const Table: FC<Props> = ({ table }) => {
 		columnVisibility,
 		columnOrder,
 		grouping,
+		collapsedMultirow,
 	} = getState()
 
 	const tableProps =
@@ -73,17 +80,22 @@ export const Table: FC<Props> = ({ table }) => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [table.getRowModel().rows, columnPinning, columnVisibility])
 
+	const _visibleColumns = getNonCollapsedColumns(
+		getColumnsFilteredByDisplay([
+			...table.getLeftVisibleLeafColumns(),
+			...table.getCenterVisibleLeafColumns(),
+			...table.getRightVisibleLeafColumns(),
+		]),
+		collapsedMultirow,
+		'columnDef'
+	)
+
 	const [leftPinnedIndexes, rightPinnedIndexes] = useMemo(
 		() =>
 			enableColumnVirtualization
-				? [
-						...table.getLeftVisibleLeafColumns(),
-						...table.getCenterVisibleLeafColumns(),
-						...table.getRightVisibleLeafColumns(),
-				  ]
-						.filter(isColumnDisplayed)
-						.reduce(
-							([left, right], column, index) => {
+				? _visibleColumns.reduce(
+						([left, right], column, index) => {
+							if (!column.empty) {
 								switch (column.getIsPinned()) {
 									case 'left':
 										left.push(index)
@@ -94,12 +106,13 @@ export const Table: FC<Props> = ({ table }) => {
 									default:
 										break
 								}
+							}
 
-								return [left, right]
-							},
-							[[], []] as [number[], number[]]
-						)
-				: [[], [], []],
+							return [left, right]
+						},
+						[[], []] as [number[], number[]]
+				  )
+				: [[], []],
 		[
 			enableColumnVirtualization,
 			table,
@@ -107,6 +120,7 @@ export const Table: FC<Props> = ({ table }) => {
 			columnPinning,
 			columnVisibility,
 			grouping,
+			_visibleColumns.length,
 		]
 	)
 
@@ -115,20 +129,21 @@ export const Table: FC<Props> = ({ table }) => {
 		| undefined = enableColumnVirtualization
 		? // eslint-disable-next-line react-hooks/rules-of-hooks
 		  useVirtualizer({
-				count: table.getVisibleLeafColumns().filter(isColumnDisplayed).length,
+				count: _visibleColumns.length,
 				estimateSize: () => averageColumnWidth,
 				getScrollElement: () => tableContainerRef.current,
 				horizontal: true,
 				overscan: 1,
 				// eslint-disable-next-line react-hooks/rules-of-hooks
 				rangeExtractor: useCallback(
-					(range: Range) => [
-						...new Set([
-							...leftPinnedIndexes,
-							...defaultRangeExtractor(range),
-							...rightPinnedIndexes,
-						]),
-					],
+					(range: Range) =>
+						Array.from(
+							new Set([
+								...leftPinnedIndexes,
+								...defaultRangeExtractor(range),
+								...rightPinnedIndexes,
+							])
+						),
 					[leftPinnedIndexes, rightPinnedIndexes]
 				),
 				...vProps,

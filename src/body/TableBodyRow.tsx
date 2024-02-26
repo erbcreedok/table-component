@@ -30,8 +30,10 @@ import { getSubRowIndex } from '../utils/getSubRowIndex'
 import { setHoveredRow } from '../utils/setHoveredRow'
 import { sortMappedVirtualCells } from '../utils/sortColumns'
 import { mapVirtualItems } from '../utils/virtual'
+import { getNonCollapsedColumns } from '../utils/getNonCollapsedColumns'
 
 import { Memo_TableBodyCell, TableBodyCell } from './TableBodyCell'
+import { TableBodyCellEmpty } from './TableBodyCellEmpty'
 import { TableDetailPanel } from './TableDetailPanel'
 
 export interface TableBodyRowProps<TData extends TableData = TableData> {
@@ -92,6 +94,7 @@ export const TableBodyRow: FC<TableBodyRowProps> = (props) => {
 		columnVisibility,
 		openedDetailedPanels,
 		hoveredRow,
+		collapsedMultirow,
 	} = getState()
 	const isEditingRow = !!editingRow && editingRow?.id === row.id
 	const isNewRow = table.getIsNewRow(row)
@@ -240,13 +243,6 @@ export const TableBodyRow: FC<TableBodyRowProps> = (props) => {
 		]
 	)
 
-	const cells = sortMappedVirtualCells(
-		mapVirtualItems(
-			getCellsFilteredByDisplay(row?.getVisibleCells()),
-			virtualColumns
-		)
-	)
-
 	const computedMeasureElement = useComputedMeasureElement(measureElement)
 
 	// handle resize of detailed panel, if row virtualization is enabled
@@ -286,6 +282,16 @@ export const TableBodyRow: FC<TableBodyRowProps> = (props) => {
 			}
 		}
 	}, [columnVisibility])
+
+	const cells = sortMappedVirtualCells(
+		mapVirtualItems(
+			getNonCollapsedColumns(
+				getCellsFilteredByDisplay(row?.getVisibleCells()),
+				collapsedMultirow
+			),
+			virtualColumns
+		)
+	)
 
 	return (
 		<>
@@ -344,10 +350,22 @@ export const TableBodyRow: FC<TableBodyRowProps> = (props) => {
 						>
 							<ColumnVirtualizerWrapper>
 								{cells.map(([cell, virtualCell], index) => {
+									if (cell.empty) {
+										return (
+											<TableBodyCellEmpty
+												key={cell.keyName}
+												colSpan={cell.colSpan}
+												enableHover={tableRowProps?.hover !== false}
+											/>
+										)
+									}
+
 									if (table.getIsNewRow(row) && cell.column.getIsGrouped())
 										return null
+
 									if (cell.getIsPlaceholder() && !isSummaryRow)
 										return getGroupedCell(cell, virtualCell)
+
 									const groupBorders = getCellGroupBorders({
 										table,
 										rowIndex: getSubRowIndex({ row }) ?? rowIndex,
