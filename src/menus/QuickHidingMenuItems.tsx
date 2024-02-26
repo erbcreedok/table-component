@@ -52,7 +52,9 @@ export const QuickHidingMenuItems = ({ column, table, setVisible }) => {
 
 	const isDisabled =
 		!column.getCanHide() ||
-		!nonMultiheaderGroup.columns.filter((col) => col.id === column.id).length
+		(!nonMultiheaderGroup.columns.filter((col) => col.id === column.id)
+			.length &&
+			multirowColumnsDisplayDepth <= multirowHeader.length)
 
 	if (!enableHiding) return null
 

@@ -4,12 +4,14 @@ export const hideColumns = <TData extends TableData = TableData>(
 	colIds: string[],
 	table: TableInstance<TData>
 ) => {
-	const { setColumnVisibility, setGrouping, setSorting } = table
+	const { setColumnVisibility, setGrouping, setSorting, getColumn } = table
 
 	const updatedVisibility = (columnVisibility) =>
 		Object.keys(columnVisibility).reduce((acc, curr) => {
 			if (colIds.includes(curr)) {
-				acc[curr] = false
+				if (getColumn(curr).getCanHide()) {
+					acc[curr] = false
+				}
 			} else {
 				acc[curr] = columnVisibility[curr]
 			}

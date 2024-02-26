@@ -331,7 +331,7 @@ export const ColumnsMultirowMenu = <TData extends TableData = {}>({
 					) ?? multirowHeader[0]
 
 				const multirowColumns = makeMultirowColumns(
-					columns,
+					columns.filter((col) => col.getCanHide()),
 					multirowDepthMatchingRow,
 					table as TableInstance
 				)
@@ -427,7 +427,7 @@ export const ColumnsMultirowMenu = <TData extends TableData = {}>({
 							flexDirection: 'column',
 							flexWrap: 'wrap',
 							overflowX: 'auto',
-							maxHeight: 'calc(100vh - 180px)',
+							maxHeight: 'calc(100vh - 134px)',
 							'&::-webkit-scrollbar': { height: 3, WebkitAppearance: 'none' },
 							'&::-webkit-scrollbar-thumb': {
 								borderRadius: 6,
