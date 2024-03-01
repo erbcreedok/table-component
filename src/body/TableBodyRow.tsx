@@ -265,7 +265,7 @@ export const TableBodyRow: FC<TableBodyRowProps> = ({
 			return expandedCell && columnVisibility[expandedCell] === false
 		}
 
-		if (row.getIsExpanded()) {
+		if (row.getIsExpanded?.()) {
 			if (isRowCellHidden()) {
 				const filteredClickedCells = { ...openedDetailedPanels }
 				delete filteredClickedCells[row.id]
