@@ -106,3 +106,11 @@ export const DEFAULT_TEAMS_PRESETS = [
 		state: MOCK_STATE_3,
 	},
 ]
+
+export const performanceValues = [
+	'Fails',
+	'Below',
+	'Meet',
+	'Exceed',
+	'Exceed++',
+]

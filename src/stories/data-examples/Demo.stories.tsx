@@ -11,7 +11,7 @@ import Box from '@mui/material/Box'
 import { Flex } from '../../components/Flex';
 import { TextEllipsis } from '../../components/TextEllipsis';
 import { HeaderBase } from '../../head/HeaderBase';
-import { Colors } from '../utils/constants'
+import { Colors, performanceValues } from '../utils/constants'
 import { TeamMember } from '../types/TeamMember';
 import { getTeamsBorderColorSet } from '../utils/getTeamsBorderColorSet'
 import { createGetColors } from '../utils/createGetColors'
@@ -26,7 +26,7 @@ export default meta;
 
 const groupsSorting = {
 	impact: sortByArrayOrder(['Critical', 'High', 'Medium', 'Low']),
-	performance: sortByArrayOrder(['Often exceeds', 'Sometimes exceeds', 'Meets']),
+	performance: sortByArrayOrder(performanceValues),
 	riskOfLeaving: sortByArrayOrder(['Leaver', 'High', 'Medium', 'Low']),
 }
 

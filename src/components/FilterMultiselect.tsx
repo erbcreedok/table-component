@@ -92,7 +92,7 @@ export const FilterMultiselect = <TData extends TableData>({
 		const filtered = options.filter(
 			(option) =>
 				rankItem(getOptionLabel(option), inputValue, {
-					threshold: rankings.MATCHES,
+					threshold: rankings.CONTAINS,
 				}).passed
 		)
 		filteredOptions.current = filtered

@@ -1,9 +1,10 @@
 import { faker } from '@faker-js/faker'
 import { TeamMember, UnitTreeItem, User } from '../types/TeamMember'
+import { performanceValues } from './constants'
 import { getRandomFromArray } from './getRandomFromArray'
 
 const impacts = ['Critical', 'High', 'Medium', 'Low', null]
-const performances = ['Often exceeds', 'Sometimes exceeds', 'Meets', undefined]
+const performances = [...performanceValues, undefined]
 const risksOfLeaving = ['Leaver', 'High', 'Medium', 'Low', undefined]
 const successionStatuses = [
 	'No successors',

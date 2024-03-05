@@ -27,7 +27,7 @@ import {
 import { AnalyticsIcon } from '../../icons/AnalyticsIcon'
 import { getNestedProp } from '../../utils/getNestedProp'
 import { TeamMember, User } from '../types/TeamMember'
-import { Colors } from './constants'
+import { Colors, performanceValues } from './constants'
 import { convertDate } from './convertDate'
 import { createGetColors } from './createGetColors'
 import { anyOfDateRange } from './customFilterFns'
@@ -117,11 +117,7 @@ export const getTeamMembersColumns = () => {
 			Cell: ({ row, table }) => {
 				const user = row.original.member
 				return (
-					<Flex
-						center="y"
-						gap="0.75rem"
-						sx={{ flexGrow: 1, maxWidth: '100%' }}
-					>
+					<Flex center="y" gap="0.75rem" sx={{ flexGrow: 1, maxWidth: '100%' }}>
 						<Avatar
 							sx={{ width: 36, height: 36 }}
 							src={user.avatarUrl}
@@ -309,9 +305,7 @@ export const getTeamMembersColumns = () => {
 			filterVariant: 'multi-select',
 			editVariant: 'select',
 			editSelectOptions: [
-				'Often exceeds',
-				'Sometimes exceeds',
-				'Meets',
+				...performanceValues,
 				{ label: 'N/A', value: undefined },
 			],
 			validator: ({ value, table, row }) => {
@@ -330,17 +324,14 @@ export const getTeamMembersColumns = () => {
 			muiTableBodyCellProps: coloredCellProps,
 			enableColumnOrdering: true,
 			filterSelectOptions: [
-				'Often exceeds',
-				'Sometimes exceeds',
-				'Meets',
-				{ value: null, label: 'N/A' },
+				...performanceValues,
+				{ label: 'N/A', value: undefined },
 			],
 			sortingFn(rowA, rowB) {
-				return sortByArrayOrder([
-					'Often exceeds',
-					'Sometimes exceeds',
-					'Meets',
-				])(rowA.getValue('performance'), rowB.getValue('performance'))
+				return sortByArrayOrder(performanceValues)(
+					rowA.getValue('performance'),
+					rowB.getValue('performance')
+				)
 			},
 		},
 		{

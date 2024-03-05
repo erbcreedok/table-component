@@ -6,6 +6,7 @@ import { faker } from '@faker-js/faker'
 import { SelectCheckbox, RowActionMenuButton, HeaderBase } from '../../'
 import { getRandomFromArray } from './getRandomFromArray'
 import { TextEllipsis } from '../../components/TextEllipsis'
+import { performanceValues } from './constants'
 
 const ClickableCell = ({ row, accessorKey }) => {
 	const title = row.original[accessorKey]
@@ -172,7 +173,6 @@ export const getPeopleColumns = () =>
 		},
 	] as any
 
-const performances = ['Often exceeds', 'Sometimes exceeds', 'Meets']
 const risksOfLeaving = ['Leaver', 'High', 'Medium', 'Low']
 const mood = ['Positive', 'Netral', 'Demotivated']
 const totalWorkload = ['100%', '50%', '25%', 'On bench']
@@ -190,7 +190,7 @@ const savedUsers = getUsers()
 export const getPeopleMember = (user?: any) => ({
 	id: faker.datatype.uuid(),
 	member: getRandomFromArray(savedUsers),
-	performance: getRandomFromArray(performances),
+	performance: getRandomFromArray(performanceValues),
 	riskOfLeaving: getRandomFromArray(risksOfLeaving),
 	mood: getRandomFromArray(mood),
 	lastTalk: faker.date.between(
