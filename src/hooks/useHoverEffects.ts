@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 export const useHoverEffects = (delay?: number) => {
 	const [hovered, setHovered] = useState(false)
@@ -10,9 +10,18 @@ export const useHoverEffects = (delay?: number) => {
 			setHovered(true)
 		},
 		onMouseLeave: () => {
-			ref.current = setTimeout(() => setHovered(false), delay)
+			ref.current = setTimeout(() => {
+				if (!ref.current) return
+
+				ref.current = undefined
+				setHovered(false)
+			}, delay)
 		},
 	}
+
+	useEffect(() => () => {
+		ref.current = undefined
+	})
 
 	return {
 		hovered,

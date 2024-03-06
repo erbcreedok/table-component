@@ -20,7 +20,9 @@ export default [
 			'date-fns',
 			'react',
 			'react-datepicker',
+			'react-hook-form',
 			'react-resize-detector',
+			'usehooks-ts',
 		],
 		input: './src/index.tsx',
 		output: [

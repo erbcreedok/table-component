@@ -1,4 +1,4 @@
-import React, {
+import {
 	FC,
 	MouseEvent,
 	MouseEventHandler,
@@ -8,8 +8,10 @@ import React, {
 	useMemo,
 	useState,
 } from 'react'
+import { useBoolean } from 'usehooks-ts'
 
 import { ColumnActionMenu } from '../menus/ColumnActionMenu'
+import { CustomColumnEditor } from '../menus/CustomColumnEditor'
 import type { Table_Header, TableInstance } from '..'
 
 type Props = {
@@ -31,10 +33,16 @@ export const TableHeadCellActionsButton: FC<Props> = ({
 	anchorElRef,
 }) => {
 	const {
-		options: { localization },
+		options: { localization, setColumns },
 	} = table
+	const { column } = header
 
 	const [visible, setVisible] = useState(false)
+	const {
+		value: isCustomizer,
+		setTrue: setCustomizerTrue,
+		setFalse: setCustomizerFalse,
+	} = useBoolean(false)
 
 	const handleClick = useCallback(
 		(event: MouseEvent<HTMLElement>) => {
@@ -63,8 +71,17 @@ export const TableHeadCellActionsButton: FC<Props> = ({
 				anchorEl={visible ? anchorElRef.current : null}
 				header={header}
 				setVisible={setVisible}
+				openCustomizer={setCustomizerTrue}
 				table={table}
 			/>
+			{isCustomizer && setColumns && (
+				<CustomColumnEditor
+					columnDef={column.columnDef}
+					anchorEl={anchorElRef.current}
+					close={setCustomizerFalse}
+					setColumns={setColumns}
+				/>
+			)}
 		</>
 	)
 }

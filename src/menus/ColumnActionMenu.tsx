@@ -10,11 +10,13 @@ import { QuickFiltersMenu } from './QuickFiltersMenu'
 import { QuickGroupingMenuItems } from './QuickGroupingMenuItems'
 import { QuickHidingMenuItems } from './QuickHidingMenuItems'
 import { QuickSortMenuItems } from './QuickSortMenuItems'
+import { CustomColumnMenuItems } from './CustomColumnMenuItems'
 
 interface Props {
 	anchorEl: HTMLElement | null
 	header: Table_Header
 	setVisible: (visible: boolean) => void
+	openCustomizer: () => void
 	table: TableInstance
 }
 
@@ -22,11 +24,12 @@ export const ColumnActionMenu: FC<Props> = ({
 	anchorEl,
 	header,
 	setVisible,
+	openCustomizer,
 	table,
 }) => {
 	const menuRef = useRef(null)
 	const {
-		options: { renderColumnActionsMenuItems, e2eLabels },
+		options: { renderColumnActionsMenuItems, e2eLabels, setColumns },
 	} = table
 	const { column } = header
 	const { columnDef } = column
@@ -111,6 +114,15 @@ export const ColumnActionMenu: FC<Props> = ({
 						column={column}
 						setVisible={setVisible}
 					/>,
+					setColumns && (
+						<CustomColumnMenuItems
+							key="columnEdit"
+							column={column}
+							setVisible={setVisible}
+							openCustomizer={openCustomizer}
+							setColumns={setColumns}
+						/>
+					),
 				]}
 		</Menu>
 	)

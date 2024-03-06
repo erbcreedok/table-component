@@ -11,6 +11,7 @@ import { Table_Column, TableInstance } from '../TableComponent'
 import { getPascalCase } from '../utils/getPascalCase'
 import { withNativeEvent } from '../utils/withNativeEvent'
 import { getTestAttributes } from '../utils/getTestAttributes'
+import { ExpandMoreMenuChevron } from '../components/ExpandMoreMenuChevron'
 
 import { QuickSortMenuItemOptions } from './QuickSortMenuItemOptions'
 import { commonListItemStyles, commonMenuItemStyles } from './constants'
@@ -71,16 +72,7 @@ export const QuickSortMenuItems: FC<Props> = ({
 						<ArrowsIcon />
 					</ListItemIcon>
 					{localization.addSorting}
-					<Box
-						sx={(theme) => ({
-							height: 24,
-							ml: 'auto',
-							transform: 'rotate(-90deg)',
-							color: theme.palette.action.active,
-						})}
-					>
-						<ExpandMoreIcon />
-					</Box>
+					<ExpandMoreMenuChevron />
 				</Box>
 			</MenuItem>
 			<Popper

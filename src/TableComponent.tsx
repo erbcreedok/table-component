@@ -238,6 +238,22 @@ export interface Table_Localization {
 	locked: string
 	grouping: string
 	sorting: string
+	insert: string
+	InsertColumnLeft: string
+	InsertColumnRight: string
+	editSettings: string
+	delete: string
+	name: string
+	type: string
+	addProperty: string
+	shortName: string
+	subtitle: string
+	text: string
+	thisFieldIsRequired: string
+	columnName: string
+	columnShortNameOptional: string
+	shortNameIsDisplayedInAColumnHeader: string
+	columnSubtitleOptional: string
 }
 
 export type DraggingMessage = {
@@ -695,6 +711,15 @@ export type Table_ColumnDef<TData extends TableData = TableData> = Omit<
 		columnFilterModeOptions?: Array<
 			LiteralUnion<string & Table_FilterOption>
 		> | null
+		/**
+		 * @ignore Internal use only! (for now)
+		 * Custom Column Flag/Options
+		 * Specify if this column can be customized by the user.
+		 * `setColumns` table option must be defined to be operational.
+		 * In the future it could hold an object of customization props:
+		 * for example: {canBeDeleted:true, allowedTypes: ['text','numeric']...}
+		 */
+		enableCustomization?: true
 		columns?: Table_ColumnDef<TData>[]
 		dataType?:
 			| 'textual'
@@ -1064,6 +1089,12 @@ export interface TestIds {
 	columnMenuGroup?: string
 	columnMenuPin?: string
 	columnMenuHide?: string
+	columnMenuInsert?: string
+	columnMenuInsertLeft?: string
+	columnMenuInsertRight?: string
+	columnMenuInsertText?: string
+	columnMenuEdit?: string
+	columnMenuDelete?: string
 	rowActionMenu?: string
 	sidebarColumns?: string
 	sidebarColumnsHideAll?: string
@@ -1081,6 +1112,12 @@ export interface E2ELabelsOption {
 	/** @default "table_" */
 	idPrefix?: string
 }
+
+export type SetColumns<TData extends TableData> = (
+	columns: Table_ColumnDef<TData>[],
+	current: Table_ColumnDef<TData>,
+	action: 'INSERT' | 'UPDATE' | 'DELETE'
+) => void
 
 /**
  * `columns` and `data` props are the only required props, but there are over 150 other optional props.
@@ -1111,6 +1148,21 @@ export type TableComponentProps<TData extends TableData = TableData> = Omit<
 		 * The columns to display in the table. `accessorKey`s or `accessorFn`s must match keys in the `data` prop.
 		 */
 		columns: Table_ColumnDef<TData>[]
+		/**
+		 * Enable Editing of Custom Columns (insert, update, delete)
+		 * See columns with `enableCustomization` option set
+		 */
+		setColumns?: SetColumns<TData>
+		/**
+		 * Custom Columns Settings
+		 */
+		customColumns?: {
+			validate?: {
+				header?: (value: string) => boolean | string
+				shortHeader?: (value: string) => boolean | string
+				subtitle?: (value: string) => boolean | string
+			}
+		}
 		/**
 		 * The columns to be suggested in sidebars.
 		 * Contains list of column accessorKey.
