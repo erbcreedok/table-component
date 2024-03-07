@@ -1,4 +1,4 @@
-import { styled } from '@mui/material'
+import { CSSObject, styled, Theme } from '@mui/material'
 import Box from '@mui/material/Box'
 import Divider from '@mui/material/Divider'
 import IconButton from '@mui/material/IconButton'
@@ -27,6 +27,7 @@ const Line = styled(Divider)<{ height?: number }>`
 export type TableBulkActionsProps<TData extends Record<string, any> = {}> = {
 	table: TableInstance<TData>
 	wrapperProps?: ComponentProps<typeof Box>
+	sx?: (theme: Theme & { visible: boolean }) => CSSObject
 } & ComponentProps<typeof Box>
 export const TableBulkActions = ({
 	table,
@@ -90,7 +91,7 @@ export const TableBulkActions = ({
 				zIndex: theme.zIndex.tooltip,
 				padding: '9px',
 				bottom: stickyHorizontalScrollbarHeight,
-				...(sx instanceof Function ? sx(theme) : (sx as any)),
+				...(sx instanceof Function ? sx({ ...theme, visible }) : (sx as any)),
 			})}
 		>
 			<Box
@@ -111,7 +112,7 @@ export const TableBulkActions = ({
 					borderRadius: '6px',
 					...(wrapperProps?.sx instanceof Function
 						? wrapperProps?.sx?.(theme)
-						: (sx as any)),
+						: (wrapperProps?.sx as any)),
 				})}
 				{...getTestAttributes(e2eLabels, 'bulkActions')}
 			>
