@@ -105,8 +105,16 @@ export const FilterMultiselect = <TData extends TableData>({
 		setIsOpen(false)
 	}
 
+	const handleClickAway = () => {
+		setIsOpen(false)
+
+		if (filteredOptions.current.length === 0) {
+			setInputValue('')
+		}
+	}
+
 	return (
-		<ClickAwayListener onClickAway={() => setIsOpen(false)}>
+		<ClickAwayListener onClickAway={handleClickAway}>
 			<Autocomplete
 				sx={{
 					width: '100%',
