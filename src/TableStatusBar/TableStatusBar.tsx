@@ -1,11 +1,18 @@
 import { styled, ButtonBase } from '@mui/material'
-import React, { ComponentProps, useRef } from 'react'
+import React, {
+	ComponentProps,
+	ReactNode,
+	useRef,
+	useCallback,
+	useMemo,
+} from 'react'
 import Box from '@mui/material/Box'
 
 import { Colors } from '../components/styles'
 import type { TableInstance } from '../index'
 import { mergeMuiProps } from '../utils/mergeMuiProps'
 import { withNativeEvent } from '../utils/withNativeEvent'
+import { getValueOrFunctionHandler } from '../utils/getValueOrFunctionHandler'
 
 import { GroupingChip } from './GroupingChip/GroupingChip'
 import { SortingChip } from './SortingChip/SortingChip'
@@ -38,15 +45,22 @@ const Wrapper = styled(Box)<{ hidden?: boolean }>`
 	}
 `
 
+export type Adornment<TData extends Record<string, any> = {}> =
+	| ReactNode
+	| ((config: { table: TableInstance<TData> }) => ReactNode)
+
 export type TableStatusBarWrapperProps = {
 	lineProps?: ComponentProps<typeof Line>
 } & ComponentProps<typeof Wrapper>
+
 export type TableStatusBarProps<TData extends Record<string, any> = {}> = {
 	table: TableInstance<TData>
+	statusBarAdornment?: Adornment<TData>
 } & TableStatusBarWrapperProps
 
 export const TableStatusBar = <TData extends Record<string, any> = {}>({
 	table,
+	statusBarAdornment,
 	lineProps: rLineProps,
 	...rest
 }: TableStatusBarProps<TData>) => {
@@ -90,6 +104,16 @@ export const TableStatusBar = <TData extends Record<string, any> = {}>({
 		return <FilterChip key={filter.id} filterId={filter.id} table={table} />
 	})
 
+	const getAdornment = useCallback(
+		(adornment: Adornment<TData>) =>
+			getValueOrFunctionHandler(adornment)({ table }),
+		[table]
+	)
+
+	const cAdornment = useMemo(() => {
+		return getAdornment(statusBarAdornment)
+	}, [getAdornment, statusBarAdornment])
+
 	return (
 		<Wrapper ref={barRef} hidden={!isAnyChipVisible} {...props}>
 			<SortingChip table={table} />
@@ -102,6 +126,8 @@ export const TableStatusBar = <TData extends Record<string, any> = {}>({
 
 			<Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 'inherit' }}>
 				{filterChips}
+
+				{cAdornment}
 				<ClearAllButton
 					className={clearButtonClassName}
 					onClick={withNativeEvent(

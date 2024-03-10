@@ -25,6 +25,7 @@ export const TablePaper: FC<Props> = ({ table }) => {
 			renderBottomToolbar,
 			renderTopToolbar,
 			toolbarProps,
+			statusBarAdornment,
 			bulkActionProps,
 			innerTable,
 			innerTableTitle,
@@ -96,7 +97,9 @@ export const TablePaper: FC<Props> = ({ table }) => {
 								{...toolbarProps}
 							/>
 					  ))}
-			{enableStatusBar && <TableStatusBar table={table} />}
+			{enableStatusBar && (
+				<TableStatusBar table={table} statusBarAdornment={statusBarAdornment} />
+			)}
 			<TableContainer table={table} />
 			{enableBottomToolbar &&
 				(renderBottomToolbar instanceof Function

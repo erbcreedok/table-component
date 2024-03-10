@@ -21,14 +21,15 @@ import TableComponent, {
 	TableComponentProps,
 	TableInstance,
 	utilColumns,
+	CommonChipWithPopover,
 } from '../../index'
 import {
 	CustomNoRecordsToDisplay,
 	CustomNoResultsFound,
 } from '../components/CustomNoResultsFound'
 import { TeamMember, UnitTreeItem, User } from '../types/TeamMember'
-import { Colors } from "../utils/constants"
-import { getIndexedExpandableColumn } from "../utils/getIndexedExpandableColumn"
+import { Colors } from '../utils/constants'
+import { getIndexedExpandableColumn } from '../utils/getIndexedExpandableColumn'
 import { getTablePresetProps } from '../utils/getTablePresetProps'
 import { getDndTargetGroupingUpdateValues } from '../utils/getDndTargetGroupingUpdateValues'
 import {
@@ -38,10 +39,13 @@ import {
 } from '../utils/getTeamMembers'
 import { getTeamMembersColumns } from '../utils/getTeamMembersColumns'
 import { insertTeamMemberRows } from '../utils/insertTeamMemberRows'
-import { getDefaultRowActionMenuItems, OpenSidebarMenuItem } from '../utils/rowActionMenuItems'
+import {
+	getDefaultRowActionMenuItems,
+	OpenSidebarMenuItem,
+} from '../utils/rowActionMenuItems'
 import { useHierarchyProps } from '../utils/useHierarchyProps'
 import { ColumnActionsFiltersMenu } from './components/ColumnActionsFiltersMenu'
-import { CUSTOM_FIRST_ROW_MEMBERS_CONFIG } from "./components/constants";
+import { CUSTOM_FIRST_ROW_MEMBERS_CONFIG } from './components/constants'
 import { UnitRow } from './components/UnitRow'
 
 const columns = getTeamMembersColumns()
@@ -114,7 +118,7 @@ const multiHeader = [
 						text: 'Hide group of columns',
 						onClick: 'hideColumn',
 					},
-				]
+				],
 			},
 		],
 	},
@@ -131,7 +135,7 @@ const multiHeader = [
 						text: 'Hide group of columns',
 						onClick: 'hideColumn',
 					},
-				]
+				],
 			},
 			{
 				text: 'WORKLOAD 2',
@@ -141,7 +145,7 @@ const multiHeader = [
 						text: 'Hide group of columns',
 						onClick: 'hideColumn',
 					},
-				]
+				],
 			},
 		],
 	},
@@ -157,7 +161,7 @@ const multiHeader = [
 						text: 'Hide group of columns',
 						onClick: 'hideColumn',
 					},
-				]
+				],
 			},
 			{
 				text: 'WORKLOAD 2_1',
@@ -168,7 +172,7 @@ const multiHeader = [
 						text: 'Hide group of columns',
 						onClick: 'hideColumn',
 					},
-				]
+				],
 			},
 			{
 				text: 'WORKLOAD 2_2',
@@ -178,7 +182,7 @@ const multiHeader = [
 						text: 'Hide group of columns',
 						onClick: 'hideColumn',
 					},
-				]
+				],
 			},
 		],
 	},
@@ -198,6 +202,7 @@ type TeamsTableConfigs = Omit<TableComponentProps<TeamMember>, 'data'> &
 		enableLoremIpsumColumn?: boolean
 		columnSubtitles: Record<string, string>
 		enableInfiniteScroll?: boolean
+		enableTestStatusBarAdornment?: boolean
 	}
 
 type TeamsTableExample = Omit<TeamsTableConfigs, 'data' | 'columns'>
@@ -391,6 +396,10 @@ const SummaryRowExampleCellValue = (props) => {
 	)
 }
 
+const TestStatusBarAdornment = () => {
+	return <CommonChipWithPopover text="Test status bar adornment" />
+}
+
 const defaultRowsCount = 100
 
 const TeamsTable: Story<TeamsTableConfigs> = (args) => {
@@ -402,6 +411,7 @@ const TeamsTable: Story<TeamsTableConfigs> = (args) => {
 		initialState = {},
 		multirowHeader,
 		enableInfiniteScroll,
+		enableTestStatusBarAdornment,
 		data,
 		setData,
 		...rest
@@ -484,7 +494,9 @@ const TeamsTable: Story<TeamsTableConfigs> = (args) => {
 					initialState={{
 						showColumnFilters: true,
 					}}
-					muiTableContainerProps={{ sx: { border: `1px solid ${Colors.lightGrey}` } }}
+					muiTableContainerProps={{
+						sx: { border: `1px solid ${Colors.lightGrey}` },
+					}}
 					{...getTablePresetProps('teamsInnerTablePreset')}
 				/>
 			</Sidebar>
@@ -525,7 +537,9 @@ const TeamsTable: Story<TeamsTableConfigs> = (args) => {
 						if (hoveredRow && draggingRows.length > 0) {
 							const filteredData = data.filter(
 								(data, index) =>
-									!draggingRows.some((draggingRow) => draggingRow.index === index)
+									!draggingRows.some(
+										(draggingRow) => draggingRow.index === index
+									)
 							)
 							filteredData.splice(
 								filteredData.indexOf(hoveredRow.row.original) +
@@ -551,7 +565,12 @@ const TeamsTable: Story<TeamsTableConfigs> = (args) => {
 				}}
 				onNativeEvent={(props) => console.log(props)}
 				onInfiniteScrollLoad={enableInfiniteScroll ? handleLoadData : undefined}
-				showBottomProggressBar={enableInfiniteScroll ? isDataLoading : undefined}
+				showBottomProggressBar={
+					enableInfiniteScroll ? isDataLoading : undefined
+				}
+				statusBarAdornment={
+					enableTestStatusBarAdornment ? <TestStatusBarAdornment /> : undefined
+				}
 				{...getTablePresetProps('teamsDefaultTable')}
 				{...rest}
 			/>
@@ -574,8 +593,14 @@ export const TeamsTableWithManyColumns: Story<TeamsTableExample> = (args) => {
 	)
 }
 
-export const TeamsTableSubtree: Story<TeamsTableExample> = ({ customFirstRow, ...args }) => {
-	const [dataTree, setDataTree] = useState([...customFirstRow, ...getExpandingTeamMembers(3, '', 2)])
+export const TeamsTableSubtree: Story<TeamsTableExample> = ({
+	customFirstRow,
+	...args
+}) => {
+	const [dataTree, setDataTree] = useState([
+		...customFirstRow,
+		...getExpandingTeamMembers(3, '', 2),
+	])
 
 	const muiTableBodyRowDragHandleProps = useCallback<
 		MuiTableBodyRowDragHandleFnProps<TeamMember>
@@ -866,15 +891,23 @@ const meta: Meta = {
 			control: { type: 'select' },
 			defaultValue: 'teamMember',
 			description: 'Defines column with Expand button',
-			options: ['default', '2nd column', ...columns.map(getColumnId), 'last column'],
-			mapping: columns.reduce((acc, col) => ({
-				...acc,
-				[getColumnId(col)]: getColumnId(col),
-			}), {
-				'1st column': undefined,
-				'2nd column': getIndexedExpandableColumn(1),
-				'last column': getIndexedExpandableColumn(-1)
-			}),
+			options: [
+				'default',
+				'2nd column',
+				...columns.map(getColumnId),
+				'last column',
+			],
+			mapping: columns.reduce(
+				(acc, col) => ({
+					...acc,
+					[getColumnId(col)]: getColumnId(col),
+				}),
+				{
+					'1st column': undefined,
+					'2nd column': getIndexedExpandableColumn(1),
+					'last column': getIndexedExpandableColumn(-1),
+				}
+			),
 		},
 		hideRowSelectionColumn: {
 			control: 'boolean',
@@ -1102,6 +1135,12 @@ const meta: Meta = {
 			defaultValue: false,
 			description:
 				'***THIS IS NOT A PROP***\n' + 'Enables infinite scroll example',
+		},
+		enableTestStatusBarAdornment: {
+			control: { type: 'boolean' },
+			defaultValue: false,
+			description:
+				'***THIS IS NOT A PROP***\n' + 'Add test status bar adornment',
 		},
 	},
 }

@@ -65,7 +65,10 @@ import { InputProps } from './inputs/Input'
 import { SelectProps } from './inputs/Select'
 import { Table_SortingFns } from './sortingFns'
 import { TableMain } from './table/TableMain'
-import { TableStatusBarWrapperProps } from './TableStatusBar'
+import {
+	TableStatusBarWrapperProps,
+	TableStatusBarAdornment,
+} from './TableStatusBar'
 import {
 	Preset,
 	PresetState,
@@ -1686,6 +1689,7 @@ export type TableComponentProps<TData extends TableData = TableData> = Omit<
 			column: Table_Column<TData>
 			defaultStyles: Record<string, any>
 		}) => React.ReactNode
+		statusBarAdornment?: TableStatusBarAdornment<TData>
 		ColumnActionsFiltersMenu?: FC<Table_ColumnActionsFiltersMenuProps<TData>>
 		columnVirtualizerInstanceRef?: MutableRefObject<Virtualizer<
 			HTMLDivElement,
