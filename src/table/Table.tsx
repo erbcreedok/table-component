@@ -15,7 +15,7 @@ import { TableHead } from '../head/TableHead'
 import { Memo_TableBody, TableBody } from '../body/TableBody'
 import { TableBodyRow } from '../body/TableBodyRow'
 import { TableFooter } from '../footer/TableFooter'
-import type { Table_ColumnDef, Table_Row, TableInstance } from '..'
+import { Table_ColumnDef, Table_Row, TableInstance } from '..'
 import { TableHeadInvisible } from '../head/TableHeadInvisible'
 import { isColumnDisplayed } from '../utils/getFilteredByDisplay'
 
@@ -140,7 +140,7 @@ export const Table: FC<Props> = ({ table }) => {
 	}
 
 	const virtualColumns = columnVirtualizer
-		? columnVirtualizer.getVirtualItems()
+		? columnVirtualizer.getVirtualItems().filter(Boolean)
 		: undefined
 
 	let virtualPaddingLeft = 0
@@ -183,7 +183,7 @@ export const Table: FC<Props> = ({ table }) => {
 	const summaryRowProps = useMemo(
 		() => ({
 			columnVirtualizer,
-			numRows: table.getRowModel().rows.length as number,
+			numRows: table.getRowModel().rows.length,
 			rowIndex: -1,
 			rowNumber: -1,
 			table,

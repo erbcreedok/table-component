@@ -1,9 +1,10 @@
 import { VirtualItem } from '@tanstack/react-virtual'
 
+export type MappedVirtualItem<T> = [T, VirtualItem | undefined]
 export const mapVirtualItems = <T>(
 	items?: T[],
 	virtualItems?: VirtualItem[]
-): [T, VirtualItem | undefined][] => {
+): MappedVirtualItem<T>[] => {
 	if (!items) return []
 	if (!virtualItems) return items.map((col) => [col, undefined])
 

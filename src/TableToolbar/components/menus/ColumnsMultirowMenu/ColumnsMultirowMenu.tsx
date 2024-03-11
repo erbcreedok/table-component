@@ -93,7 +93,7 @@ export const ColumnsMultirowMenu = <TData extends TableData = {}>({
 	const [searchList, setsearchList] = useState<
 		Table_Column<TData>[] | MultirowColumnsGroup[]
 	>([])
-	const allColumns = organizeColumnsMenu(getAllLeafColumns())
+	const allColumns = organizeColumnsMenu(getAllLeafColumns(), table)
 	if (!isLeafDepth) {
 		allColumns.sort(
 			(a, b) => columnOrder.indexOf(a.id) - columnOrder.indexOf(b.id)

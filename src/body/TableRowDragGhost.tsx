@@ -297,20 +297,19 @@ const TableRowDragGhostRoot = <TData extends TableData>(
 								phase: 'main',
 								fn() {}, // required
 								effect({ instance }) {
-									const listener = [
-										'drag',
-										() => {
-											instance.update()
-										},
-									] as const
+									const listener = () => {
+										instance.update()
+									}
 
 									table.refs.tableContainerRef.current.addEventListener(
-										...listener
+										'drag',
+										listener
 									)
 
 									return () => {
 										table.refs.tableContainerRef.current?.removeEventListener(
-											...listener
+											'drag',
+											listener
 										)
 									}
 								},

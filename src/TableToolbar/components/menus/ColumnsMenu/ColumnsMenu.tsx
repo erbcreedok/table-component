@@ -12,6 +12,7 @@ import {
 import { Sidebar } from '../../../../components/Sidebar'
 import { Colors, TextColor } from '../../../../components/styles'
 import { getValidColumnOrder } from '../../../../utils/getValidColumnOrder'
+import { sortColumns } from '../../../../utils/sortColumns'
 import { splitArrayItems } from '../../../../utils/splitArrayItems'
 import { getColumnsFilteredByDisplay } from '../../../../utils/getFilteredByDisplay'
 import { getTestAttributes } from '../../../../utils/getTestAttributes'
@@ -25,16 +26,38 @@ interface Props<TData extends Record<string, any> = {}> {
 	table: TableInstance<TData>
 }
 
+const getCompareValue = (colId: string, left?: string[], right?: string[]) => {
+	if (left && left.includes(colId)) {
+		return -left.length + left.indexOf(colId)
+	}
+	if (right && right.includes(colId)) {
+		return right.indexOf(colId) + 1
+	}
+
+	return 0
+}
 export const defaultOrganizeColumnsMenu = <TData extends TableData = {}>(
-	allColumns: Table_Column<TData>[]
-) =>
-	getColumnsFilteredByDisplay(
-		allColumns.filter(
-			(col) => !(Table_DisplayColumnIdsArray as string[]).includes(col.id)
+	allColumns: Table_Column<TData>[],
+	table: TableInstance<TData>
+) => {
+	const {
+		columnPinning: { left, right },
+	} = table.getState()
+
+	return sortColumns(
+		getColumnsFilteredByDisplay(
+			allColumns
+				.filter((col) => !Table_DisplayColumnIdsArray.includes(col.id))
+				.sort(
+					(a, b) =>
+						getCompareValue(a.id, left, right) -
+						getCompareValue(b.id, left, right)
+				)
 		)
 	)
+}
 
-export const ColumnsMenu = <TData extends TableData = {}>({
+export const ColumnsMenu = <TData extends TableData = TableData>({
 	anchorEl,
 	setAnchorEl,
 	table,
@@ -42,6 +65,7 @@ export const ColumnsMenu = <TData extends TableData = {}>({
 	const {
 		getAllLeafColumns,
 		setColumnOrder,
+		setColumnPinning,
 		setGrouping,
 		options: {
 			localization,
@@ -52,15 +76,14 @@ export const ColumnsMenu = <TData extends TableData = {}>({
 	} = table
 	const [isSearchActive, setIsSearchActive] = useState<boolean>(false)
 	const [searchList, setSearchList] = useState<Array<Table_Column<TData>>>([])
-	const allColumns = organizeColumnsMenu(getAllLeafColumns())
+	const allColumns = organizeColumnsMenu(
+		// TODO: override getAllLeafColumns method, so it reorders and filters columns by itself
+		getAllLeafColumns(),
+		table
+	)
 
 	const [visibleColumns, hiddenColumns] = splitArrayItems(allColumns, (col) =>
 		col.getIsVisible()
-	)
-
-	const [groupedColumns, ungroupedColumns] = useMemo(
-		() => splitArrayItems(visibleColumns, (col) => col.getIsGrouped()),
-		[visibleColumns]
 	)
 
 	const [hoveredColumn, setHoveredColumn] =
@@ -101,10 +124,20 @@ export const ColumnsMenu = <TData extends TableData = {}>({
 
 	const onColumnOrderChange = useCallback(
 		(draggedColumn: Table_Column<TData>, targetColumn: Table_Column<TData>) => {
+			const pinPosition = targetColumn.getIsPinned()
 			if (targetColumn.getIsGrouped()) {
 				setGrouping((grouping) =>
 					reorderColumn(draggedColumn, targetColumn, grouping)
 				)
+			} else if (pinPosition) {
+				setColumnPinning((columnPinning) => ({
+					...columnPinning,
+					[pinPosition]: reorderColumn(
+						draggedColumn,
+						targetColumn,
+						columnPinning[pinPosition] ?? []
+					),
+				}))
 			} else {
 				setColumnOrder((columnOrder) =>
 					reorderColumn(
@@ -117,6 +150,39 @@ export const ColumnsMenu = <TData extends TableData = {}>({
 		},
 		[table.options, setColumnOrder, setGrouping]
 	)
+
+	const enableDrag = useMemo(() => {
+		const enableForGrouped =
+			visibleColumns.filter((col) => col.getIsGrouped() && !col.getIsPinned())
+				.length > 1
+		const enableForPinned = {
+			left:
+				visibleColumns.filter(
+					(col) => col.getIsPinned() === 'left' && !col.getIsGrouped()
+				).length > 1,
+			right:
+				visibleColumns.filter(
+					(col) => col.getIsPinned() === 'right' && !col.getIsGrouped()
+				).length > 1,
+		}
+		const enableForDefault =
+			visibleColumns.filter(
+				(col) =>
+					!col.getIsPinned() &&
+					!col.getIsGrouped() &&
+					col.columnDef.enableColumnOrdering !== false
+			).length > 1
+
+		return (column: Table_Column<TData>): boolean => {
+			const pinPosition = column.getIsPinned()
+			if (column.getIsGrouped()) return enableForGrouped
+			if (pinPosition) return enableForPinned[pinPosition]
+			if (column.columnDef.enableColumnOrdering !== false)
+				return enableForDefault
+
+			return false
+		}
+	}, [visibleColumns])
 
 	return (
 		<Sidebar
@@ -139,16 +205,7 @@ export const ColumnsMenu = <TData extends TableData = {}>({
 			{isSearchActive ? (
 				searchList.length ? (
 					searchList.map((column) => (
-						<ColumnsMenuItem
-							key={column.id}
-							column={column}
-							table={table}
-							hoveredColumn={hoveredColumn}
-							draggingColumn={draggingColumn}
-							setHoveredColumn={setHoveredColumn}
-							setDraggingColumn={setDraggingColumn}
-							onColumnOrderChange={onColumnOrderChange}
-						/>
+						<ColumnsMenuItem key={column.id} column={column} table={table} />
 					))
 				) : (
 					<Typography
@@ -217,7 +274,7 @@ export const ColumnsMenu = <TData extends TableData = {}>({
 								</ButtonLink>
 							</Box>
 						</Box>
-						{groupedColumns.map((column) => (
+						{visibleColumns.map((column) => (
 							<ColumnsMenuItem
 								key={column?.id}
 								column={column}
@@ -227,21 +284,7 @@ export const ColumnsMenu = <TData extends TableData = {}>({
 								setHoveredColumn={setHoveredColumn}
 								setDraggingColumn={setDraggingColumn}
 								onColumnOrderChange={onColumnOrderChange}
-								enableDrag={groupedColumns.length > 1}
-							/>
-						))}
-
-						{ungroupedColumns.map((column) => (
-							<ColumnsMenuItem
-								key={column.id}
-								column={column}
-								table={table}
-								hoveredColumn={hoveredColumn}
-								draggingColumn={draggingColumn}
-								setHoveredColumn={setHoveredColumn}
-								setDraggingColumn={setDraggingColumn}
-								onColumnOrderChange={onColumnOrderChange}
-								enableDrag
+								enableDrag={enableDrag(column)}
 							/>
 						))}
 
@@ -261,11 +304,6 @@ export const ColumnsMenu = <TData extends TableData = {}>({
 										key={column.id}
 										column={column}
 										table={table}
-										hoveredColumn={hoveredColumn}
-										draggingColumn={draggingColumn}
-										setHoveredColumn={setHoveredColumn}
-										setDraggingColumn={setDraggingColumn}
-										onColumnOrderChange={onColumnOrderChange}
 									/>
 								))}
 							</>

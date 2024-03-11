@@ -836,7 +836,7 @@ const meta: Meta = {
 		},
 		enablePinning: {
 			control: 'boolean',
-			defaultValue: false,
+			defaultValue: true,
 			description: 'Pin columns to left or right side of the table',
 		},
 		enableRowActions: {

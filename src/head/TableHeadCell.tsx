@@ -15,7 +15,7 @@ import { useTheme } from '@mui/material/styles'
 import type { Theme } from '@mui/material/styles'
 import { useResizeDetector } from 'react-resize-detector'
 
-import { HeaderBase, utilColumns } from '..'
+import { HeaderBase, utilColumns, utilColumnsList } from '..'
 import { Tooltip } from '../components/Tooltip'
 import { useHoverEffects } from '../hooks/useHoverEffects'
 import { GroupBorders } from '../utils/getGroupBorders'
@@ -80,8 +80,13 @@ export const TableHeadCell: FC<TableHeadCellProps> = ({
 		setHoveredColumn,
 	} = table
 	const localRef = useRef<HTMLTableCellElement>(null)
-	const { draggingColumn, grouping, hoveredColumn, highlightHeadCellId } =
-		getState()
+	const {
+		draggingColumn,
+		grouping,
+		hoveredColumn,
+		highlightHeadCellId,
+		columnPinning,
+	} = getState()
 	const { column } = header
 	const { columnDef } = column
 	const { columnDefType, emptyHeader } = columnDef
@@ -91,6 +96,7 @@ export const TableHeadCell: FC<TableHeadCellProps> = ({
 	const isExpandColumn = utilColumns.expand === column.id
 	const isExpandableColumn =
 		expandableColumn && expandableColumn.id === column.id
+	const isPinnedColumn = column.getIsPinned()
 	const showExpandAllButton = isExpandableColumn && enableExpandAll
 
 	const mTableHeadCellProps = getValueOrFunctionHandler(muiTableHeadCellProps)({
@@ -131,7 +137,11 @@ export const TableHeadCell: FC<TableHeadCellProps> = ({
 		columnDef.enableColumnDragging !== false &&
 		enableColumnOrdering &&
 		columnDef.enableColumnOrdering !== false &&
-		(!column.getIsGrouped() || grouping.length > 1)
+		(!column.getIsGrouped() || grouping.length > 1) &&
+		(!isPinnedColumn ||
+			(columnPinning[isPinnedColumn]?.filter(
+				(colId) => !utilColumnsList.includes(colId)
+			)?.length ?? 0) > 1)
 
 	const headerPL = useMemo(() => {
 		let pl = 0
@@ -167,7 +177,8 @@ export const TableHeadCell: FC<TableHeadCellProps> = ({
 		if (enableColumnOrdering && draggingColumn && columnDefType !== 'group') {
 			setHoveredColumn(
 				columnDef.enableColumnOrdering !== false &&
-					draggingColumn.getIsGrouped() === column.getIsGrouped()
+					draggingColumn.getIsGrouped() === column.getIsGrouped() &&
+					draggingColumn.getIsPinned() === column.getIsPinned()
 					? column
 					: null
 			)
@@ -258,9 +269,9 @@ export const TableHeadCell: FC<TableHeadCellProps> = ({
 							textTransform: uppercaseHeader && 'uppercase',
 							zIndex:
 								column.getIsResizing() || draggingColumn?.id === column.id
-									? 3
+									? 5
 									: column.getIsPinned() && columnDefType !== 'group'
-									? 2
+									? 4
 									: 1,
 							borderBottom: `1px solid ${
 								innerTable ? Colors.BorderMain : Colors.Gray20

@@ -1,15 +1,25 @@
-import React, { Dispatch, DragEvent, SetStateAction, useRef } from 'react'
+import React, {
+	Dispatch,
+	DragEvent,
+	PropsWithChildren,
+	SetStateAction,
+	useRef,
+} from 'react'
 import Box from '@mui/material/Box'
 import FormControlLabel from '@mui/material/FormControlLabel'
 import MenuItem from '@mui/material/MenuItem'
 import Typography from '@mui/material/Typography'
 
-import { ColumnPinningButtons } from '../../../../buttons/ColumnPinningButtons'
 import { GrabHandleButton } from '../../buttons/GrabHandleButton'
-import type { Table_Column, TableData, TableInstance } from '../../../../index'
+import type {
+	Table_Column,
+	TableData,
+	TableInstance,
+	TooltipProps,
+} from '../../../../index'
 import { TableSwitch } from '../../../../components/TableSwitch'
 import { Tooltip } from '../../../../components/Tooltip'
-import { TreeAngle } from '../../../..//components/TreeAngle'
+import { TreeAngle } from '../../../../components/TreeAngle'
 import {
 	Colors,
 	DEFAULT_FONT_FAMILY,
@@ -21,10 +31,10 @@ import { getPascalCase } from '../../../../utils/getPascalCase'
 
 export interface ColumnsMenuItemProps<TData extends TableData = TableData> {
 	column: Table_Column<TData>
-	hoveredColumn: Table_Column<TData> | null
-	draggingColumn: Table_Column<TData> | null
-	setHoveredColumn: Dispatch<SetStateAction<Table_Column<TData> | null>>
-	setDraggingColumn: Dispatch<SetStateAction<Table_Column<TData> | null>>
+	hoveredColumn?: Table_Column<TData> | null
+	draggingColumn?: Table_Column<TData> | null
+	setHoveredColumn?: Dispatch<SetStateAction<Table_Column<TData> | null>>
+	setDraggingColumn?: Dispatch<SetStateAction<Table_Column<TData> | null>>
 	table: TableInstance<TData>
 	enableDrag?: boolean
 	onColumnOrderChange?(
@@ -51,9 +61,8 @@ export const ColumnsMenuItem = <TData extends TableData = TableData>({
 		options: {
 			enableColumnOrdering,
 			enableHiding,
-			enablePinning,
 			localization,
-			icons: { GroupingIcon, LockedIcon },
+			icons: { GroupingIcon, LockedIcon, FreezeIcon },
 		},
 		getState,
 	} = table
@@ -88,13 +97,13 @@ export const ColumnsMenuItem = <TData extends TableData = TableData>({
 		columnDef.enableColumnOrdering ?? enableColumnOrdering
 
 	const handleDragStart = (e: DragEvent<HTMLButtonElement>) => {
-		setDraggingColumn(column)
+		setDraggingColumn?.(column)
 		e.dataTransfer.setDragImage(menuItemRef.current as HTMLElement, 0, 0)
 	}
 
 	const handleDragEnd = () => {
-		setDraggingColumn(null)
-		setHoveredColumn(null)
+		setDraggingColumn?.(null)
+		setHoveredColumn?.(null)
 		if (hoveredColumn) {
 			onColumnOrderChange?.(column, hoveredColumn)
 		}
@@ -104,22 +113,27 @@ export const ColumnsMenuItem = <TData extends TableData = TableData>({
 		if (
 			!isDragging &&
 			columnOrderingEnabled &&
-			column.getIsGrouped() === draggingColumn?.getIsGrouped()
+			column.getIsGrouped() === draggingColumn?.getIsGrouped() &&
+			column.getIsPinned() === draggingColumn?.getIsPinned()
 		) {
-			setHoveredColumn(column)
+			setHoveredColumn?.(column)
 		}
 	}
 
 	// for clearer indication of where dragging column is being placed
-	const { columnOrder, grouping } = getState()
+	const { columnOrder, grouping, columnPinning } = getState()
 
 	const getBorderSx = () => {
 		const isHovered = hoveredColumn?.id === column.id
 
 		if (!draggingColumn || !isHovered) return {}
+		const isGrouped = draggingColumn.getIsGrouped()
+		const isPinned = draggingColumn.getIsPinned()
 
-		const orderedColumns = grouping.includes(draggingColumn.id)
+		const orderedColumns = isGrouped
 			? grouping
+			: isPinned
+			? columnPinning[isPinned] ?? []
 			: columnOrder
 
 		const isDragginUpwards =
@@ -193,12 +207,6 @@ export const ColumnsMenuItem = <TData extends TableData = TableData>({
 						<Box sx={{ width: '9px' }} />
 					)}
 					{renderTreeAngle && <TreeAngle lastInList={isLastInList} />}
-					{enablePinning &&
-						(column.getCanPin() ? (
-							<ColumnPinningButtons column={column} table={table} />
-						) : (
-							<Box sx={{ width: '70px' }} />
-						))}
 					{enableHiding ? (
 						<FormControlLabel
 							componentsProps={{
@@ -234,38 +242,49 @@ export const ColumnsMenuItem = <TData extends TableData = TableData>({
 							{columnDef.header}
 						</Typography>
 					)}
-					{!column.getCanHide() && (
-						<Tooltip
-							placement="top"
-							title={localization.locked}
-							arrow
-							sx={{ height: '30px', mb: '2px' }}
-						>
-							<Box sx={{ marginLeft: 'auto' }}>
-								<LockedIcon style={{ color: IconsColor.default }} />
-							</Box>
-						</Tooltip>
-					)}
-					{column.getIsGrouped() && (
-						<Tooltip
-							placement="top"
-							title={localization.groupedBy}
-							arrow
-							sx={{ height: '30px', mb: '2px' }}
-						>
-							<Box sx={{ marginLeft: 'auto' }}>
+					<Box sx={{ display: 'flex', ml: 'auto', gap: '9px' }}>
+						{column.getIsPinned() && (
+							<IconTooltip title={localization.frozen}>
+								<FreezeIcon
+									style={{
+										width: '18px',
+										height: '18px',
+									}}
+								/>
+							</IconTooltip>
+						)}
+						{column.getIsGrouped() && (
+							<IconTooltip title={localization.groupedBy}>
 								<GroupingIcon
 									style={{
 										width: '18px',
 										height: '18px',
-										color: IconsColor.default,
 									}}
 								/>
-							</Box>
-						</Tooltip>
-					)}
+							</IconTooltip>
+						)}
+						{!column.getCanHide() && (
+							<IconTooltip title={localization.locked}>
+								<LockedIcon />
+							</IconTooltip>
+						)}
+					</Box>
 				</Box>
 			</MenuItem>
 		</>
 	)
 }
+
+const IconTooltip = ({
+	children,
+	...props
+}: PropsWithChildren<TooltipProps>) => (
+	<Tooltip
+		{...props}
+		placement="top"
+		arrow
+		sx={{ lineHeight: '18px', fontSize: 14, p: '6px 12px' }}
+	>
+		<Box sx={{ color: IconsColor.default }}>{children}</Box>
+	</Tooltip>
+)

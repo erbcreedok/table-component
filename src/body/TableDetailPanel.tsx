@@ -3,7 +3,7 @@ import TableCell from '@mui/material/TableCell'
 import TableRow from '@mui/material/TableRow'
 import React, { forwardRef } from 'react'
 
-import type { Table_Row, TableInstance } from '..'
+import { getColumnsFilteredByDisplay, Table_Row, TableInstance } from '..'
 import { getValueOrFunctionHandler } from '../utils/getValueOrFunctionHandler'
 
 interface Props {
@@ -54,7 +54,10 @@ export const TableDetailPanel = forwardRef<HTMLTableRowElement, Props>(
 			>
 				<TableCell
 					className="Mui-TableBodyCell-DetailPanel"
-					colSpan={getVisibleLeafColumns().length - grouping.length}
+					colSpan={
+						getColumnsFilteredByDisplay(getVisibleLeafColumns()).length -
+						grouping.length
+					}
 					{...tableCellProps}
 					sx={(theme) => ({
 						display: layoutMode === 'grid' ? 'flex' : 'table-cell',

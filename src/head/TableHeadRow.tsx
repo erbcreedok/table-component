@@ -11,9 +11,11 @@ import type {
 import { ColumnVirtualizerWrapper } from '../components/ColumnVirtualizerWrapper'
 import type { StickyElement } from '../hooks/useMultiSticky'
 import { Colors } from '../components/styles'
+import { getHeadersFilteredByDisplay } from '../utils/getFilteredByDisplay'
 import { getHeaderGroupBorders } from '../utils/getGroupBorders'
 import { getIsColumnAllGroupsCollapsedDefault } from '../utils/getIsColumnAllGroupsCollapsed'
 import { handleTableHeadDragEnter } from '../utils/handleTableHeadDragEnter'
+import { sortMappedVirtualHeaders } from '../utils/sortColumns'
 import { mapVirtualItems } from '../utils/virtual'
 import { onGroupCollapsedToggleAllDefault } from '../utils/onGroupCollapseToggleAll'
 import { getTestAttributes } from '../utils/getTestAttributes'
@@ -93,7 +95,12 @@ export const TableHeadRow = ({
 
 	const getHeaderCellProps = (): TableHeadCellProps[] => {
 		let isPrevColumnAllGroupsCollapsed = false
-		const headers = mapVirtualItems(headerGroup.headers, virtualColumns)
+		const headers = sortMappedVirtualHeaders(
+			mapVirtualItems(
+				getHeadersFilteredByDisplay(headerGroup.headers),
+				virtualColumns
+			)
+		)
 
 		return headers.map(([header]) => {
 			const groupBorders = getHeaderGroupBorders({ header, table })

@@ -4,11 +4,11 @@ import type { Table_Header, TableInstance } from '..'
 import { Menu } from '../components/Menu'
 import { getTestAttributes } from '../utils/getTestAttributes'
 
+import { QuickColumnPinningMenuItems } from './QuickColumnPinningMenuItems'
 import { QuickFilterMenuItems } from './QuickFilterMenuItems'
 import { QuickFiltersMenu } from './QuickFiltersMenu'
 import { QuickGroupingMenuItems } from './QuickGroupingMenuItems'
 import { QuickHidingMenuItems } from './QuickHidingMenuItems'
-import { QuickPinningMenuItems } from './QuickPinningMenuItems'
 import { QuickSortMenuItems } from './QuickSortMenuItems'
 
 interface Props {
@@ -99,10 +99,10 @@ export const ColumnActionMenu: FC<Props> = ({
 						column={column}
 						setVisible={setVisible}
 					/>,
-					<QuickPinningMenuItems
-						key="pinning"
-						table={table}
+					<QuickColumnPinningMenuItems
+						key="freezing"
 						column={column}
+						table={table}
 						setVisible={setVisible}
 					/>,
 					<QuickHidingMenuItems

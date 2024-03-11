@@ -10,6 +10,9 @@ import {
 	SortingState,
 	ColumnOrderState,
 	noop,
+	ColumnPinningState,
+	Updater,
+	ColumnSizingState,
 } from '@tanstack/react-table'
 import React, { useCallback, useMemo, useRef, useState } from 'react'
 
@@ -42,6 +45,7 @@ import {
 } from '../TableComponent'
 import { getUtilColumn, utilColumns } from '../utilColumns'
 import { flatHierarchyTree } from '../utils/flatHierarchyTree'
+import { getColumnPinningAffectedByGrouping } from '../utils/getColumnPinningAffectedByGrouping'
 import { getCoreRowModel } from '../utils/getCoreRowModel'
 import { getExpandableColumn } from '../utils/getExpandableColumn'
 import { getExpandedRowModel } from '../utils/getExpandedRowModel'
@@ -51,6 +55,7 @@ import { getGroupedRowModel } from '../utils/getGroupedRowModel'
 import { getSortedRowModel } from '../utils/getSortedRowModel'
 import { showRowActionsColumn } from '../utils/showRowActionsColumn'
 import { defaultGetSubRows } from '../utils/defaultGetSubRows'
+import { showUtilityColumn } from '../utils/showUtilityColumn'
 
 export const useTable = <TData extends TableData = TableData>(
 	config: TableComponentProps<TData> & { localization: Table_Localization }
@@ -81,9 +86,7 @@ export const useTable = <TData extends TableData = TableData>(
 	}>(() =>
 		Object.assign(
 			{},
-			...getAllLeafColumnDefs(
-				config.columns as Array<Table_ColumnDef<TData>>
-			).map((col) => ({
+			...getAllLeafColumnDefs(config.columns).map((col) => ({
 				[getColumnId(col)]:
 					col.filterFn instanceof Function
 						? col.filterFn.name ?? 'custom'
@@ -96,8 +99,14 @@ export const useTable = <TData extends TableData = TableData>(
 	const [columnOrder, setColumnOrder] = useState<ColumnOrderState>(
 		initialState.columnOrder ?? []
 	)
+	const [columnPinning, setColumnPinning] = useState<ColumnPinningState>(
+		initialState.columnPinning ?? {}
+	)
 	const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(
 		initialState.columnVisibility ?? {}
+	)
+	const [columnSizing, setColumnSizing] = useState<ColumnSizingState>(
+		initialState.columnSizing ?? {}
 	)
 	const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
 		initialState.columnFilters ?? []
@@ -164,14 +173,12 @@ export const useTable = <TData extends TableData = TableData>(
 		!(config.hierarchyTreeConfig.enableHierarchyTree ?? true)
 	const isHierarchyItem = config.hierarchyTreeConfig?.isHierarchyItem
 
+	const isUtilityColumnVisible = showUtilityColumn(config)
 	const displayColumns = useMemo(
 		() =>
 			(
 				[
-					(config.enableRowDragging ||
-						config.enableRowNumbers ||
-						(!config.hideRowSelectionColumn && config.enableRowSelection)) &&
-						getUtilColumn(config),
+					isUtilityColumnVisible && getUtilColumn(config),
 					showRowActionsColumn(config) && {
 						Cell: ({ cell, row, table }) => (
 							<ToggleRowActionMenuButton cell={cell} row={row} table={table} />
@@ -230,7 +237,7 @@ export const useTable = <TData extends TableData = TableData>(
 		() =>
 			prepareColumns({
 				aggregationFns: config.aggregationFns as any,
-				columnDefs: [...displayColumns, ...config.columns],
+				columnDefs: [...config.columns, ...displayColumns],
 				columnFilterFns: config.state?.columnFilterFns ?? columnFilterFns,
 				defaultDisplayColumn: config.defaultDisplayColumn ?? {},
 				filterFns: config.filterFns as any,
@@ -286,40 +293,6 @@ export const useTable = <TData extends TableData = TableData>(
 		isHierarchyItem,
 	])
 
-	const setMergedGrouping = useCallback((setter) => {
-		const setColumnSizings = (currentGrouping) => {
-			const newSizes = currentGrouping
-				.slice(0, currentGrouping.length - 1)
-				.reduce(
-					(acc, columnId) => ({
-						...acc,
-						[columnId]: 1,
-					}),
-					{}
-				)
-
-			table.setColumnSizing((oldSizes) =>
-				Object.entries(oldSizes).reduce(
-					(acc, [columnId, size]) => ({
-						[columnId]: size === 1 ? undefined : size,
-						...acc,
-					}),
-					newSizes
-				)
-			)
-		}
-
-		return setGrouping((old) => {
-			let newGrouping = setter
-			if (newGrouping instanceof Function) {
-				newGrouping = setter(old)
-			}
-			setColumnSizings(newGrouping)
-
-			return newGrouping
-		})
-	}, [])
-
 	const getPresets = useCallback(
 		() => JSON.parse(localStorage.getItem('tablePresets') as string),
 		[]
@@ -346,7 +319,9 @@ export const useTable = <TData extends TableData = TableData>(
 		columnFilters,
 		rowSelection,
 		columnOrder,
+		columnPinning,
 		columnVisibility,
+		columnSizing,
 		draggingColumn,
 		draggingRows,
 		editingCell,
@@ -376,6 +351,71 @@ export const useTable = <TData extends TableData = TableData>(
 		[isHierarchyItem]
 	)
 
+	const onGroupingChange = useCallback(
+		(setter) => {
+			const _setColumnSizing = (currentGrouping) => {
+				const newSizes = currentGrouping
+					.slice(0, currentGrouping.length - 1)
+					.reduce(
+						(acc, columnId) => ({
+							...acc,
+							[columnId]: 44,
+						}),
+						{}
+					)
+				const currentSetColumnSizing =
+					config.onColumnSizingChange ?? setColumnSizing
+				currentSetColumnSizing((oldSizes) =>
+					Object.entries(oldSizes).reduce(
+						(acc, [columnId, size]) => ({
+							[columnId]: size <= 44 ? undefined : size,
+							...acc,
+						}),
+						newSizes
+					)
+				)
+			}
+			const currentSetGrouping = config.onGroupingChange ?? setGrouping
+
+			return currentSetGrouping((old) => {
+				let newGrouping = setter
+				if (newGrouping instanceof Function) {
+					newGrouping = setter(old)
+				}
+				_setColumnSizing(newGrouping)
+				const currentSetColumnPinning =
+					config.onColumnPinningChange ?? setColumnPinning
+				currentSetColumnPinning((columnPinning) =>
+					getColumnPinningAffectedByGrouping(columnPinning, newGrouping)
+				)
+
+				return newGrouping
+			})
+		},
+		[
+			config.onGroupingChange,
+			config.onColumnPinningChange,
+			config.onColumnSizingChange,
+		]
+	)
+
+	const onColumnPinningChange = useCallback(
+		(valueOrFunction: Updater<ColumnPinningState>) => {
+			const currentSetColumnPinning =
+				config.onColumnPinningChange ?? setColumnPinning
+			const { columnPinning, grouping } = state
+			const newColumnPinning =
+				valueOrFunction instanceof Function
+					? valueOrFunction(columnPinning)
+					: valueOrFunction
+
+			return currentSetColumnPinning(
+				getColumnPinningAffectedByGrouping(newColumnPinning, grouping)
+			)
+		},
+		[config.onColumnPinningChange, state.columnPinning, state.grouping]
+	)
+
 	// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 	// @ts-ignore
 	const table = Object.assign(
@@ -395,10 +435,11 @@ export const useTable = <TData extends TableData = TableData>(
 			onColumnOrderChange: setColumnOrder,
 			onRowSelectionChange: setRowSelection,
 			onColumnVisibilityChange: setColumnVisibility,
-			onGroupingChange: setMergedGrouping,
 			onSortingChange: setSorting,
 			onStateChange: config.onStateChange,
 			...config,
+			onColumnPinningChange,
+			onGroupingChange,
 			detailPanelBorderColor:
 				config.detailPanelBorderColor ?? config.theme?.palette.primary.main,
 			// eslint-disable-next-line @typescript-eslint/ban-ts-comment

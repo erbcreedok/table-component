@@ -38,6 +38,7 @@ export const TableHeadCellGrabHandle: FC<Props> = ({
 		options: { enableColumnOrdering, muiTableHeadCellDragHandleProps },
 		setColumnOrder,
 		setGrouping,
+		setColumnPinning,
 		setDraggingColumn,
 		setHoveredColumn,
 	} = table
@@ -99,8 +100,19 @@ export const TableHeadCellGrabHandle: FC<Props> = ({
 				hoveredColumn.getIsGrouped()
 			) {
 				setGrouping((grouping) =>
-					reorderColumn(column, hoveredColumn as Table_Column, grouping)
+					reorderColumn(column, hoveredColumn, grouping)
 				)
+			} else if ('getIsPinned' in hoveredColumn) {
+				const pinPosition = hoveredColumn.getIsPinned()
+				if (!pinPosition) return
+				setColumnPinning((columnPinning) => ({
+					...columnPinning,
+					[pinPosition]: reorderColumn(
+						column,
+						hoveredColumn,
+						columnPinning[pinPosition] ?? []
+					),
+				}))
 			}
 		}
 		setDraggingColumn(null)

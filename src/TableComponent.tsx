@@ -109,6 +109,7 @@ export interface Table_Localization {
 	changeFilterMode: string
 	changeSearchMode: string
 	clearFilter: string
+	clearFreezing: string
 	clearSearch: string
 	clearSort: string
 	clickToCopy: string
@@ -151,6 +152,12 @@ export interface Table_Localization {
 	filterStartsWith: string
 	filterWeakEquals: string
 	filteringByColumn: string
+	freeze: string
+	freezeToLeft: string
+	freezeToRight: string
+	freezeThisColumn: string
+	freezeUpToThisColumn: string
+	frozen: string
 	goToFirstPage: string
 	goToLastPage: string
 	goToNextPage: string
@@ -259,6 +266,7 @@ export type TableInstance<TData extends TableData = TableData> = Omit<
 	| 'getColumn'
 	| 'getExpandedRowModel'
 	| 'getFlatHeaders'
+	| 'getHeaderGroups'
 	| 'getLeftLeafColumns'
 	| 'getLeftVisibleLeafColumns'
 	| 'getPaginationRowModel'
@@ -284,6 +292,7 @@ export type TableInstance<TData extends TableData = TableData> = Omit<
 	getColumn: (columnId: string) => Table_Column<TData>
 	getExpandedRowModel: () => Table_RowModel<TData>
 	getFlatHeaders: () => Table_Header<TData>[]
+	getHeaderGroups: () => Table_HeaderGroup<TData>[]
 	getLeftLeafColumns: () => Table_Column<TData>[]
 	getLeftVisibleLeafColumns: () => Table_Column<TData>[]
 	getPaginationRowModel: () => Table_RowModel<TData>
@@ -1034,6 +1043,13 @@ export type ValueTransformer<In, Out = In> = (value: In) => Out
 export interface TestIds {
 	headerRow?: string
 	columnMenu?: string
+	columnMenuFreeze?: string
+	columnMenuFreezeMenu?: string
+	columnMenuFreezingClear?: string
+	columnMenuItemFreezeColumnLeft?: string
+	columnMenuItemFreezeColumnRight?: string
+	columnMenuItemFreezeUpToThisColumnLeft?: string
+	columnMenuItemFreezeUpToThisColumnRight?: string
 	columnMenuSort?: string
 	columnMenuSortMenu?: string
 	columnMenuSortAsc?: string
@@ -1088,13 +1104,6 @@ export type TableComponentProps<TData extends TableData = TableData> = Omit<
 		> | null
 		/**
 		 * The columns to display in the table. `accessorKey`s or `accessorFn`s must match keys in the `data` prop.
-		 *
-		 * See more info on creating columns on the official docs site:
-		 * @link https://www.material-react-table.com/docs/guides/data-columns
-		 * @link https://www.material-react-table.com/docs/guides/display-columns
-		 *
-		 * See all Columns Options on the official docs site:
-		 * @link https://www.material-react-table.com/docs/api/column-options
 		 */
 		columns: Table_ColumnDef<TData>[]
 		/**
@@ -1108,9 +1117,6 @@ export type TableComponentProps<TData extends TableData = TableData> = Omit<
 		}
 		/**
 		 * Pass your data as an array of objects. Objects can theoretically be any shape, but it's best to keep them consistent.
-		 *
-		 * See the usage guide for more info on creating columns and data:
-		 * @link https://www.material-react-table.com/docs/getting-started/usage
 		 */
 		data: TData[]
 		bulkActions?: FunctionProps<
@@ -1227,6 +1233,10 @@ export type TableComponentProps<TData extends TableData = TableData> = Omit<
 			props: GetIsColumnAllGroupsCollapsedProps<TData>
 		) => boolean
 		getIsGroupCollapsed?: (props: GetIsGroupCollapsedProps<TData>) => boolean
+		getPinnedColumnPosition?: (
+			column: Table_Column<TData>,
+			table: TableInstance<TData>
+		) => Record<string, unknown> | undefined
 		globalFilterFn?: Table_FilterOption
 		globalFilterModeOptions?: Table_FilterOption[] | null
 		groupBorder?: string | { left: string; top: string }
@@ -1584,7 +1594,10 @@ export type TableComponentProps<TData extends TableData = TableData> = Omit<
 			value?: any
 		}) => void
 		onInfiniteScrollLoad?: ({ table }: { table: TableInstance<TData> }) => void
-		organizeColumnsMenu?(columns: Table_Column<TData>[]): Table_Column<TData>[]
+		organizeColumnsMenu?(
+			columns: Table_Column<TData>[],
+			table: TableInstance<TData>
+		): Table_Column<TData>[]
 		organizeGroupingMenu?:
 			| readonly string[]
 			| ValueTransformer<readonly Table_Column<TData>[]>

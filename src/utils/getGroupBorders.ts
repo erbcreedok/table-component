@@ -21,7 +21,8 @@ export const getCellGroupBorders = ({
 	isGroupedColumn,
 }: CellProps) => {
 	const groupBorder = table.options.groupBorder
-	const borderLeft = groupBorder
+	const grouping = table.getState().grouping
+	const borderRight = groupBorder
 		? typeof groupBorder === 'string'
 			? groupBorder
 			: groupBorder.left
@@ -37,8 +38,8 @@ export const getCellGroupBorders = ({
 		borders.borderBottom = 'none'
 	}
 
-	if (isGroupedColumn && colIndex > 0) {
-		borders.borderLeft = borderLeft
+	if (isGroupedColumn && colIndex < grouping.length - 1) {
+		borders.borderRight = borderRight
 	}
 	if (isFirstOfGroup && rowIndex > 0) {
 		borders.borderTop = borderTop
@@ -49,7 +50,8 @@ export const getCellGroupBorders = ({
 
 export const getHeaderGroupBorders = ({ header, table }: HeaderProps) => {
 	const groupBorder = table.options.groupBorder
-	const borderLeft = groupBorder
+	const grouping = table.getState().grouping
+	const borderRight = groupBorder
 		? typeof groupBorder === 'string'
 			? groupBorder
 			: groupBorder.left
@@ -59,8 +61,8 @@ export const getHeaderGroupBorders = ({ header, table }: HeaderProps) => {
 	const allColumns = table.getVisibleLeafColumns()
 	const colIndex = allColumns.findIndex((c) => c.id === column.id)
 
-	if (colIndex > 0 && column.getIsGrouped()) {
-		borders.borderLeft = borderLeft
+	if (colIndex < grouping.length - 1 && column.getIsGrouped()) {
+		borders.borderRight = borderRight
 	}
 
 	return borders

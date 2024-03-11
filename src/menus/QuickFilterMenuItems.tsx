@@ -25,7 +25,7 @@ export const QuickFilterMenuItems = ({
 			localization,
 			e2eLabels,
 		},
-	} = table as TableInstance
+	} = table
 	const enableFiltering = column.getCanFilter()
 
 	if (!enableFiltering || !enableColumnFilters) {

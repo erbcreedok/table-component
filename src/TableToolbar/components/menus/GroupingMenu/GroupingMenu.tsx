@@ -169,8 +169,8 @@ export const GroupingMenu = <TData extends Record<string, any> = {}>({
 
 								{groupedColumns.map((column) => (
 									<MenuItem
-										column={column as Table_Column<TData>}
-										key={(column as Table_Column<TData>).id}
+										column={column}
+										key={column.id}
 										enableDrag={groupedColumns.length > 1}
 										hoveredColumn={hoveredColumn}
 										onColumnOrderChange={onColumnOrderChanged}

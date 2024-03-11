@@ -226,7 +226,8 @@ export const TableBodyCell = ({
 		if (enableColumnOrdering && draggingColumn) {
 			setHoveredColumn(
 				columnDef.enableColumnOrdering !== false &&
-					draggingColumn.getIsGrouped() === column.getIsGrouped()
+					draggingColumn.getIsGrouped() === column.getIsGrouped() &&
+					draggingColumn.getIsPinned() === column.getIsPinned()
 					? column
 					: null
 			)

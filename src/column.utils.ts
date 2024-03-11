@@ -6,9 +6,12 @@ import type { Theme } from '@mui/material/styles'
 import { Table_AggregationFns } from './aggregationFns'
 import { GroupedCellBase } from './components/GroupedCellBase'
 import { CellBase } from './components/CellBase'
+import { Colors } from './components/styles'
 import { Table_FilterFns } from './filterFns'
 import { Table_SortingFns } from './sortingFns'
 import { utilColumns } from './utilColumns'
+import { showRowActionsColumn } from './utils/showRowActionsColumn'
+import { showUtilityColumn } from './utils/showUtilityColumn'
 
 import type {
 	TableComponentProps,
@@ -199,13 +202,9 @@ export const getLeadingDisplayColumnIds = <
 	props: TableComponentProps<TData>
 ) =>
 	[
-		(props.enableRowDragging ||
-			(!props.hideRowSelectionColumn && props.enableRowSelection)) &&
-			utilColumns.column,
+		showUtilityColumn(props) && utilColumns.column,
 		props.positionActionsColumn === 'first' &&
-			(props.enableRowActions ||
-				(props.enableEditing &&
-					['row', 'modal'].includes(props.editingMode ?? ''))) &&
+			showRowActionsColumn(props) &&
 			utilColumns.actions,
 		props.positionExpandColumn === 'first' &&
 			showExpandColumn(props) &&
@@ -218,13 +217,9 @@ export const getTrailingDisplayColumnIds = <
 	props: TableComponentProps<TData>
 ) => [
 	props.positionActionsColumn === 'last' &&
-		(props.enableRowActions ||
-			(props.enableEditing &&
-				['row', 'modal'].includes(props.editingMode ?? ''))) &&
+		showRowActionsColumn(props) &&
 		utilColumns.actions,
-	props.positionExpandColumn === 'last' &&
-		showExpandColumn(props) &&
-		utilColumns.expand,
+	showExpandColumn(props) && utilColumns.expand,
 ]
 
 export const getDefaultColumnOrderIds = <
@@ -319,15 +314,11 @@ export const getCommonCellStyles = ({
 			: 'inherit',
 	backgroundImage: 'inherit',
 	boxShadow: getIsLastLeftPinnedColumn(table, column)
-		? `-4px 0 8px -6px ${alpha(theme.palette.common.black, 0.2)} inset`
+		? `-2px 0 0 0 ${Colors.Gray} inset`
 		: getIsFirstRightPinnedColumn(column)
-		? `4px 0 8px -6px ${alpha(theme.palette.common.black, 0.2)} inset`
+		? `2px 0 0 0 ${Colors.Gray} inset`
 		: undefined,
 	display: table.options.layoutMode === 'grid' ? 'flex' : 'table-cell',
-	left:
-		column.getIsPinned() === 'left'
-			? `${column.getStart('left')}px`
-			: undefined,
 	...(table.getState().draggingColumn?.id === column.id ||
 	table.getState().hoveredColumn?.id === column.id
 		? {
@@ -338,10 +329,6 @@ export const getCommonCellStyles = ({
 		column.getIsPinned() && column.columnDef.columnDefType !== 'group'
 			? 'sticky'
 			: 'relative',
-	right:
-		column.getIsPinned() === 'right'
-			? `${getTotalRight(table, column)}px`
-			: undefined,
 	transition:
 		table.options.enableColumnVirtualization || column.getIsResizing()
 			? 'none'
@@ -354,6 +341,7 @@ export const getCommonCellStyles = ({
 			? `${column.getSize()} 0 auto`
 			: undefined,
 	...getColumnWidth({ column, header }),
+	...table.options.getPinnedColumnPosition?.(column, table),
 })
 
 export const Table_DisplayColumnIdsArray: string[] = [

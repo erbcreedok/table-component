@@ -43,6 +43,8 @@ import { ExpandFilledIcon } from './icons/ExpandFilledIcon'
 import { EyeIcon } from './icons/EyeIcon'
 import { EyeCrossedIcon } from './icons/EyeCrossedIcon'
 import { FiltersIcon } from './icons/FiltersIcon'
+import { FreezeIcon } from './icons/FreezeIcon'
+import { FreezeToLeftIcon } from './icons/FreezeToLeftIcon'
 import { HideIcon } from './icons/HideIcon'
 import { LocationLeft } from './icons/LocationLeft'
 import { LocationRight } from './icons/LocationRight'
@@ -97,6 +99,8 @@ export interface Table_Icons {
 	EyeCrossedIcon: any
 	FilterListIcon: any
 	FilterListOffIcon: any
+	FreezeIcon: any
+	FreezeToLeftIcon: any
 	FullscreenExitIcon: any
 	FullscreenIcon: any
 	GroupIcon: any
@@ -165,6 +169,8 @@ export const Default_Icons: Table_Icons = {
 	EyeCrossedIcon,
 	FilterListIcon,
 	FilterListOffIcon,
+	FreezeIcon,
+	FreezeToLeftIcon,
 	FullscreenExitIcon,
 	FullscreenIcon,
 	KeyboardDoubleArrowDownIcon,

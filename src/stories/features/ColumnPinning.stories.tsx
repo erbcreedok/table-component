@@ -49,7 +49,13 @@ const data = [...Array(100)].map(() => ({
 }));
 
 export const ColumnPinningEnabled: Story<TableComponentProps> = () => (
-  <TableComponent columns={columns} data={data} enablePinning />
+  <TableComponent
+    columns={columns}
+    data={data}
+    enablePinning
+    enableColumnOrdering
+    enableColumnDragging
+  />
 );
 
 export const ColumnPinningInitial: Story<TableComponentProps> = () => (
@@ -57,6 +63,8 @@ export const ColumnPinningInitial: Story<TableComponentProps> = () => (
     columns={columns}
     data={data}
     enablePinning
+    enableColumnOrdering
+    enableColumnDragging
     initialState={{ columnPinning: { left: ['email'], right: ['state'] } }}
   />
 );
@@ -94,6 +102,8 @@ export const ColumnPinningDisabledPerColumn: Story<
     ]}
     data={data}
     enablePinning
+    enableColumnOrdering
+    enableColumnDragging
   />
 );
 
@@ -102,6 +112,8 @@ export const ColumnPinningWithSelect: Story<TableComponentProps> = () => (
     columns={columns}
     data={data}
     enablePinning
+    enableColumnOrdering
+    enableColumnDragging
     enableRowSelection
   />
 );
@@ -113,7 +125,8 @@ export const ColumnPinningWithDetailPanel: Story<
     columns={columns}
     data={data}
     enablePinning
-    enableExpanding
+    enableColumnOrdering
+    enableColumnDragging
     renderDetailPanel={({ row: _row }) => <h1>Hi</h1>}
   />
 );

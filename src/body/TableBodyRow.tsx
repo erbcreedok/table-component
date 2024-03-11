@@ -26,6 +26,7 @@ import { Colors } from '../components/styles'
 import { getIsMockRow } from '../utils/getIsMockRow'
 import { getSubRowIndex } from '../utils/getSubRowIndex'
 import { setHoveredRow } from '../utils/setHoveredRow'
+import { sortMappedVirtualCells } from '../utils/sortColumns'
 import { mapVirtualItems } from '../utils/virtual'
 
 import { Memo_TableBodyCell, TableBodyCell } from './TableBodyCell'
@@ -230,9 +231,11 @@ export const TableBodyRow: FC<TableBodyRowProps> = ({
 		]
 	)
 
-	const cells = mapVirtualItems(
-		getCellsFilteredByDisplay(row?.getVisibleCells()),
-		virtualColumns
+	const cells = sortMappedVirtualCells(
+		mapVirtualItems(
+			getCellsFilteredByDisplay(row?.getVisibleCells()),
+			virtualColumns
+		)
 	)
 
 	const computedMeasureElement = useComputedMeasureElement(measureElement)

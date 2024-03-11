@@ -26,7 +26,7 @@ export const QuickHidingMenuItems = ({ column, table, setVisible }) => {
 		},
 	} = table
 
-	const allColumns = organizeColumnsMenu(getAllLeafColumns())
+	const allColumns = organizeColumnsMenu(getAllLeafColumns(), table)
 	const multirowDepthMatchingColumns = getMultirowDepthMatchingColumns(
 		multirowHeader,
 		multirowColumnsDisplayDepth

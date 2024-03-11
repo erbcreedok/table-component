@@ -46,8 +46,8 @@ export function getSortedRowModel<TData extends RowData>(): (
 
 					sortedData.sort((rowA, rowB) => {
 						for (let i = 0; i < availableSorting.length; i += 1) {
-							const sortEntry = availableSorting[i]!
-							const columnInfo = columnInfoById[sortEntry.id]!
+							const sortEntry = availableSorting[i]
+							const columnInfo = columnInfoById[sortEntry.id]
 							const isDesc = sortEntry?.desc ?? false
 
 							if (columnInfo.sortUndefined) {

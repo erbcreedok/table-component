@@ -21,6 +21,7 @@ import {
 import { createTheme } from '../theme/createTheme'
 import { DEFAULT_EXPAND_PADDING } from '../utilColumns'
 import { defaultSetSubRows } from '../utils/defaultGetSubRows'
+import { getDefaultPinnedColumnPosition } from '../utils/getDefaultPinnedColumnPosition'
 
 import { TableContext, TableContextType } from './TableContext'
 
@@ -67,6 +68,7 @@ export const TableProvider = <TData extends Record<string, any> = {}>({
 	enableTopToolbar = true,
 	expandPaddingSize = DEFAULT_EXPAND_PADDING,
 	filterFns,
+	getPinnedColumnPosition = getDefaultPinnedColumnPosition,
 	groupBorder = '6px solid white',
 	icons,
 	innerTable = false,
@@ -222,6 +224,7 @@ export const TableProvider = <TData extends Record<string, any> = {}>({
 		enableTopToolbar,
 		expandPaddingSize,
 		filterFns: _filterFns,
+		getPinnedColumnPosition,
 		groupBorder,
 		hierarchyTreeConfig,
 		icons: _icons,

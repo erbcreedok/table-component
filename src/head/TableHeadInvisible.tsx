@@ -3,9 +3,10 @@ import { VirtualItem } from '@tanstack/react-virtual'
 
 import { ColumnVirtualizerWrapper } from '../components/ColumnVirtualizerWrapper'
 import { DEFAULT_EXPAND_PADDING, utilColumns } from '../utilColumns'
+import { getColumnWidth } from '../column.utils'
+import { TableInstance } from '../TableComponent'
 import { getHeadersFilteredByDisplay } from '../utils/getFilteredByDisplay'
-import { getColumnWidth, getTotalRight } from '../column.utils'
-import { Table_HeaderGroup, TableInstance } from '../TableComponent'
+import { sortMappedVirtualHeaders } from '../utils/sortColumns'
 import { mapVirtualItems } from '../utils/virtual'
 
 type TableHeadInvisibleProps = {
@@ -21,7 +22,10 @@ export const TableHeadInvisible: FC<TableHeadInvisibleProps> = ({
 	const {
 		getHeaderGroups,
 		getPaginationRowModel,
-		options: { expandPaddingSize = DEFAULT_EXPAND_PADDING },
+		options: {
+			expandPaddingSize = DEFAULT_EXPAND_PADDING,
+			getPinnedColumnPosition,
+		},
 	} = table
 	const expandedDepth = getPaginationRowModel().rows.reduce(
 		(max, row) => Math.max(row.depth, max),
@@ -30,12 +34,14 @@ export const TableHeadInvisible: FC<TableHeadInvisibleProps> = ({
 
 	return (
 		<thead>
-			{(getHeaderGroups() as Table_HeaderGroup[]).map((headerGroup) => (
+			{getHeaderGroups().map((headerGroup) => (
 				<tr key={headerGroup.id}>
 					<ColumnVirtualizerWrapper>
-						{mapVirtualItems(
-							getHeadersFilteredByDisplay(headerGroup.headers),
-							virtualColumns
+						{sortMappedVirtualHeaders(
+							mapVirtualItems(
+								getHeadersFilteredByDisplay(headerGroup.headers),
+								virtualColumns
+							)
 						).map(([header, virtualColumn]) => {
 							const colWidth = getColumnWidth({ column: header.column, header })
 							const column = header.column
@@ -45,6 +51,8 @@ export const TableHeadInvisible: FC<TableHeadInvisibleProps> = ({
 									key={header.id}
 									ref={measureElement}
 									data-index={virtualColumn?.index}
+									data-header={column.header}
+									data-column-id={column.id}
 									style={{
 										...colWidth,
 										...(header.id === utilColumns.expand
@@ -53,15 +61,8 @@ export const TableHeadInvisible: FC<TableHeadInvisibleProps> = ({
 														expandedDepth * expandPaddingSize + colWidth.width,
 											  }
 											: {}),
-										left:
-											column.getIsPinned() === 'left'
-												? `${column.getStart('left')}px`
-												: undefined,
 										position: column.getIsPinned() ? 'sticky' : 'relative',
-										right:
-											column.getIsPinned() === 'right'
-												? `${getTotalRight(table, column)}px`
-												: undefined,
+										...getPinnedColumnPosition?.(column, table),
 									}}
 								/>
 							)
