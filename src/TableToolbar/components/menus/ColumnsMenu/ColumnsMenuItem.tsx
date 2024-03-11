@@ -55,6 +55,7 @@ export const ColumnsMenuItem = <TData extends TableData = TableData>({
 			localization,
 			icons: { GroupingIcon, LockedIcon },
 		},
+		getState,
 	} = table
 
 	const { columnDef } = column
@@ -109,6 +110,30 @@ export const ColumnsMenuItem = <TData extends TableData = TableData>({
 		}
 	}
 
+	// for clearer indication of where dragging column is being placed
+	const { columnOrder, grouping } = getState()
+
+	const getBorderSx = () => {
+		const isHovered = hoveredColumn?.id === column.id
+
+		if (!draggingColumn || !isHovered) return {}
+
+		const orderedColumns = grouping.includes(draggingColumn.id)
+			? grouping
+			: columnOrder
+
+		const isDragginUpwards =
+			orderedColumns.indexOf(draggingColumn.id) >
+			orderedColumns.indexOf(hoveredColumn.id)
+
+		const borderStyle = `1px solid ${Colors.LightBlue}`
+
+		return {
+			borderTop: isDragginUpwards ? borderStyle : 'none',
+			borderBottom: !isDragginUpwards ? borderStyle : 'none',
+		}
+	}
+
 	return (
 		<>
 			<MenuItem
@@ -123,10 +148,7 @@ export const ColumnsMenuItem = <TData extends TableData = TableData>({
 					filter: isDragging
 						? 'filter: drop-shadow(0px 4px 22px rgba(29, 30, 38, 0.15))'
 						: 'none',
-					borderBottom:
-						hoveredColumn?.id === column.id
-							? `1px solid ${Colors.LightBlue}`
-							: 'none',
+					...getBorderSx(),
 					pl: `${(column.depth + 0.5) * 2}rem`,
 					py: '6px',
 					height: 36,
