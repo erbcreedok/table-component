@@ -3,7 +3,7 @@ import FormControlLabel from '@mui/material/FormControlLabel'
 import React, { ChangeEvent, MouseEvent, ReactNode } from 'react'
 import Checkbox, { CheckboxProps } from '@mui/material/Checkbox'
 import Tooltip from '@mui/material/Tooltip'
-import Radio from '@mui/material/Radio'
+import Radio, { RadioProps } from '@mui/material/Radio'
 import type { Theme } from '@mui/material/styles'
 
 import type { Table_Row, TableData, TableInstance } from '..'
@@ -61,7 +61,7 @@ export const SelectCheckbox = <TData extends TableData>({
 				: table.getIsAllRowsSelected())
 		: row?.getIsSomeSelected()
 
-	const commonProps: CheckboxProps = {
+	const commonProps: RadioProps = {
 		disableRipple: true,
 		indeterminateIcon: <CheckboxIndeterminateIcon />,
 		checkedIcon: <CheckboxCheckedIcon />,
