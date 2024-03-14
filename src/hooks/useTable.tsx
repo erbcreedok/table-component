@@ -100,7 +100,7 @@ export const useTable = <TData extends TableData = TableData>(
 		initialState.columnVisibility ?? {}
 	)
 	const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
-		[]
+		initialState.columnFilters ?? []
 	)
 	const [rowSelection, setRowSelection] = React.useState({})
 	const [draggingColumn, setDraggingColumn] =
