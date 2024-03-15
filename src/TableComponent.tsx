@@ -1654,6 +1654,7 @@ export type TableComponentProps<TData extends TableData = TableData> = Omit<
 			row: Table_Row<TData>
 			table: TableInstance<TData>
 		}) => ReactNode[]
+		renderRowActionMenuItemsOnOpen?: boolean
 		renderRowActions?: ({
 			cell,
 			row,

@@ -33,6 +33,7 @@ export const RowActionMenu = <TData extends Record<string, any> = {}>({
 			renderEditMenuItem,
 			renderRowActionMenuItems,
 			e2eLabels,
+			renderRowActionMenuItemsOnOpen,
 		},
 	} = table
 
@@ -72,11 +73,12 @@ export const RowActionMenu = <TData extends Record<string, any> = {}>({
 						{localization.edit}
 					</MenuItemBase>
 				))}
-			{renderRowActionMenuItems?.({
-				row,
-				table,
-				closeMenu: () => setOpen(false),
-			})}
+			{(!renderRowActionMenuItemsOnOpen || open) &&
+				renderRowActionMenuItems?.({
+					row,
+					table,
+					closeMenu: () => setOpen(false),
+				})}
 		</Menu>
 	)
 }
