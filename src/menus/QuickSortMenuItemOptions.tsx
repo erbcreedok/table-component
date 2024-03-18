@@ -3,7 +3,7 @@ import ListItemIcon from '@mui/material/ListItemIcon'
 import MenuItem from '@mui/material/MenuItem'
 import { FC } from 'react'
 
-import { Colors } from '../components/styles'
+import { SelectedChevron } from '../components/SelectedChevron'
 import { Table_Column, TableInstance } from '../TableComponent'
 import { getSortingIcon, getSortingText } from '../utils/getSortingInfo'
 import { getPascalCase } from '../utils/getPascalCase'
@@ -23,12 +23,7 @@ export const QuickSortMenuItemOptions: FC<Props> = ({
 	setVisible,
 }) => {
 	const {
-		options: {
-			enableSorting,
-			enableMultiSort,
-			icons: { CheckIcon },
-			e2eLabels,
-		},
+		options: { enableSorting, enableMultiSort, e2eLabels },
 	} = table
 
 	const handleSortAsc = () => {
@@ -45,11 +40,6 @@ export const QuickSortMenuItemOptions: FC<Props> = ({
 		return null
 	}
 
-	const selectedChevron = (
-		<Box sx={{ ml: 'auto', color: Colors.LightBlue, height: '24px' }}>
-			<CheckIcon />
-		</Box>
-	)
 	const ascText = getSortingText({
 		column,
 		table,
@@ -90,7 +80,7 @@ export const QuickSortMenuItemOptions: FC<Props> = ({
 				<Box sx={commonListItemStyles}>
 					<ListItemIcon>{ascIcon}</ListItemIcon>
 					{ascText}
-					{column.getIsSorted() === 'asc' && selectedChevron}
+					{column.getIsSorted() === 'asc' && <SelectedChevron table={table} />}
 				</Box>
 			</MenuItem>
 
@@ -112,7 +102,7 @@ export const QuickSortMenuItemOptions: FC<Props> = ({
 				<Box sx={commonListItemStyles}>
 					<ListItemIcon>{descIcon}</ListItemIcon>
 					{descText}
-					{column.getIsSorted() === 'desc' && selectedChevron}
+					{column.getIsSorted() === 'desc' && <SelectedChevron table={table} />}
 				</Box>
 			</MenuItem>
 		</>

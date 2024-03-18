@@ -490,6 +490,7 @@ const TeamsTable: Story<TeamsTableConfigs> = (args) => {
 					enableExpanding
 					enableStickyHeader
 					enableGrouping
+					enablePinning
 					filterFromLeafRows
 					initialState={{
 						showColumnFilters: true,

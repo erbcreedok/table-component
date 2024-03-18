@@ -2,6 +2,7 @@ import Box from '@mui/material/Box'
 import ListItemIcon from '@mui/material/ListItemIcon'
 import MenuItem from '@mui/material/MenuItem'
 
+import { Table_Column, TableData, TableInstance } from '../TableComponent'
 import { getPascalCase } from '../utils/getPascalCase'
 import { withNativeEvent } from '../utils/withNativeEvent'
 import { getMultirowDepthMatchingColumns } from '../utils/getMultirowDepthMatchingColumns'
@@ -12,17 +13,26 @@ import { getTestAttributes } from '../utils/getTestAttributes'
 
 import { commonListItemStyles, commonMenuItemStyles } from './constants'
 
-export const QuickHidingMenuItems = ({ column, table, setVisible }) => {
+type QuickHidingMenuItemsProps<TData extends TableData = TableData> = {
+	column: Table_Column<TData>
+	table: TableInstance<TData>
+	setVisible(open?: boolean): void
+}
+export const QuickHidingMenuItems = <TData extends TableData = TableData>({
+	column,
+	table,
+	setVisible,
+}: QuickHidingMenuItemsProps<TData>) => {
 	const {
 		getAllLeafColumns,
 		options: {
+			e2eLabels,
 			enableHiding,
 			icons: { EyeCrossedIcon },
 			localization,
 			multirowHeader,
 			multirowColumnsDisplayDepth,
 			organizeColumnsMenu = defaultOrganizeColumnsMenu,
-			test,
 		},
 	} = table
 
@@ -46,6 +56,9 @@ export const QuickHidingMenuItems = ({ column, table, setVisible }) => {
 		if (column.getIsGrouped()) {
 			column.toggleGrouping()
 		}
+		if (column.getIsPinned()) {
+			column.pin(false)
+		}
 		column.clearSorting()
 		setVisible(false)
 	}
@@ -54,7 +67,7 @@ export const QuickHidingMenuItems = ({ column, table, setVisible }) => {
 		!column.getCanHide() ||
 		(!nonMultiheaderGroup.columns.filter((col) => col.id === column.id)
 			.length &&
-			multirowColumnsDisplayDepth <= multirowHeader.length)
+			(multirowColumnsDisplayDepth ?? 0) <= (multirowHeader ?? []).length)
 
 	if (!enableHiding) return null
 
@@ -72,7 +85,7 @@ export const QuickHidingMenuItems = ({ column, table, setVisible }) => {
 				table
 			)(handleHideColumn)}
 			sx={commonMenuItemStyles}
-			{...getTestAttributes(test, 'columnMenuHide')}
+			{...getTestAttributes(e2eLabels, 'columnMenuHide')}
 		>
 			<Box sx={commonListItemStyles}>
 				<ListItemIcon>

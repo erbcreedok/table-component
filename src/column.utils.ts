@@ -161,16 +161,14 @@ export const reorderColumn = <TData extends Record<string, any> = {}>(
 	targetColumn: Table_Column<TData>,
 	columnOrder: ColumnOrderState
 ): ColumnOrderState => {
-	if (draggedColumn?.getCanPin?.()) {
-		draggedColumn.pin(targetColumn.getIsPinned())
-	}
-	columnOrder.splice(
-		columnOrder.indexOf(targetColumn.id),
+	const newColumnOrder = [...columnOrder]
+	newColumnOrder.splice(
+		newColumnOrder.indexOf(targetColumn.id),
 		0,
-		columnOrder.splice(columnOrder.indexOf(draggedColumn.id), 1)[0]
+		newColumnOrder.splice(newColumnOrder.indexOf(draggedColumn.id), 1)[0]
 	)
 
-	return [...columnOrder]
+	return newColumnOrder
 }
 
 export const reorderColumnSet = <TData extends Record<string, any>>(

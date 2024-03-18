@@ -4,6 +4,7 @@ import ListItemIcon from '@mui/material/ListItemIcon'
 import MenuItem from '@mui/material/MenuItem'
 import { FC } from 'react'
 
+import { SelectedChevron } from '../components/SelectedChevron'
 import { Table_Column, TableInstance } from '../TableComponent'
 import { getColumnsFilteredByDisplay } from '../utils/getFilteredByDisplay'
 import { getPascalCase } from '../utils/getPascalCase'
@@ -41,6 +42,9 @@ export const QuickColumnPinningMenuItemOptions: FC<Props> = ({
 			localization,
 		},
 	} = table
+	const { columnPinning } = table.getState()
+	const isPinned = column.getIsPinned() === direction
+	const isMultipleColumnsPinned = (columnPinning[direction] ?? []).length > 1
 
 	const handleFreezeColumn = () => {
 		table.setColumnPinning((old) => ({
@@ -111,6 +115,9 @@ export const QuickColumnPinningMenuItemOptions: FC<Props> = ({
 						</IconBox>
 					</ListItemIcon>
 					{localization.freezeThisColumn}
+					{isPinned && !isMultipleColumnsPinned && (
+						<SelectedChevron table={table} />
+					)}
 				</Box>
 			</MenuItem>
 
@@ -121,7 +128,7 @@ export const QuickColumnPinningMenuItemOptions: FC<Props> = ({
 					{
 						el: `ColumnHeaderMenu_${getPascalCase(
 							column.columnDef.header
-						)}_FreezeUpToThisColumn`,
+						)}_FreezeUpToThisColumnTo${capitalize(direction)}`,
 						type: 'click',
 					},
 					table
@@ -141,6 +148,9 @@ export const QuickColumnPinningMenuItemOptions: FC<Props> = ({
 						</IconBox>
 					</ListItemIcon>
 					{localization.freezeUpToThisColumn}
+					{isPinned && isMultipleColumnsPinned && (
+						<SelectedChevron table={table} />
+					)}
 				</Box>
 			</MenuItem>
 		</>

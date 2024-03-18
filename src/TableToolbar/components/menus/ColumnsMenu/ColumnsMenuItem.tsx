@@ -84,6 +84,9 @@ export const ColumnsMenuItem = <TData extends TableData = TableData>({
 			if (col.getIsGrouped()) {
 				col.toggleGrouping()
 			}
+			if (col.getIsPinned()) {
+				col.pin(false)
+			}
 			col.clearSorting()
 			col.toggleVisibility()
 		}

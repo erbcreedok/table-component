@@ -257,7 +257,7 @@ export const TableHeadCell: FC<TableHeadCellProps> = ({
 							overflow: column.getIsResizing() ? 'visible' : 'hidden',
 							'&:hover, &:active': {
 								overflow: 'visible',
-								zIndex: 2,
+								zIndex: column.getIsResizing() ? 10 : 2,
 							},
 							p: '0',
 							pb: columnDefType === 'display' ? 0 : '0.1rem',
@@ -269,7 +269,7 @@ export const TableHeadCell: FC<TableHeadCellProps> = ({
 							textTransform: uppercaseHeader && 'uppercase',
 							zIndex:
 								column.getIsResizing() || draggingColumn?.id === column.id
-									? 5
+									? 10
 									: column.getIsPinned() && columnDefType !== 'group'
 									? 4
 									: 1,

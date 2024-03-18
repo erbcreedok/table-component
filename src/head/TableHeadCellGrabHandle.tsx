@@ -87,22 +87,14 @@ export const TableHeadCellGrabHandle: FC<Props> = ({
 			hoveredColumn &&
 			hoveredColumn.id !== draggingColumn?.id
 		) {
-			if (!column.getIsGrouped()) {
-				setColumnOrder((columnOrder) =>
-					reorderColumn(
-						column,
-						hoveredColumn as Table_Column,
-						getValidColumnOrder(table.options, columnOrder)
-					)
-				)
-			} else if (
-				'getIsGrouped' in hoveredColumn &&
-				hoveredColumn.getIsGrouped()
-			) {
+			if ('getIsGrouped' in hoveredColumn && hoveredColumn.getIsGrouped()) {
 				setGrouping((grouping) =>
 					reorderColumn(column, hoveredColumn, grouping)
 				)
-			} else if ('getIsPinned' in hoveredColumn) {
+			} else if (
+				'getIsPinned' in hoveredColumn &&
+				hoveredColumn.getIsPinned()
+			) {
 				const pinPosition = hoveredColumn.getIsPinned()
 				if (!pinPosition) return
 				setColumnPinning((columnPinning) => ({
@@ -113,6 +105,14 @@ export const TableHeadCellGrabHandle: FC<Props> = ({
 						columnPinning[pinPosition] ?? []
 					),
 				}))
+			} else {
+				setColumnOrder((columnOrder) =>
+					reorderColumn(
+						column,
+						hoveredColumn as Table_Column,
+						getValidColumnOrder(table.options, columnOrder)
+					)
+				)
 			}
 		}
 		setDraggingColumn(null)

@@ -49,6 +49,7 @@ export const TableHeadCellResizeHandle: FC<Props> = ({ header, table }) => {
 					opacity: 1,
 					transition: 'opacity 0.2s',
 				},
+				zIndex: column.getIsResizing() ? 10 : 0,
 			})}
 			style={{
 				transform:
@@ -68,7 +69,7 @@ export const TableHeadCellResizeHandle: FC<Props> = ({ header, table }) => {
 						? undefined
 						: 'all 150ms ease-in-out',
 					userSelect: 'none',
-					zIndex: 4,
+					zIndex: 10,
 					borderColor: column.getIsResizing()
 						? Colors.LightBlue
 						: IconsColor.active,

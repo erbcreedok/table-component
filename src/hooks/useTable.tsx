@@ -433,6 +433,7 @@ export const useTable = <TData extends TableData = TableData>(
 			getSubRows: searchData ? noop : defaultGetSubRows,
 			onColumnFiltersChange: setColumnFilters,
 			onColumnOrderChange: setColumnOrder,
+			onColumnSizingChange: setColumnSizing,
 			onRowSelectionChange: setRowSelection,
 			onColumnVisibilityChange: setColumnVisibility,
 			onSortingChange: setSorting,
