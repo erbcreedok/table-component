@@ -1,7 +1,12 @@
 import { createCell, createRow } from '@tanstack/table-core'
 import type { Column, Table as TableType } from '@tanstack/react-table'
 import { FC, useCallback, useMemo } from 'react'
-import { Range, useVirtualizer, Virtualizer } from '@tanstack/react-virtual'
+import {
+	defaultRangeExtractor,
+	Range,
+	useVirtualizer,
+	Virtualizer,
+} from '@tanstack/react-virtual'
 import MuiTable from '@mui/material/Table'
 
 import { getColumnId } from '../column.utils'
@@ -13,7 +18,6 @@ import { TableFooter } from '../footer/TableFooter'
 import type { Table_ColumnDef, Table_Row, TableInstance } from '..'
 import { TableHeadInvisible } from '../head/TableHeadInvisible'
 import { isColumnDisplayed } from '../utils/getFilteredByDisplay'
-import { indexesRangeExtractor } from '../utils/virtual'
 
 interface Props {
 	table: TableInstance
@@ -39,7 +43,13 @@ export const Table: FC<Props> = ({ table }) => {
 		},
 		refs: { tableContainerRef },
 	} = table
-	const { isFullScreen, columnPinning, columnVisibility } = getState()
+	const {
+		isFullScreen,
+		columnPinning,
+		columnVisibility,
+		columnOrder,
+		grouping,
+	} = getState()
 
 	const tableProps =
 		muiTableProps instanceof Function ? muiTableProps({ table }) : muiTableProps
@@ -63,14 +73,17 @@ export const Table: FC<Props> = ({ table }) => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [table.getRowModel().rows, columnPinning, columnVisibility])
 
-	const [leftPinnedIndexes, centerIndexes, rightPinnedIndexes] = useMemo(
+	const [leftPinnedIndexes, rightPinnedIndexes] = useMemo(
 		() =>
 			enableColumnVirtualization
-				? table
-						.getVisibleLeafColumns()
+				? [
+						...table.getLeftVisibleLeafColumns(),
+						...table.getCenterVisibleLeafColumns(),
+						...table.getRightVisibleLeafColumns(),
+				  ]
 						.filter(isColumnDisplayed)
 						.reduce(
-							([left, center, right], column, index) => {
+							([left, right], column, index) => {
 								switch (column.getIsPinned()) {
 									case 'left':
 										left.push(index)
@@ -79,15 +92,22 @@ export const Table: FC<Props> = ({ table }) => {
 										right.push(index)
 										break
 									default:
-										center.push(index)
+										break
 								}
 
-								return [left, center, right]
+								return [left, right]
 							},
-							[[], [], []] as [number[], number[], number[]]
+							[[], []] as [number[], number[]]
 						)
 				: [[], [], []],
-		[enableColumnVirtualization, table]
+		[
+			enableColumnVirtualization,
+			table,
+			columnOrder,
+			columnPinning,
+			columnVisibility,
+			grouping,
+		]
 	)
 
 	const columnVirtualizer:
@@ -102,19 +122,14 @@ export const Table: FC<Props> = ({ table }) => {
 				overscan: 1,
 				// eslint-disable-next-line react-hooks/rules-of-hooks
 				rangeExtractor: useCallback(
-					(range: Range) => {
-						const result = [
+					(range: Range) => [
+						...new Set([
 							...leftPinnedIndexes,
-							...indexesRangeExtractor(
-								{ ...range, count: centerIndexes.length },
-								centerIndexes
-							),
+							...defaultRangeExtractor(range),
 							...rightPinnedIndexes,
-						]
-
-						return result
-					},
-					[leftPinnedIndexes, centerIndexes, rightPinnedIndexes]
+						]),
+					],
+					[leftPinnedIndexes, rightPinnedIndexes]
 				),
 				...vProps,
 		  })
