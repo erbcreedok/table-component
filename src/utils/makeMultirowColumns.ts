@@ -11,7 +11,8 @@ import { getColumnId, getTotalRight } from '../column.utils'
 export const makeMultirowColumns = <TData extends TableData = {}>(
 	columns: Table_Column<TData>[],
 	multiHeaderRow: MultirowHeaderRow,
-	table: TableInstance
+	table: TableInstance,
+	filterMultirowCanHide = false
 ) => {
 	const columnIdsText = multiHeaderRow.columns.reduce((result, current) => {
 		const obj = result
@@ -67,6 +68,10 @@ export const makeMultirowColumns = <TData extends TableData = {}>(
 			colIds: [column.id],
 			depth: multiHeaderRow.depth,
 			originalColIds,
+		}
+
+		if (filterMultirowCanHide && text && !column.getCanHide()) {
+			return result
 		}
 
 		if (!result.length) {

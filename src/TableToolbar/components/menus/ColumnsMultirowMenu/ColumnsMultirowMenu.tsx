@@ -331,9 +331,10 @@ export const ColumnsMultirowMenu = <TData extends TableData = {}>({
 					) ?? multirowHeader[0]
 
 				const multirowColumns = makeMultirowColumns(
-					columns.filter((col) => col.getCanHide()),
+					columns,
 					multirowDepthMatchingRow,
-					table as TableInstance
+					table as TableInstance,
+					true
 				)
 
 				const multirowColumnsWithParents = addMultirowColumnsParents(
