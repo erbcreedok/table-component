@@ -16,7 +16,7 @@ type Props<TData extends TableData> = {
 	table: TableInstance | TableInstance<TData>
 	parentRow?: Table_Row | Table_Row<TData>
 	label?: ReactNode | ((props: CheckboxProps) => ReactNode)
-} & CheckboxProps
+} & (CheckboxProps | RadioProps)
 
 export const SelectCheckbox = <TData extends TableData>({
 	row,
@@ -61,7 +61,7 @@ export const SelectCheckbox = <TData extends TableData>({
 				: table.getIsAllRowsSelected())
 		: row?.getIsSomeSelected()
 
-	const commonProps: RadioProps = {
+	const commonProps: CheckboxProps = {
 		disableRipple: true,
 		indeterminateIcon: <CheckboxIndeterminateIcon />,
 		checkedIcon: <CheckboxCheckedIcon />,
@@ -127,7 +127,7 @@ export const SelectCheckbox = <TData extends TableData>({
 
 	const checkbox =
 		enableMultiRowSelection === false ? (
-			<Radio {...commonProps} />
+			<Radio {...(commonProps as RadioProps)} />
 		) : (
 			<Checkbox {...commonProps} />
 		)
