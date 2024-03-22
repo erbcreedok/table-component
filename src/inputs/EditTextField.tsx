@@ -86,6 +86,7 @@ export const EditTextField = <TData extends TableData>({
 		isNumeric,
 		minValue,
 		maxValue,
+		decimalPlaces: (columnDef as any).decimalPlaces,
 		label: showLabel ? column.columnDef.header : undefined,
 		name: column.id,
 		placeholder: columnDef.header,

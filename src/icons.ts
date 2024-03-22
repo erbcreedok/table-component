@@ -71,6 +71,7 @@ import { InsertColumnLeftIcon } from './icons/InsertColumnLeftIcon'
 import { InsertColumnRightIcon } from './icons/InsertColumnRightIcon'
 import { DeleteIcon } from './icons/DeleteIcon'
 import { TextTypeIcon } from './icons/TextTypeIcon'
+import { NumericTypeIcon } from './icons/NumericTypeIcon'
 
 export interface Table_Icons {
 	AnalyticsIcon: any
@@ -145,6 +146,7 @@ export interface Table_Icons {
 	InsertColumnRightIcon: any
 	DeleteIcon: any
 	TextTypeIcon: any
+	NumericTypeIcon: any
 }
 
 export const Default_Icons: Table_Icons = {
@@ -220,4 +222,5 @@ export const Default_Icons: Table_Icons = {
 	InsertColumnRightIcon,
 	DeleteIcon,
 	TextTypeIcon,
+	NumericTypeIcon,
 }

@@ -404,7 +404,7 @@ const defaultRowsCount = 100
 
 const TeamsTable: Story<TeamsTableConfigs> = (args) => {
 	const {
-		columns,
+		columns: initialColumns,
 		defaultSorting,
 		defaultColumnOrder,
 		defaultColumnVisibility,
@@ -416,6 +416,7 @@ const TeamsTable: Story<TeamsTableConfigs> = (args) => {
 		setData,
 		...rest
 	} = args
+	const [columns, setColumns] = useState(initialColumns)
 	const [isDataLoading, setIsDataLoading] = useState(false)
 	const [isInnerTableOpen, setIsInnerTableOpen] = useState(false)
 	const [innerData] = useState(getExpandingTeamMembers(3, '', 3, 2))
@@ -505,6 +506,7 @@ const TeamsTable: Story<TeamsTableConfigs> = (args) => {
 				data={data}
 				multirowHeader={multirowHeader}
 				columns={getPropsHandledColumns(columns, args)}
+				setColumns={setColumns}
 				groupBorder={{ left: '6px solid white', top: '6px solid white' }}
 				initialState={{
 					sorting: defaultSorting ?? [],

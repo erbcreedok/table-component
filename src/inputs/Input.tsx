@@ -39,6 +39,7 @@ export type InputProps = Omit<
 	step?: number
 	minValue?: number
 	maxValue?: number
+	decimalPlaces?: number
 	error?: string | null | boolean
 	hideErrorOnFocus?: boolean
 }
@@ -48,6 +49,7 @@ export const Input = ({
 	step = 1,
 	minValue,
 	maxValue,
+	decimalPlaces,
 	hideErrorOnFocus,
 	error,
 	onChange,
@@ -89,7 +91,11 @@ export const Input = ({
 	const handleChange = useCallback<ChangeEventHandler<HTMLInputElement>>(
 		(event) => {
 			if (isNumeric) {
-				const value = getValidNumber(minValue, maxValue)(event.target.value)
+				const value = getValidNumber({
+					decimalPlaces,
+					min: minValue,
+					max: maxValue,
+				})(event.target.value)
 				if (value === false) return
 				Object.assign(event.target, {
 					value,

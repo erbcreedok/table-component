@@ -254,6 +254,10 @@ export interface Table_Localization {
 	columnShortNameOptional: string
 	shortNameIsDisplayedInAColumnHeader: string
 	columnSubtitleOptional: string
+	numeric: string
+	allowNegativeNumbers: string
+	numberOfDecimalPlaces: string
+	useSpaceAs1000Separator: string
 }
 
 export type DraggingMessage = {
@@ -721,14 +725,6 @@ export type Table_ColumnDef<TData extends TableData = TableData> = Omit<
 		 */
 		enableCustomization?: true
 		columns?: Table_ColumnDef<TData>[]
-		dataType?:
-			| 'textual'
-			| 'numeric'
-			| 'date'
-			| 'formula'
-			| 'single-select'
-			| 'multi-select'
-			| 'custom'
 		formatCellValue?: (value: unknown) => string
 		emptyHeader?: boolean
 		errorText?: string
@@ -742,7 +738,6 @@ export type Table_ColumnDef<TData extends TableData = TableData> = Omit<
 		enableEditing?: EnableEditingOption<TData>
 		filterFn?: Table_FilterFn<TData>
 		filterSelectOptions?: (string | SelectOption)[]
-		filterVariant?: 'text' | 'select' | 'multi-select' | 'range' | 'checkbox'
 		/**
 		 * footer must be a string. If you want custom JSX to render the footer, you can also specify a `Footer` option. (Capital F)
 		 */
@@ -765,8 +760,6 @@ export type Table_ColumnDef<TData extends TableData = TableData> = Omit<
 		 * @default gets set to the same value as `accessorKey` by default
 		 */
 		id?: LiteralUnion<string & keyof TData>
-		minValue?: number
-		maxValue?: number
 		muiTableBodyCellCopyButtonProps?:
 			| ButtonProps
 			| (({
@@ -910,7 +903,43 @@ export type Table_ColumnDef<TData extends TableData = TableData> = Omit<
 		 * Specifies that column is not diplayed in table and sidebars, except filtering
 		 */
 		notDisplayed?: boolean
-	}
+
+		// TODO In the next major release:
+
+		// todo split editVariant between dataTypes
+
+		// todo split filterVariant between dataTypes
+		filterVariant?: 'text' | 'select' | 'multi-select' | 'range' | 'checkbox'
+
+		// todo move to numeric datatype:
+		minValue?: number
+		maxValue?: number
+	} & (
+		| {
+				dataType: 'numeric'
+				/* // todo
+				minValue?: number
+				maxValue?: number
+				editVariant?: 'number'
+				*/
+				/** Number of digits after decimal point */
+				decimalPlaces?: number
+				/** @default 'SPACE1000' */
+				numberFormat?: 'SPACE1000' | 'NONE'
+		  }
+		| {
+				dataType?:
+					| 'textual'
+					| 'date'
+					| 'formula'
+					| 'single-select'
+					| 'multi-select'
+					| 'custom'
+				// typeOptions?: {
+				// 	hshs?: boolean
+				// }
+		  }
+	)
 
 export type Table_DefinedColumnDef<TData extends TableData = TableData> = Omit<
 	Table_ColumnDef<TData>,
@@ -1093,6 +1122,7 @@ export interface TestIds {
 	columnMenuInsertLeft?: string
 	columnMenuInsertRight?: string
 	columnMenuInsertText?: string
+	columnMenuInsertNumeric?: string
 	columnMenuEdit?: string
 	columnMenuDelete?: string
 	rowActionMenu?: string

@@ -11,25 +11,36 @@ import {
 	Box,
 	TextField,
 	styled,
+	Switch,
+	FormControlLabel,
 } from '@mui/material'
 import zIndex from '@mui/material/styles/zIndex'
 import { useBoolean, useOnClickOutside } from 'usehooks-ts'
-import { useForm, SubmitHandler } from 'react-hook-form'
+import { useForm, SubmitHandler, Controller } from 'react-hook-form'
 
 import {
 	SetColumns,
 	TableData,
+	Table_ColumnDef,
 	Table_DefinedColumnDef,
 } from '../TableComponent'
 import { useTableContext } from '../context/useTableContext'
 import { handleStopPropagation } from '../utils/withStopPropagation'
+import { DECIMAL_PLACES } from '../utils/constants'
+import { Input } from '../inputs/Input'
 
 import { commonListItemStyles, commonMenuItemStyles } from './constants'
 
-type Inputs = {
-	header: string
-	shortHeader: string
-	subtitle: string
+type Inputs<TData extends TableData = TableData> = Required<
+	Pick<
+		Table_ColumnDef<TData>,
+		'header' | 'dataType' | 'shortHeader' | 'subtitle'
+	>
+> & {
+	// numeric
+	decimalPlaces: number
+	allowNegative: boolean
+	space1000: boolean
 }
 
 type Props<TData extends TableData = TableData> = {
@@ -46,23 +57,31 @@ export const CustomColumnEditor: FC<Props> = ({
 	anchorEl,
 }) => {
 	const {
+		control,
 		register,
 		handleSubmit,
-		setValue,
-		getValues,
+		watch,
 		formState: { errors },
 	} = useForm<Inputs>({
 		defaultValues: {
+			// common
 			header: columnDef.header,
-			shortHeader: columnDef.shortHeader,
-			subtitle: columnDef.subtitle,
+			dataType: columnDef.dataType ?? 'textual',
+			shortHeader: columnDef.shortHeader ?? '',
+			subtitle: columnDef.subtitle ?? '',
+			// numeric
+			decimalPlaces: (columnDef as any).decimalPlaces ?? DECIMAL_PLACES,
+			allowNegative: columnDef.minValue !== 0,
+			space1000:
+				(columnDef as any).numberFormat === undefined ||
+				(columnDef as any).numberFormat === 'SPACE1000',
 		},
 	})
 
 	const {
 		table: {
 			options: {
-				icons: { TextTypeIcon },
+				icons: { TextTypeIcon, NumericTypeIcon },
 				localization,
 				customColumns,
 			},
@@ -71,22 +90,61 @@ export const CustomColumnEditor: FC<Props> = ({
 	} = useTableContext()
 
 	const handleSave: SubmitHandler<Inputs> = useCallback(
-		({ header, shortHeader, subtitle }) => {
+		({
+			header,
+			dataType,
+			shortHeader,
+			subtitle,
+			decimalPlaces,
+			allowNegative,
+			space1000,
+		}) => {
 			const index = originalColumns.findIndex(
 				(c) => c.accessorKey === columnDef.id
 			)
 			const nextColumns = [...originalColumns]
 			const updatedColumn = nextColumns[index]
 
-			updatedColumn.header = header
+			// common props
 
-			if (shortHeader === '' || shortHeader === undefined)
-				delete updatedColumn.shortHeader
+			updatedColumn.header = header
+			updatedColumn.dataType = dataType
+
+			// eslint-disable-next-line default-case
+			switch (dataType) {
+				case 'textual':
+					updatedColumn.editVariant = 'text'
+					break
+				case 'numeric':
+					updatedColumn.editVariant = 'number'
+					break
+			}
+
+			if (shortHeader === '') delete updatedColumn.shortHeader
 			else updatedColumn.shortHeader = shortHeader
 
-			if (subtitle === '' || subtitle === undefined)
-				delete updatedColumn.subtitle
+			if (subtitle === '') delete updatedColumn.subtitle
 			else updatedColumn.subtitle = subtitle
+
+			// numeric props
+
+			if (dataType === 'numeric') {
+				// eslint-disable-next-line no-param-reassign
+				decimalPlaces = Number(decimalPlaces)
+				if (decimalPlaces === DECIMAL_PLACES)
+					delete (updatedColumn as any).decimalPlaces
+				else (updatedColumn as any).decimalPlaces = decimalPlaces
+
+				if (allowNegative) delete updatedColumn.minValue
+				else updatedColumn.minValue = 0
+
+				if (space1000) delete (updatedColumn as any).numberFormat
+				else (updatedColumn as any).numberFormat = 'NONE'
+			} else {
+				delete (updatedColumn as any).decimalPlaces
+				delete updatedColumn.minValue
+				delete (updatedColumn as any).numberFormat
+			}
 
 			setColumns(nextColumns, updatedColumn, 'UPDATE')
 			close()
@@ -111,7 +169,14 @@ export const CustomColumnEditor: FC<Props> = ({
 	})
 	const arrowRef = useRef(null)
 
-	const { shortHeader, subtitle } = getValues()
+	const dataType = watch('dataType')
+
+	const { value: isShortHeader, setTrue: setShortHeaderTrue } = useBoolean(
+		columnDef.shortHeader !== undefined
+	)
+	const { value: isSubtitle, setTrue: setSubtitleTrue } = useBoolean(
+		columnDef.subtitle !== undefined
+	)
 
 	return (
 		<>
@@ -149,6 +214,7 @@ export const CustomColumnEditor: FC<Props> = ({
 							gap: '12px',
 						}}
 					>
+						{/* Header */}
 						<Box>
 							<strong>{localization.name}</strong>
 							<TextField
@@ -164,7 +230,9 @@ export const CustomColumnEditor: FC<Props> = ({
 								fullWidth
 							/>
 						</Box>
-						{shortHeader !== undefined && (
+
+						{/* Short Header */}
+						{isShortHeader && (
 							<Box>
 								<strong>{localization.shortName}</strong>
 								<TextField
@@ -183,7 +251,9 @@ export const CustomColumnEditor: FC<Props> = ({
 								/>
 							</Box>
 						)}
-						{subtitle !== undefined && (
+
+						{/* Subtitle */}
+						{isSubtitle && (
 							<Box>
 								<strong>{localization.subtitle}</strong>
 								<TextField
@@ -199,30 +269,115 @@ export const CustomColumnEditor: FC<Props> = ({
 								/>
 							</Box>
 						)}
+
+						{/* Type */}
 						<Box>
 							<strong>{localization.type}</strong>
-							<Select
-								value="text"
-								disabled
-								sx={(theme) => ({
-									marginTop: theme.spacing(),
-								})}
-								size="small"
-								fullWidth
-							>
-								<MenuItem
-									value="text"
-									sx={{ ...commonMenuItemStyles, padding: '0px' }}
-								>
-									<Box sx={commonListItemStyles}>
-										<ListItemIcon>
-											<TextTypeIcon />
-										</ListItemIcon>
-										{localization.text}
-									</Box>
-								</MenuItem>
-							</Select>
+							<Controller
+								name="dataType"
+								control={control}
+								render={({ field: { value, onChange } }) => (
+									<Select
+										value={value}
+										onChange={onChange}
+										sx={(theme) => ({
+											marginTop: theme.spacing(),
+										})}
+										MenuProps={{
+											style: { zIndex: zIndex.tooltip + 1 },
+										}}
+										size="small"
+										fullWidth
+									>
+										<MenuItem
+											value="textual"
+											sx={{ ...commonMenuItemStyles, padding: '0px' }}
+										>
+											<Box sx={commonListItemStyles}>
+												<ListItemIcon>
+													<TextTypeIcon />
+												</ListItemIcon>
+												{localization.text}
+											</Box>
+										</MenuItem>
+										<MenuItem
+											value="numeric"
+											sx={{ ...commonMenuItemStyles, padding: '0px' }}
+										>
+											<Box sx={commonListItemStyles}>
+												<ListItemIcon>
+													<NumericTypeIcon />
+												</ListItemIcon>
+												{localization.numeric}
+											</Box>
+										</MenuItem>
+									</Select>
+								)}
+							/>
 						</Box>
+
+						{/* Numeric Options */}
+						{dataType === 'numeric' && (
+							<>
+								<Box>
+									<strong>{localization.numberOfDecimalPlaces}</strong>
+									<Controller
+										name="decimalPlaces"
+										control={control}
+										render={({ field: { value, onChange } }) => (
+											<Input
+												value={value}
+												onChange={onChange}
+												isNumeric
+												minValue={0}
+												maxValue={10}
+												margin="dense"
+												size="small"
+												fullWidth
+											/>
+										)}
+									/>
+								</Box>
+								<Box>
+									<FormControlLabel
+										label={localization.useSpaceAs1000Separator}
+										control={
+											<Controller
+												name="space1000"
+												control={control}
+												render={({ field: { value, onChange } }) => (
+													<Switch
+														checked={value}
+														onChange={onChange}
+														size="small"
+													/>
+												)}
+											/>
+										}
+									/>
+								</Box>
+								<Box>
+									<FormControlLabel
+										label={localization.allowNegativeNumbers}
+										control={
+											<Controller
+												name="allowNegative"
+												control={control}
+												render={({ field: { value, onChange } }) => (
+													<Switch
+														checked={value}
+														onChange={onChange}
+														size="small"
+													/>
+												)}
+											/>
+										}
+									/>
+								</Box>
+							</>
+						)}
+
+						{/* Action Buttons */}
 						<Box
 							sx={(theme) => ({
 								display: 'flex',
@@ -233,6 +388,7 @@ export const CustomColumnEditor: FC<Props> = ({
 								size="small"
 								ref={addPropertyRef}
 								onClick={setPropertyMenuTrue}
+								disabled={isShortHeader && isSubtitle}
 							>
 								+ {localization.addProperty}
 							</Button>
@@ -258,7 +414,7 @@ export const CustomColumnEditor: FC<Props> = ({
 				<MenuList>
 					<MenuItem
 						onClick={() => {
-							setValue('shortHeader', '')
+							setShortHeaderTrue()
 							setPropertyMenuFalse()
 						}}
 					>
@@ -266,7 +422,7 @@ export const CustomColumnEditor: FC<Props> = ({
 					</MenuItem>
 					<MenuItem
 						onClick={() => {
-							setValue('subtitle', '')
+							setSubtitleTrue()
 							setPropertyMenuFalse()
 						}}
 					>

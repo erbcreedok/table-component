@@ -1,6 +1,6 @@
 import { FormGroup } from '@mui/material'
 import FormControlLabel from '@mui/material/FormControlLabel'
-import React, { ChangeEvent, MouseEvent, ReactNode } from 'react'
+import { ChangeEvent, MouseEvent, ReactNode } from 'react'
 import Checkbox, { CheckboxProps } from '@mui/material/Checkbox'
 import Tooltip from '@mui/material/Tooltip'
 import Radio, { RadioProps } from '@mui/material/Radio'
@@ -125,6 +125,7 @@ export const SelectCheckbox = <TData extends TableData>({
 		title: undefined,
 	}
 
+	// todo refactor to 2 separate components
 	const checkbox =
 		enableMultiRowSelection === false ? (
 			<Radio {...(commonProps as RadioProps)} />

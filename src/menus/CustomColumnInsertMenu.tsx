@@ -45,55 +45,70 @@ export const CustomColumnInsertMenu: FC<Props> = ({
 	} = useTableContext()
 	const {
 		options: {
-			icons: { InsertColumnLeftIcon, InsertColumnRightIcon, TextTypeIcon },
+			icons: {
+				InsertColumnLeftIcon,
+				InsertColumnRightIcon,
+				TextTypeIcon,
+				NumericTypeIcon,
+			},
 			localization,
 			e2eLabels,
 		},
 		setColumnOrder,
 	} = table
 
-	const handleInsertColumn = useCallback(() => {
-		let columnNumber =
-			Math.max.apply(
-				null,
-				originalColumns
-					.filter((c) => c.enableCustomization !== undefined)
-					.map((c) => Number(c.accessorKey?.split(customColumnPrefix)[1] ?? 0))
-			) + 1
+	const handleInsertColumn = useCallback(
+		(event) => {
+			let columnNumber =
+				Math.max.apply(
+					null,
+					originalColumns
+						.filter((c) => c.enableCustomization !== undefined)
+						.map((c) =>
+							Number(c.accessorKey?.split(customColumnPrefix)[1] ?? 0)
+						)
+				) + 1
 
-		if (columnNumber < 1) columnNumber = 1
+			if (columnNumber < 1) columnNumber = 1
 
-		const accessorKey = `${customColumnPrefix}${columnNumber}`
-		const newColumn: Table_ColumnDef<TableData> = {
-			header: `Column ${columnNumber}`,
-			accessorKey,
-			enableCustomization: true,
-		}
-		const rightShift = insertPosition === 'right' ? 1 : 0
-		const index =
-			originalColumns.findIndex((c) => c.accessorKey === column.id) + rightShift
-		const nextColumns = [...originalColumns]
+			const accessorKey = `${customColumnPrefix}${columnNumber}`
+			const { datatype: dataType, editvariant: editVariant } =
+				event.currentTarget.dataset
+			const newColumn: Table_ColumnDef<TableData> = {
+				header: `Column ${columnNumber}`,
+				accessorKey,
+				enableCustomization: true,
+				dataType,
+				editVariant,
+			}
+			const rightShift = insertPosition === 'right' ? 1 : 0
+			const index =
+				originalColumns.findIndex((c) => c.accessorKey === column.id) +
+				rightShift
+			const nextColumns = [...originalColumns]
 
-		nextColumns.splice(index, 0, newColumn)
+			nextColumns.splice(index, 0, newColumn)
 
-		setColumns(nextColumns, newColumn, 'INSERT')
-		setColumnOrder((prev) => {
-			const insertAt = prev.findIndex((id) => id === column.id) + rightShift
-			const next = [...prev]
+			setColumns(nextColumns, newColumn, 'INSERT')
+			setColumnOrder((prev) => {
+				const insertAt = prev.findIndex((id) => id === column.id) + rightShift
+				const next = [...prev]
 
-			next.splice(insertAt, 0, accessorKey)
+				next.splice(insertAt, 0, accessorKey)
 
-			return next
-		})
-		setVisible(false)
-	}, [
-		originalColumns,
-		setColumns,
-		setColumnOrder,
-		setVisible,
-		insertPosition,
-		column.id,
-	])
+				return next
+			})
+			setVisible(false)
+		},
+		[
+			originalColumns,
+			setColumns,
+			setColumnOrder,
+			setVisible,
+			insertPosition,
+			column.id,
+		]
+	)
 
 	return (
 		<>
@@ -138,7 +153,10 @@ export const CustomColumnInsertMenu: FC<Props> = ({
 			>
 				<MenuPaper sx={{ mx: '6px' }} {...hoverProps}>
 					<MenuList>
+						{/* Text */}
 						<MenuItem
+							data-datatype="textual"
+							data-editvariant="text"
 							onClick={withNativeEvent(
 								{
 									el: `ColumnHeaderMenu_${getPascalCase(
@@ -156,6 +174,30 @@ export const CustomColumnInsertMenu: FC<Props> = ({
 									<TextTypeIcon />
 								</ListItemIcon>
 								{localization.text}
+							</Box>
+						</MenuItem>
+
+						{/* Numeric */}
+						<MenuItem
+							data-datatype="numeric"
+							data-editvariant="number"
+							onClick={withNativeEvent(
+								{
+									el: `ColumnHeaderMenu_${getPascalCase(
+										column.columnDef.header
+									)}_InsertNumericButton`,
+									type: 'click',
+								},
+								table
+							)(handleInsertColumn)}
+							{...getTestAttributes(e2eLabels, `columnMenuInsertNumeric`)}
+							sx={commonMenuItemStyles}
+						>
+							<Box sx={commonListItemStyles}>
+								<ListItemIcon>
+									<NumericTypeIcon />
+								</ListItemIcon>
+								{localization.numeric}
 							</Box>
 						</MenuItem>
 					</MenuList>

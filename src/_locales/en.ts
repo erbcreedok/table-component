@@ -157,4 +157,8 @@ export const Table_Localization_EN: Table_Localization = {
 	shortNameIsDisplayedInAColumnHeader:
 		'Short name is displayed in a column header, while the Name is displayed elsewhere',
 	columnSubtitleOptional: 'Column subtitle (optional)',
+	numeric: 'Numeric',
+	allowNegativeNumbers: 'Allow negative numbers',
+	numberOfDecimalPlaces: 'Number of decimal places',
+	useSpaceAs1000Separator: 'Use space as 1000 separator',
 }

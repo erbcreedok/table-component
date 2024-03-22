@@ -28,6 +28,11 @@ const initialColumns: Table_ColumnDef<MyRow>[] = [
 		header: 'Custom Column',
 		accessorKey: 'customColumn1',
 		enableCustomization: true,
+		// dataType: 'textual',
+		// editVariant: 'text',
+		dataType: 'numeric',
+		editVariant: 'number',
+		// numberFormat: 'NONE',
 	},
 	{
 		header: 'Size',
@@ -91,13 +96,15 @@ export const CustomColumnDefault: Story<TableComponentProps> = () => {
 			data={data}
 			customColumns={{
 				validate: {
-					header: (h) => h.length > 3 || 'Header is too short',
-					shortHeader: (h) => h.length > 3 || 'Header is too short',
+					header: (h) => h.length >= 3 || 'Header is too short',
+					shortHeader: (h) =>
+						h === '' || h.length >= 3 || 'Header is too short',
 				},
 			}}
 			editingMode="row"
 			enableEditing
 			onEditingRowsSave={handleSaveRows}
+			enableGrouping
 		/>
 	)
 }
