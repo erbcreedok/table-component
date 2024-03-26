@@ -5,16 +5,15 @@ import MenuItem from '@mui/material/MenuItem'
 import Typography from '@mui/material/Typography'
 
 import type { Table_Column, TableData, TableInstance } from '../../../../index'
-import { arrayHasAll } from '../../../../utils/arrayHasAll'
 import { GrabHandleButton } from '../../buttons/GrabHandleButton'
 import { TableSwitch } from '../../../../components/TableSwitch'
 import { Tooltip } from '../../../../components/Tooltip'
 import {
 	DEFAULT_FONT_FAMILY,
 	TextColor,
-	IconsColor,
 	Colors,
 } from '../../../../components/styles'
+import { IconTooltip } from '../ColumnsMenu/ColumnsMenuItem'
 
 import { MultirowColumnParent } from './multirowMenu.types'
 
@@ -64,11 +63,13 @@ export const ColumnsMultirowMenuGroupItem = <
 			enableHiding,
 			enableColumnOrdering,
 			localization,
-			icons: { LockedIcon },
+			icons: { LockedIcon, GroupingIcon, FreezeIcon },
 		},
 	} = table
 
-	const switchCannotBeChecked = columnsGroup.every((col) => !col.getCanHide())
+	const isGrouped = columnsGroup.length === 1 && columnsGroup[0].getIsGrouped()
+	const isPinned = columnsGroup.length === 1 && columnsGroup[0].getIsPinned()
+	const isLocked = columnsGroup.every((col) => !col.getCanHide())
 	const switchChecked = columnsGroup.some(
 		(col) => col.getCanHide() && col.getIsVisible()
 	)
@@ -201,8 +202,8 @@ export const ColumnsMultirowMenuGroupItem = <
 									},
 								},
 							}}
-							checked={switchCannotBeChecked || switchChecked}
-							disabled={switchCannotBeChecked}
+							checked={isLocked || switchChecked}
+							disabled={isLocked}
 							control={
 								<Tooltip
 									arrow
@@ -221,18 +222,33 @@ export const ColumnsMultirowMenuGroupItem = <
 							{columnsGroupText}
 						</Typography>
 					)}
-					{switchCannotBeChecked && (
-						<Tooltip
-							placement="top"
-							title={localization.locked}
-							arrow
-							sx={{ height: '30px', mb: '2px' }}
-						>
-							<Box sx={{ marginLeft: 'auto' }}>
-								<LockedIcon style={{ color: IconsColor.default }} />
-							</Box>
-						</Tooltip>
-					)}
+					<Box sx={{ display: 'flex', ml: 'auto', gap: '9px' }}>
+						{isPinned && (
+							<IconTooltip title={localization.frozen}>
+								<FreezeIcon
+									style={{
+										width: '18px',
+										height: '18px',
+									}}
+								/>
+							</IconTooltip>
+						)}
+						{isGrouped && (
+							<IconTooltip title={localization.groupedBy}>
+								<GroupingIcon
+									style={{
+										width: '18px',
+										height: '18px',
+									}}
+								/>
+							</IconTooltip>
+						)}
+						{isLocked && (
+							<IconTooltip title={localization.locked}>
+								<LockedIcon />
+							</IconTooltip>
+						)}
+					</Box>
 				</Box>
 			</MenuItem>
 		</>

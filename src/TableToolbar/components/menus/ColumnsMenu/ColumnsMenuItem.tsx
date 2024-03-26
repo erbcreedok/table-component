@@ -278,7 +278,7 @@ export const ColumnsMenuItem = <TData extends TableData = TableData>({
 	)
 }
 
-const IconTooltip = ({
+export const IconTooltip = ({
 	children,
 	...props
 }: PropsWithChildren<TooltipProps>) => (
