@@ -210,7 +210,6 @@ export const HeaderSearch = <T extends TableData>({
 			setShowPopper(false)
 		} else {
 			event.stopPropagation()
-			table.setSearchData(null)
 		}
 	}
 
