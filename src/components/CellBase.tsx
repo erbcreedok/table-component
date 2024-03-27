@@ -7,6 +7,7 @@ import {
 	Table_Row,
 	TableData,
 	TableInstance,
+	NumericColumn,
 } from '../TableComponent'
 import { mergeSx } from '../utils/mergeSx'
 
@@ -40,14 +41,33 @@ export const CellBase = <TData extends TableData = {}>({
 	const {
 		options: { cellGroupedPlaceholderText = 'N/A', cellPlaceholderText },
 	} = table
-	const { formatCellValue = (value) => value } = column.columnDef
+	const {
+		formatCellValue = (value) => value,
+		enableCustomization,
+		dataType,
+	} = column.columnDef
 	const isGrouped = column.getIsGrouped()
 	const value = cell.getValue()
+
 	const text = useMemo(() => {
+		const { columnDef } = column
+
+		// Space 1000 numeric
+		if (
+			value !== undefined &&
+			enableCustomization &&
+			dataType === 'numeric' &&
+			((columnDef as NumericColumn).numberFormat === undefined ||
+				(columnDef as NumericColumn).numberFormat === 'SPACE1000')
+		) {
+			return (value as number)
+				.toString()
+				.replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ' ')
+		}
+
 		if (uText) return uText
 		const formatted = `${formatCellValue(value) ?? ''}`
 		if (formatted) return formatted
-		const { columnDef } = column
 		const placeholder =
 			columnDef.cellPlaceholderText ?? cellPlaceholderText ?? ''
 		if (isGrouped)
@@ -62,6 +82,8 @@ export const CellBase = <TData extends TableData = {}>({
 		cellGroupedPlaceholderText,
 		cellPlaceholderText,
 		column,
+		dataType,
+		enableCustomization,
 		formatCellValue,
 		isGrouped,
 		uText,

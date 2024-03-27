@@ -915,18 +915,7 @@ export type Table_ColumnDef<TData extends TableData = TableData> = Omit<
 		minValue?: number
 		maxValue?: number
 	} & (
-		| {
-				dataType: 'numeric'
-				/* // todo
-				minValue?: number
-				maxValue?: number
-				editVariant?: 'number'
-				*/
-				/** Number of digits after decimal point */
-				decimalPlaces?: number
-				/** @default 'SPACE1000' */
-				numberFormat?: 'SPACE1000' | 'NONE'
-		  }
+		| NumericColumn
 		| {
 				dataType?:
 					| 'textual'
@@ -935,11 +924,21 @@ export type Table_ColumnDef<TData extends TableData = TableData> = Omit<
 					| 'single-select'
 					| 'multi-select'
 					| 'custom'
-				// typeOptions?: {
-				// 	hshs?: boolean
-				// }
 		  }
 	)
+
+export interface NumericColumn {
+	dataType: 'numeric'
+	/* // todo
+	minValue?: number
+	maxValue?: number
+	editVariant?: 'number'
+	*/
+	/** Number of digits after decimal point */
+	decimalPlaces?: number
+	/** @default 'SPACE1000' */
+	numberFormat?: 'SPACE1000' | 'NONE'
+}
 
 export type Table_DefinedColumnDef<TData extends TableData = TableData> = Omit<
 	Table_ColumnDef<TData>,

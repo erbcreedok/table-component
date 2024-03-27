@@ -19,6 +19,7 @@ import { useBoolean, useOnClickOutside } from 'usehooks-ts'
 import { useForm, SubmitHandler, Controller } from 'react-hook-form'
 
 import {
+	NumericColumn,
 	SetColumns,
 	TableData,
 	Table_ColumnDef,
@@ -70,11 +71,12 @@ export const CustomColumnEditor: FC<Props> = ({
 			shortHeader: columnDef.shortHeader ?? '',
 			subtitle: columnDef.subtitle ?? '',
 			// numeric
-			decimalPlaces: (columnDef as any).decimalPlaces ?? DECIMAL_PLACES,
+			decimalPlaces:
+				(columnDef as NumericColumn).decimalPlaces ?? DECIMAL_PLACES,
 			allowNegative: columnDef.minValue !== 0,
 			space1000:
-				(columnDef as any).numberFormat === undefined ||
-				(columnDef as any).numberFormat === 'SPACE1000',
+				(columnDef as NumericColumn).numberFormat === undefined ||
+				(columnDef as NumericColumn).numberFormat === 'SPACE1000',
 		},
 	})
 
@@ -132,18 +134,18 @@ export const CustomColumnEditor: FC<Props> = ({
 				// eslint-disable-next-line no-param-reassign
 				decimalPlaces = Number(decimalPlaces)
 				if (decimalPlaces === DECIMAL_PLACES)
-					delete (updatedColumn as any).decimalPlaces
-				else (updatedColumn as any).decimalPlaces = decimalPlaces
+					delete (updatedColumn as NumericColumn).decimalPlaces
+				else (updatedColumn as NumericColumn).decimalPlaces = decimalPlaces
 
 				if (allowNegative) delete updatedColumn.minValue
 				else updatedColumn.minValue = 0
 
-				if (space1000) delete (updatedColumn as any).numberFormat
-				else (updatedColumn as any).numberFormat = 'NONE'
+				if (space1000) delete (updatedColumn as NumericColumn).numberFormat
+				else (updatedColumn as NumericColumn).numberFormat = 'NONE'
 			} else {
-				delete (updatedColumn as any).decimalPlaces
+				delete (updatedColumn as NumericColumn).decimalPlaces
 				delete updatedColumn.minValue
-				delete (updatedColumn as any).numberFormat
+				delete (updatedColumn as NumericColumn).numberFormat
 			}
 
 			setColumns(nextColumns, updatedColumn, 'UPDATE')
@@ -404,6 +406,7 @@ export const CustomColumnEditor: FC<Props> = ({
 				</form>
 			</Popper>
 
+			{/* Add property menu */}
 			<Menu
 				ref={addPropertyMenuRef}
 				open={isPropertyMenu}
@@ -412,22 +415,26 @@ export const CustomColumnEditor: FC<Props> = ({
 				sx={{ zIndex: zIndex.tooltip, width: 260 }}
 			>
 				<MenuList>
-					<MenuItem
-						onClick={() => {
-							setShortHeaderTrue()
-							setPropertyMenuFalse()
-						}}
-					>
-						<Box sx={commonListItemStyles}>{localization.shortName}</Box>
-					</MenuItem>
-					<MenuItem
-						onClick={() => {
-							setSubtitleTrue()
-							setPropertyMenuFalse()
-						}}
-					>
-						<Box sx={commonListItemStyles}>{localization.subtitle}</Box>
-					</MenuItem>
+					{isShortHeader ? null : (
+						<MenuItem
+							onClick={() => {
+								setShortHeaderTrue()
+								setPropertyMenuFalse()
+							}}
+						>
+							<Box sx={commonListItemStyles}>{localization.shortName}</Box>
+						</MenuItem>
+					)}
+					{isSubtitle ? null : (
+						<MenuItem
+							onClick={() => {
+								setSubtitleTrue()
+								setPropertyMenuFalse()
+							}}
+						>
+							<Box sx={commonListItemStyles}>{localization.subtitle}</Box>
+						</MenuItem>
+					)}
 				</MenuList>
 			</Menu>
 		</>

@@ -486,6 +486,7 @@ const TeamsTable: Story<TeamsTableConfigs> = (args) => {
 					innerTable
 					data={innerData}
 					columns={columns}
+					setColumns={setColumns}
 					enableRowNumbers={false}
 					enableBottomToolbar={false}
 					enableExpanding

@@ -37,7 +37,7 @@ export const CustomColumnInsertMenu: FC<Props> = ({
 	setVisible,
 }) => {
 	const anchorRef = useRef(null)
-	const { hovered, hoverProps } = useHoverEffects(300)
+	const { hovered, hoverProps } = useHoverEffects(50)
 
 	const {
 		table,
