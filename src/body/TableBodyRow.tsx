@@ -338,8 +338,26 @@ export const TableBodyRow: FC<TableBodyRowProps> = ({
 									isGroupedColumn: false,
 									isFirstOfGroup: !!groupingProps,
 								})
-								if (collapsedColumnIndex !== undefined && !isSummaryRow)
+
+								if (collapsedColumnIndex !== undefined && !isSummaryRow) {
+									if (cell.column.columnDef.GroupedCellCollapsedContent) {
+										return (
+											<td
+												key={cell.id}
+												style={{ position: 'relative', ...groupBorders }}
+											>
+												{cell.column.columnDef.GroupedCellCollapsedContent({
+													table,
+													row,
+													cell,
+												})}
+											</td>
+										)
+									}
+
 									return <EmptyCell key={cell.id} groupBorders={groupBorders} />
+								}
+
 								const props = {
 									cell,
 									enableHover: tableRowProps?.hover !== false,

@@ -55,6 +55,10 @@ export const ColoredGroupedCell: typeof GroupedCellBase = (props) => {
 	)
 }
 
+export const GroupedCellCollapsedContentExample = ({ table, row, cell }) => {
+	return <Typography variant="body1">test</Typography>
+}
+
 export const coloredCellProps = <
 	TData extends Record<string, any> = {}
 >(props: {
@@ -293,6 +297,7 @@ export const getTeamMembersColumns = () => {
 			accessorFn: teamMemberAccessorFn('impact'),
 			filterVariant: 'multi-select',
 			GroupedCell: ColoredGroupedCell,
+			GroupedCellCollapsedContent: GroupedCellCollapsedContentExample,
 			muiTableBodyCellProps: coloredCellProps,
 			enableColumnOrdering: true,
 			enableSorting: false,

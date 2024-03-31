@@ -601,6 +601,15 @@ export type Table_ColumnDef<TData extends TableData = TableData> = Omit<
 			row: Table_Row<TData>
 			table: TableInstance<TData>
 		}>) => ReactNode
+		GroupedCellCollapsedContent?: ({
+			cell,
+			row,
+			table,
+		}: PropsWithChildren<{
+			cell: Table_Cell<TData>
+			row: Table_Row<TData>
+			table: TableInstance<TData>
+		}>) => ReactNode
 		Header?:
 			| ReactNode
 			| (({
