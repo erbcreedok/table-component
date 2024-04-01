@@ -1,28 +1,11 @@
-import {
-	autoUpdate,
-	flip,
-	FloatingPortal,
-	shift,
-	useFloating,
-} from '@floating-ui/react'
-import { styled } from '@mui/material'
-import Box from '@mui/material/Box'
-import IconButton from '@mui/material/IconButton'
-import { ReactElement, useRef } from 'react'
+import { ReactElement, useCallback, useEffect, useState } from 'react'
+import { useFormContext } from 'react-hook-form'
 
 import { Table_Row, TableData, TableInstance } from '../TableComponent'
+import { scrollToElement } from '../utils/scrollToElement'
 
-import { Colors } from './styles'
-
-const IconButtonStyled = styled(IconButton)`
-	height: 30px;
-	width: 30px;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	color: ${Colors.White};
-	border-radius: 4px;
-`
+import { FloatingActionButtons } from './FloatingActionButtons'
+import { NotificationBox } from './NotificationBox'
 
 type EditingRowActionButtonsProps<TData extends TableData> = {
 	open?: boolean
@@ -41,94 +24,118 @@ export const EditingRowActionButtons = <TData extends TableData>({
 	const {
 		getState,
 		options: {
-			icons: { CloseIcon, CheckIcon },
-			onEditingRowsSave,
+			onEditingRowSave,
 			onEditingRowCancel,
+			onNewRowSave,
+			localization: { requiredFieldIsHidden },
 		},
 		refs: { tableContainerRef, tableHeadCellRefs },
 		setEditingRow,
+		setNewRow,
 	} = table
-	const { editingRow } = getState()
+	const { columnVisibility } = getState()
+	const { editingRow, newRow } = getState()
+	const isNewRow = table.getIsNewRow(row)
+	const { trigger, getValues, getFieldState } = useFormContext()
+	const [rowError, setRowError] = useState<string | undefined>()
 
-	const handleCancel = () => {
-		onEditingRowCancel?.({ row, table })
-		setEditingRow(null)
-	}
+	const handleCancel = useCallback(() => {
+		if (isNewRow) {
+			setNewRow(null)
+		} else {
+			onEditingRowCancel?.({ row, table })
+			setEditingRow(null)
+		}
+	}, [isNewRow, onEditingRowCancel, row, setEditingRow, setNewRow, table])
 
-	const handleSave = () => {
-		const hasErrors = Object.values(editingRow?.errors ?? {}).some(
-			(error) => error !== null
-		)
-		if (hasErrors) {
-			const firstErrorKey = Object.keys(editingRow?.errors ?? {}).find(
-				(key) => editingRow?.errors[key] !== null
-			)
-			if (firstErrorKey) {
-				const errorTableHeadRef = tableHeadCellRefs.current[firstErrorKey]
-				const rect = errorTableHeadRef.getBoundingClientRect()
-				const x =
-					rect?.left +
-					tableContainerRef.current?.scrollLeft -
-					tableContainerRef.current?.clientWidth / 2
-				tableContainerRef.current?.scrollTo({
-					left: x,
-					behavior: 'smooth',
+	useEffect(() => {
+		setRowError(undefined)
+	}, [columnVisibility])
+
+	const handleSave = useCallback(async () => {
+		const currentRow = isNewRow ? newRow : editingRow
+		if (currentRow) {
+			if (!(await trigger(currentRow.id))) {
+				const { error } = getFieldState(currentRow.id)
+				const firstErrorKey = Object.keys(error ?? {})[0]
+				if (firstErrorKey) {
+					const errorTableHeadEl = tableHeadCellRefs.current[firstErrorKey]
+					if (errorTableHeadEl && tableContainerRef.current) {
+						scrollToElement(errorTableHeadEl, tableContainerRef.current)
+					}
+				}
+
+				return
+			}
+			if (isNewRow && newRow) {
+				const isRequiredColumnHidden = newRow
+					.getAllCells()
+					.some(
+						({ column: { columnDef, getIsVisible } }) =>
+							columnDef.required && !getIsVisible()
+					)
+				if (isRequiredColumnHidden) {
+					setRowError(requiredFieldIsHidden)
+
+					return
+				}
+				onNewRowSave?.({
+					exitEditingMode: () => setNewRow(null),
+					row: newRow,
+					table,
+					values: getValues(newRow.id),
+				})
+			} else if (editingRow) {
+				onEditingRowSave?.({
+					exitEditingMode: () => setEditingRow(null),
+					row: editingRow ?? row,
+					table,
+					values: getValues(editingRow.id),
 				})
 			}
 		}
-		if (editingRow && !hasErrors) {
-			onEditingRowsSave?.({
-				exitEditingMode: () => setEditingRow(null),
-				rows: editingRow ?? row,
-				table,
-				values: { ...row.original, ...editingRow?._valuesCache },
-			})
-		}
-	}
-	const defaultContainerRef = useRef(document.body)
-	const { x, y, floating, reference, strategy } = useFloating({
-		open,
-		whileElementsMounted: autoUpdate,
-		placement: 'bottom-end',
-		middleware: [shift(), flip()],
-	})
+	}, [
+		isNewRow,
+		newRow,
+		editingRow,
+		trigger,
+		getFieldState,
+		tableHeadCellRefs,
+		tableContainerRef,
+		onNewRowSave,
+		table,
+		getValues,
+		requiredFieldIsHidden,
+		setNewRow,
+		onEditingRowSave,
+		row,
+		setEditingRow,
+	])
+
+	const onCloseNotification = useCallback(() => {
+		setRowError(undefined)
+	}, [])
 
 	return (
-		<>
-			{children({ ref: reference })}
-			{open && (
-				<FloatingPortal
-					root={tableContainerRef.current ?? defaultContainerRef.current}
-				>
-					<Box
-						ref={floating}
-						style={{
-							position: strategy,
-							left: x ?? '',
-							top: y ?? '',
-							zIndex: 2,
-						}}
-						sx={{
-							display: 'flex',
-							gap: '6px',
-							p: '6px',
-						}}
-					>
-						<IconButtonStyled
-							style={{ background: Colors.Red }}
-							onClick={handleCancel}
-						>
-							<CloseIcon style={{ width: '21px', height: '21px' }} />
-						</IconButtonStyled>
-						<IconButtonStyled
-							style={{ background: Colors.LightBlue }}
-							onClick={handleSave}
-						>
-							<CheckIcon style={{ width: '21px', height: '21px' }} />
-						</IconButtonStyled>
-					</Box>
-				</FloatingPortal>
-			)}
-		</>
+		<FloatingActionButtons
+			table={table}
+			open={open}
+			onSubmit={handleSave}
+			onCancel={handleCancel}
+			adornment={
+				rowError ? (
+					<NotificationBox
+						size="small"
+						text={rowError}
+						type="danger"
+						sx={{ width: 'auto' }}
+						closeAutomatically
+						onClose={onCloseNotification}
+					/>
+				) : null
+			}
+		>
+			{children}
+		</FloatingActionButtons>
 	)
 }

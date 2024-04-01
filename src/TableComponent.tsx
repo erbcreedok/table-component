@@ -51,7 +51,7 @@ import type { VirtualizerOptions, Virtualizer } from '@tanstack/react-virtual'
 
 import { Table_AggregationFns } from './aggregationFns'
 import { TableBodyRowProps } from './body/TableBodyRow'
-import { HierarchyTreeConfig } from './components/HierarchyRow'
+import { NotificationBoxProps } from './components/NotificationBox'
 import {
 	BulkActionButtonProps,
 	TableBulkActionsProps,
@@ -59,6 +59,13 @@ import {
 import { TableProvider } from './context/TableProvider'
 import { Table_FilterFns } from './filterFns'
 import { multirowActions } from './head/constants'
+import {
+	NewRowState,
+	TableInstanceWithCreateNewRow,
+	TablePropsWithCreateNewRow,
+	HierarchyTreeConfig,
+	TableInstanceWithTableHierarchy,
+} from './hooks'
 import { Table_Icons } from './icons'
 import { DayPickerInputProps } from './inputs/DayPickerInput'
 import { InputProps } from './inputs/Input'
@@ -126,6 +133,7 @@ export interface Table_Localization {
 	edit: string
 	expand: string
 	expandAll: string
+	fieldNameIsRequired: string
 	filter: string
 	filterArrIncludes: string
 	filterArrIncludesAll: string
@@ -233,6 +241,7 @@ export interface Table_Localization {
 	unsorted: string
 	updateCurrent: string
 	removeAll: string
+	requiredFieldIsHidden: string
 	addFilter: string
 	isAnyOf: string
 	locked: string
@@ -290,6 +299,7 @@ export type TableInstance<TData extends TableData = TableData> = Omit<
 	| 'getLeftLeafColumns'
 	| 'getLeftVisibleLeafColumns'
 	| 'getPaginationRowModel'
+	| 'getPreExpandedRowModel'
 	| 'getPreFilteredRowModel'
 	| 'getPrePaginationRowModel'
 	| 'getVisibleLeafColumns'
@@ -300,80 +310,80 @@ export type TableInstance<TData extends TableData = TableData> = Omit<
 	| 'getSelectedRowModel'
 	| 'getState'
 	| 'options'
-> & {
-	constants: {
-		expandableColumn: Table_Column<TData> | null
+> &
+	TableInstanceWithCreateNewRow<TData> &
+	TableInstanceWithTableHierarchy<TData> & {
+		constants: {
+			expandableColumn: Table_Column<TData> | null
+		}
+		getAllColumns: () => Table_Column<TData>[]
+		getAllFlatColumns: () => Table_Column<TData>[]
+		getAllLeafColumns: () => Table_Column<TData>[]
+		getCenterLeafColumns: () => Table_Column<TData>[]
+		getCenterVisibleLeafColumns: () => Table_Column<TData>[]
+		getColumn: (columnId: string) => Table_Column<TData>
+		getExpandedRowModel: () => Table_RowModel<TData>
+		getFlatHeaders: () => Table_Header<TData>[]
+		getHeaderGroups: () => Table_HeaderGroup<TData>[]
+		getLeftLeafColumns: () => Table_Column<TData>[]
+		getLeftVisibleLeafColumns: () => Table_Column<TData>[]
+		getPaginationRowModel: () => Table_RowModel<TData>
+		getPreExpandedRowModel: () => Table_RowModel<TData>
+		getPreFilteredRowModel: () => Table_RowModel<TData>
+		getPrePaginationRowModel: () => Table_RowModel<TData>
+		getRightLeafColumns: () => Table_Column<TData>[]
+		getRightVisibleLeafColumns: () => Table_Column<TData>[]
+		getRow: (rowId: string) => Table_Row<TData>
+		getRowModel: () => Table_RowModel<TData>
+		getSelectedRowModel: () => Table_RowModel<TData>
+		getState: () => Table_TableState<TData>
+		getVisibleLeafColumns: () => Table_Column<TData>[]
+		getPresets: () => Preset[]
+		savePresets: (presets: Preset[]) => void
+		getDefaultPresets: () => Preset[]
+		isHierarchyItem?: HierarchyTreeConfig<TData>['isHierarchyItem']
+		setSearchData: (data: SearchData<TData>) => void
+		setHighlightHeadCellId: (colId: string | null) => void
+		options: TableComponentPropsDefined<TData>
+		refs: {
+			bottomToolbarRef: MutableRefObject<HTMLDivElement>
+			bulkActionsRef: MutableRefObject<HTMLDivElement>
+			editInputRefs: MutableRefObject<Record<string, HTMLInputElement>>
+			expandRowTimeoutRef: MutableRefObject<NodeJS.Timeout>
+			filterInputRefs: MutableRefObject<Record<string, HTMLInputElement>>
+			searchInputRef: MutableRefObject<HTMLInputElement>
+			rowDragEnterTimeoutRef: MutableRefObject<NodeJS.Timeout>
+			tableContainerRef: MutableRefObject<HTMLDivElement>
+			tableHeadCellRefs: MutableRefObject<Record<string, HTMLTableCellElement>>
+			tablePaperRef: MutableRefObject<HTMLDivElement>
+			topToolbarRef: MutableRefObject<HTMLDivElement>
+			tableToolbarRef: MutableRefObject<HTMLDivElement>
+		}
+		resetRowSelection: (defaultState?: boolean) => void
+		setColumnFilterFns: Dispatch<
+			SetStateAction<{ [key: string]: Table_FilterOption }>
+		>
+		setDraggingColumn: Dispatch<SetStateAction<Table_Column<TData> | null>>
+		setDraggingRows: Dispatch<SetStateAction<Table_Row<TData>[]>>
+		setEditingCell: Dispatch<SetStateAction<Table_Cell<TData> | null>>
+		setEditingRow: Dispatch<SetStateAction<Table_Row<TData> | null>>
+		setGlobalFilterFn: Dispatch<SetStateAction<Table_FilterOption>>
+		setGroupCollapsed: Dispatch<SetStateAction<GroupCollapsed>>
+		setHoveredColumn: Dispatch<
+			SetStateAction<Table_Column<TData> | { id: string } | null>
+		>
+		setHoveredRow: Dispatch<SetStateAction<HoveredRowState<TData>>>
+		setOpenedDetailedPanels: Dispatch<
+			SetStateAction<Record<string, OpenedDetailPanel<TData>>>
+		>
+		setIsFullScreen: Dispatch<SetStateAction<boolean>>
+		setShowAlertBanner: Dispatch<SetStateAction<boolean>>
+		setShowFilters: Dispatch<SetStateAction<boolean>>
+		setShowGlobalFilter: Dispatch<SetStateAction<boolean>>
+		setShowToolbarDropZone: Dispatch<SetStateAction<boolean>>
+		setStickyHorizontalScrollbarHeight: Dispatch<SetStateAction<number>>
+		CustomRow?: FC<TableBodyRowProps>
 	}
-	getAllColumns: () => Table_Column<TData>[]
-	getAllFlatColumns: () => Table_Column<TData>[]
-	getAllLeafColumns: () => Table_Column<TData>[]
-	getCenterLeafColumns: () => Table_Column<TData>[]
-	getCenterVisibleLeafColumns: () => Table_Column<TData>[]
-	getColumn: (columnId: string) => Table_Column<TData>
-	getExpandedRowModel: () => Table_RowModel<TData>
-	getFlatHeaders: () => Table_Header<TData>[]
-	getHeaderGroups: () => Table_HeaderGroup<TData>[]
-	getLeftLeafColumns: () => Table_Column<TData>[]
-	getLeftVisibleLeafColumns: () => Table_Column<TData>[]
-	getPaginationRowModel: () => Table_RowModel<TData>
-	getPreFilteredRowModel: () => Table_RowModel<TData>
-	getPrePaginationRowModel: () => Table_RowModel<TData>
-	getRightLeafColumns: () => Table_Column<TData>[]
-	getRightVisibleLeafColumns: () => Table_Column<TData>[]
-	getRow: (rowId: string) => Table_Row<TData>
-	getRowModel: () => Table_RowModel<TData>
-	getSelectedRowModel: () => Table_RowModel<TData>
-	getState: () => Table_TableState<TData>
-	getVisibleLeafColumns: () => Table_Column<TData>[]
-	getPresets: () => Preset[]
-	savePresets: (presets: Preset[]) => void
-	getDefaultPresets: () => Preset[]
-	setSearchData: (data: SearchData<TData>) => void
-	setHighlightHeadCellId: (colId: string | null) => void
-	options: TableComponentPropsDefined<TData>
-	refs: {
-		bottomToolbarRef: MutableRefObject<HTMLDivElement>
-		bulkActionsRef: MutableRefObject<HTMLDivElement>
-		editInputRefs: MutableRefObject<Record<string, HTMLInputElement>>
-		expandRowTimeoutRef: MutableRefObject<NodeJS.Timeout>
-		filterInputRefs: MutableRefObject<Record<string, HTMLInputElement>>
-		searchInputRef: MutableRefObject<HTMLInputElement>
-		rowDragEnterTimeoutRef: MutableRefObject<NodeJS.Timeout>
-		tableContainerRef: MutableRefObject<HTMLDivElement>
-		tableHeadCellRefs: MutableRefObject<Record<string, HTMLTableCellElement>>
-		tablePaperRef: MutableRefObject<HTMLDivElement>
-		topToolbarRef: MutableRefObject<HTMLDivElement>
-		tableToolbarRef: MutableRefObject<HTMLDivElement>
-	}
-	resetRowSelection: (defaultState?: boolean) => void
-	setColumnFilterFns: Dispatch<
-		SetStateAction<{ [key: string]: Table_FilterOption }>
-	>
-	setDraggingColumn: Dispatch<SetStateAction<Table_Column<TData> | null>>
-	setDraggingRows: Dispatch<SetStateAction<Table_Row<TData>[]>>
-	setEditingCell: Dispatch<SetStateAction<Table_Cell<TData> | null>>
-	setEditingRow: Dispatch<
-		SetStateAction<(Table_Row<TData> & { isError?: boolean }) | null>
-	>
-	setGlobalFilterFn: Dispatch<SetStateAction<Table_FilterOption>>
-	setGroupCollapsed: Dispatch<SetStateAction<GroupCollapsed>>
-	setHoveredColumn: Dispatch<
-		SetStateAction<Table_Column<TData> | { id: string } | null>
-	>
-	setHoveredRow: Dispatch<SetStateAction<HoveredRowState<TData>>>
-	setOpenedDetailedPanels: Dispatch<
-		SetStateAction<Record<string, OpenedDetailPanel<TData>>>
-	>
-	setIsFullScreen: Dispatch<SetStateAction<boolean>>
-	setShowAlertBanner: Dispatch<SetStateAction<boolean>>
-	setShowFilters: Dispatch<SetStateAction<boolean>>
-	setShowGlobalFilter: Dispatch<SetStateAction<boolean>>
-	setShowToolbarDropZone: Dispatch<SetStateAction<boolean>>
-	setStickyHorizontalScrollbarHeight: Dispatch<SetStateAction<number>>
-	CustomRow?: FC<TableBodyRowProps>
-}
-
-export type FieldError = string | null
 
 export type SearchData<TData extends TableData = TableData> =
 	| Table_Row<TData>[]
@@ -385,9 +395,7 @@ export type Table_TableState<TData extends TableData = TableData> =
 		draggingColumn: Table_Column<TData> | null
 		draggingRows: Table_Row<TData>[]
 		editingCell: Table_Cell<TData> | null
-		editingRow:
-			| (Table_Row<TData> & { errors: Record<string, FieldError> })
-			| null
+		editingRow: Table_Row<TData> | null
 		isEditingRowError: boolean
 		globalFilterFn: Table_FilterOption
 		hoveredColumn: Table_Column<TData> | { id: string } | null
@@ -395,6 +403,7 @@ export type Table_TableState<TData extends TableData = TableData> =
 		hoveredRow: HoveredRowState<TData>
 		isFullScreen: boolean
 		isLoading: boolean
+		newRow: NewRowState<TData>
 		searchData: SearchData<TData>
 		showAlertBanner: boolean
 		showColumnFilters: boolean
@@ -506,11 +515,13 @@ export type TableColumnEditProps<TData extends TableData> = {
 		| 'multi-select'
 		| 'date'
 		| 'date-range'
+	required?: boolean
 	editSelectOptions?: (string | SelectOption)[]
 	muiEditDayPickerInputProps?: TableFunctionalProp<DayPickerInputProps, TData>
 	muiEditInputProps?: TableFunctionalProp<InputProps, TData>
 	muiEditSelectProps?: TableFunctionalProp<SelectProps, TData>
-	Edit?: TableFunctionalProp<ReactNode, TData>
+	Edit?: FC<TableCellDataProps<TData>> | ReactNode | null
+	getEditValue?: (rowOriginal: TData) => any
 }
 
 export type EnableEditingArgs<TData extends TableData = TableData> = {
@@ -890,11 +901,13 @@ export type Table_ColumnDef<TData extends TableData = TableData> = Omit<
 			table,
 			row,
 			cell,
+			values,
 		}: {
 			value: any
 			table: TableInstance<TData>
 			row: Table_Row<TData>
 			cell: Table_Cell<TData>
+			values: Record<string, any>
 		}) => boolean | string
 		cellGroupedPlaceholderText?: string
 		cellPlaceholderText?: string
@@ -1059,11 +1072,6 @@ export type HoveredRowState<TData extends TableData> = {
 	rowRef: MutableRefObject<HTMLTableRowElement | null>
 } | null
 
-export type TableInputProps = TextFieldProps & {
-	options?: SelectOption[]
-	onClear?: MouseEventHandler
-}
-
 export type NativeEventArgs = {
 	el: any
 	type: 'click' | 'keypress' | 'hover' | 'dragstart' | 'dragend'
@@ -1074,7 +1082,7 @@ export type NativeEventArgs = {
 export type ValidateHoveredRowProp<TData extends TableData = {}> = (
 	row: NonNullable<HoveredRowState<TData>>,
 	table: TableInstance<TData>
-) => boolean | DraggingMessage
+) => boolean | NotificationBoxProps
 export type GetRowDragValuesChangeMessageProp<TData extends TableData = {}> =
 	(args: {
 		table: TableInstance<TData>
@@ -1169,6 +1177,7 @@ export type TableComponentProps<TData extends TableData = TableData> = Omit<
 	| 'initialState'
 	| 'state'
 > &
+	TablePropsWithCreateNewRow<TData> &
 	TableSortingConfigs<TData> & {
 		columnFilterModeOptions?: Array<
 			LiteralUnion<string & Table_FilterOption>
@@ -1633,7 +1642,7 @@ export type TableComponentProps<TData extends TableData = TableData> = Omit<
 			cell: Table_Cell<TData>
 			table: TableInstance<TData>
 			value: any
-			error: FieldError
+			error: string | null
 		}) => Promise<void> | void
 		onEditingRowCancel?: ({
 			row,
@@ -1642,14 +1651,14 @@ export type TableComponentProps<TData extends TableData = TableData> = Omit<
 			row: Table_Row<TData>
 			table: TableInstance<TData>
 		}) => void
-		onEditingRowsSave?: ({
+		onEditingRowSave?: ({
 			exitEditingMode,
-			rows,
+			row,
 			table,
 			values,
 		}: {
 			exitEditingMode: () => void
-			rows: Table_Row<TData> | Table_Row<TData>[]
+			row: Table_Row<TData>
 			table: TableInstance<TData>
 			values: Record<LiteralUnion<string & DeepKeys<TData>>, any> | {}
 		}) => Promise<void> | void

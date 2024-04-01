@@ -9,6 +9,7 @@ export const TextColor = {
 export const Colors = {
 	LightBlue: '#009ECC',
 	Blue: '#008ACE',
+	Blue2: '#008ABD',
 	LightestBlue10: '#B9E3EF',
 	LightestBlue: '#E1F4FA',
 	LightGreen: '#67A300',
@@ -22,6 +23,9 @@ export const Colors = {
 	Dark: '#303240',
 	Red: '#FA4B4B',
 	Red2: '#f66c6c',
+	Red3: '#FCC8C8',
+	Red4: '#FDE1E1',
+	Red5: '#B32424',
 	BorderMain: '#E1E3EB',
 	Amber2: '#FFDD96',
 	Amber3: '#FCAA00',

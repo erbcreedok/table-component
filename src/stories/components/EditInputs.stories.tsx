@@ -118,7 +118,7 @@ export const EditInputsExample = (args) => {
 		<TableComponent
 			data={data}
 			columns={columns}
-			onEditingRowsSave={handleSaveRows}
+			onEditingRowSave={handleSaveRows}
 			onEditingCellSave={({ cell, value, error, exitEditingMode }) => {
 				console.log(value, error, cell)
 				if (error) return
@@ -143,5 +143,5 @@ const meta: Meta = {
 		},
 	}
 };
-  
+
 export default meta;

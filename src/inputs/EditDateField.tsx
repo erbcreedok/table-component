@@ -1,19 +1,24 @@
 import React, { useRef } from 'react'
+import { useFormContext } from 'react-hook-form'
 
 import { useOnClickOutside } from '../hooks/useOnClickOutside'
+import { getCellFieldId } from '../stories/utils/getCellFieldId'
 import { SimpleEvent, TableData } from '../TableComponent'
 import { getValueOrFunctionHandler } from '../utils/getValueOrFunctionHandler'
-import { useEditField } from '../hooks/useEditField'
 import { isEditInputDisabled } from '../utils/isEditingEnabled'
 
-import { DayPickerInput, DayPickerInputProps } from './DayPickerInput'
-import { EditCellFieldProps } from './EditCellField'
+import { DayPickerInput } from './DayPickerInput'
+import { EditCellControllerProps, EditCellFieldProps } from './EditCellField'
 
 export const EditDateField = <TData extends TableData>({
 	table,
 	cell,
 	showLabel,
-}: EditCellFieldProps<TData>) => {
+	field,
+	fieldState,
+	onCellSave,
+	onCellCancel,
+}: EditCellFieldProps<TData> & EditCellControllerProps) => {
 	const cellRef = useRef<HTMLInputElement | null>(null)
 	const dayPickerRef = useRef<HTMLInputElement | null>(null)
 	const { row, column } = cell
@@ -26,13 +31,12 @@ export const EditDateField = <TData extends TableData>({
 	const {
 		options: { muiEditDayPickerInputProps },
 		refs: { editInputRefs },
-		setEditingCell,
 	} = table
 	const { columnDef } = column
 	const { editVariant, enableEditing } = columnDef
-	const { setValue, saveData, value, error } = useEditField<TData, Date | null>(
-		cellDataProps
-	)
+	const fieldId = getCellFieldId(cell)
+	const { setValue } = useFormContext()
+	const error = fieldState.error?.message
 	const mDayPickerInputProps = getValueOrFunctionHandler(
 		muiEditDayPickerInputProps
 	)(cellDataProps)
@@ -46,28 +50,29 @@ export const EditDateField = <TData extends TableData>({
 	const isDateRange = editVariant === 'date-range'
 	const handleChange = (event: SimpleEvent<Date>) => {
 		muiDayPickerInputProps.onChange?.(event)
-		setValue(event.target.value)
+		field.onChange(event.target.value)
 	}
 
 	const handleDayPickerBlur = () => {
 		muiDayPickerInputProps.onBlur?.()
-		saveData(value)
+		field.onBlur()
+		onCellSave()
 	}
 
 	const handleClickOutside = (event) => {
 		event.stopPropagation()
 		if (error) {
-			setEditingCell(null)
+			onCellCancel()
 		}
 	}
 	useOnClickOutside([cellRef, dayPickerRef], handleClickOutside)
 
-	const dayPickerInputProps: DayPickerInputProps = {
+	const dayPickerInputProps = {
 		disabled: isEditInputDisabled(enableEditing, { table, row }),
 		inputProps: {
+			error,
 			placeholder: columnDef.header,
 			label: showLabel ? column.columnDef.header : undefined,
-			error,
 			hideErrorOnFocus: true,
 			...muiDayPickerInputProps.inputProps,
 			inputRef: (inputRef) => {
@@ -81,7 +86,7 @@ export const EditDateField = <TData extends TableData>({
 			},
 			onClear: (e) => {
 				muiDayPickerInputProps.inputProps?.onClear?.(e)
-				setValue(null)
+				setValue(fieldId, null)
 			},
 			onClick: (e) => {
 				e.stopPropagation()
@@ -90,16 +95,15 @@ export const EditDateField = <TData extends TableData>({
 			onKeyDown: (e) => {
 				muiDayPickerInputProps?.inputProps?.onKeyDown?.(e)
 				if (!e.isPropagationStopped() && e.key === 'Escape') {
-					setEditingCell(null)
+					onCellCancel()
 				}
 			},
 		},
 		isDateRange,
-		name: column.id,
-		value,
-		...muiDayPickerInputProps,
+		...field,
 		onChange: handleChange,
 		onBlur: handleDayPickerBlur,
+		...muiDayPickerInputProps,
 		floatingRef: dayPickerRef,
 	}
 

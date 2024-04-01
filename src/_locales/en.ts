@@ -27,6 +27,7 @@ export const Table_Localization_EN: Table_Localization = {
 	edit: 'Edit',
 	expand: 'Expand',
 	expandAll: 'Expand all',
+	fieldNameIsRequired: '`{column}` field is required',
 	filter: 'Filter',
 	filterArrIncludes: 'Includes',
 	filterArrIncludesAll: 'Includes all',
@@ -134,6 +135,8 @@ export const Table_Localization_EN: Table_Localization = {
 	showColumns: 'Columns',
 	showPreset: 'Preset',
 	removeAll: 'Remove all',
+	requiredFieldIsHidden:
+		'Required fields are not filled, because one or more required columns are hidden in ‘Columns’ table settings',
 	addFilter: 'Add Filter',
 	isAnyOf: 'is any of',
 	locked: 'Locked',

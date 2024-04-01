@@ -14,6 +14,7 @@ import { lighten } from '@mui/material/styles'
 import type { VirtualItem, Virtualizer } from '@tanstack/react-virtual'
 import { useResizeDetector } from 'react-resize-detector'
 
+import { CreateNewRow } from '../buttons/CreateNewRow'
 import { ColumnVirtualizerWrapper } from '../components/ColumnVirtualizerWrapper'
 import { EditingRowActionButtons } from '../components/EditingRowActionButtons'
 import { EmptyCell } from '../components/EmptyCell'
@@ -52,23 +53,25 @@ export interface TableBodyRowProps<TData extends TableData = TableData> {
 	}[]
 }
 
-export const TableBodyRow: FC<TableBodyRowProps> = ({
-	columnVirtualizer,
-	isSummaryRow = false,
-	measureElement,
-	numRows,
-	row,
-	rowIndex,
-	rowNumber,
-	table,
-	virtualColumns,
-	virtualRow,
-	groupingProps,
-}) => {
+export const TableBodyRow: FC<TableBodyRowProps> = (props) => {
+	const {
+		columnVirtualizer,
+		isSummaryRow = false,
+		measureElement,
+		numRows,
+		row,
+		rowIndex,
+		rowNumber,
+		table,
+		virtualColumns,
+		virtualRow,
+		groupingProps,
+	} = props
 	const {
 		getIsSomeColumnsPinned,
 		getState,
 		options: {
+			enableCreateNewRow,
 			enableExpanding,
 			enableRowDragging,
 			enableTableHead,
@@ -90,6 +93,7 @@ export const TableBodyRow: FC<TableBodyRowProps> = ({
 		hoveredRow,
 	} = getState()
 	const isEditingRow = !!editingRow && editingRow?.id === row.id
+	const isNewRow = table.getIsNewRow(row)
 	const isMockRow = getIsMockRow(row)
 
 	const tableRowProps =
@@ -178,8 +182,11 @@ export const TableBodyRow: FC<TableBodyRowProps> = ({
 			)
 			const group = groupingProps?.[groupIndex]
 			if (!group || !groupingProps) return null
-			// There is an extra row for the detail panel, so multiply rowspan by 2
-			const rowSpan = group.count * (renderDetailPanel ? 2 : 1)
+			// There could be an extra row for the detail panel
+			// There could be an extra row to create new row
+			const rowSpan =
+				group.count *
+				(1 + (renderDetailPanel ? 1 : 0) + (enableCreateNewRow ? 1 : 0))
 			const groupBorders = getCellGroupBorders({
 				table,
 				isFirstOfGroup: true,
@@ -222,6 +229,7 @@ export const TableBodyRow: FC<TableBodyRowProps> = ({
 			collapsedColumnIndex,
 			groupingProps,
 			isSummaryRow,
+			enableCreateNewRow,
 			numRows,
 			renderDetailPanel,
 			row,
@@ -279,13 +287,13 @@ export const TableBodyRow: FC<TableBodyRowProps> = ({
 	}, [columnVisibility])
 
 	return (
-		<EditingRowActionButtons
-			open={isEditingRow && editingMode === 'row'}
-			table={table}
-			row={row}
-		>
-			{({ ref }) => (
-				<>
+		<>
+			<EditingRowActionButtons
+				open={(isEditingRow && editingMode === 'row') || isNewRow}
+				table={table}
+				row={row}
+			>
+				{({ ref }) => (
 					<MuiTableRow
 						data-index={virtualRow?.index}
 						hover
@@ -329,6 +337,8 @@ export const TableBodyRow: FC<TableBodyRowProps> = ({
 					>
 						<ColumnVirtualizerWrapper>
 							{cells.map(([cell, virtualCell], index) => {
+								if (table.getIsNewRow(row) && cell.column.getIsGrouped())
+									return null
 								if (cell.getIsPlaceholder() && !isSummaryRow)
 									return getGroupedCell(cell, virtualCell)
 								const groupBorders = getCellGroupBorders({
@@ -390,15 +400,16 @@ export const TableBodyRow: FC<TableBodyRowProps> = ({
 							})}
 						</ColumnVirtualizerWrapper>
 					</MuiTableRow>
-					{renderDetailPanel &&
-						(collapsedColumnIndex === undefined ? (
-							<TableDetailPanel ref={panelRef} row={row} table={table} />
-						) : (
-							<tr />
-						))}
-				</>
-			)}
-		</EditingRowActionButtons>
+				)}
+			</EditingRowActionButtons>
+			{renderDetailPanel &&
+				(collapsedColumnIndex === undefined ? (
+					<TableDetailPanel ref={panelRef} row={row} table={table} />
+				) : (
+					<tr />
+				))}
+			{enableCreateNewRow && <CreateNewRow {...props} />}
+		</>
 	)
 }
 

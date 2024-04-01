@@ -1,19 +1,24 @@
 import React, { useRef } from 'react'
+import { useFormContext } from 'react-hook-form'
 
-import { useEditField } from '../hooks/useEditField'
 import { useOnClickOutside } from '../hooks/useOnClickOutside'
+import { getCellFieldId } from '../stories/utils/getCellFieldId'
 import { TableData } from '../TableComponent'
 import { getValueOrFunctionHandler } from '../utils/getValueOrFunctionHandler'
 import { isEditInputDisabled } from '../utils/isEditingEnabled'
 
-import { EditCellFieldProps } from './EditCellField'
+import { EditCellControllerProps, EditCellFieldProps } from './EditCellField'
 import { Input, InputProps } from './Input'
 
 export const EditTextField = <TData extends TableData>({
 	table,
 	cell,
 	showLabel,
-}: EditCellFieldProps<TData>) => {
+	field,
+	fieldState,
+	onCellSave,
+	onCellCancel,
+}: EditCellFieldProps<TData> & EditCellControllerProps) => {
 	const { row, column } = cell
 	const cellDataProps = {
 		cell,
@@ -22,13 +27,14 @@ export const EditTextField = <TData extends TableData>({
 		table,
 	}
 	const {
-		options: { muiEditInputProps },
+		options: { editingMode, muiEditInputProps },
 		refs: { editInputRefs },
-		setEditingCell,
 	} = table
 	const { columnDef } = column
 	const { editVariant, minValue, maxValue, enableEditing } = columnDef
-	const { setValue, saveData, value, error } = useEditField(cellDataProps)
+	const { setValue } = useFormContext()
+	const fieldId = getCellFieldId(cell)
+	const error = fieldState.error?.message
 
 	const mInputProps =
 		getValueOrFunctionHandler(muiEditInputProps)(cellDataProps)
@@ -43,14 +49,17 @@ export const EditTextField = <TData extends TableData>({
 		muiInputProps.onChange?.(event)
 		if (event.isPropagationStopped()) return
 		if (!isReadOnly) {
-			setValue(event.target.value)
+			field.onChange(event)
 		}
 	}
 
 	const handleBlur: InputProps['onBlur'] = (event) => {
 		muiInputProps.onBlur?.(event)
 		if (event.isPropagationStopped()) return
-		saveData(value)
+		field.onBlur()
+		if (editingMode === 'cell') {
+			onCellSave()
+		}
 	}
 
 	const handleEnterKeyDown: InputProps['onKeyDown'] = (event) => {
@@ -59,7 +68,7 @@ export const EditTextField = <TData extends TableData>({
 			editInputRefs.current[column.id]?.blur()
 		}
 		if (event.key === 'Escape') {
-			setEditingCell(null)
+			onCellCancel()
 		}
 	}
 
@@ -67,9 +76,10 @@ export const EditTextField = <TData extends TableData>({
 	const handleClickOutside = (event) => {
 		event.stopPropagation()
 		if (error) {
-			setEditingCell(null)
+			onCellCancel()
 		}
 	}
+
 	useOnClickOutside(cellRef, handleClickOutside)
 
 	const inputProps: InputProps = {
@@ -90,7 +100,6 @@ export const EditTextField = <TData extends TableData>({
 		label: showLabel ? column.columnDef.header : undefined,
 		name: column.id,
 		placeholder: columnDef.header,
-		value,
 		...muiInputProps,
 		onClick: (e) => {
 			e.stopPropagation()
@@ -98,8 +107,9 @@ export const EditTextField = <TData extends TableData>({
 		},
 		onClear: (e) => {
 			muiInputProps.onClear?.(e)
-			setValue('')
+			setValue(fieldId, '')
 		},
+		value: field.value,
 		error,
 		hideErrorOnFocus: true,
 		onBlur: handleBlur,

@@ -111,7 +111,10 @@ export const Input = ({
 
 	const handleStepClick = (step: number) => () => {
 		if (inputRef.current) {
-			createNativeChangeEvent(inputRef.current, Number(props.value || 0) + step)
+			createNativeChangeEvent(
+				inputRef.current,
+				Number(props.value || inputRef.current.value) + step
+			)
 		}
 	}
 

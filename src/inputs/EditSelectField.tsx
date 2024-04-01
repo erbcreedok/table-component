@@ -1,19 +1,21 @@
-import React, { FocusEvent } from 'react'
+import React from 'react'
 
 import { TableData } from '../TableComponent'
 import { getValueOrFunctionHandler } from '../utils/getValueOrFunctionHandler'
 import { normalizeSelectOptions } from '../utils/normalizeSelectOptions'
-import { useEditField } from '../hooks/useEditField'
 import { isEditInputDisabled } from '../utils/isEditingEnabled'
 
-import { EditCellFieldProps } from './EditCellField'
+import { EditCellControllerProps, EditCellFieldProps } from './EditCellField'
 import { Select, SelectProps } from './Select'
 
 export const EditSelectField = <TData extends TableData>({
 	table,
 	cell,
 	showLabel,
-}: EditCellFieldProps<TData>) => {
+	field,
+	fieldState,
+	onCellSave,
+}: EditCellFieldProps<TData> & EditCellControllerProps) => {
 	const { row, column } = cell
 	const cellDataProps = {
 		cell,
@@ -27,7 +29,6 @@ export const EditSelectField = <TData extends TableData>({
 	} = table
 	const { columnDef } = column
 	const { editVariant, editSelectOptions, enableEditing } = columnDef
-	const { setValue, saveData, value, error } = useEditField(cellDataProps)
 	const mSelectProps =
 		getValueOrFunctionHandler(muiEditSelectProps)(cellDataProps)
 	const mcSelectProps = getValueOrFunctionHandler(columnDef.muiEditSelectProps)(
@@ -40,12 +41,13 @@ export const EditSelectField = <TData extends TableData>({
 		const computedValue = Array.isArray(value)
 			? value.map((el) => el.value ?? el)
 			: value?.value
-		setValue(computedValue)
+		field.onChange(computedValue)
 	}
 
-	const handleBlur = (event: FocusEvent<HTMLInputElement>) => {
+	const handleBlur = (event) => {
 		muiSelectProps.onBlur?.(event)
-		saveData(value)
+		field.onBlur()
+		onCellSave()
 	}
 
 	const selectProps: SelectProps = {
@@ -53,15 +55,16 @@ export const EditSelectField = <TData extends TableData>({
 		multiple,
 		options: editSelectOptions ? normalizeSelectOptions(editSelectOptions) : [],
 		placeholder: columnDef.header,
-		value,
 		...muiSelectProps,
 		onClick: (e) => {
 			e.stopPropagation()
 			muiSelectProps?.onClick?.(e)
 		},
+		value: field.value,
 		onBlur: handleBlur,
 		onChange: handleChange,
 		inputProps: {
+			error: fieldState.error?.message,
 			inputRef: (inputRef) => {
 				if (inputRef) {
 					editInputRefs.current[column.id] = inputRef
@@ -72,7 +75,6 @@ export const EditSelectField = <TData extends TableData>({
 			},
 			label: showLabel ? column.columnDef.header : undefined,
 			name: column.id,
-			error,
 			hideErrorOnFocus: true,
 			...muiSelectProps.inputProps,
 		},

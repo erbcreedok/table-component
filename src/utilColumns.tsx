@@ -34,7 +34,10 @@ const UtilColumnCell = <TData extends TableData>({
 
 	return (
 		<>
-			{!hideRowSelectionColumn && enableRowSelection && !getIsMockRow(row) ? (
+			{!hideRowSelectionColumn &&
+			enableRowSelection &&
+			!getIsMockRow(row) &&
+			!table.getIsNewRow(row) ? (
 				<SelectCheckbox row={row} table={table} />
 			) : null}
 		</>

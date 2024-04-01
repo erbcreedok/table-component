@@ -5,7 +5,7 @@ import { IconGeneral } from './IconGeneral'
 
 export const ExpandFilledIcon = (props: SvgIconProps) => {
 	return (
-		<IconGeneral {...props} viewBox="0 0 18 18" size={18}>
+		<IconGeneral {...props} viewBox="-1 -1 17 17" size={18}>
 			<path
 				fillRule="evenodd"
 				clipRule="evenodd"

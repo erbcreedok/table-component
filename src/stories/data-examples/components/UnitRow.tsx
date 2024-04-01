@@ -2,6 +2,7 @@ import { styled } from '@mui/material'
 import Box from '@mui/material/Box'
 import React, { useCallback, useRef } from 'react'
 import { TableBodyRow, TableBodyRowProps } from '../../../body/TableBodyRow'
+import { CreateNewRow } from '../../../buttons/CreateNewRow'
 import { ExpandButton } from '../../../buttons/ExpandButton'
 import { TableHeadMultiRow } from '../../../head/TableHeadMultiRow'
 import { TableHeadRow } from '../../../head/TableHeadRow'
@@ -36,7 +37,7 @@ export const UnitRow = <TData extends Record<string, any> = {}>(
 		getVisibleLeafColumns,
 		getHeaderGroups,
 		getPaginationRowModel,
-		options: { enableStickyHeader, multirowHeader },
+		options: { enableCreateNewRow, enableStickyHeader, multirowHeader },
 	} = table
 	const ref = useRef<HTMLTableRowElement | null>(null)
 	const { isFullScreen } = table.getState()
@@ -109,43 +110,50 @@ export const UnitRow = <TData extends Record<string, any> = {}>(
 		<TableBodyRow {...props} measureElement={computedMeasureElement} />
 	) : null
 
-	const tableHeader = showTableHeader ? (
-		<>
-			{multirowHeader && (
-				<TableHeadMultiRow
-					isScrolled
-					multirowHeader={multirowHeader}
-					table={table}
-					registerSticky={registerSticky}
-					stickyElements={stickyElements}
-					virtualColumns={virtualColumns}
-				/>
-			)}
-			{getHeaderGroups().map((headerGroup) => (
-				<>
-					<TableHeadRow
-						data-index={virtualRow?.index}
-						parentRow={row}
-						stickyElements={stickyElements}
-						registerSticky={registerSticky}
-						headerGroup={getHeaderGroupFilteredByDisplay(headerGroup as any)}
-						key={headerGroup.id}
+	const createNewRow =
+		!!unitRow && enableCreateNewRow ? (
+			<CreateNewRow fillGroupedColumns {...props} />
+		) : null
+
+	const tableHeader =
+		(!!createNewRow && table.getIsNewRowHolder(row)) || showTableHeader ? (
+			<>
+				{multirowHeader && (
+					<TableHeadMultiRow
+						isScrolled
+						multirowHeader={multirowHeader}
 						table={table}
+						registerSticky={registerSticky}
+						stickyElements={stickyElements}
 						virtualColumns={virtualColumns}
-						cellBackgroundColor="#EBEDF5"
-						cellBackgroundColorHover="#FAFAFC"
-						stickyHeader={!!isFullScreen || !!enableStickyHeader}
-						sx={{ zIndex: 2 }}
 					/>
-				</>
-			))}
-		</>
-	) : null
+				)}
+				{getHeaderGroups().map((headerGroup) => (
+					<>
+						<TableHeadRow
+							data-index={virtualRow?.index}
+							parentRow={row}
+							stickyElements={stickyElements}
+							registerSticky={registerSticky}
+							headerGroup={getHeaderGroupFilteredByDisplay(headerGroup as any)}
+							key={headerGroup.id}
+							table={table}
+							virtualColumns={virtualColumns}
+							cellBackgroundColor="#EBEDF5"
+							cellBackgroundColorHover="#FAFAFC"
+							stickyHeader={!!isFullScreen || !!enableStickyHeader}
+							sx={{ zIndex: 2 }}
+						/>
+					</>
+				))}
+			</>
+		) : null
 
 	return (
 		<>
 			{unitRow}
 			{tableHeader}
+			{createNewRow}
 			{memberRow}
 		</>
 	)

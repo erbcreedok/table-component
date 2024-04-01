@@ -1,3 +1,5 @@
+import * as ReactHookForm from 'react-hook-form'
+
 import {
 	ColumnVirtualizerWrapper,
 	ColumnVirtualizerWrapperProps,
@@ -80,11 +82,11 @@ import {
 } from './components/EmbeddedSelect'
 import { CommonChipWithPopover } from './TableStatusBar/CommonChipWithPopover/CommonChipWithPopover'
 
-export * from './hooks/useEditField'
 export default TableComponent
 export * from '@tanstack/react-table'
 export * from './TableComponent'
 export * from './utilColumns'
+export * from './hooks'
 export type {
 	Table_Icons,
 	TableBodyRowProps,
@@ -124,6 +126,7 @@ export {
 	MenuItemBase,
 	QuickFilters,
 	type QuickFiltersProps,
+	ReactHookForm,
 	RowActionMenuButton,
 	Select,
 	SelectCheckbox,

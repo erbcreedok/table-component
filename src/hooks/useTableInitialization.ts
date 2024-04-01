@@ -1,6 +1,5 @@
 import { useMemo } from 'react'
 
-import { HierarchyTreeConfig } from '../components/HierarchyRow'
 import { Default_Table_Props } from '../constants'
 import {
 	TableComponentProps,
@@ -19,6 +18,8 @@ import {
 } from '../column.utils'
 import { createTheme } from '../theme/createTheme'
 import { defaultSetSubRows } from '../utils/defaultGetSubRows'
+
+import { HierarchyTreeConfig } from './useTableHierarchy'
 
 const defaultTheme = createTheme({})
 export const useTableInitialization = <TData extends Record<string, any>>(

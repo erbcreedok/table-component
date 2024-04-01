@@ -1,14 +1,14 @@
 import { styled } from '@mui/material'
 import Box from '@mui/material/Box'
-import React, { FC, memo, useCallback, useRef } from 'react'
+import React, { memo, useCallback, useRef } from 'react'
 
 import { TableBodyRow, TableBodyRowProps } from '../body/TableBodyRow'
+import { CreateNewRow } from '../buttons/CreateNewRow'
 import { ExpandButton } from '../buttons/ExpandButton'
 import { TableHeadMultiRow } from '../head/TableHeadMultiRow'
 import { TableHeadRow } from '../head/TableHeadRow'
 import { useComputedMeasureElement } from '../hooks/useComputedMeasureElement'
 import { useMultiSticky } from '../hooks/useMultiSticky'
-import { Table_Row, TableData, TableInstance } from '../TableComponent'
 import { getHeaderGroupFilteredByDisplay } from '../utils/getFilteredByDisplay'
 import { getValueOrFunctionHandler } from '../utils/getValueOrFunctionHandler'
 import { handleTableHeadDragEnter } from '../utils/handleTableHeadDragEnter'
@@ -29,16 +29,6 @@ const Wrapper = styled(Box)`
 	width: fit-content;
 `
 
-export type HierarchyTreeConfig<TData extends TableData = TableData> = {
-	isHierarchyItem: (row: TData) => boolean
-	getValue?: (row: TData) => string
-	showTableHeader?:
-		| boolean
-		| ((row: Table_Row<TData>, table: TableInstance<TData>) => boolean)
-	enableHierarchyTree?: boolean
-	HierarchyRow?: FC<TableBodyRowProps<TData>>
-	HierarchyComponent?: FC<TableBodyRowProps<TData>>
-}
 export const HierarchyRow = (props: TableBodyRowProps) => {
 	const { domIndex, row, table, virtualColumns, virtualRow, measureElement } =
 		props
@@ -46,7 +36,12 @@ export const HierarchyRow = (props: TableBodyRowProps) => {
 		getVisibleLeafColumns,
 		getHeaderGroups,
 		getPaginationRowModel,
-		options: { enableStickyHeader, hierarchyTreeConfig, multirowHeader },
+		options: {
+			enableStickyHeader,
+			enableCreateNewRow,
+			hierarchyTreeConfig,
+			multirowHeader,
+		},
 	} = table
 	const ref = useRef<HTMLTableRowElement | null>(null)
 	const {
@@ -146,43 +141,50 @@ export const HierarchyRow = (props: TableBodyRowProps) => {
 		<TableBodyRow {...props} measureElement={computedMeasureElement} />
 	) : null
 
-	const tableHeader = showTableHeader ? (
-		<>
-			{multirowHeader && (
-				<TableHeadMultiRow
-					isScrolled
-					multirowHeader={multirowHeader}
-					table={table}
-					registerSticky={registerSticky}
-					stickyElements={stickyElements}
-					virtualColumns={virtualColumns}
-				/>
-			)}
-			{getHeaderGroups().map((headerGroup) => (
-				<>
-					<TableHeadRow
-						data-index={virtualRow?.index}
-						parentRow={row}
-						stickyElements={stickyElements}
-						registerSticky={registerSticky}
-						headerGroup={getHeaderGroupFilteredByDisplay(headerGroup as any)}
-						key={headerGroup.id}
+	const createNewRow =
+		!!unitRow && enableCreateNewRow ? (
+			<CreateNewRow fillGroupedColumns {...props} />
+		) : null
+
+	const tableHeader =
+		(!!createNewRow && table.getIsNewRowHolder(row)) || showTableHeader ? (
+			<>
+				{multirowHeader && (
+					<TableHeadMultiRow
+						isScrolled
+						multirowHeader={multirowHeader}
 						table={table}
+						registerSticky={registerSticky}
+						stickyElements={stickyElements}
 						virtualColumns={virtualColumns}
-						cellBackgroundColor={Colors.Gray20}
-						cellBackgroundColorHover={Colors.LightestGray}
-						stickyHeader={!!isFullScreen || !!enableStickyHeader}
-						sx={{ zIndex: 2 }}
 					/>
-				</>
-			))}
-		</>
-	) : null
+				)}
+				{getHeaderGroups().map((headerGroup) => (
+					<>
+						<TableHeadRow
+							data-index={virtualRow?.index}
+							parentRow={row}
+							stickyElements={stickyElements}
+							registerSticky={registerSticky}
+							headerGroup={getHeaderGroupFilteredByDisplay(headerGroup as any)}
+							key={headerGroup.id}
+							table={table}
+							virtualColumns={virtualColumns}
+							cellBackgroundColor={Colors.Gray20}
+							cellBackgroundColorHover={Colors.LightestGray}
+							stickyHeader={!!isFullScreen || !!enableStickyHeader}
+							sx={{ zIndex: 2 }}
+						/>
+					</>
+				))}
+			</>
+		) : null
 
 	return (
 		<>
 			{unitRow}
 			{tableHeader}
+			{createNewRow}
 			{memberRow}
 		</>
 	)

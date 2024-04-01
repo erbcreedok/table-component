@@ -38,6 +38,8 @@ export const TableBodyCellUtility: FC<Props> = ({
 	const { column, row } = cell
 	const { columnDef } = column
 
+	if (table.getIsNewRow(row)) return null
+
 	const isMock = getIsMockRow(row)
 	const isRowNumbersOnly =
 		isMock ||

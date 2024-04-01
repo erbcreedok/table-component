@@ -131,36 +131,38 @@ export const TableHeadRow = ({
 	}
 
 	return (
-		<TableRow
-			ref={ref}
-			{...tableRowProps}
-			onDragEnter={handleDragEnter}
-			{...rest}
-			sx={(theme) => ({
-				position: stickyHeader ? 'sticky' : 'relative',
-				backgroundColor: Colors.LightestGray,
-				display: layoutMode === 'grid' ? 'flex' : 'table-row',
-				top: multirowHeader?.length
-					? stickyElements.find((sticky) => sticky.id === 'headRow')?.top
-					: 0,
-				boxShadow:
-					stickyHeader && isScrolled
-						? '0px 4px 4px 0px rgba(0, 0, 0, 0.10)'
-						: undefined,
-				...(tableRowProps?.sx instanceof Function
-					? tableRowProps?.sx(theme)
-					: (tableRowProps?.sx as any)),
-				...(sx instanceof Function ? sx(theme) : (sx as any)),
-			})}
-			{...getTestAttributes(e2eLabels, 'headerRow')}
-		>
-			<ColumnVirtualizerWrapper
-				style={{ backgroundColor: cellBackgroundColor ?? Colors.Gray20 }}
+		<>
+			<TableRow
+				ref={ref}
+				{...tableRowProps}
+				onDragEnter={handleDragEnter}
+				{...rest}
+				sx={(theme) => ({
+					position: stickyHeader ? 'sticky' : 'relative',
+					backgroundColor: Colors.LightestGray,
+					display: layoutMode === 'grid' ? 'flex' : 'table-row',
+					top: multirowHeader?.length
+						? stickyElements.find((sticky) => sticky.id === 'headRow')?.top
+						: 0,
+					boxShadow:
+						stickyHeader && isScrolled
+							? '0px 4px 4px 0px rgba(0, 0, 0, 0.10)'
+							: undefined,
+					...(tableRowProps?.sx instanceof Function
+						? tableRowProps?.sx(theme)
+						: (tableRowProps?.sx as any)),
+					...(sx instanceof Function ? sx(theme) : (sx as any)),
+				})}
+				{...getTestAttributes(e2eLabels, 'headerRow')}
 			>
-				{getHeaderCellProps().map((props) => (
-					<TableHeadCell key={props.header.id} {...props} />
-				))}
-			</ColumnVirtualizerWrapper>
-		</TableRow>
+				<ColumnVirtualizerWrapper
+					style={{ backgroundColor: cellBackgroundColor ?? Colors.Gray20 }}
+				>
+					{getHeaderCellProps().map((props) => (
+						<TableHeadCell key={props.header.id} {...props} />
+					))}
+				</ColumnVirtualizerWrapper>
+			</TableRow>
+		</>
 	)
 }

@@ -27,9 +27,10 @@ import {
 	CustomNoRecordsToDisplay,
 	CustomNoResultsFound,
 } from '../components/CustomNoResultsFound'
-import { TeamMember, UnitTreeItem, User } from '../types/TeamMember'
+import { TeamMember, UnitTreeItem } from '../types/TeamMember'
 import { Colors } from '../utils/constants'
 import { getIndexedExpandableColumn } from '../utils/getIndexedExpandableColumn'
+import { getOrganizeCreateNewRowButtons } from '../utils/getOrganizeCreateNewRowButtons'
 import { getTablePresetProps } from '../utils/getTablePresetProps'
 import { getDndTargetGroupingUpdateValues } from '../utils/getDndTargetGroupingUpdateValues'
 import {
@@ -43,6 +44,7 @@ import {
 	getDefaultRowActionMenuItems,
 	OpenSidebarMenuItem,
 } from '../utils/rowActionMenuItems'
+import { useEditingProps } from '../utils/useEditingProps'
 import { useHierarchyProps } from '../utils/useHierarchyProps'
 import { ColumnActionsFiltersMenu } from './components/ColumnActionsFiltersMenu'
 import { CUSTOM_FIRST_ROW_MEMBERS_CONFIG } from './components/constants'
@@ -190,6 +192,7 @@ const multiHeader = [
 
 type TeamsTableConfigs = Omit<TableComponentProps<TeamMember>, 'data'> &
 	Partial<TableComponentProps<TeamMember>> & {
+		customFirstRow?: TeamMember[]
 		data: TeamMember[]
 		setData: (data: TeamMember[]) => void
 		bulkActions?: object[]
@@ -420,33 +423,10 @@ const TeamsTable: Story<TeamsTableConfigs> = (args) => {
 	const [isDataLoading, setIsDataLoading] = useState(false)
 	const [isInnerTableOpen, setIsInnerTableOpen] = useState(false)
 	const [innerData] = useState(getExpandingTeamMembers(3, '', 3, 2))
-
-	const setNewRow = (row, values) => {
-		const newData = [...data]
-		const newRow = row.original
-		Object.entries(values).forEach(([key, value]) => {
-			if (key === 'teamMember') {
-				newRow.member = value as User
-			} else if (key === 'completion') {
-				newRow.completion =
-					value !== null && value !== undefined ? Number(value) : value
-			} else {
-				newRow[key] = value
-			}
-		})
-		setData(newData)
-	}
-
-	const handleSaveRows = ({ exitEditingMode, rows, values }) => {
-		if (Array.isArray(rows)) {
-			rows.forEach((row) => {
-				setNewRow(row, values)
-			})
-		} else {
-			setNewRow(rows, values)
-		}
-		exitEditingMode()
-	}
+	const { handleAddRow, handleEditRow, updateRow } = useEditingProps([
+		data,
+		setData,
+	])
 
 	const handleRowsDrop = ({ hoveredRow, draggingRows, grouping, table }) => {
 		const newGroupingData = getDndTargetGroupingUpdateValues(
@@ -455,12 +435,8 @@ const TeamsTable: Story<TeamsTableConfigs> = (args) => {
 		)
 
 		const rowsToSave = draggingRows.map((row) => table.getRow(row.id))
-
-		handleSaveRows({
-			exitEditingMode: () => table.setEditingRow(null),
-			rows: rowsToSave,
-			values: newGroupingData ?? {},
-		})
+		rowsToSave.forEach((row) => updateRow(row, newGroupingData))
+		table.setEditingRow(null)
 	}
 
 	const handleLoadData = () => {
@@ -515,11 +491,12 @@ const TeamsTable: Story<TeamsTableConfigs> = (args) => {
 					columnVisibility: defaultColumnVisibility,
 					...initialState,
 				}}
-				onEditingRowsSave={handleSaveRows}
+				onEditingRowSave={handleEditRow}
+				onNewRowSave={handleAddRow}
 				onEditingCellSave={({ cell, value, error, exitEditingMode }) => {
 					console.log(value, error, cell)
 					if (error) return
-					setNewRow(cell.row, { [cell.column.id]: value })
+					updateRow(cell.row, { [cell.column.id]: value })
 					exitEditingMode()
 				}}
 				filterFromLeafRows
@@ -602,7 +579,7 @@ export const TeamsTableSubtree: Story<TeamsTableExample> = ({
 	...args
 }) => {
 	const [dataTree, setDataTree] = useState([
-		...customFirstRow,
+		...(customFirstRow ?? []),
 		...getExpandingTeamMembers(3, '', 2),
 	])
 
@@ -644,9 +621,14 @@ export const TeamsTableSubtree: Story<TeamsTableExample> = ({
 export const HierarchyWithCustomRowExample: Story = (args) => {
 	const {
 		data,
+		setData,
 		muiTableBodyRowDragHandleProps,
 		getRowDragValuesChangeMessage,
 	} = useHierarchyProps()
+	const { handleAddRow, handleEditRow, updateRow } = useEditingProps([
+		data,
+		setData,
+	])
 
 	return (
 		<>
@@ -660,6 +642,8 @@ export const HierarchyWithCustomRowExample: Story = (args) => {
 				CustomRow={UnitRow}
 				groupBorder={{ left: '6px solid white', top: '6px solid white' }}
 				{...args}
+				onEditingRowSave={handleEditRow}
+				onNewRowSave={handleAddRow}
 				enableExpanding
 				hideExpandColumn
 				hideTableHead
@@ -676,10 +660,15 @@ export const HierarchyWithCustomRowExample: Story = (args) => {
 export const HierarchyWithConfigExample: Story = (args) => {
 	const {
 		data,
+		setData,
 		muiTableBodyRowDragHandleProps,
 		getRowDragValuesChangeMessage,
 	} = useHierarchyProps()
 	const [isHierarchyEnabled, setHierarchyEnabled] = useState(true)
+	const { handleAddRow, handleEditRow, updateRow } = useEditingProps([
+		data,
+		setData,
+	])
 
 	return (
 		<>
@@ -698,6 +687,8 @@ export const HierarchyWithConfigExample: Story = (args) => {
 				enableExpanding
 				hideExpandColumn
 				hideTableHead
+				onNewRowSave={handleAddRow}
+				onEditingRowSave={handleEditRow}
 				filterFromLeafRows
 				hierarchyTreeConfig={{
 					isHierarchyItem: isUnitTreeItem,
@@ -772,6 +763,18 @@ const meta: Meta = {
 			control: 'boolean',
 			defaultValue: false,
 		},
+		enableCreateNewRow: {
+			options: ['true', 'false', 'Except "Impact" is not "Medium"'],
+			mapping: {
+				true: true,
+				false: false,
+				'Except "Impact" is not "Medium"': ({ row }) =>
+					row.original.impact !== 'Medium',
+			},
+			control: { type: 'select' },
+			defaultValue: 'false',
+		},
+		organizeCreateNewRowButtons: getOrganizeCreateNewRowButtons(),
 		enableExpandAll: {
 			control: 'boolean',
 		},

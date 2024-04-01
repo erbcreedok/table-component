@@ -55,6 +55,9 @@ import { showRowActionsColumn } from '../utils/showRowActionsColumn'
 import { defaultGetSubRows } from '../utils/defaultGetSubRows'
 import { showUtilityColumn } from '../utils/showUtilityColumn'
 
+import { NewRowState, useCreateNewRow } from './useCreateNewRow'
+import { useTableHierarchy } from './useTableHierarchy'
+
 export const useTable = <TData extends TableData = TableData>(
 	config: TableComponentPropsDefined<TData>
 ) => {
@@ -143,6 +146,7 @@ export const useTable = <TData extends TableData = TableData>(
 	const [isFullScreen, setIsFullScreen] = useState(
 		initialState?.isFullScreen ?? false
 	)
+	const [newRow, setNewRow] = useState<NewRowState>(null)
 	const [showAlertBanner, setShowAlertBanner] = useState(
 		config.initialState?.showAlertBanner ?? false
 	)
@@ -331,6 +335,7 @@ export const useTable = <TData extends TableData = TableData>(
 		hoveredRow,
 		openedDetailedPanels,
 		isFullScreen,
+		newRow,
 		showAlertBanner,
 		showColumnFilters,
 		showGlobalFilter,
@@ -480,6 +485,7 @@ export const useTable = <TData extends TableData = TableData>(
 			setHoveredRow: config.onHoveredRowChange ?? setHoveredRow,
 			setOpenedDetailedPanels,
 			setIsFullScreen: config.onIsFullScreenChange ?? setIsFullScreen,
+			setNewRow: config.setNewRow ?? setNewRow,
 			setShowAlertBanner: config.onShowAlertBannerChange ?? setShowAlertBanner,
 			setShowFilters: config.onShowFiltersChange ?? setShowFilters,
 			setShowGlobalFilter:
@@ -510,6 +516,9 @@ export const useTable = <TData extends TableData = TableData>(
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 		[visibleLeafColumns, table, table.options.enableExpanding]
 	)
+
+	useCreateNewRow(table)
+	useTableHierarchy(table)
 
 	return { state, table, config }
 }

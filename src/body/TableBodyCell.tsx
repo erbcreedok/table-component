@@ -189,18 +189,21 @@ export const TableBodyCell = ({
 		[draggingBorder, numRows]
 	)
 
+	const isNewRow = table.getIsNewRow(row)
+
 	const isEditable =
 		columnDef.enableEditing !== undefined
 			? isEditingEnabled(columnDef.enableEditing, { table, row })
 			: isEditingEnabled(enableEditing, { table, row })
 
 	const isEditing =
-		!isGroupedCell &&
-		// if editingCell state is provided, it should be higher priority, than any config
-		(editingCell?.id === cell.id ||
-			(isEditable &&
-				editingMode !== 'modal' &&
-				(editingMode === 'table' || editingRow?.id === row.id)))
+		isNewRow ||
+		(!isGroupedCell &&
+			// if editingCell state is provided, it should be higher priority, than any config
+			(editingCell?.id === cell.id ||
+				(isEditable &&
+					editingMode !== 'modal' &&
+					(editingMode === 'table' || editingRow?.id === row.id))))
 
 	const handleDoubleClick = (event: MouseEvent<HTMLTableCellElement>) => {
 		tableCellProps?.onDoubleClick?.(event)
@@ -347,7 +350,10 @@ export const TableBodyCell = ({
 		px: 0,
 		[depthPaddingAttr]:
 			isExpandColumn || isExpandableColumn
-				? `${row.depth * expandPaddingSize + (isExpandableColumn ? 24 : 0)}px`
+				? `${
+						table.getRelativeDepth(row) * expandPaddingSize +
+						(isExpandableColumn ? 24 : 0)
+				  }px`
 				: undefined,
 		textOverflow: columnDefType !== 'display' ? 'ellipsis' : undefined,
 		whiteSpace: 'normal',

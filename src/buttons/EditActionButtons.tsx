@@ -22,7 +22,7 @@ export const EditActionButtons = <TData extends Record<string, any> = {}>({
 		options: {
 			icons: { CancelIcon, SaveIcon },
 			localization,
-			onEditingRowsSave,
+			onEditingRowSave,
 			onEditingRowCancel,
 		},
 		refs: { editInputRefs },
@@ -47,9 +47,9 @@ export const EditActionButtons = <TData extends Record<string, any> = {}>({
 				editingRow._valuesCache[input.name] = input.value
 			}
 		})
-		onEditingRowsSave?.({
+		onEditingRowSave?.({
 			exitEditingMode: () => setEditingRow(null),
-			rows: editingRow ?? row,
+			row: editingRow ?? row,
 			table,
 			values: editingRow?._valuesCache ?? { ...row.original },
 		})

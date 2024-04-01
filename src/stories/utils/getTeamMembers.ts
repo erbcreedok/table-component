@@ -14,13 +14,14 @@ const successionStatuses = [
 ]
 const petType = ['Cat', 'Dog', 'Rabbit', 'Fish', 'Other']
 
+export const getUser = (prefix = '') => ({
+	id: faker.datatype.uuid(),
+	fullName: `${prefix}. ${faker.name.fullName()}`,
+	avatarUrl: faker.image.avatar(),
+	role: faker.name.jobTitle(),
+})
 export const getUsers = (length = 200, prefix = '') =>
-	[...Array(length)].map((_, index) => ({
-		id: faker.datatype.uuid(),
-		fullName: `${prefix}${index + 1}. ${faker.name.fullName()}`,
-		avatarUrl: faker.image.avatar(),
-		role: faker.name.jobTitle(),
-	}))
+	[...Array(length)].map((_, index) => getUser(`${prefix}${index + 1}`))
 
 const savedUsers = getUsers()
 

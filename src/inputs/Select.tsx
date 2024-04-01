@@ -113,6 +113,7 @@ export const Select = <
 				{
 					[`.${autocompleteClasses.endAdornment}`]: {
 						position: 'static',
+						transform: 'translate(0, 0)',
 					},
 					[`&.${autocompleteClasses.hasClearIcon}.${autocompleteClasses.hasPopupIcon} .${outlinedInputClasses.root},
 					 &.${autocompleteClasses.hasPopupIcon} .${outlinedInputClasses.root}`]: {

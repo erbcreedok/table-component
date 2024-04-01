@@ -13,9 +13,9 @@ import {
 	RowActionMenuButton,
 	Select,
 	TextEllipsis,
-	useEditField,
 	GroupedCellBase,
 	CellBase,
+	ReactHookForm,
 } from '../../index'
 import {
 	Table_Cell,
@@ -31,6 +31,7 @@ import { Colors, performanceValues } from './constants'
 import { convertDate } from './convertDate'
 import { createGetColors } from './createGetColors'
 import { anyOfDateRange } from './customFilterFns'
+import { getCellFieldId } from './getCellFieldId'
 import { isTeamMember } from './getTeamMembers'
 import { getTeamsBorderColorSet } from './getTeamsBorderColorSet'
 import { getTeamsCellBackgroundSet } from './getTeamsCellBackgroundSet'
@@ -118,6 +119,7 @@ export const getTeamMembersColumns = () => {
 			dataType: 'textual',
 			filterVariant: 'text',
 			filterFn: 'contains',
+			required: true,
 			Cell: ({ row, table }) => {
 				const user = row.original.member
 				return (
@@ -199,15 +201,14 @@ export const getTeamMembersColumns = () => {
 					/>
 				</Box>
 			),
+			getEditValue: (rowOriginal: TeamMember) => rowOriginal.member,
 			Edit: (props) => {
-				const { value, setValue, saveData } = useEditField<
-					TeamMember,
-					User | null
-				>({ ...props, getValue: (row) => row.original.member })
+				const fieldId = getCellFieldId(props.cell)
+				const { control } = ReactHookForm.useFormContext()
 				const [loading, setLoading] = useState(false)
 				const [options, setOptions] = useState<User[]>([])
 
-				const handleInputChange = useCallback(async (e, value: string) => {
+				const handleInputChange = useCallback(async (_, value: string) => {
 					setLoading(true)
 					setOptions(await searchUsers(value))
 					setLoading(false)
@@ -218,73 +219,80 @@ export const getTeamMembersColumns = () => {
 				}, [handleInputChange])
 
 				return (
-					<Select<User, false>
-						onInputChange={handleInputChange}
-						options={options}
-						value={value}
-						clearIcon={null}
-						onChange={(e, value) => {
-							setValue(value)
-							saveData(value)
-						}}
-						loading={loading}
-						filterOptions={(options) => options}
-						getOptionLabel={(option) => option.fullName}
-						renderInput={(params) => (
-							<Input
-								{...params}
-								InputProps={{
-									...params.InputProps,
-									startAdornment: (
-										<Avatar
-											sx={{ width: 24, height: 24 }}
-											src={value?.avatarUrl}
-											alt={value?.fullName}
-										/>
-									),
-									endAdornment: (
-										<>
-											{params.InputProps.endAdornment}
-											{loading && <CircularProgress size={16} />}
-										</>
-									),
+					<ReactHookForm.Controller
+						name={fieldId}
+						control={control}
+						rules={{ required: '`Team member` field is required' }}
+						render={({ field, fieldState }) => (
+							<Select<User, false>
+								onInputChange={handleInputChange}
+								options={options}
+								{...field}
+								onChange={(e, value) => {
+									field.onChange(value)
+								}}
+								clearIcon={null}
+								loading={loading}
+								filterOptions={(options) => options}
+								getOptionLabel={(option) => option.fullName}
+								renderInput={(params) => (
+									<Input
+										{...params}
+										error={fieldState.error?.message}
+										InputProps={{
+											...params.InputProps,
+											startAdornment: (
+												<Avatar
+													sx={{ width: 24, height: 24 }}
+													src={field.value?.avatarUrl}
+													alt={field.value?.fullName}
+												/>
+											),
+											endAdornment: (
+												<>
+													{params.InputProps.endAdornment}
+													{loading && <CircularProgress size={16} />}
+												</>
+											),
+										}}
+									/>
+								)}
+								renderOption={(props, user) => {
+									return (
+										<li {...props}>
+											<Flex
+												center="y"
+												gap="8px"
+												style={{ minWidth: '100%', padding: '0 0' }}
+											>
+												<Avatar
+													sx={{ width: 24, height: 24 }}
+													src={user?.avatarUrl}
+													alt={user?.fullName}
+												/>
+												<Flex column style={{ overflow: 'hidden' }}>
+													<TextEllipsis
+														style={{ fontSize: '12px' }}
+														title={user?.fullName ?? 'N/A'}
+													>
+														{user?.fullName}
+													</TextEllipsis>
+													<TextEllipsis
+														style={{
+															color: '#6C6F80',
+															fontSize: '10px',
+															fontWeight: '400',
+														}}
+													>
+														{user?.role}
+													</TextEllipsis>
+												</Flex>
+											</Flex>
+										</li>
+									)
 								}}
 							/>
 						)}
-						renderOption={(props, user) => {
-							return (
-								<li {...props}>
-									<Flex
-										center="y"
-										gap="8px"
-										style={{ minWidth: '100%', padding: '0 0' }}
-									>
-										<Avatar
-											sx={{ width: 24, height: 24 }}
-											src={user?.avatarUrl}
-											alt={user?.fullName}
-										/>
-										<Flex column style={{ overflow: 'hidden' }}>
-											<TextEllipsis
-												style={{ fontSize: '12px' }}
-												title={user?.fullName ?? 'N/A'}
-											>
-												{user?.fullName}
-											</TextEllipsis>
-											<TextEllipsis
-												style={{
-													color: '#6C6F80',
-													fontSize: '10px',
-													fontWeight: '400',
-												}}
-											>
-												{user?.role}
-											</TextEllipsis>
-										</Flex>
-									</Flex>
-								</li>
-							)
-						}}
 					/>
 				)
 			},
@@ -383,13 +391,7 @@ export const getTeamMembersColumns = () => {
 			Header: HeaderBase,
 			enableColumnOrdering: true,
 			editVariant: 'text',
-			validator: ({ value }) => {
-				if (!value) {
-					return 'Location is required'
-				}
-
-				return true
-			},
+			required: true,
 		},
 		{
 			header: 'Hired At',

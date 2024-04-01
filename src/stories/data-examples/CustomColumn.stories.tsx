@@ -65,14 +65,8 @@ export const CustomColumnDefault: Story<TableComponentProps> = () => {
 		setData(newData)
 	}
 
-	const handleSaveRows = ({ exitEditingMode, rows, values }) => {
-		if (Array.isArray(rows)) {
-			rows.forEach((row) => {
-				setNewRow(row, values)
-			})
-		} else {
-			setNewRow(rows, values)
-		}
+	const handleSaveRows = ({ exitEditingMode, row, values }) => {
+		setNewRow(row, values)
 		exitEditingMode()
 	}
 
@@ -103,7 +97,7 @@ export const CustomColumnDefault: Story<TableComponentProps> = () => {
 			}}
 			editingMode="row"
 			enableEditing
-			onEditingRowsSave={handleSaveRows}
+			onEditingRowSave={handleSaveRows}
 			enableGrouping
 		/>
 	)

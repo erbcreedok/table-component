@@ -3,8 +3,12 @@ import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
 import { forwardRef, ReactNode, RefObject, useMemo } from 'react'
 
+import {
+	NotificationBox,
+	NotificationBoxProps,
+} from '../components/NotificationBox'
 import { Colors, IconsColor, TextColor } from '../components/styles'
-import { DraggingMessage, TableData, TableInstance } from '../TableComponent'
+import { TableData, TableInstance } from '../TableComponent'
 import { getColorAlpha } from '../utils/getColorAlpha'
 import { getTargetGroupingKeysValues } from '../utils/getTargetGroupingKeysValues'
 
@@ -78,34 +82,6 @@ const renderCells = (
 			</div>
 		),
 	].filter(Boolean)
-}
-
-const Message = ({ text, type }: DraggingMessage) => {
-	return (
-		<Typography
-			sx={{
-				p: '9px 12px',
-				borderRadius: '6px',
-				border: `2px solid ${
-					type === 'danger'
-						? Colors.Red
-						: type === 'warning'
-						? Colors.Amber3
-						: Colors.LightBlue
-				}`,
-				background:
-					type === 'danger'
-						? Colors.Red2
-						: type === 'warning'
-						? Colors.Amber2
-						: Colors.LightestBlue,
-				zIndex: 10,
-				width: 'fit-content',
-			}}
-		>
-			{text}
-		</Typography>
-	)
 }
 
 const ValuesChangeMessages = ({
@@ -202,7 +178,7 @@ const TableRowDragGhostRoot = <TData extends TableData>(
 		return validateHoveredRow(hoveredRow, table)
 	}, [hoveredRow, table, validateHoveredRow])
 
-	const draggingMessage = useMemo<DraggingMessage | null>(() => {
+	const draggingMessage = useMemo<NotificationBoxProps | null>(() => {
 		if (hoveredRowValidation !== false && hoveredRowValidation !== true) {
 			return hoveredRowValidation
 		}
@@ -328,12 +304,12 @@ const TableRowDragGhostRoot = <TData extends TableData>(
 						}}
 					>
 						{sorting.length > 0 && hoveredRowValidation === true && (
-							<Message
+							<NotificationBox
 								text="Sorting will be reset automatically"
 								type="warning"
 							/>
 						)}
-						{draggingMessage && <Message {...draggingMessage} />}
+						{draggingMessage && <NotificationBox {...draggingMessage} />}
 						{(!draggingMessage || draggingMessage.type !== 'danger') &&
 							valuesChangeMessages.length > 0 && (
 								<ValuesChangeMessages
