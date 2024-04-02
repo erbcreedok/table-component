@@ -67,6 +67,7 @@ export const TableHeadCell: FC<TableHeadCellProps> = ({
 			enableColumnOrdering,
 			enableExpandAll,
 			enableGrouping,
+			enableGroupCollapsing,
 			enableMultiSort,
 			expandableColumnButtonPosition = 'left',
 			muiTableHeadCellProps,
@@ -362,7 +363,7 @@ export const TableHeadCell: FC<TableHeadCellProps> = ({
 												: undefined,
 									}}
 								>
-									{column.getIsGrouped() && (
+									{column.getIsGrouped() && enableGroupCollapsing && (
 										<IconButton
 											sx={{ p: 0, mr: `min(0.5rem, 10%)` }}
 											onClick={toggleGroupCollapsed}

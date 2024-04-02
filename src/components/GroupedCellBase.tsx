@@ -84,6 +84,9 @@ export const GroupedCellBase = <TData extends object>({
 			icons: { ExpandIcon, CollapseIcon },
 			onGroupCollapsedToggle,
 			getIsGroupCollapsed,
+			enableGroupCount,
+			enableGroupCollapsing,
+			enableGroupSelection,
 		},
 	} = table
 	const columnId = getColumnId(column.columnDef)
@@ -167,14 +170,16 @@ export const GroupedCellBase = <TData extends object>({
 							mt: isShort ? '-0.25rem' : 0,
 						}}
 					>
-						<IconButton
-							disabled={(groupRow?.subRows?.length ?? 0) <= 1}
-							sx={{ p: 0, order: 1 }}
-							onClick={toggleExpand}
-						>
-							{expanded ? <CollapseIcon /> : <ExpandIcon />}
-						</IconButton>
-						{enableRowSelection && groupId && (
+						{enableGroupCollapsing && (
+							<IconButton
+								disabled={(groupRow?.subRows?.length ?? 0) <= 1}
+								sx={{ p: 0, order: 1 }}
+								onClick={toggleExpand}
+							>
+								{expanded ? <CollapseIcon /> : <ExpandIcon />}
+							</IconButton>
+						)}
+						{enableGroupSelection && enableRowSelection && groupId && (
 							<SelectCheckbox
 								table={table}
 								parentRow={row.groupRows?.[groupId]}
@@ -196,7 +201,7 @@ export const GroupedCellBase = <TData extends object>({
 								{children}
 							</Box>
 						)}
-						{!isTooShort && (
+						{!isTooShort && enableGroupCount && (
 							<Typography
 								sx={{
 									color: TextColor.Disabled,

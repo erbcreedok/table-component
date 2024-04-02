@@ -780,6 +780,18 @@ const meta: Meta = {
 			control: 'boolean',
 			defaultValue: true,
 		},
+		enableGroupCount: {
+			control: 'boolean',
+			defaultValue: false,
+		},
+		enableGroupCollapsing: {
+			control: 'boolean',
+			defaultValue: false,
+		},
+		enableGroupSelection: {
+			control: 'boolean',
+			defaultValue: false,
+		},
 		enablePagination: {
 			control: 'boolean',
 			defaultValue: false,

@@ -1160,11 +1160,14 @@ export type TableComponentProps<TData extends TableData = TableData> = Omit<
 		enableColumnOrdering?: boolean
 		enableColumnVirtualization?: boolean
 		enableDensityToggle?: boolean
+		enableDetailedPanel?: boolean
 		enableDragScrolling?: boolean | 'horizontal' | 'vertical'
 		enableEditing?: EnableEditingOption<TData>
 		enableExpandAll?: boolean
-		enableDetailedPanel?: boolean
 		enableFlatSearch?: boolean
+		enableGroupCount?: boolean
+		enableGroupCollapsing?: boolean
+		enableGroupSelection?: boolean
 		expandByClick?: ExpandByClick
 		expandPaddingSize?: number
 		expandableColumnButtonPosition?: 'left' | 'right'
