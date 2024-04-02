@@ -240,7 +240,8 @@ const addColumnSubtitle = (
 ) => {
 	return columns.map((column) => ({
 		...column,
-		subtitle: columnSubtitles[getColumnId(column)] ?? undefined,
+		subtitle:
+			columnSubtitles[getColumnId(column)] ?? column.subtitle ?? undefined,
 	}))
 }
 
@@ -571,6 +572,9 @@ const TeamsTable: Story<TeamsTableConfigs> = (args) => {
 				{...getTablePresetProps('teamsDefaultTable')}
 				{...rest}
 			/>
+
+			{/* Offset to accommodate column editing popup */}
+			<div style={{ height: '20em' }} />
 		</>
 	)
 }

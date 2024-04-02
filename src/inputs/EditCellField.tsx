@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react'
+import { useCallback } from 'react'
 import {
 	Controller,
 	useFormContext,
@@ -10,6 +10,7 @@ import {
 
 import type { Table_Cell, TableData, TableInstance } from '..'
 import { getCellFieldId } from '../stories/utils/getCellFieldId'
+import { validateValue } from '../utils/validate'
 
 import { EditDateField } from './EditDateField'
 import { EditSelectField } from './EditSelectField'
@@ -20,15 +21,15 @@ export type EditCellFieldProps<TData extends TableData = TableData> = {
 	table: TableInstance<TData>
 	showLabel?: boolean
 }
-export type EditCellControllerProps = {
-	field: ControllerRenderProps<TableData>
+export type EditCellControllerProps<TData extends TableData = TableData> = {
+	field: ControllerRenderProps<TData>
 	fieldState: ControllerFieldState
-	formState: UseFormStateReturn<TableData>
+	formState: UseFormStateReturn<TData>
 	onCellSave(): void
 	onCellCancel(): void
 }
 
-export const EditCellField = <TData extends Record<string, any> = {}>(
+export const EditCellField = <TData extends TableData = TableData>(
 	props: EditCellFieldProps<TData>
 ) => {
 	const { cell, table } = props
@@ -50,7 +51,7 @@ export const EditCellField = <TData extends Record<string, any> = {}>(
 	})
 	const validate = useCallback(
 		(value, formValues) =>
-			validator?.({
+			(validator ?? validateValue)({
 				value,
 				values: formValues,
 				table,

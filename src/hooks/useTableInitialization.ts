@@ -55,9 +55,7 @@ export const useTableInitialization = <TData extends Record<string, any>>(
 	)
 	const defaultDisplayColumn = useMemo<Partial<Table_ColumnDef<TData>>>(
 		() => ({
-			...(Table_DefaultDisplayColumn as unknown as Partial<
-				Table_ColumnDef<TData>
-			>),
+			...(Table_DefaultDisplayColumn as any),
 			...props.defaultDisplayColumn,
 		}),
 		[props.defaultDisplayColumn]

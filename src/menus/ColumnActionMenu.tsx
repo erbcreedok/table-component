@@ -16,7 +16,6 @@ interface Props {
 	anchorEl: HTMLElement | null
 	header: Table_Header
 	setVisible: (visible: boolean) => void
-	openCustomizer: () => void
 	table: TableInstance
 }
 
@@ -24,7 +23,6 @@ export const ColumnActionMenu: FC<Props> = ({
 	anchorEl,
 	header,
 	setVisible,
-	openCustomizer,
 	table,
 }) => {
 	const menuRef = useRef(null)
@@ -119,7 +117,6 @@ export const ColumnActionMenu: FC<Props> = ({
 							key="columnEdit"
 							column={column}
 							setVisible={setVisible}
-							openCustomizer={openCustomizer}
 							setColumns={setColumns}
 						/>
 					),

@@ -20,6 +20,7 @@ import { useForm, SubmitHandler, Controller } from 'react-hook-form'
 
 import {
 	NumericColumn,
+	PercentColumn,
 	SetColumns,
 	TableData,
 	Table_ColumnDef,
@@ -27,10 +28,9 @@ import {
 } from '../TableComponent'
 import { useTableContext } from '../context/useTableContext'
 import { handleStopPropagation } from '../utils/withStopPropagation'
-import { DECIMAL_PLACES } from '../constants'
 import { Input } from '../inputs/Input'
 
-import { commonListItemStyles, commonMenuItemStyles } from './constants'
+import { commonListItemStyles } from './constants'
 
 type Inputs<TData extends TableData = TableData> = Required<
 	Pick<
@@ -38,23 +38,21 @@ type Inputs<TData extends TableData = TableData> = Required<
 		'header' | 'dataType' | 'shortHeader' | 'subtitle'
 	>
 > & {
-	// numeric
-	decimalPlaces: number
-	allowNegative: boolean
-	space1000: boolean
+	// numeric and percent
+	decimalPlaces: number | string
+	enableNegative: boolean
+	enableFormat: boolean
 }
 
 type Props<TData extends TableData = TableData> = {
 	columnDef: Table_DefinedColumnDef<TData>
 	setColumns: SetColumns<TData>
-	close: () => void
 	anchorEl: HTMLElement | null
 }
 
 export const CustomColumnEditor: FC<Props> = ({
 	columnDef,
 	setColumns,
-	close,
 	anchorEl,
 }) => {
 	const {
@@ -70,26 +68,28 @@ export const CustomColumnEditor: FC<Props> = ({
 			dataType: columnDef.dataType ?? 'textual',
 			shortHeader: columnDef.shortHeader ?? '',
 			subtitle: columnDef.subtitle ?? '',
-			// numeric
-			decimalPlaces:
-				(columnDef as NumericColumn).decimalPlaces ?? DECIMAL_PLACES,
-			allowNegative: columnDef.minValue !== 0,
-			space1000:
-				(columnDef as NumericColumn).numberFormat === undefined ||
-				(columnDef as NumericColumn).numberFormat === 'SPACE1000',
+			// numeric and percent
+			decimalPlaces: (columnDef as NumericColumn).decimalPlaces,
+			enableNegative: columnDef.minValue !== 0,
+			enableFormat: (columnDef as NumericColumn).displayFormat !== undefined,
 		},
 	})
 
 	const {
-		table: {
-			options: {
-				icons: { TextTypeIcon, NumericTypeIcon },
-				localization,
-				customColumns,
-			},
-		},
+		table,
 		config: { originalColumns },
 	} = useTableContext()
+	const {
+		options: {
+			icons: { TextTypeIcon, NumericTypeIcon, PercentTypeIcon },
+			localization,
+			customColumns,
+		},
+	} = table
+
+	const close = useCallback(() => {
+		table.setCustomColumnEditor(undefined)
+	}, [table])
 
 	const handleSave: SubmitHandler<Inputs> = useCallback(
 		({
@@ -98,8 +98,8 @@ export const CustomColumnEditor: FC<Props> = ({
 			shortHeader,
 			subtitle,
 			decimalPlaces,
-			allowNegative,
-			space1000,
+			enableNegative,
+			enableFormat,
 		}) => {
 			const index = originalColumns.findIndex(
 				(c) => c.accessorKey === columnDef.id
@@ -112,13 +112,15 @@ export const CustomColumnEditor: FC<Props> = ({
 			updatedColumn.header = header
 			updatedColumn.dataType = dataType
 
-			// eslint-disable-next-line default-case
 			switch (dataType) {
 				case 'textual':
 					updatedColumn.editVariant = 'text'
 					break
 				case 'numeric':
 					updatedColumn.editVariant = 'number'
+					break
+				case 'percent':
+					updatedColumn.editVariant = 'percent'
 					break
 			}
 
@@ -128,30 +130,36 @@ export const CustomColumnEditor: FC<Props> = ({
 			if (subtitle === '') delete updatedColumn.subtitle
 			else updatedColumn.subtitle = subtitle
 
-			// numeric props
+			// numeric and percent props
 
-			if (dataType === 'numeric') {
-				// eslint-disable-next-line no-param-reassign
-				decimalPlaces = Number(decimalPlaces)
-				if (decimalPlaces === DECIMAL_PLACES)
+			if (dataType === 'numeric' || dataType === 'percent') {
+				if (decimalPlaces === '')
 					delete (updatedColumn as NumericColumn).decimalPlaces
-				else (updatedColumn as NumericColumn).decimalPlaces = decimalPlaces
+				else
+					(updatedColumn as NumericColumn).decimalPlaces = Number(decimalPlaces)
 
-				if (allowNegative) delete updatedColumn.minValue
+				if (enableNegative) delete updatedColumn.minValue
 				else updatedColumn.minValue = 0
 
-				if (space1000) delete (updatedColumn as NumericColumn).numberFormat
-				else (updatedColumn as NumericColumn).numberFormat = 'NONE'
+				if (enableFormat) {
+					if (dataType === 'numeric')
+						(updatedColumn as NumericColumn).displayFormat = 'SPACE_1000'
+					else (updatedColumn as PercentColumn).displayFormat = 'PROGRESS_BAR'
+				} else {
+					delete (updatedColumn as NumericColumn).displayFormat
+				}
 			} else {
 				delete (updatedColumn as NumericColumn).decimalPlaces
 				delete updatedColumn.minValue
-				delete (updatedColumn as NumericColumn).numberFormat
+				delete (updatedColumn as NumericColumn).displayFormat
 			}
+
+			// common logic
 
 			setColumns(nextColumns, updatedColumn, 'UPDATE')
 			close()
 		},
-		[columnDef.id, originalColumns, setColumns, close]
+		[close, columnDef.id, originalColumns, setColumns]
 	)
 
 	const {
@@ -163,12 +171,8 @@ export const CustomColumnEditor: FC<Props> = ({
 	const addPropertyMenuRef = useRef<HTMLDivElement>(null)
 
 	const popperRef = useRef(null)
-	// todo `useOnClickOutside([popperRef, addPropertyMenuRef], close)` when fixed <https://github.com/juliencrn/usehooks-ts/issues/531>
-	useOnClickOutside(popperRef, (c: any) => {
-		if (addPropertyMenuRef.current?.contains(c.target)) return
+	useOnClickOutside([popperRef, addPropertyMenuRef], close)
 
-		close()
-	})
 	const arrowRef = useRef(null)
 
 	const dataType = watch('dataType')
@@ -216,7 +220,7 @@ export const CustomColumnEditor: FC<Props> = ({
 							gap: '12px',
 						}}
 					>
-						{/* Header */}
+						{/* Header Text Input */}
 						<Box>
 							<strong>{localization.name}</strong>
 							<TextField
@@ -233,7 +237,7 @@ export const CustomColumnEditor: FC<Props> = ({
 							/>
 						</Box>
 
-						{/* Short Header */}
+						{/* Short Header Text Input */}
 						{isShortHeader && (
 							<Box>
 								<strong>{localization.shortName}</strong>
@@ -254,7 +258,7 @@ export const CustomColumnEditor: FC<Props> = ({
 							</Box>
 						)}
 
-						{/* Subtitle */}
+						{/* Subtitle Text Input */}
 						{isSubtitle && (
 							<Box>
 								<strong>{localization.subtitle}</strong>
@@ -272,7 +276,7 @@ export const CustomColumnEditor: FC<Props> = ({
 							</Box>
 						)}
 
-						{/* Type */}
+						{/* Type Select Input */}
 						<Box>
 							<strong>{localization.type}</strong>
 							<Controller
@@ -291,10 +295,7 @@ export const CustomColumnEditor: FC<Props> = ({
 										size="small"
 										fullWidth
 									>
-										<MenuItem
-											value="textual"
-											sx={{ ...commonMenuItemStyles, padding: '0px' }}
-										>
+										<MenuItem value="textual">
 											<Box sx={commonListItemStyles}>
 												<ListItemIcon>
 													<TextTypeIcon />
@@ -302,10 +303,7 @@ export const CustomColumnEditor: FC<Props> = ({
 												{localization.text}
 											</Box>
 										</MenuItem>
-										<MenuItem
-											value="numeric"
-											sx={{ ...commonMenuItemStyles, padding: '0px' }}
-										>
+										<MenuItem value="numeric">
 											<Box sx={commonListItemStyles}>
 												<ListItemIcon>
 													<NumericTypeIcon />
@@ -313,14 +311,23 @@ export const CustomColumnEditor: FC<Props> = ({
 												{localization.numeric}
 											</Box>
 										</MenuItem>
+										<MenuItem value="percent">
+											<Box sx={commonListItemStyles}>
+												<ListItemIcon>
+													<PercentTypeIcon />
+												</ListItemIcon>
+												{localization.percent}
+											</Box>
+										</MenuItem>
 									</Select>
 								)}
 							/>
 						</Box>
 
-						{/* Numeric Options */}
-						{dataType === 'numeric' && (
+						{/* Numeric and Percent Options */}
+						{(dataType === 'numeric' || dataType === 'percent') && (
 							<>
+								{/* Decimal Places Number Input */}
 								<Box>
 									<strong>{localization.numberOfDecimalPlaces}</strong>
 									<Controller
@@ -340,12 +347,18 @@ export const CustomColumnEditor: FC<Props> = ({
 										)}
 									/>
 								</Box>
+
+								{/* Enable Format Boolean Input */}
 								<Box>
 									<FormControlLabel
-										label={localization.useSpaceAs1000Separator}
+										label={
+											dataType === 'numeric'
+												? localization.useSpaceAs1000Separator
+												: localization.displayAsProgressBar
+										}
 										control={
 											<Controller
-												name="space1000"
+												name="enableFormat"
 												control={control}
 												render={({ field: { value, onChange } }) => (
 													<Switch
@@ -358,12 +371,14 @@ export const CustomColumnEditor: FC<Props> = ({
 										}
 									/>
 								</Box>
+
+								{/* Enable Negative Boolean Input */}
 								<Box>
 									<FormControlLabel
 										label={localization.allowNegativeNumbers}
 										control={
 											<Controller
-												name="allowNegative"
+												name="enableNegative"
 												control={control}
 												render={({ field: { value, onChange } }) => (
 													<Switch
@@ -379,7 +394,7 @@ export const CustomColumnEditor: FC<Props> = ({
 							</>
 						)}
 
-						{/* Action Buttons */}
+						{/* Bottom Action Buttons */}
 						<Box
 							sx={(theme) => ({
 								display: 'flex',
@@ -406,7 +421,7 @@ export const CustomColumnEditor: FC<Props> = ({
 				</form>
 			</Popper>
 
-			{/* Add property menu */}
+			{/* Add Property Menu */}
 			<Menu
 				ref={addPropertyMenuRef}
 				open={isPropertyMenu}

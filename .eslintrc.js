@@ -45,6 +45,9 @@ module.exports = {
 		'no-plusplus': 'off',
 		// Don't see the practical point of this rule
 		'no-shadow': 'off',
+		'no-lonely-if': 'off',
+		'default-case': 'off',
+		'@typescript-eslint/no-non-null-assertion': 'off',
 		// Defining functions in the end of the scope is a common pattern,
 		// so we can disable the `functions` check
 		// + Using variables before they are defined, but in inner scopes (e.g. in functions)
@@ -66,8 +69,7 @@ module.exports = {
 		'react/forbid-prop-types': 'off',
 		'react/prop-types': 'off',
 		'react/no-unused-prop-types': 'off',
-		// It’s OK to assign to parameter fields when it’s necessary
-		'no-param-reassign': ['error', { props: false }],
+		'no-param-reassign': 'off',
 		// It’s OK to name fields with `_`.
 		'no-underscore-dangle': 'off',
 		'padding-line-between-statements': [
@@ -151,14 +153,14 @@ module.exports = {
 		'@typescript-eslint/explicit-module-boundary-types': 'off',
 		'no-useless-constructor': 'off',
 		'@typescript-eslint/no-useless-constructor': ['error'],
-		"@typescript-eslint/ban-types": [
-			"error",
+		'@typescript-eslint/ban-types': [
+			'error',
 			{
-				"types": {
-					"{}": false
+				types: {
+					'{}': false,
 				},
-				"extendDefaults": true
-			}
+				extendDefaults: true,
+			},
 		],
 		'prettier/prettier': ['error'],
 		camelcase: 'off',

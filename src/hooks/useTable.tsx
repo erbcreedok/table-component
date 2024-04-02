@@ -124,6 +124,9 @@ export const useTable = <TData extends TableData = TableData>(
 	const [editingRow, setEditingRow] = useState<Table_Row<TData> | null>(
 		initialState.editingRow ?? null
 	)
+	const [customColumnEditor, setCustomColumnEditor] = useState<
+		string | undefined
+	>()
 	const [globalFilterFn, setGlobalFilterFn] = useState<Table_FilterOption>(
 		initialState.globalFilterFn ?? 'fuzzy'
 	)
@@ -331,6 +334,7 @@ export const useTable = <TData extends TableData = TableData>(
 		draggingRows,
 		editingCell,
 		editingRow,
+		customColumnEditor,
 		globalFilterFn,
 		grouping,
 		groupCollapsed,
@@ -495,6 +499,7 @@ export const useTable = <TData extends TableData = TableData>(
 			setDraggingRows: config.onDraggingRowsChange ?? setDraggingRows,
 			setEditingCell: config.onEditingCellChange ?? setEditingCell,
 			setEditingRow: config.onEditingRowChange ?? setEditingRow,
+			setCustomColumnEditor,
 			setGlobalFilterFn: config.onGlobalFilterFnChange ?? setGlobalFilterFn,
 			setGroupCollapsed: config.onGroupCollapsedChange ?? setGroupCollapsed,
 			setHoveredColumn: config.onHoveredColumnChange ?? setHoveredColumn,

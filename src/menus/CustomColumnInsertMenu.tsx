@@ -1,4 +1,4 @@
-import { FC, useCallback, useRef } from 'react'
+import { FC, useCallback, useRef, MouseEvent } from 'react'
 import { MenuList, Popper, capitalize } from '@mui/material'
 import Box from '@mui/material/Box'
 import ListItemIcon from '@mui/material/ListItemIcon'
@@ -21,14 +21,38 @@ import { getTestAttributes } from '../utils/getTestAttributes'
 
 import { commonListItemStyles, commonMenuItemStyles } from './constants'
 
+const customColumnPrefix = 'customColumn'
+
+type CustomDefault = Partial<Table_ColumnDef<TableData>>
+
+const customDefaultText: CustomDefault = {
+	dataType: 'textual',
+	editVariant: 'text',
+}
+const customDefaultTextJson = JSON.stringify(customDefaultText)
+
+const customDefaultNumber: CustomDefault = {
+	dataType: 'numeric',
+	editVariant: 'number',
+	decimalPlaces: 2,
+	displayFormat: 'SPACE_1000',
+}
+const customDefaultNumberJson = JSON.stringify(customDefaultNumber)
+
+const customDefaultPercent: CustomDefault = {
+	dataType: 'percent',
+	editVariant: 'percent',
+	decimalPlaces: 2,
+	minValue: 0,
+}
+const customDefaultPercentJson = JSON.stringify(customDefaultPercent)
+
 type Props<TData extends TableData = TableData> = {
 	column: Table_Column
 	setColumns: SetColumns<TData>
 	insertPosition: 'left' | 'right'
 	setVisible: (visible: boolean) => void
 }
-
-const customColumnPrefix = 'customColumn'
 
 export const CustomColumnInsertMenu: FC<Props> = ({
 	column,
@@ -43,6 +67,7 @@ export const CustomColumnInsertMenu: FC<Props> = ({
 		table,
 		config: { originalColumns },
 	} = useTableContext()
+
 	const {
 		options: {
 			icons: {
@@ -50,15 +75,17 @@ export const CustomColumnInsertMenu: FC<Props> = ({
 				InsertColumnRightIcon,
 				TextTypeIcon,
 				NumericTypeIcon,
+				PercentTypeIcon,
 			},
 			localization,
 			e2eLabels,
+			onNativeEvent,
 		},
 		setColumnOrder,
 	} = table
 
 	const handleInsertColumn = useCallback(
-		(event) => {
+		(event: MouseEvent<HTMLElement>) => {
 			let columnNumber =
 				Math.max.apply(
 					null,
@@ -72,15 +99,17 @@ export const CustomColumnInsertMenu: FC<Props> = ({
 			if (columnNumber < 1) columnNumber = 1
 
 			const accessorKey = `${customColumnPrefix}${columnNumber}`
-			const { datatype: dataType, editvariant: editVariant } =
-				event.currentTarget.dataset
+			const { dataType, ...config } = JSON.parse(
+				event.currentTarget.dataset.json!
+			)
 			const newColumn: Table_ColumnDef<TableData> = {
 				header: `Column ${columnNumber}`,
 				accessorKey,
 				enableCustomization: true,
 				dataType,
-				editVariant,
+				...config,
 			}
+
 			const rightShift = insertPosition === 'right' ? 1 : 0
 			const index =
 				originalColumns.findIndex((c) => c.accessorKey === column.id) +
@@ -99,13 +128,25 @@ export const CustomColumnInsertMenu: FC<Props> = ({
 				return next
 			})
 			setVisible(false)
+			table.setCustomColumnEditor(accessorKey)
+
+			onNativeEvent?.({
+				el: `ColumnHeaderMenu_${getPascalCase(
+					column.columnDef.header
+				)}_Insert${capitalize(dataType)}Button`,
+				type: 'click',
+				event,
+			})
 		},
 		[
 			originalColumns,
+			insertPosition,
 			setColumns,
 			setColumnOrder,
 			setVisible,
-			insertPosition,
+			table,
+			onNativeEvent,
+			column.columnDef.header,
 			column.id,
 		]
 	)
@@ -153,19 +194,10 @@ export const CustomColumnInsertMenu: FC<Props> = ({
 			>
 				<MenuPaper sx={{ mx: '6px' }} {...hoverProps}>
 					<MenuList>
-						{/* Text */}
+						{/* Textrual */}
 						<MenuItem
-							data-datatype="textual"
-							data-editvariant="text"
-							onClick={withNativeEvent(
-								{
-									el: `ColumnHeaderMenu_${getPascalCase(
-										column.columnDef.header
-									)}_InsertTextButton`,
-									type: 'click',
-								},
-								table
-							)(handleInsertColumn)}
+							data-json={customDefaultTextJson}
+							onClick={handleInsertColumn}
 							{...getTestAttributes(e2eLabels, `columnMenuInsertText`)}
 							sx={commonMenuItemStyles}
 						>
@@ -179,17 +211,8 @@ export const CustomColumnInsertMenu: FC<Props> = ({
 
 						{/* Numeric */}
 						<MenuItem
-							data-datatype="numeric"
-							data-editvariant="number"
-							onClick={withNativeEvent(
-								{
-									el: `ColumnHeaderMenu_${getPascalCase(
-										column.columnDef.header
-									)}_InsertNumericButton`,
-									type: 'click',
-								},
-								table
-							)(handleInsertColumn)}
+							data-json={customDefaultNumberJson}
+							onClick={handleInsertColumn}
 							{...getTestAttributes(e2eLabels, `columnMenuInsertNumeric`)}
 							sx={commonMenuItemStyles}
 						>
@@ -198,6 +221,21 @@ export const CustomColumnInsertMenu: FC<Props> = ({
 									<NumericTypeIcon />
 								</ListItemIcon>
 								{localization.numeric}
+							</Box>
+						</MenuItem>
+
+						{/* Percent */}
+						<MenuItem
+							data-json={customDefaultPercentJson}
+							onClick={handleInsertColumn}
+							{...getTestAttributes(e2eLabels, `columnMenuInsertNumeric`)}
+							sx={commonMenuItemStyles}
+						>
+							<Box sx={commonListItemStyles}>
+								<ListItemIcon>
+									<PercentTypeIcon />
+								</ListItemIcon>
+								{localization.percent}
 							</Box>
 						</MenuItem>
 					</MenuList>

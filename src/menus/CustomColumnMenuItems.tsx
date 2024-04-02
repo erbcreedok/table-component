@@ -20,14 +20,12 @@ import { CustomColumnInsertMenu } from './CustomColumnInsertMenu'
 type Props<TData extends TableData = TableData> = {
 	column: Table_Column
 	setVisible: (visible: boolean) => void
-	openCustomizer: () => void
 	setColumns: SetColumns<TData>
 }
 
 export const CustomColumnMenuItems: FC<Props> = ({
 	column,
 	setVisible,
-	openCustomizer,
 	setColumns,
 }) => {
 	const anchorRef = useRef(null)
@@ -126,8 +124,8 @@ export const CustomColumnMenuItems: FC<Props> = ({
 							},
 							table
 						)(() => {
-							openCustomizer()
 							setVisible(false)
+							table.setCustomColumnEditor(column.columnDef.accessorKey)
 						})}
 						{...getTestAttributes(e2eLabels, 'columnMenuEdit')}
 					>

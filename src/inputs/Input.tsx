@@ -2,18 +2,20 @@ import {
 	inputBaseClasses,
 	outlinedInputClasses,
 	TextField,
+	Typography,
 } from '@mui/material'
 import IconButton from '@mui/material/IconButton'
 import { TextFieldProps } from '@mui/material/TextField'
 import Box from '@mui/material/Box'
 import { PartialKeys } from '@tanstack/table-core'
-import React, {
+import {
 	ChangeEventHandler,
 	MouseEventHandler,
 	useCallback,
 	useRef,
 } from 'react'
 
+import { TableColumnEditProps } from '../TableComponent'
 import { Tooltip } from '../components/Tooltip'
 import { NumberStepButtons } from '../components/NumberStepButtons'
 import { Colors, IconsColor, TextColor } from '../components/styles'
@@ -23,7 +25,7 @@ import { isGreaterThan } from '../stories/utils/isGreaterThan'
 import { isLessThan } from '../stories/utils/isLessThan'
 import { sumAnyTwoValues } from '../stories/utils/sumAnyTwoValues'
 import { createNativeChangeEvent } from '../utils/createNativeChangeEvent'
-import { getValidNumber } from '../utils/getValidNumber'
+import { sanitizeNumeric } from '../utils/numeric'
 import { mergeSx } from '../utils/mergeSx'
 import {
 	handleStopPropagation,
@@ -33,28 +35,32 @@ import {
 export type InputProps = Omit<
 	PartialKeys<TextFieldProps, 'variant'>,
 	'color' | 'error'
-> & {
-	onClear?: MouseEventHandler
-	isNumeric?: boolean
-	step?: number
-	minValue?: number
-	maxValue?: number
-	decimalPlaces?: number
-	error?: string | null | boolean
-	hideErrorOnFocus?: boolean
-}
+> &
+	Pick<TableColumnEditProps<never>, 'editVariant'> & {
+		onClear?: MouseEventHandler
+		/** @deprecated use `editVariant` */
+		isNumeric?: boolean
+		step?: number
+		minValue?: number
+		maxValue?: number
+		error?: string | null | boolean
+		hideErrorOnFocus?: boolean
+	}
+
 export const Input = ({
 	onClear,
 	isNumeric,
+	editVariant,
 	step = 1,
 	minValue,
 	maxValue,
-	decimalPlaces,
 	hideErrorOnFocus,
 	error,
 	onChange,
 	...props
 }: InputProps) => {
+	if (editVariant === undefined && isNumeric) editVariant = 'number'
+
 	const {
 		table: {
 			options: {
@@ -90,20 +96,12 @@ export const Input = ({
 
 	const handleChange = useCallback<ChangeEventHandler<HTMLInputElement>>(
 		(event) => {
-			if (isNumeric) {
-				const value = getValidNumber({
-					decimalPlaces,
-					min: minValue,
-					max: maxValue,
-				})(event.target.value)
-				if (value === false) return
-				Object.assign(event.target, {
-					value,
-				})
+			if (editVariant === 'number' || editVariant === 'percent') {
+				event.target.value = sanitizeNumeric(event.target.value)
 			}
 			onChange?.(event)
 		},
-		[isNumeric, maxValue, minValue, onChange]
+		[editVariant, onChange]
 	)
 
 	const isError = typeof error === 'string' || error === true
@@ -183,7 +181,7 @@ export const Input = ({
 								<CloseIcon style={{ width: '18px', height: '18px' }} />
 							</IconButton>
 						)}
-						{isNumeric && (
+						{editVariant === 'number' && (
 							<NumberStepButtons
 								sx={{ mr: '6px' }}
 								onClickUp={handleStepClick(step)}
@@ -201,6 +199,15 @@ export const Input = ({
 									),
 								}}
 							/>
+						)}
+						{editVariant === 'percent' && (
+							<Typography
+								sx={{
+									mr: 1,
+								}}
+							>
+								%
+							</Typography>
 						)}
 						{props.InputProps?.endAdornment}
 					</>

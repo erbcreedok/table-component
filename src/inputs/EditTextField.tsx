@@ -1,9 +1,10 @@
-import React, { useRef } from 'react'
+import { useRef } from 'react'
 import { useFormContext } from 'react-hook-form'
 
+import { isNumeric, roundDecimalPlaces } from '../utils/numeric'
 import { useOnClickOutside } from '../hooks/useOnClickOutside'
 import { getCellFieldId } from '../stories/utils/getCellFieldId'
-import { TableData } from '../TableComponent'
+import { NumericColumn, TableData } from '../TableComponent'
 import { getValueOrFunctionHandler } from '../utils/getValueOrFunctionHandler'
 import { isEditInputDisabled } from '../utils/isEditingEnabled'
 
@@ -32,6 +33,8 @@ export const EditTextField = <TData extends TableData>({
 	} = table
 	const { columnDef } = column
 	const { editVariant, minValue, maxValue, enableEditing } = columnDef
+	const decimalPlaces = (columnDef as NumericColumn).decimalPlaces
+
 	const { setValue } = useFormContext()
 	const fieldId = getCellFieldId(cell)
 	const error = fieldState.error?.message
@@ -42,7 +45,6 @@ export const EditTextField = <TData extends TableData>({
 		cellDataProps
 	)
 	const muiInputProps = { ...mInputProps, ...mcInputProps }
-	const isNumeric = editVariant === 'number'
 	const isReadOnly = editVariant === 'formula'
 
 	const handleChange: InputProps['onChange'] = (event) => {
@@ -54,6 +56,9 @@ export const EditTextField = <TData extends TableData>({
 	}
 
 	const handleBlur: InputProps['onBlur'] = (event) => {
+		if (decimalPlaces !== undefined && isNumeric(field.value)) {
+			setValue(fieldId, roundDecimalPlaces(decimalPlaces, Number(field.value)))
+		}
 		muiInputProps.onBlur?.(event)
 		if (event.isPropagationStopped()) return
 		field.onBlur()
@@ -93,10 +98,9 @@ export const EditTextField = <TData extends TableData>({
 				}
 			}
 		},
-		isNumeric,
+		editVariant,
 		minValue,
 		maxValue,
-		decimalPlaces: (columnDef as any).decimalPlaces,
 		label: showLabel ? column.columnDef.header : undefined,
 		name: column.id,
 		placeholder: columnDef.header,

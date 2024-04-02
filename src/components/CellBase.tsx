@@ -1,6 +1,7 @@
 import { BoxProps } from '@mui/material'
 import { PropsWithChildren, useMemo } from 'react'
 
+import { validateValue } from '../utils/validate'
 import {
 	Table_Cell,
 	Table_Column,
@@ -8,11 +9,13 @@ import {
 	TableData,
 	TableInstance,
 	NumericColumn,
+	PercentColumn,
 } from '../TableComponent'
 import { mergeSx } from '../utils/mergeSx'
 
 import { TooltipProps } from './Tooltip'
 import { TooltipOverflow } from './TooltipOverflow'
+import { LinearProgressWithLabel } from './LinearProgressWithLabel'
 
 export type CellBaseProps<TData extends TableData = {}> = PropsWithChildren<
 	{
@@ -41,28 +44,32 @@ export const CellBase = <TData extends TableData = {}>({
 	const {
 		options: { cellGroupedPlaceholderText = 'N/A', cellPlaceholderText },
 	} = table
+	const { columnDef } = column
 	const {
 		formatCellValue = (value) => value,
 		enableCustomization,
 		dataType,
-	} = column.columnDef
+	} = columnDef
 	const isGrouped = column.getIsGrouped()
 	const value = cell.getValue()
 
 	const text = useMemo(() => {
-		const { columnDef } = column
+		// Custom Column
+		if (value !== undefined && enableCustomization) {
+			// Space 1000 numeric
+			if (
+				dataType === 'numeric' &&
+				(columnDef as NumericColumn).displayFormat === 'SPACE_1000'
+			) {
+				return (value as number)
+					.toString()
+					.replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ' ')
+			}
 
-		// Space 1000 numeric
-		if (
-			value !== undefined &&
-			enableCustomization &&
-			dataType === 'numeric' &&
-			((columnDef as NumericColumn).numberFormat === undefined ||
-				(columnDef as NumericColumn).numberFormat === 'SPACE1000')
-		) {
-			return (value as number)
-				.toString()
-				.replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ' ')
+			// Percent
+			if (dataType === 'percent') {
+				return `${value}%`
+			}
 		}
 
 		if (uText) return uText
@@ -81,7 +88,7 @@ export const CellBase = <TData extends TableData = {}>({
 	}, [
 		cellGroupedPlaceholderText,
 		cellPlaceholderText,
-		column,
+		columnDef,
 		dataType,
 		enableCustomization,
 		formatCellValue,
@@ -90,8 +97,28 @@ export const CellBase = <TData extends TableData = {}>({
 		value,
 	])
 
+	// Custom Column: Percent as Progress Bar
+	if (
+		value !== undefined &&
+		enableCustomization &&
+		dataType === 'percent' &&
+		(columnDef as PercentColumn).displayFormat === 'PROGRESS_BAR'
+	) {
+		return <LinearProgressWithLabel value={Number(value)} />
+	}
+
+	const isValid = enableCustomization
+		? validateValue({
+				value,
+				table,
+				cell,
+				row,
+				values: [],
+		  })
+		: true
+
 	const content = <>{children ?? text}</>
-	const lineClamp = column.columnDef.lineClamp ?? clamp
+	const lineClamp = columnDef.lineClamp ?? clamp
 	const computedClamp = lineClamp === true ? 2 : !lineClamp ? 1 : lineClamp
 	const isParagraph =
 		typeof content.props.children === 'string'
@@ -126,6 +153,7 @@ export const CellBase = <TData extends TableData = {}>({
 							WebkitBoxOrient: 'vertical',
 							whiteSpace: 'normal',
 						}),
+						borderBottom: isValid === true ? undefined : '1px red dashed',
 					},
 					rest.sx
 				),

@@ -12,7 +12,9 @@ interface MyRow {
 	name: string
 	color: 'red' | 'green' | 'blue'
 	size: 'small' | 'medium' | 'large'
-	customColumn1?: any
+	customText?: any
+	customNumber?: any
+	customPercent?: any
 }
 
 const initialColumns: Table_ColumnDef<MyRow>[] = [
@@ -21,18 +23,34 @@ const initialColumns: Table_ColumnDef<MyRow>[] = [
 		accessorKey: 'name',
 	},
 	{
-		header: 'Color',
-		accessorKey: 'color',
+		header: 'Custom Text',
+		accessorKey: 'customText',
+		enableCustomization: true,
+		dataType: 'textual',
+		editVariant: 'text',
 	},
 	{
-		header: 'Custom Column',
-		accessorKey: 'customColumn1',
+		header: 'Custom Number',
+		accessorKey: 'customNumber',
 		enableCustomization: true,
-		// dataType: 'textual',
-		// editVariant: 'text',
 		dataType: 'numeric',
 		editVariant: 'number',
-		// numberFormat: 'NONE',
+		decimalPlaces: 2,
+		displayFormat: 'SPACE_1000',
+	},
+	{
+		header: 'Custom Percent',
+		accessorKey: 'customPercent',
+		enableCustomization: true,
+		dataType: 'percent',
+		editVariant: 'percent',
+		decimalPlaces: 2,
+		minValue: 0,
+		displayFormat: 'PROGRESS_BAR',
+	},
+	{
+		header: 'Color',
+		accessorKey: 'color',
 	},
 	{
 		header: 'Size',
@@ -43,9 +61,9 @@ const initialColumns: Table_ColumnDef<MyRow>[] = [
 // prettier-ignore
 const initialData: MyRow[] = [
 	{name: '0',	color: 'red',	size: 'large'},
-	{name: '1', color: 'blue', size: 'small'},
-	{name: '2', color: 'blue', size: 'medium'},
-	{name: '3', color: 'red', size: 'large'},
+	{name: '1', color: 'blue', size: 'small', customText: 'abcde'},
+	{name: '2', color: 'blue', size: 'medium', customNumber: 123456.78901},
+	{name: '3', color: 'red', size: 'large', customPercent: 333.333},
 	{name: '4', color: 'green', size: 'small'},
 ]
 

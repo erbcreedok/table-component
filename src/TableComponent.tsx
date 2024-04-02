@@ -88,6 +88,7 @@ import type { GetIsGroupCollapsedProps } from './utils/getIsGroupCollapsed'
 import type { OnGroupCollapsedToggleProps } from './utils/onGroupCollapsedToggle'
 import type { OnGroupCollapsedToggleAllProps } from './utils/onGroupCollapseToggleAll'
 import type { EmptyColumn } from './utils/getNonCollapsedColumns'
+import { Table_Localization_EN } from './_locales/en'
 
 /**
  * Most of this file is just TypeScript types
@@ -110,167 +111,7 @@ export type {
 	OnGroupCollapsedToggleAllProps,
 }
 
-export interface Table_Localization {
-	actions: string
-	and: string
-	addToFilter: string
-	addSorting: string
-	cancel: string
-	changeFilterMode: string
-	changeSearchMode: string
-	clearFilter: string
-	clearFreezing: string
-	clearSearch: string
-	clearSort: string
-	clickToCopy: string
-	close: string
-	collapse: string
-	collapseAll: string
-	columns: string
-	columnActions: string
-	confirmDeletion: string
-	confirmPresetDeletionMessage: string
-	copiedToClipboard: string
-	deselectAll: string
-	dropToGroupBy: string
-	edit: string
-	expand: string
-	expandAll: string
-	fieldNameIsRequired: string
-	filter: string
-	filterArrIncludes: string
-	filterArrIncludesAll: string
-	filterArrIncludesSome: string
-	filterBetween: string
-	filterBetweenInclusive: string
-	filterByColumn: string
-	filterContains: string
-	filterEmpty: string
-	filterEndsWith: string
-	filterEquals: string
-	filterEqualsString: string
-	filterFuzzy: string
-	filterGreaterThan: string
-	filterGreaterThanOrEqualTo: string
-	filterInNumberRange: string
-	filterIncludesString: string
-	filterIncludesStringSensitive: string
-	filterLessThan: string
-	filterLessThanOrEqualTo: string
-	filterMode: string
-	filterNotEmpty: string
-	filterNotEquals: string
-	filterStartsWith: string
-	filterWeakEquals: string
-	filteringByColumn: string
-	freeze: string
-	freezeToLeft: string
-	freezeToRight: string
-	freezeThisColumn: string
-	freezeUpToThisColumn: string
-	frozen: string
-	goToFirstPage: string
-	goToLastPage: string
-	goToNextPage: string
-	goToPreviousPage: string
-	grab: string
-	group: string
-	groupBy: string
-	groupByColumn: string
-	groupedBy: string
-	groupedTableByColumn: string
-	hideAll: string
-	hideColumn: string
-	hideInView: string
-	loading: string
-	max: string
-	min: string
-	move: string
-	multirowColumnActions: string
-	noOptions: string
-	noRecordsToDisplay: string
-	noResultsFound: string
-	of: string
-	or: string
-	pinToLeft: string
-	pinToRight: string
-	resetColumnSize: string
-	resetOrder: string
-	rowActions: string
-	rowNumber: string
-	rowNumbers: string
-	rowsPerPage: string
-	save: string
-	saveAsNew: string
-	search: string
-	select: string
-	selectAll: string
-	selectRow: string
-	selectedCountOfRowCountRowsSelected: string
-	showAll: string
-	showAllColumns: string
-	showHideColumns: string
-	showHideFilters: string
-	showGrouping: string
-	showSorting: string
-	showFiltering: string
-	showHideSearch: string
-	showColumns: string
-	showPreset: string
-	sort: string
-	sortAsc: string
-	sortDesc: string
-	suggested: string
-	ascending: string
-	descending: string
-	AZ: string
-	ZA: string
-	firstLast: string
-	lastFirst: string
-	sortByColumnAsc: string
-	sortByColumnDesc: string
-	sortedByColumnAsc: string
-	sortedByColumnDesc: string
-	thenBy: string
-	toggleDensity: string
-	toggleFullScreen: string
-	toggleSelectAll: string
-	toggleSelectRow: string
-	toggleVisibility: string
-	ungroup: string
-	ungroupByColumn: string
-	unpin: string
-	unpinAll: string
-	unsorted: string
-	updateCurrent: string
-	removeAll: string
-	requiredFieldIsHidden: string
-	addFilter: string
-	isAnyOf: string
-	locked: string
-	grouping: string
-	sorting: string
-	insert: string
-	InsertColumnLeft: string
-	InsertColumnRight: string
-	editSettings: string
-	delete: string
-	name: string
-	type: string
-	addProperty: string
-	shortName: string
-	subtitle: string
-	text: string
-	thisFieldIsRequired: string
-	columnName: string
-	columnShortNameOptional: string
-	shortNameIsDisplayedInAColumnHeader: string
-	columnSubtitleOptional: string
-	numeric: string
-	allowNegativeNumbers: string
-	numberOfDecimalPlaces: string
-	useSpaceAs1000Separator: string
-}
+export type Table_Localization = typeof Table_Localization_EN
 
 export type DraggingMessage = {
 	text: string | ReactNode
@@ -370,6 +211,7 @@ export type TableInstance<TData extends TableData = TableData> = Omit<
 		setDraggingRows: Dispatch<SetStateAction<Table_Row<TData>[]>>
 		setEditingCell: Dispatch<SetStateAction<Table_Cell<TData> | null>>
 		setEditingRow: Dispatch<SetStateAction<Table_Row<TData> | null>>
+		setCustomColumnEditor: Dispatch<SetStateAction<string | undefined>>
 		setGlobalFilterFn: Dispatch<SetStateAction<Table_FilterOption>>
 		setGroupCollapsed: Dispatch<SetStateAction<GroupCollapsed>>
 		setHoveredColumn: Dispatch<
@@ -404,6 +246,8 @@ export type Table_TableState<TData extends TableData = TableData> =
 		draggingRows: Table_Row<TData>[]
 		editingCell: Table_Cell<TData> | null
 		editingRow: Table_Row<TData> | null
+		/** Show editor for custom column accessorKey */
+		customColumnEditor: string | undefined
 		isEditingRowError: boolean
 		globalFilterFn: Table_FilterOption
 		hoveredColumn: Table_Column<TData> | { id: string } | null
@@ -524,6 +368,7 @@ export type TableColumnEditProps<TData extends TableData> = {
 	editVariant?:
 		| 'text'
 		| 'number'
+		| 'percent'
 		| 'formula'
 		| 'select'
 		| 'multi-select'
@@ -938,11 +783,12 @@ export type Table_ColumnDef<TData extends TableData = TableData> = Omit<
 		// todo split filterVariant between dataTypes
 		filterVariant?: 'text' | 'select' | 'multi-select' | 'range' | 'checkbox'
 
-		// todo move to numeric datatype:
+		// todo move to NumericColumn
 		minValue?: number
 		maxValue?: number
 	} & (
 		| NumericColumn
+		| PercentColumn
 		| {
 				dataType?:
 					| 'textual'
@@ -963,8 +809,24 @@ export interface NumericColumn {
 	*/
 	/** Number of digits after decimal point */
 	decimalPlaces?: number
-	/** @default 'SPACE1000' */
-	numberFormat?: 'SPACE1000' | 'NONE'
+	/**
+	 * @default "123456789.12345"
+	 * SPACE1000 - "123 456 789.12345"
+	 */
+	displayFormat?: 'SPACE_1000'
+}
+
+export interface PercentColumn
+	extends Pick<
+		NumericColumn,
+		'decimalPlaces' // todo | 'minValue' | 'maxValue'
+	> {
+	dataType: 'percent'
+	/**
+	 * @default "123456.123%"
+	 * PROGRESS_BAR - 123% <ProgressBar>
+	 */
+	displayFormat?: 'PROGRESS_BAR'
 }
 
 export type Table_DefinedColumnDef<TData extends TableData = TableData> = Omit<

@@ -1,6 +1,4 @@
-import type { Table_Localization } from '../TableComponent'
-
-export const Table_Localization_EN: Table_Localization = {
+export const Table_Localization_EN = {
 	actions: 'Actions',
 	addToFilter: 'Filter',
 	addSorting: 'Sort',
@@ -164,4 +162,10 @@ export const Table_Localization_EN: Table_Localization = {
 	allowNegativeNumbers: 'Allow negative numbers',
 	numberOfDecimalPlaces: 'Number of decimal places',
 	useSpaceAs1000Separator: 'Use space as 1000 separator',
+	percent: 'Percent',
+	displayAsProgressBar: 'Display as progress bar',
+	notNumeric: 'Not numeric',
+	smallerThanMinValue: `Smaller than {minValue} min value`,
+	biggerThanMaxValue: `Bigger than {maxValue} max value`,
+	exceedsDecimalPlaces: `Exceeds {decimalPlaces} decimal places`,
 }

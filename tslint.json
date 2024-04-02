@@ -1,85 +1,88 @@
 {
-    "extends": [
-        "tslint:recommended",
-        "tslint-react",
-        "tslint-config-prettier"
-    ],
-    "rulesDirectory": ["tslint-plugin-prettier", "node_modules/tslint-lines-between-class-members"],
-    "rules": {
-        "prettier": false,
-        "deprecation": false,
-        "curly": [false], // https://palantir.github.io/tslint/rules/curly/
-        "no-unused-expression": false,
-        "prefer-for-of": false,
-        "ordered-imports": false,
-        "no-var-requires": false,
-        "object-literal-sort-keys": false,
-        "object-literal-shorthand": true,
-        "no-string-literal": false,
-        "interface-name": false,
-        "no-console": false,
-        "variable-name": [
-            //            true,
-            false,
-            "ban-keywords",
-            "check-format",
-            "allow-leading-underscore"
-        ],
-        "linebreak-style": [false, "CRLF"],
-        "member-access": false,
-        "member-ordering": false,
-        "interface-over-type-literal": false,
-        "await-promise": false,
-        "no-floating-promises": false,
-        "no-for-in-array": false,
-        "no-inferred-empty-object-type": true,
-        "no-invalid-template-strings": false, // https://palantir.github.io/tslint/rules/no-invalid-template-strings/
-        "no-sparse-arrays": false, // https://palantir.github.io/tslint/rules/no-sparse-arrays/
-        "no-switch-case-fall-through": false,
-        "cyclomatic-complexity": [false, 35],
-        "no-boolean-literal-compare": false,
-        "no-unnecessary-callback-wrapper": true,
-        "prefer-method-signature": true,
-        "prefer-template": false,
-        "no-bitwise": false,
-        "max-line-length": false,
-        "only-arrow-functions": false,
-        "no-object-literal-type-assertion": false, // https://palantir.github.io/tslint/rules/no-object-literal-type-assertion/
-        //        "prefer-conditional-expression": true,         // https://palantir.github.io/tslint/rules/prefer-conditional-expression/
-        //        "prefer-object-spread": true,                  // https://palantir.github.io/tslint/rules/prefer-object-spread/
-        "no-duplicate-variable": [
-            // https://palantir.github.io/tslint/rules/no-duplicate-variable/
-            false,
-            "check-parameters"
-        ],
-        "no-this-assignment": [
-            // https://palantir.github.io/tslint/rules/no-this-assignment/
-            false,
-            {
-                "allowed-names": ["^model$"],
-                "allow-destructuring": true
-            }
-        ],
-        "no-duplicate-imports": false, // https://palantir.github.io/tslint/rules/no-duplicate-imports/
-        //        "no-submodule-imports": true,
-        "ban-comma-operator": false, // https://palantir.github.io/tslint/rules/ban-comma-operator/
-        "no-duplicate-switch-case": false, // https://palantir.github.io/tslint/rules/no-duplicate-switch-case/
-        //        "no-implicit-dependencies": true              // https://palantir.github.io/tslint/rules/no-implicit-dependencies/
-        //        "no-return-await": true                       // https://palantir.github.io/tslint/rules/no-return-await/
-        "max-classes-per-file": false,
-        //
-        // https://github.com/palantir/tslint-react
-        //
-        "jsx-no-lambda": false,
-        "jsx-no-bind": false,
-        "jsx-self-close": "warn",
-        "jsx-boolean-value": false,
-        "lines-between-class-members": false,
-        "jsdoc-format": false
-    },
+	"extends": ["tslint:recommended", "tslint-react", "tslint-config-prettier"],
+	"rulesDirectory": [
+		"tslint-plugin-prettier",
+		"node_modules/tslint-lines-between-class-members"
+	],
+	"rules": {
+		"prettier": false,
+		"deprecation": false,
+		"curly": [false], // https://palantir.github.io/tslint/rules/curly/
+		"no-unused-expression": false,
+		"prefer-for-of": false,
+		"ordered-imports": false,
+		"no-var-requires": false,
+		"object-literal-sort-keys": false,
+		"object-literal-shorthand": true,
+		"no-string-literal": false,
+		"interface-name": false,
+		"no-console": false,
+		"variable-name": [
+			//            true,
+			false,
+			"ban-keywords",
+			"check-format",
+			"allow-leading-underscore"
+		],
+		"linebreak-style": [false, "CRLF"],
+		"member-access": false,
+		"member-ordering": false,
+		"interface-over-type-literal": false,
+		"await-promise": false,
+		"no-floating-promises": false,
+		"no-for-in-array": false,
+		"no-lonely-if": false,
+		"default-case": false,
+		"no-param-reassign": false,
+		"@typescript-eslint/no-non-null-assertion": false,
+		"no-inferred-empty-object-type": true,
+		"no-invalid-template-strings": false, // https://palantir.github.io/tslint/rules/no-invalid-template-strings/
+		"no-sparse-arrays": false, // https://palantir.github.io/tslint/rules/no-sparse-arrays/
+		"no-switch-case-fall-through": false,
+		"cyclomatic-complexity": [false, 35],
+		"no-boolean-literal-compare": false,
+		"no-unnecessary-callback-wrapper": true,
+		"prefer-method-signature": true,
+		"prefer-template": false,
+		"no-bitwise": false,
+		"max-line-length": false,
+		"only-arrow-functions": false,
+		"no-object-literal-type-assertion": false, // https://palantir.github.io/tslint/rules/no-object-literal-type-assertion/
+		//        "prefer-conditional-expression": true,         // https://palantir.github.io/tslint/rules/prefer-conditional-expression/
+		//        "prefer-object-spread": true,                  // https://palantir.github.io/tslint/rules/prefer-object-spread/
+		"no-duplicate-variable": [
+			// https://palantir.github.io/tslint/rules/no-duplicate-variable/
+			false,
+			"check-parameters"
+		],
+		"no-this-assignment": [
+			// https://palantir.github.io/tslint/rules/no-this-assignment/
+			false,
+			{
+				"allowed-names": ["^model$"],
+				"allow-destructuring": true
+			}
+		],
+		"no-duplicate-imports": false, // https://palantir.github.io/tslint/rules/no-duplicate-imports/
+		//        "no-submodule-imports": true,
+		"ban-comma-operator": false, // https://palantir.github.io/tslint/rules/ban-comma-operator/
+		"no-duplicate-switch-case": false, // https://palantir.github.io/tslint/rules/no-duplicate-switch-case/
+		//        "no-implicit-dependencies": true              // https://palantir.github.io/tslint/rules/no-implicit-dependencies/
+		//        "no-return-await": true                       // https://palantir.github.io/tslint/rules/no-return-await/
+		"max-classes-per-file": false,
+		//
+		// https://github.com/palantir/tslint-react
+		//
+		"jsx-no-lambda": false,
+		"jsx-no-bind": false,
+		"jsx-self-close": "warn",
+		"jsx-boolean-value": false,
+		"lines-between-class-members": false,
+		"jsdoc-format": false
+	},
 
-    "jsRules": {
-        "object-literal-sort-keys": false,
-        "max-line-length": false
-    }
+	"jsRules": {
+		"object-literal-sort-keys": false,
+		"max-line-length": false
+	}
 }
