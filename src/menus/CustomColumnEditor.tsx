@@ -27,7 +27,7 @@ import {
 } from '../TableComponent'
 import { useTableContext } from '../context/useTableContext'
 import { handleStopPropagation } from '../utils/withStopPropagation'
-import { DECIMAL_PLACES } from '../utils/constants'
+import { DECIMAL_PLACES } from '../constants'
 import { Input } from '../inputs/Input'
 
 import { commonListItemStyles, commonMenuItemStyles } from './constants'

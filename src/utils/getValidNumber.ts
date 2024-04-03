@@ -1,4 +1,4 @@
-import { DECIMAL_PLACES } from './constants'
+import { DECIMAL_PLACES } from '../constants'
 
 export const getValidNumber =
 	({ decimalPlaces = DECIMAL_PLACES, min = -Infinity, max = Infinity }) =>
