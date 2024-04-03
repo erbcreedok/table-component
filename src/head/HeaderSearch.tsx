@@ -120,7 +120,9 @@ const getFlatFilteredData = <T extends TableData>({
 	path,
 }: GetFilteredDataArgs<T>) => {
 	return flatRows.filter((item) =>
-		getValueFromObj(item.original, path, '')?.toLowerCase().includes(value)
+		getValueFromObj(item.original, path, '')
+			?.toLowerCase()
+			.includes(value.trim())
 	)
 }
 
