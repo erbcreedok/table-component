@@ -239,7 +239,7 @@ export const useTable = <TData extends TableData = TableData>(
 		() =>
 			prepareColumns({
 				aggregationFns: config.aggregationFns as any,
-				columnDefs: [...config.columns, ...displayColumns],
+				columnDefs: [...displayColumns, ...config.columns],
 				columnFilterFns: config.state?.columnFilterFns ?? columnFilterFns,
 				defaultDisplayColumn: config.defaultDisplayColumn ?? {},
 				filterFns: config.filterFns as any,

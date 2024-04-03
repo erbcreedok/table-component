@@ -1,17 +1,20 @@
-import { useCallback, useEffect, useRef } from 'react'
+import { RefObject, useCallback, useEffect, useRef } from 'react'
+
+import { StickyScrollbarDefaultHeight } from '../constants'
+import { findRelativeParent } from '../utils'
 
 interface Props {
 	enabled: boolean
 	onHorizontalScrollbarHeight: (height: number) => void
-	parent?: HTMLElement | null
+	parentRef?: RefObject<HTMLElement | null | undefined>
 }
 
 export const useStickyScrollbar = ({
 	enabled,
 	onHorizontalScrollbarHeight,
-	parent,
+	parentRef,
 }: Props) => {
-	const parentRef = useRef<HTMLElement | null | undefined>()
+	const relativeParentRef = useRef<HTMLElement | null>(null)
 	const containerRef = useRef<HTMLDivElement | null>(null)
 	const scrollbarRef = useRef<HTMLDivElement | null>(null)
 	const fakeContentRef = useRef<HTMLElement | undefined>()
@@ -20,33 +23,39 @@ export const useStickyScrollbar = ({
 		containerResizeObserver?: Destructor
 		scrollbarScroll?: Destructor
 	}>({})
+	const computedRelativeParent = parentRef ?? relativeParentRef
 
 	// Show the virtual scrollbar when the container's scrollbar is out of view.
 	const handleScrollbarVisibility = useCallback(() => {
-		const parent = parentRef.current
 		const scrollbar = scrollbarRef.current
 
-		if (!scrollbar) return
+		if (!scrollbar || !containerRef.current) return
 
-		const height = parent ? parent.clientHeight : window.innerHeight
+		const height = window.innerHeight
 
-		const { top, bottom } = containerRef.current?.getBoundingClientRect() ?? {
-			top: 0,
-			bottom: 0,
+		const { top, bottom } = containerRef.current?.getBoundingClientRect()
+		let visible = top < height && bottom >= height
+		if (visible && computedRelativeParent.current) {
+			const relativeParent = computedRelativeParent.current
+			const scrollBottom =
+				relativeParent.scrollTop + relativeParent.clientHeight
+			const scrollHeight = relativeParent.scrollHeight
+			const scrolledToBottom =
+				scrollHeight - scrollBottom <= StickyScrollbarDefaultHeight
+
+			visible = !scrolledToBottom
 		}
-		scrollbar.classList.toggle('visible', top < height && bottom >= height)
-	}, [])
+		scrollbar.classList.toggle('visible', visible)
+	}, [computedRelativeParent])
 
 	useEffect(() => {
-		parentRef.current = parent
-		;(parent ?? document).addEventListener('scroll', handleScrollbarVisibility)
+		relativeParentRef.current = findRelativeParent(containerRef?.current)
+		const relativeParent = relativeParentRef.current ?? window
+		relativeParent.addEventListener('scroll', handleScrollbarVisibility)
 
 		return () =>
-			(parent ?? document).removeEventListener(
-				'scroll',
-				handleScrollbarVisibility
-			)
-	}, [handleScrollbarVisibility, parent])
+			relativeParent.removeEventListener('scroll', handleScrollbarVisibility)
+	}, [handleScrollbarVisibility])
 
 	const handleScrollbarRef = useCallback(
 		(scrollbar: HTMLDivElement | null) => {

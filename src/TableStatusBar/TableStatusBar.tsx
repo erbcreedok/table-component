@@ -31,12 +31,11 @@ const Line = styled(Box)`
 	margin: 0 3px;
 	background-color: ${Colors.Gray};
 `
-const Wrapper = styled(Box)<{ hidden?: boolean }>`
+const Wrapper = styled(Box)`
 	align-items: center;
 	display: flex;
 	gap: 6px;
 	flex-wrap: wrap;
-	${({ hidden }) => hidden && `display: none;`}
 	.${clearButtonClassName} {
 		visibility: hidden;
 	}
@@ -114,8 +113,10 @@ export const TableStatusBar = <TData extends Record<string, any> = {}>({
 		return getAdornment(statusBarAdornment)
 	}, [getAdornment, statusBarAdornment])
 
+	if (!isAnyChipVisible && !cAdornment) return null
+
 	return (
-		<Wrapper ref={barRef} hidden={!isAnyChipVisible} {...props}>
+		<Wrapper ref={barRef} {...props}>
 			<SortingChip table={table} />
 
 			<GroupingChip table={table} />

@@ -9,6 +9,7 @@ import React, {
 	PropsWithChildren,
 	ReactElement,
 	ReactNode,
+	RefObject,
 	SetStateAction,
 } from 'react'
 import type { AlertProps } from '@mui/material/Alert'
@@ -1292,12 +1293,7 @@ export type TableComponentProps<TData extends TableData = TableData> = Omit<
 		enableStatusBar?: boolean
 		enableStickyScrollbars?: {
 			horizontal?: boolean
-			/**
-			 * todo
-			 * position must relative
-			 * @default window
-			 */
-			// parent: HTMLElement | null | undefined
+			relativeParentRef?: RefObject<HTMLElement | null | undefined>
 		}
 		enableStickyFooter?: boolean
 		enableStickyHeader?: boolean

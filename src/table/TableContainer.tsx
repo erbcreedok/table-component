@@ -54,7 +54,7 @@ export const TableContainer: FC<Props> = ({ table }) => {
 	const { handleContainerRef, handleScrollbarRef } = useStickyScrollbar({
 		enabled: enableStickyScrollbars?.horizontal === true,
 		onHorizontalScrollbarHeight: setStickyHorizontalScrollbarHeight,
-		// parent: enableStickyScrollbars?.parent,
+		parentRef: enableStickyScrollbars?.relativeParentRef,
 	})
 
 	return (

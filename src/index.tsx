@@ -86,6 +86,7 @@ export default TableComponent
 export * from '@tanstack/react-table'
 export * from './TableComponent'
 export * from './utilColumns'
+export * from './context'
 export * from './hooks'
 export type {
 	Table_Icons,

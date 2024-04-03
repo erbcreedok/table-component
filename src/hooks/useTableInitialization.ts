@@ -88,10 +88,7 @@ export const useTableInitialization = <TData extends Record<string, any>>(
 		return props.hierarchyTreeConfig
 	}, [props.getIsUnitTreeItem, props.hierarchyTreeConfig])
 
-	if (
-		props.enablePagination === false &&
-		props.manualPagination === undefined
-	) {
+	if (props.enablePagination !== true && props.manualPagination === undefined) {
 		props.manualPagination = true
 	}
 

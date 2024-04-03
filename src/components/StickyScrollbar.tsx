@@ -12,19 +12,16 @@ export const StickyHorizontalScrollbar = forwardRef<HTMLDivElement>(
 const StyledScrollbar = styled('div')`
 	overflow-x: auto;
 
-	/* display: none; // will not be able to set the scrollLeft  */
 	visibility: hidden;
+	pointer-events: none;
 	z-index: 100;
-
-	position: fixed;
+	position: absolute;
 	bottom: 0;
 
-	/* position: absolute;
-	top: 50%;
-	left: 50%; */
-
 	&.visible {
+		position: sticky;
 		visibility: visible;
+		pointer-events: auto;
 	}
 `
 

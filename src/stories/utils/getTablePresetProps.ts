@@ -17,11 +17,11 @@ export const getTablePresetProps = (
 	defaultPreset?: Preset[]
 ) => ({
 	onSavePresets: (presets) => {
-		localStorage.setItem(presetStorageName, JSON.stringify(presets))
+		global.localStorage.setItem(presetStorageName, JSON.stringify(presets))
 	},
 	onGetPresets: () => {
 		try {
-			return JSON.parse(localStorage.getItem(presetStorageName) as string)
+			return JSON.parse(global.localStorage.getItem(presetStorageName) as string)
 		} catch (e) {
 			return defaultPreset ?? DEFAULT_PRESETS
 		}
