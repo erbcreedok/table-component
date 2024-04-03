@@ -47,8 +47,9 @@ export const QuickColumnPinningMenuItemOptions: FC<Props> = ({
 	const isMultipleColumnsPinned = (columnPinning[direction] ?? []).length > 1
 
 	const handleFreezeColumn = () => {
-		table.setColumnPinning((old) => ({
-			...old,
+		table.setColumnPinning(({ left, right }) => ({
+			left: left?.filter((id) => id !== column.id),
+			right: right?.filter((id) => id !== column.id),
 			[direction]: [column.id],
 		}))
 		setVisible(false)
@@ -70,7 +71,11 @@ export const QuickColumnPinningMenuItemOptions: FC<Props> = ({
 		} else {
 			newColumnPinning = sortedColumns.slice(index)
 		}
-		table.setColumnPinning((old) => ({ ...old, [direction]: newColumnPinning }))
+		table.setColumnPinning(({ left, right }) => ({
+			left: left?.filter((id) => id !== column.id),
+			right: right?.filter((id) => id !== column.id),
+			[direction]: newColumnPinning,
+		}))
 		setVisible(false)
 	}
 

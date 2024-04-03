@@ -13,11 +13,7 @@ import type {
 } from '../../../../index'
 import { ContentTitle } from '../../../../components/ContentTitle'
 import { ButtonLink } from '../../../../components/ButtonLink'
-import {
-	reorderColumn,
-	reorderColumnSet,
-	Table_DisplayColumnIdsArray,
-} from '../../../../column.utils'
+import { reorderColumn, reorderColumnSet } from '../../../../column.utils'
 import { Sidebar } from '../../../../components/Sidebar'
 import { Colors, TextColor } from '../../../../components/styles'
 import { getMultirowHeaderGroupLeafColumnIds } from '../../../../utils/getMultirowHeaderGroupLeafColumnIds'
@@ -28,6 +24,7 @@ import { getColumnsFilteredByDisplay } from '../../../../utils/getFilteredByDisp
 import { getTestAttributes } from '../../../../utils/getTestAttributes'
 import { withNativeEvent } from '../../../../utils/withNativeEvent'
 import { makeMultirowColumns } from '../../../../utils/makeMultirowColumns'
+import { defaultOrganizeColumnsMenu } from '../ColumnsMenu/ColumnsMenu'
 import { ColumnsMenuItem } from '../ColumnsMenu/ColumnsMenuItem'
 
 import { ColumnsMultirowMenuGroupItem } from './ColumnsMultirowMenuGroupItem'
@@ -39,13 +36,6 @@ interface Props<TData extends Record<string, any> = {}> {
 	setAnchorEl(anchorEl: HTMLElement | null): void
 	table: TableInstance<TData>
 }
-
-export const defaultOrganizeColumnsMenu = <TData extends TableData = {}>(
-	allColumns: Table_Column<TData>[]
-) =>
-	getColumnsFilteredByDisplay(
-		allColumns.filter((col) => !Table_DisplayColumnIdsArray.includes(col.id))
-	)
 
 export const ColumnsMultirowMenu = <TData extends TableData = {}>({
 	anchorEl,
@@ -104,12 +94,27 @@ export const ColumnsMultirowMenu = <TData extends TableData = {}>({
 		col.getIsVisible()
 	)
 
-	const [groupedColumns, ungroupedColumns] = useMemo(
+	const [leftColumns, middleColumns, rightColumns] = useMemo(
 		() =>
-			splitArrayItems(visibleColumns, (col) =>
-				isLeafDepth
-					? col.getIsGrouped()
-					: !multirowColumnIds.includes(col.id) && col.getIsGrouped()
+			visibleColumns.reduce(
+				(acc, col) => {
+					const isParentColumn =
+						!isLeafDepth && multirowColumnIds.includes(col.id)
+					const isLeftColumn =
+						!isParentColumn &&
+						(col.getIsGrouped() || col.getIsPinned() === 'left')
+					const isRightColumn = !isParentColumn && col.getIsPinned() === 'right'
+					if (isLeftColumn) {
+						acc[0].push(col)
+					} else if (!isRightColumn) {
+						acc[1].push(col)
+					} else {
+						acc[2].push(col)
+					}
+
+					return acc
+				},
+				[[], [], []] as Table_Column<TData>[][]
 			),
 		[isLeafDepth, multirowColumnIds, visibleColumns]
 	)
@@ -361,12 +366,12 @@ export const ColumnsMultirowMenu = <TData extends TableData = {}>({
 		]
 	)
 
-	const [ungroupedHeaderGroups, hiddenHeaderGroups] = useMemo(() => {
+	const [visibleHeaderGroups, hiddenHeaderGroups] = useMemo(() => {
 		return [
-			getMultirowHeaderGroups(ungroupedColumns),
+			getMultirowHeaderGroups(middleColumns),
 			getMultirowHeaderGroups(hiddenColumns),
 		]
-	}, [getMultirowHeaderGroups, ungroupedColumns, hiddenColumns])
+	}, [getMultirowHeaderGroups, middleColumns, hiddenColumns])
 
 	return (
 		<Sidebar
@@ -481,25 +486,35 @@ export const ColumnsMultirowMenu = <TData extends TableData = {}>({
 							</Box>
 						</Box>
 
-						{groupedColumns.map((column) => (
+						{leftColumns.map((column) => (
 							<ColumnsMenuItem
 								key={column?.id}
 								column={column}
 								table={table}
-								enableDrag={groupedColumns.length > 1}
+								enableDrag={leftColumns.length > 1}
 								{...itemDraggingProps}
 							/>
 						))}
 
-						{ungroupedHeaderGroups && (
+						{visibleHeaderGroups && (
 							<MultiRowTree
-								multirowGroups={ungroupedHeaderGroups}
+								multirowGroups={visibleHeaderGroups}
 								table={table}
 								enableDrag
 								multirowColumnsDisplayDepth={multirowColumnsDisplayDepth ?? 1}
 								{...draggingProps}
 							/>
 						)}
+
+						{rightColumns.map((column) => (
+							<ColumnsMenuItem
+								key={column?.id}
+								column={column}
+								table={table}
+								enableDrag={leftColumns.length > 1}
+								{...itemDraggingProps}
+							/>
+						))}
 
 						{!!hiddenColumns.length && (
 							<>
