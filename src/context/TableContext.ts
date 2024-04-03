@@ -1,46 +1,16 @@
-import {
-	ColumnOrderState,
-	GroupingState,
-	TableState as TanstackTableState,
-} from '@tanstack/react-table'
 import { createContext } from 'react'
 
 import {
-	Table_Cell,
-	Table_Column,
-	Table_FilterOption,
-	Table_Row,
-	TableComponentProps,
+	Table_TableState,
+	TableComponentPropsDefined,
 	TableData,
 	TableInstance,
 } from '../TableComponent'
 
-export type TableComponentState<TData extends Record<string, any> = {}> =
-	TanstackTableState & {
-		columnFilterFns: {
-			[key: string]: Table_FilterOption
-		}
-		columnOrder: ColumnOrderState | undefined
-		draggingColumn: Table_Column<TData> | null
-		draggingRows: Table_Row<TData>[]
-		editingCell: Table_Cell<TData> | null
-		editingRow: Table_Row<TData> | null
-		globalFilterFn: Table_FilterOption
-		grouping: GroupingState
-		hoveredColumn: Table_Column<TData> | { id: string } | null
-		hoveredRow: Table_Row<TData> | { id: string } | null
-		isFullScreen: boolean
-		showAlertBanner: boolean
-		showColumnFilters: boolean
-		showGlobalFilter: boolean
-		showToolbarDropZone: boolean
-		stickyHorizontalScrollbarHeight: number
-	}
-
 export type TableContextType<TData extends TableData = TableData> = {
 	table: TableInstance<TData>
-	state: TableComponentState<TData>
-	config: TableComponentProps<TData>
+	state: Table_TableState<TData>
+	config: TableComponentPropsDefined<TData>
 }
 export const TableContext = createContext<TableContextType>(
 	{} as TableContextType

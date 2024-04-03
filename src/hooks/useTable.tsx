@@ -28,7 +28,6 @@ import {
 	prepareColumns,
 	showExpandColumn,
 } from '../column.utils'
-import { TableComponentState } from '../context/TableContext'
 import {
 	GroupCollapsed,
 	HoveredRowState,
@@ -36,10 +35,9 @@ import {
 	Table_Column,
 	Table_ColumnDef,
 	Table_FilterOption,
-	Table_Localization,
 	Table_Row,
 	Table_TableState,
-	TableComponentProps,
+	TableComponentPropsDefined,
 	TableData,
 	TableInstance,
 } from '../TableComponent'
@@ -58,7 +56,7 @@ import { defaultGetSubRows } from '../utils/defaultGetSubRows'
 import { showUtilityColumn } from '../utils/showUtilityColumn'
 
 export const useTable = <TData extends TableData = TableData>(
-	config: TableComponentProps<TData> & { localization: Table_Localization }
+	config: TableComponentPropsDefined<TData>
 ) => {
 	const bottomToolbarRef = useRef<HTMLDivElement>(null)
 	const editInputRefs = useRef<Record<string, HTMLInputElement>>({})
@@ -342,7 +340,7 @@ export const useTable = <TData extends TableData = TableData>(
 		highlightHeadCellId,
 		stickyHorizontalScrollbarHeight,
 		...config.state,
-	} as TableComponentState<TData>
+	} as Table_TableState<TData>
 
 	const isGroupableRow = useCallback(
 		(row: Table_Row<TData>) => {

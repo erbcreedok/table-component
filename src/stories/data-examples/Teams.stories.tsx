@@ -778,15 +778,15 @@ const meta: Meta = {
 		},
 		enableGrouping: {
 			control: 'boolean',
-			defaultValue: true,
+			defaultValue: undefined,
 		},
 		enableGroupCount: {
 			control: 'boolean',
-			defaultValue: false,
+			defaultValue: undefined,
 		},
 		enableGroupCollapsing: {
 			control: 'boolean',
-			defaultValue: false,
+			defaultValue: undefined,
 		},
 		enableGroupSelection: {
 			control: 'boolean',

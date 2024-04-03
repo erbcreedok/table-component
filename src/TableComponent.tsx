@@ -310,11 +310,7 @@ export type TableInstance<TData extends TableData = TableData> = Omit<
 	getDefaultPresets: () => Preset[]
 	setSearchData: (data: SearchData<TData>) => void
 	setHighlightHeadCellId: (colId: string | null) => void
-	options: TableComponentProps<TData> & {
-		icons: Table_Icons
-		localization: Table_Localization
-		enableAggregationRow?: boolean
-	}
+	options: TableComponentPropsDefined<TData>
 	refs: {
 		bottomToolbarRef: MutableRefObject<HTMLDivElement>
 		bulkActionsRef: MutableRefObject<HTMLDivElement>
@@ -1756,6 +1752,13 @@ export type TableComponentProps<TData extends TableData = TableData> = Omit<
 		e2eLabels?: E2ELabelsOption
 	}
 
+export type TableComponentPropsDefined<TData extends TableData = TableData> =
+	TableComponentProps<TData> & {
+		originalColumns: Table_ColumnDef<TData>[]
+		icons: Table_Icons
+		localization: Table_Localization
+		theme: Theme
+	}
 const TableComponent = <TData extends TableData = TableData>(
 	props: TableComponentProps<TData>
 ) => {
