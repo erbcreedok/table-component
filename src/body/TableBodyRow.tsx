@@ -14,6 +14,7 @@ import { lighten } from '@mui/material/styles'
 import type { VirtualItem, Virtualizer } from '@tanstack/react-virtual'
 import { useResizeDetector } from 'react-resize-detector'
 
+import { RowTooltip } from '../components/RowTooltip'
 import { CreateNewRow } from '../buttons/CreateNewRow'
 import { ColumnVirtualizerWrapper } from '../components/ColumnVirtualizerWrapper'
 import { EditingRowActionButtons } from '../components/EditingRowActionButtons'
@@ -294,112 +295,121 @@ export const TableBodyRow: FC<TableBodyRowProps> = (props) => {
 				row={row}
 			>
 				{({ ref }) => (
-					<MuiTableRow
-						data-index={virtualRow?.index}
-						hover
-						selected={row.getIsSelected()}
-						onDragEnter={!isHoveredRow ? handleDragEnter : noop}
-						onDragOver={enableExpanding && isHoveredRow ? handleDragOver : noop}
-						ref={(node: HTMLTableRowElement) => {
-							if (node) {
-								ref(node)
-								rowRef.current = node
-								if (!renderDetailPanel) {
-									measureElement?.(node)
-								}
+					<RowTooltip row={row} table={table}>
+						<MuiTableRow
+							data-index={virtualRow?.index}
+							hover
+							selected={row.getIsSelected()}
+							onDragEnter={!isHoveredRow ? handleDragEnter : noop}
+							onDragOver={
+								enableExpanding && isHoveredRow ? handleDragOver : noop
 							}
-						}}
-						{...tableRowProps}
-						sx={(theme) => ({
-							backgroundColor: lighten(theme.palette.background.default, 0.06),
-							display: layoutMode === 'grid' ? 'flex' : 'table-row',
-							alignItems: 'center',
-							opacity: isDraggingRow ? 0.5 : 1,
-							width: '100%',
-							[`&.${tableRowClasses.hover}:hover`]: {
-								backgroundColor: Colors.Gray10,
-							},
-							...(isMockRow
-								? {
-										backgroundColor: Colors.LightestGray,
-								  }
-								: {}),
-							'&:hover td': {
-								backgroundColor:
-									tableRowProps?.hover !== false && getIsSomeColumnsPinned()
-										? Colors.Gray10
-										: undefined,
-							},
-							...(tableRowProps?.sx instanceof Function
-								? tableRowProps.sx(theme)
-								: (tableRowProps?.sx as any)),
-						})}
-					>
-						<ColumnVirtualizerWrapper>
-							{cells.map(([cell, virtualCell], index) => {
-								if (table.getIsNewRow(row) && cell.column.getIsGrouped())
-									return null
-								if (cell.getIsPlaceholder() && !isSummaryRow)
-									return getGroupedCell(cell, virtualCell)
-								const groupBorders = getCellGroupBorders({
-									table,
-									rowIndex: getSubRowIndex({ row }) ?? rowIndex,
-									colIndex: index,
-									isGroupedColumn: false,
-									isFirstOfGroup: !!groupingProps,
-								})
+							ref={(node: HTMLTableRowElement) => {
+								if (node) {
+									ref(node)
+									rowRef.current = node
+									if (!renderDetailPanel) {
+										measureElement?.(node)
+									}
+								}
+							}}
+							{...tableRowProps}
+							sx={(theme) => ({
+								backgroundColor: lighten(
+									theme.palette.background.default,
+									0.06
+								),
+								display: layoutMode === 'grid' ? 'flex' : 'table-row',
+								alignItems: 'center',
+								opacity: isDraggingRow ? 0.5 : 1,
+								width: '100%',
+								[`&.${tableRowClasses.hover}:hover`]: {
+									backgroundColor: Colors.Gray10,
+								},
+								...(isMockRow
+									? {
+											backgroundColor: Colors.LightestGray,
+									  }
+									: {}),
+								'&:hover td': {
+									backgroundColor:
+										tableRowProps?.hover !== false && getIsSomeColumnsPinned()
+											? Colors.Gray10
+											: undefined,
+								},
+								...(tableRowProps?.sx instanceof Function
+									? tableRowProps.sx(theme)
+									: (tableRowProps?.sx as any)),
+							})}
+						>
+							<ColumnVirtualizerWrapper>
+								{cells.map(([cell, virtualCell], index) => {
+									if (table.getIsNewRow(row) && cell.column.getIsGrouped())
+										return null
+									if (cell.getIsPlaceholder() && !isSummaryRow)
+										return getGroupedCell(cell, virtualCell)
+									const groupBorders = getCellGroupBorders({
+										table,
+										rowIndex: getSubRowIndex({ row }) ?? rowIndex,
+										colIndex: index,
+										isGroupedColumn: false,
+										isFirstOfGroup: !!groupingProps,
+									})
 
-								if (collapsedColumnIndex !== undefined && !isSummaryRow) {
-									if (cell.column.columnDef.GroupedCellCollapsedContent) {
+									if (collapsedColumnIndex !== undefined && !isSummaryRow) {
+										if (cell.column.columnDef.GroupedCellCollapsedContent) {
+											return (
+												<td
+													key={cell.id}
+													style={{ position: 'relative', ...groupBorders }}
+												>
+													{cell.column.columnDef.GroupedCellCollapsedContent({
+														table,
+														row,
+														cell,
+													})}
+												</td>
+											)
+										}
+
 										return (
-											<td
-												key={cell.id}
-												style={{ position: 'relative', ...groupBorders }}
-											>
-												{cell.column.columnDef.GroupedCellCollapsedContent({
-													table,
-													row,
-													cell,
-												})}
-											</td>
+											<EmptyCell key={cell.id} groupBorders={groupBorders} />
 										)
 									}
 
-									return <EmptyCell key={cell.id} groupBorders={groupBorders} />
-								}
+									const props = {
+										cell,
+										enableHover: tableRowProps?.hover !== false,
+										key: cell.id,
+										measureElement: !enableTableHead
+											? columnVirtualizer?.measureElement
+											: undefined,
+										numRows,
+										row,
+										rowIndex,
+										rowNumber,
+										rowRef,
+										table,
+										virtualCell,
+										isSummaryRowCell: isSummaryRow,
+										groupBorders,
+									}
 
-								const props = {
-									cell,
-									enableHover: tableRowProps?.hover !== false,
-									key: cell.id,
-									measureElement: !enableTableHead
-										? columnVirtualizer?.measureElement
-										: undefined,
-									numRows,
-									row,
-									rowIndex,
-									rowNumber,
-									rowRef,
-									table,
-									virtualCell,
-									isSummaryRowCell: isSummaryRow,
-									groupBorders,
-								}
-
-								return memoMode === 'cells' &&
-									cell.column.columnDef.columnDefType === 'data' &&
-									!draggingColumn &&
-									!draggingRows.length &&
-									editingCell?.id !== cell.id &&
-									editingRow?.id !== row.id ? (
-									// eslint-disable-next-line react/jsx-pascal-case
-									<Memo_TableBodyCell {...props} />
-								) : (
-									<TableBodyCell {...props} />
-								)
-							})}
-						</ColumnVirtualizerWrapper>
-					</MuiTableRow>
+									return memoMode === 'cells' &&
+										cell.column.columnDef.columnDefType === 'data' &&
+										!draggingColumn &&
+										!draggingRows.length &&
+										editingCell?.id !== cell.id &&
+										editingRow?.id !== row.id ? (
+										// eslint-disable-next-line react/jsx-pascal-case
+										<Memo_TableBodyCell {...props} />
+									) : (
+										<TableBodyCell {...props} />
+									)
+								})}
+							</ColumnVirtualizerWrapper>
+						</MuiTableRow>
+					</RowTooltip>
 				)}
 			</EditingRowActionButtons>
 			{renderDetailPanel &&

@@ -1,5 +1,5 @@
 /* eslint-disable no-param-reassign */
-import { BoxProps } from '@mui/material'
+import { BoxProps, TooltipProps } from '@mui/material'
 import { Theme } from '@mui/material/styles'
 import React, {
 	Dispatch,
@@ -82,6 +82,7 @@ import {
 	PresetState,
 } from './TableToolbar/components/buttons/PresetButton'
 import type { TableToolbarProps } from './TableToolbar/TableToolbar'
+import type { RowTooltipProps } from './components/RowTooltip'
 import type { GetIsColumnAllGroupsCollapsedProps } from './utils/getIsColumnAllGroupsCollapsed'
 import type { GetIsGroupCollapsedProps } from './utils/getIsGroupCollapsed'
 import type { OnGroupCollapsedToggleProps } from './utils/onGroupCollapsedToggle'
@@ -1787,6 +1788,8 @@ export type TableComponentProps<TData extends TableData = TableData> = Omit<
 			table: TableInstance<TData>
 		}) => ReactNode
 		rowCount?: number
+		rowTooltipProps?: TooltipProps | (({ row, table }) => TooltipProps)
+		CustomRowTooltip?: FC<RowTooltipProps<TData>>
 		rowNumberMode?: 'original' | 'static'
 		selectAllMode?: 'all' | 'page'
 		setSubRows?: (row: TData, subRows: TData[]) => TData

@@ -49,6 +49,11 @@ import { useHierarchyProps } from '../utils/useHierarchyProps'
 import { ColumnActionsFiltersMenu } from './components/ColumnActionsFiltersMenu'
 import { CUSTOM_FIRST_ROW_MEMBERS_CONFIG } from './components/constants'
 import { UnitRow } from './components/UnitRow'
+import {
+	TestRowTooltipComponent,
+	TestRowTooltipStyledComponent,
+	TestRowTooltipFollowCursor,
+} from './components/CustomTooltip'
 
 const columns = getTeamMembersColumns()
 const manyColumns: Table_ColumnDef<TeamMember>[] = [
@@ -898,6 +903,41 @@ const meta: Meta = {
 		enableTableHead: {
 			control: 'boolean',
 			defaultValue: true,
+		},
+		rowTooltipProps: {
+			options: [
+				'disabled',
+				'show member value',
+				'show static value only where "Impact" is "medium"',
+			],
+			mapping: {
+				disabled: undefined,
+				'show member value': ({ row }) => ({
+					title: row.getValue('teamMember'),
+				}),
+				'show static value only where "Impact" is "medium"': ({ row }) =>
+					row.getValue('impact') === 'Medium'
+						? { title: 'Static value' }
+						: null,
+			},
+			control: { type: 'select' },
+			defaultValue: 'disabled',
+		},
+		CustomRowTooltip: {
+			options: [
+				'disabled',
+				'mui tooltip, no styling',
+				'mui tooltip, styled',
+				'mui tooltip, follow cursor',
+			],
+			mapping: {
+				disabled: undefined,
+				'mui tooltip, no styling': TestRowTooltipComponent,
+				'mui tooltip, styled': TestRowTooltipStyledComponent,
+				'mui tooltip, follow cursor': TestRowTooltipFollowCursor,
+			},
+			control: { type: 'select' },
+			defaultValue: 'disabled',
 		},
 		expandableColumnButtonPosition: {
 			options: ['left', 'right'],
