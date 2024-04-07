@@ -2,6 +2,7 @@ import React, { ChangeEvent } from 'react'
 import MuiTablePagination from '@mui/material/TablePagination'
 
 import type { TableInstance } from '..'
+import { scrollToElement } from '../utils/scrollToElement'
 
 interface Props<TData extends Record<string, any> = object> {
 	position?: 'top' | 'bottom'
@@ -23,6 +24,7 @@ export const TablePagination = <TData extends Record<string, any> = object>({
 			localization,
 			rowCount,
 		},
+		refs: { tableContainerRef },
 	} = table
 	const {
 		pagination: { pageSize = 10, pageIndex = 0 },
@@ -39,6 +41,12 @@ export const TablePagination = <TData extends Record<string, any> = object>({
 
 	const handleChangeRowsPerPage = (event: ChangeEvent<HTMLInputElement>) => {
 		setPageSize(+event.target.value)
+		tableContainerRef.current.scrollTo({ top: 0 })
+	}
+
+	const handlePageChange = (newPage: number) => {
+		setPageIndex(newPage)
+		tableContainerRef.current.scrollTo({ top: 0 })
 	}
 
 	return (
@@ -58,7 +66,7 @@ export const TablePagination = <TData extends Record<string, any> = object>({
 				`${from}-${to} ${localization.of} ${count}`
 			}
 			labelRowsPerPage={localization.rowsPerPage}
-			onPageChange={(_: any, newPage: number) => setPageIndex(newPage)}
+			onPageChange={(_: any, newPage: number) => handlePageChange(newPage)}
 			onRowsPerPageChange={handleChangeRowsPerPage}
 			page={pageIndex}
 			rowsPerPage={pageSize}
