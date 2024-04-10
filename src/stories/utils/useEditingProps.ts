@@ -49,7 +49,7 @@ export const mapValuesToTeamMember = (
 			newRow.completion =
 				value !== null && value !== undefined ? Number(value) : value
 		} else {
-			newRow[key] = value
+			newRow[key] = value === '' ? null : value
 		}
 	}
 

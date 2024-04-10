@@ -427,10 +427,14 @@ const TeamsTable: Story<TeamsTableConfigs> = (args) => {
 	const [columns, setColumns] = useState(initialColumns)
 	const [isDataLoading, setIsDataLoading] = useState(false)
 	const [isInnerTableOpen, setIsInnerTableOpen] = useState(false)
-	const [innerData] = useState(getExpandingTeamMembers(3, '', 3, 2))
+	const [innerData, setInnerData] = useState(getExpandingTeamMembers(3, '', 3, 2))
 	const { handleAddRow, handleEditRow, updateRow } = useEditingProps([
 		data,
 		setData,
+	])
+	const { handleAddRow: handleAddInnerRow } = useEditingProps([
+		innerData,
+		setInnerData,
 	])
 
 	const handleRowsDrop = ({ hoveredRow, draggingRows, grouping, table }) => {
@@ -474,6 +478,8 @@ const TeamsTable: Story<TeamsTableConfigs> = (args) => {
 					enableStickyHeader
 					enableGrouping
 					enablePinning
+					enableCreateNewRow={rest.enableCreateNewRow}
+					onNewRowSave={handleAddInnerRow}
 					filterFromLeafRows
 					initialState={{
 						showColumnFilters: true,

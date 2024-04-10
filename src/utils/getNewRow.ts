@@ -1,6 +1,7 @@
 import { Table } from '@tanstack/react-table'
 import { createRow } from '@tanstack/table-core'
 
+import { NewRowPlaceholderId } from '../constants'
 import { NewRowState } from '../hooks'
 import { Table_Row, TableData, TableInstance } from '../TableComponent'
 
@@ -69,7 +70,7 @@ export const getNewRow = <TData extends TableData = TableData>(props: {
 	const newRow: NewRowState<TData> = {
 		...(createRow(
 			table as Table<TData>,
-			'new-row-placeholder',
+			NewRowPlaceholderId,
 			getInitialValues({ row, initialValues }),
 			row.index,
 			depth,

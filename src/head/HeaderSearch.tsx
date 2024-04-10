@@ -218,7 +218,7 @@ export const HeaderSearch = <T extends TableData>({
 	const handleClickOutside = () => {
 		if (keepSearchValueOnClickOutside) {
 			setShowPopper(false)
-		} else {
+		} else if (searchValue.length === 0) {
 			clearSearch()
 		}
 	}

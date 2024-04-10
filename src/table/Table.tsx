@@ -176,10 +176,6 @@ export const Table: FC<Props> = ({ table }) => {
 		[virtualPaddingLeft, virtualPaddingRight]
 	)
 
-	const summaryRow = useMemo(
-		() => createRow(table as TableType<{}>, 'summaryRow', {}, -1, 0, []),
-		[table]
-	)
 	const summaryRowProps = useMemo(
 		() => ({
 			columnVirtualizer,
@@ -188,22 +184,16 @@ export const Table: FC<Props> = ({ table }) => {
 			rowNumber: -1,
 			table,
 			virtualColumns,
-			row: {
-				getIsSelected: () => false,
-				getVisibleCells: () =>
-					table
-						.getVisibleLeafColumns()
-						.map((column) =>
-							createCell(
-								table as TableType<{}>,
-								summaryRow,
-								column as Column<{}>,
-								getColumnId(column.columnDef as Table_ColumnDef)
-							)
-						),
-			} as Table_Row,
+			row: createRow(
+				table as TableType<{}>,
+				'summaryRow',
+				{},
+				-1,
+				0,
+				[]
+			) as Table_Row,
 		}),
-		[columnVirtualizer, summaryRow, table, virtualColumns]
+		[columnVirtualizer, table, virtualColumns]
 	)
 	const showSummaryRow =
 		enableSummaryRow &&
