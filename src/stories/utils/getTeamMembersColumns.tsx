@@ -207,6 +207,7 @@ export const getTeamMembersColumns = () => {
 				const { control } = ReactHookForm.useFormContext()
 				const [loading, setLoading] = useState(false)
 				const [options, setOptions] = useState<User[]>([])
+				const value = ReactHookForm.useWatch({ name: props.row.id, control })
 
 				const handleInputChange = useCallback(async (_, value: string) => {
 					setLoading(true)
@@ -217,6 +218,8 @@ export const getTeamMembersColumns = () => {
 				useEffect(() => {
 					handleInputChange(null, '')
 				}, [handleInputChange])
+
+				if (!value) return null
 
 				return (
 					<ReactHookForm.Controller

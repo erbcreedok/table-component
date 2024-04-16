@@ -2,7 +2,6 @@ import { useCallback } from 'react'
 import {
 	Controller,
 	useFormContext,
-	useWatch,
 	UseFormStateReturn,
 	ControllerFieldState,
 	ControllerRenderProps,
@@ -45,10 +44,7 @@ export const EditCellField = <TData extends TableData = TableData>(
 	} = table
 	const fieldId = getCellFieldId(cell)
 	const { control, getValues, getFieldState, trigger } = useFormContext()
-	const rowValue = useWatch({
-		name: row.id,
-		control,
-	})
+
 	const validate = useCallback(
 		(value, formValues) =>
 			(validator ?? validateValue)({
@@ -77,8 +73,6 @@ export const EditCellField = <TData extends TableData = TableData>(
 	const onCellCancel = () => {
 		setEditingCell(null)
 	}
-
-	if (!rowValue) return null
 
 	if (columnDef.Edit) {
 		if (columnDef.Edit instanceof Function) {
