@@ -14,19 +14,13 @@ export const ColumnVirtualizerWrapper = ({
 }: ColumnVirtualizerWrapperProps) => {
 	const { virtualPaddingLeft, virtualPaddingRight } = useVirtualizerContext()
 	const { table } = useTableContext()
-	const {
-		columnPinning: { left, right },
-		grouping,
-	} = table.getState()
-	const leftLength = left?.length ?? 0
-	const rightLength = right?.length ?? 0
-	const groupingLength =
-		grouping.filter((colId) => !left?.includes(colId)).length || 0
+	const leftLength = table.getLeftVisibleLeafColumns().length
+	const rightLength = table.getRightVisibleLeafColumns().length
 	const [leftChildren, centerChildren, rightChildren] = useMemo(() => {
 		if (!Array.isArray(children)) {
 			return [null, children, null]
 		}
-		const leftPinnedEnd = leftLength ? leftLength + groupingLength : 0
+		const leftPinnedEnd = leftLength
 		const rightPinnedEnd = children.length - rightLength
 
 		return [
@@ -34,7 +28,7 @@ export const ColumnVirtualizerWrapper = ({
 			children.slice(leftPinnedEnd, rightPinnedEnd),
 			children.slice(rightPinnedEnd),
 		]
-	}, [children, groupingLength, leftLength, rightLength])
+	}, [children, leftLength, rightLength])
 
 	const getPaddingCell = (padding?: number, position = 'left') =>
 		!!padding &&
