@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useRef } from 'react'
 import { Meta, Story } from '@storybook/react'
 import TableComponent, {
 	Table_ColumnDef,
@@ -103,6 +103,42 @@ export const EnableRowVirtualization: Story<TableComponentProps> = () => (
 		enableBottomToolbar={false}
 	/>
 )
+
+export const EnableRowVirtualizationWithWindowVirtualizer: Story<TableComponentProps> = () => (
+	<TableComponent
+		columns={longColumns}
+		data={longData}
+		enablePagination={false}
+		enableRowNumbers
+		enableRowVirtualization
+		enableBottomToolbar={false}
+		windowVirtualizer={true}
+		memoMode="rows"
+	/>
+)
+
+export const EnableRowVirtualizationWithCustomScrollElement: Story<
+	TableComponentProps
+> = () => {
+	const ref = useRef(null)
+
+	return (
+		<div style={{ width: 500, height: 300, overflow: 'auto' }} ref={ref}>
+			<TableComponent
+				columns={longColumns}
+				data={longData}
+				enablePagination={false}
+				enableRowNumbers
+				enableRowVirtualization
+				enableBottomToolbar={false}
+				rowVirtualizerProps={{
+					getScrollElement: () => ref.current,
+				}}
+				memoMode="rows"
+			/>
+		</div>
+	)
+}
 
 export const EnableRowVirtualizationWithCustomRow: Story<
 	TableComponentProps

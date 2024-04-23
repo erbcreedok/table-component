@@ -1706,16 +1706,21 @@ export type TableComponentProps<TData extends TableData = TableData> = Omit<
 					table: TableInstance<TData>
 			  }) => Partial<VirtualizerOptions<HTMLDivElement, HTMLTableCellElement>>)
 		rowVirtualizerInstanceRef?: MutableRefObject<Virtualizer<
-			HTMLDivElement,
+			HTMLDivElement | Window,
 			HTMLTableRowElement
 		> | null>
 		rowVirtualizerProps?:
-			| Partial<VirtualizerOptions<HTMLDivElement, HTMLTableRowElement>>
+			| Partial<
+					VirtualizerOptions<HTMLDivElement | Window, HTMLTableRowElement>
+			  >
 			| (({
 					table,
 			  }: {
 					table: TableInstance<TData>
-			  }) => Partial<VirtualizerOptions<HTMLDivElement, HTMLTableRowElement>>)
+			  }) => Partial<
+					VirtualizerOptions<HTMLDivElement | Window, HTMLTableRowElement>
+			  >)
+		windowVirtualizer?: boolean
 		tableInstanceRef?: MutableRefObject<TableInstance<TData> | null>
 		toolbarProps?: Partial<TableToolbarProps<TData>>
 		uppercaseHeader?: boolean

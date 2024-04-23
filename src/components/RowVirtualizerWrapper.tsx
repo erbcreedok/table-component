@@ -12,7 +12,7 @@ const wrapperProps = {
 
 type Props = PropsWithChildren<{
 	colSpan?: number
-	rowVirtualizer?: Virtualizer<HTMLDivElement, HTMLTableRowElement>
+	rowVirtualizer?: Virtualizer<HTMLDivElement | Window, HTMLTableRowElement>
 }>
 export const RowVirtualizerWrapper = ({
 	colSpan,

@@ -5,6 +5,7 @@ import type { TableInstance } from '..'
 import { DragScrollingContainer } from '../components/DragScrollingContainer'
 import { StickyHorizontalScrollbar } from '../components/StickyScrollbar'
 import { useStickyScrollbar } from '../hooks/useStickyScrollbar'
+import { getValueOrFunctionHandler } from '../utils/getValueOrFunctionHandler'
 
 import { Table } from './Table'
 
@@ -24,6 +25,8 @@ export const TableContainer: FC<Props> = ({ table }) => {
 			enableDragScrolling,
 			enableRowVirtualization,
 			enableStickyScrollbars,
+			windowVirtualizer,
+			rowVirtualizerProps,
 		},
 		refs: { tableContainerRef, bottomToolbarRef, topToolbarRef },
 		setStickyHorizontalScrollbarHeight,
@@ -57,6 +60,13 @@ export const TableContainer: FC<Props> = ({ table }) => {
 		parentRef: enableStickyScrollbars?.relativeParentRef,
 	})
 
+	const vProps = getValueOrFunctionHandler(rowVirtualizerProps)({ table })
+
+	const isTableContainerScroll =
+		(enableStickyHeader || enableRowVirtualization) &&
+		!windowVirtualizer &&
+		!vProps?.getScrollElement
+
 	return (
 		<>
 			<MuiTableContainer
@@ -75,10 +85,9 @@ export const TableContainer: FC<Props> = ({ table }) => {
 				}}
 				sx={(theme) => ({
 					maxWidth: '100%',
-					maxHeight:
-						enableStickyHeader || enableRowVirtualization
-							? `clamp(350px, calc(100vh - ${totalToolbarHeight}px), 9999px)`
-							: undefined,
+					maxHeight: isTableContainerScroll
+						? `clamp(350px, calc(100vh - ${totalToolbarHeight}px), 9999px)`
+						: undefined,
 					overflow: 'auto',
 					...(tableContainerProps?.sx instanceof Function
 						? tableContainerProps.sx(theme)
