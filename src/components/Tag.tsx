@@ -1,6 +1,4 @@
-import { css } from '@emotion/react'
-import styled from '@emotion/styled'
-import { Avatar, ButtonBase, SxProps } from '@mui/material'
+import { Avatar, ButtonBase, SxProps, styled, css } from '@mui/material'
 import { forwardRef, MouseEventHandler, ReactNode, useMemo } from 'react'
 
 import { CloseIcon } from '../icons/CloseIcon'
@@ -12,7 +10,7 @@ import { TooltipOverflow } from './TooltipOverflow'
 const WIDTH_FOR_DELETE_WITH_AVATAR = 18
 const WIDTH_FOR_DELETE_WITH_ICON = 18
 
-const DeleteButton = styled.div`
+const DeleteButton = styled('div')`
 	display: none;
 	align-items: center;
 	margin-left: 9px;
