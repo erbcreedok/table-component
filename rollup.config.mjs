@@ -30,6 +30,7 @@ export default [
 				file: './dist/cjs/index.js',
 				format: 'cjs',
 				sourcemap: true,
+				interop: 'compat',
 			},
 			{
 				file: './dist/esm/table-component.esm.js',
