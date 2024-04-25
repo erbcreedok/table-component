@@ -2,6 +2,10 @@
 import { Row, Table } from '@tanstack/react-table'
 import { memo, RowData, RowModel, SortingFn } from '@tanstack/table-core'
 
+import { Table_DefinedColumnDef } from '../TableComponent'
+
+import { getNestedValueRow } from './getNestedProp'
+
 export function getSortedRowModel<TData extends RowData>(): (
 	table: Table<TData>
 ) => () => RowModel<TData> {
@@ -26,6 +30,7 @@ export function getSortedRowModel<TData extends RowData>(): (
 						sortUndefined?: false | -1 | 1
 						invertSorting?: boolean
 						sortingFn: SortingFn<TData>
+						sortingKey?: string
 					}
 				> = {}
 
@@ -36,6 +41,8 @@ export function getSortedRowModel<TData extends RowData>(): (
 						sortUndefined: column.columnDef.sortUndefined,
 						invertSorting: column.columnDef.invertSorting,
 						sortingFn: column.getSortingFn(),
+						sortingKey: (column.columnDef as Table_DefinedColumnDef<any>)
+							.sortingKey, // todo in EPMDCEMLST-4146
 					}
 				})
 
@@ -48,6 +55,7 @@ export function getSortedRowModel<TData extends RowData>(): (
 						for (let i = 0; i < availableSorting.length; i += 1) {
 							const sortEntry = availableSorting[i]
 							const columnInfo = columnInfoById[sortEntry.id]
+							const { sortingKey } = columnInfo
 							const isDesc = sortEntry?.desc ?? false
 
 							if (columnInfo.sortUndefined) {
@@ -69,7 +77,13 @@ export function getSortedRowModel<TData extends RowData>(): (
 							}
 
 							// This function should always return in ascending order
-							let sortInt = columnInfo.sortingFn(rowA, rowB, sortEntry.id)
+							let sortInt = sortingKey
+								? columnInfo.sortingFn(
+										getNestedValueRow(rowA),
+										getNestedValueRow(rowB),
+										sortingKey
+								  )
+								: columnInfo.sortingFn(rowA, rowB, sortEntry.id)
 
 							if (sortInt !== 0) {
 								if (isDesc) {

@@ -48,6 +48,7 @@ module.exports = {
 		'no-lonely-if': 'off',
 		'default-case': 'off',
 		'@typescript-eslint/no-non-null-assertion': 'off',
+		'@typescript-eslint/no-extra-semi': 'off',
 		// Defining functions in the end of the scope is a common pattern,
 		// so we can disable the `functions` check
 		// + Using variables before they are defined, but in inner scopes (e.g. in functions)

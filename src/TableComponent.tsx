@@ -410,10 +410,12 @@ export type TableSortingConfigs<TData extends TableData = TableData> = {
 	getSortingText?: GetSortingNode<TData, { withSortWord?: boolean }>
 }
 
-export type ColumnSortingConfigs<TData extends TableData = TableData> = {
-	sortingType?: SortingType
-	sortingFn?: Table_SortingFn<TData>
-} & TableSortingConfigs<TData>
+export type ColumnSortingConfigs<TData extends TableData = TableData> =
+	TableSortingConfigs<TData> & {
+		sortingType?: SortingType
+		sortingFn?: Table_SortingFn<TData>
+		sortingKey?: string
+	}
 
 export type Table_ColumnDef<TData extends TableData = TableData> = Omit<
 	ColumnDef<TData, unknown>,

@@ -6,9 +6,7 @@ export const getSuggestedColumns = <TData extends TableData = TableData>(
 	suggested?: readonly string[]
 ): [Table_Column<TData>[], boolean] => {
 	if (suggested) {
-		const result = columns.filter((col) =>
-			suggested.includes(getColumnId(col.columnDef))
-		)
+		const result = columns.filter((col) => suggested.includes(getColumnId(col)))
 
 		if (result.length > 0) return [result, true]
 	}

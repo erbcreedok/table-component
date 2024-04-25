@@ -223,6 +223,7 @@ export const TableBody: FC<Props> = ({
 				</>
 			)}
 			<Box
+				component="tr"
 				style={{
 					height: '4px',
 					width: '100%',

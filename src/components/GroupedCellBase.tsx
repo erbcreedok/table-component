@@ -89,7 +89,7 @@ export const GroupedCellBase = <TData extends object>({
 			enableGroupSelection,
 		},
 	} = table
-	const columnId = getColumnId(column.columnDef)
+	const columnId = getColumnId(column)
 	const { grouping, hoveredRow, isLoading, showSkeletons } = table.getState()
 	const isLastGroupedColumn =
 		grouping.length > 0 && grouping[grouping.length - 1] === columnId

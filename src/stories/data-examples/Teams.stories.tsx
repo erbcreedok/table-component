@@ -56,6 +56,13 @@ import {
 } from './components/CustomTooltip'
 
 const columns = getTeamMembersColumns()
+
+const columnsWithCustomAccessors: Table_ColumnDef<TeamMember>[] = [...columns]
+columnsWithCustomAccessors[0] = {
+	sortingKey: 'member.role',
+	...columnsWithCustomAccessors[0],
+}
+
 const manyColumns: Table_ColumnDef<TeamMember>[] = [
 	...columns,
 	{
@@ -586,6 +593,20 @@ export const TeamsTableDefault: Story<TeamsTableExample> = (args) => {
 		<TeamsTable columns={columns} {...args} data={data} setData={setData} />
 	)
 }
+
+export const TeamsWithCustomAccessors: Story<TeamsTableExample> = (args) => {
+	const [data, setData] = useState(getTeamMembers(defaultRowsCount))
+
+	return (
+		<TeamsTable
+			columns={columnsWithCustomAccessors}
+			{...args}
+			data={data}
+			setData={setData}
+		/>
+	)
+}
+
 export const TeamsTableWithManyColumns: Story<TeamsTableExample> = (args) => {
 	const [data, setData] = useState(getTeamMembers(defaultRowsCount))
 

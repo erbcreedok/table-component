@@ -1,5 +1,3 @@
-import React from 'react'
-
 import {
 	TableInstance,
 	Table_SortingFn,

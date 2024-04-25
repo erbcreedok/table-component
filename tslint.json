@@ -35,6 +35,7 @@
 		"default-case": false,
 		"no-param-reassign": false,
 		"@typescript-eslint/no-non-null-assertion": false,
+		"@typescript-eslint/no-extra-semi": false,
 		"no-inferred-empty-object-type": true,
 		"no-invalid-template-strings": false, // https://palantir.github.io/tslint/rules/no-invalid-template-strings/
 		"no-sparse-arrays": false, // https://palantir.github.io/tslint/rules/no-sparse-arrays/

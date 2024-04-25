@@ -23,12 +23,10 @@ export const getColumnFilterDefaultOptions = <
 ) => {
 	const { columnFilters } = table.getState()
 	const { formatCellValue } = column.columnDef
-	const columnFilter = columnFilters.find(
-		(c) => c.id === getColumnId(column.columnDef)
-	)
+	const columnFilter = columnFilters.find((c) => c.id === getColumnId(column))
 
 	const facetedUniqueValues = getColumnUnfilteredFacetedValues(
-		getColumnId(column.columnDef),
+		getColumnId(column),
 		table
 	)
 

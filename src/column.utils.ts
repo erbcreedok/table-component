@@ -25,7 +25,7 @@ import type {
 } from '.'
 
 const getColumnIdHelper = <TData extends Record<string, any> = {}>(
-	columnDef: Table_ColumnDef<TData>
+	columnDef: Table_ColumnDef<TData> | Table_DefinedColumnDef<TData>
 ): string =>
 	columnDef.id ?? columnDef.accessorKey?.toString?.() ?? columnDef.header
 
@@ -88,7 +88,7 @@ export const prepareColumns = <TData extends Record<string, any> = {}>({
 				defaultDisplayColumn,
 				filterFns,
 				sortingFns,
-			})
+			}) as Table_ColumnDef<TData>[] // todo in EPMDCEMLST-4146
 		} else if (columnDef.columnDefType === 'data') {
 			// assign aggregationFns if multiple aggregationFns are provided
 			if (Array.isArray(columnDef.aggregationFn)) {

@@ -83,6 +83,7 @@ export const teamMemberAccessorFn =
 		}
 		return ''
 	}
+
 const SearchOption = ({
 	item,
 	onClick,
@@ -109,6 +110,7 @@ const SearchOption = ({
 		</Typography>
 	</Box>
 )
+
 export const getTeamMembersColumns = () => {
 	return [
 		{
