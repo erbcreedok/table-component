@@ -22,6 +22,13 @@ const getNestedValueDescriptor: PropertyDescriptorMap = {
 	},
 }
 
+/**
+ * This is a temporary hack to overcome the inflexibility of the TanStack's sorting/filtering functions.
+ * Todo the proper flexible funtions below TanStack's helper functions.
+ * For example:
+ * - sort(val1, val2) => -1|0|1
+ * - filter(val) => true|false
+ */
 export const getNestedValueRow = <TData extends RowData>(row: Row<TData>) => {
 	return Object.create(row, getNestedValueDescriptor) as Row<TData>
 }

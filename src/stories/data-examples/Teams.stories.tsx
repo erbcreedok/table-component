@@ -59,8 +59,9 @@ const columns = getTeamMembersColumns()
 
 const columnsWithCustomAccessors: Table_ColumnDef<TeamMember>[] = [...columns]
 columnsWithCustomAccessors[0] = {
-	sortingKey: 'member.role',
 	...columnsWithCustomAccessors[0],
+	sortingKey: 'member.role',
+	filteringKey: 'member.role',
 }
 
 const manyColumns: Table_ColumnDef<TeamMember>[] = [

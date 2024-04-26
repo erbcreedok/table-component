@@ -414,6 +414,8 @@ export type ColumnSortingConfigs<TData extends TableData = TableData> =
 	TableSortingConfigs<TData> & {
 		sortingType?: SortingType
 		sortingFn?: Table_SortingFn<TData>
+		/** This key has a higher precedence over accessor(Key/Fn) in sorting.
+		 * The key can contain paths, ex: "onbect.prop1.anotherProp" */
 		sortingKey?: string
 	}
 
@@ -609,6 +611,9 @@ export type Table_ColumnDef<TData extends TableData = TableData> = Omit<
 		enableDividerRight?: boolean
 		enableEditing?: EnableEditingOption<TData>
 		filterFn?: Table_FilterFn<TData>
+		/** This key has a higher precedence over accessor(Key/Fn) in filtering.
+		 * The key can contain paths, ex: "onbect.prop1.anotherProp" */
+		filteringKey?: string
 		filterSelectOptions?: (string | SelectOption)[]
 		/**
 		 * footer must be a string. If you want custom JSX to render the footer, you can also specify a `Footer` option. (Capital F)

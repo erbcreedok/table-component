@@ -7,7 +7,14 @@ import {
 	memo,
 } from '@tanstack/table-core'
 
+import { Table_ColumnDef } from '..'
+
 import { filterRows } from './filterRowsUtils'
+import { getNestedValueRow } from './getNestedProp'
+
+interface ResolvedColumnFilteringKey<TData extends RowData>
+	extends ResolvedColumnFilter<TData>,
+		Pick<Table_ColumnDef, 'filteringKey'> {}
 
 export function getFilteredRowModel<TData extends RowData>(): (
 	table: Table<TData>
@@ -32,8 +39,8 @@ export function getFilteredRowModel<TData extends RowData>(): (
 					return rowModel
 				}
 
-				const resolvedColumnFilters: ResolvedColumnFilter<TData>[] = []
-				const resolvedGlobalFilters: ResolvedColumnFilter<TData>[] = []
+				const resolvedColumnFilters: ResolvedColumnFilteringKey<TData>[] = []
+				const resolvedGlobalFilters: ResolvedColumnFilteringKey<TData>[] = []
 
 				;(columnFilters ?? []).forEach((d) => {
 					const column = table.getColumn(d.id)
@@ -45,6 +52,9 @@ export function getFilteredRowModel<TData extends RowData>(): (
 							)
 						}
 					}
+
+					const { columnDef } = column
+					const { filteringKey } = columnDef as Table_ColumnDef
 
 					const filterFn = column.getFilterFn()
 
@@ -62,6 +72,7 @@ export function getFilteredRowModel<TData extends RowData>(): (
 						id: d.id,
 						filterFn,
 						resolvedValue: filterFn.resolveFilterValue?.(d.value) ?? d.value,
+						filteringKey,
 					})
 				})
 
@@ -81,12 +92,15 @@ export function getFilteredRowModel<TData extends RowData>(): (
 					filterableIds.push('__global__')
 
 					globallyFilterableColumns.forEach((column) => {
+						const { id, columnDef } = column
+						const { filteringKey } = columnDef as Table_ColumnDef
 						resolvedGlobalFilters.push({
-							id: column.id,
+							id,
 							filterFn: globalFilterFn,
 							resolvedValue:
 								globalFilterFn.resolveFilterValue?.(globalFilter) ??
 								globalFilter,
+							filteringKey,
 						})
 					})
 				}
@@ -103,12 +117,13 @@ export function getFilteredRowModel<TData extends RowData>(): (
 					if (resolvedColumnFilters.length) {
 						for (let i = 0; i < resolvedColumnFilters.length; i++) {
 							currentColumnFilter = resolvedColumnFilters[i]
-							const id = currentColumnFilter.id
+							const { id, filteringKey } = currentColumnFilter
 
 							// Tag the row with the column filter state
 							row.columnFilters[id] = currentColumnFilter.filterFn(
-								row,
-								id,
+								...(filteringKey
+									? [getNestedValueRow(row), filteringKey]
+									: [row, id]),
 								currentColumnFilter.resolvedValue,
 								(filterMeta) => {
 									row.columnFiltersMeta[id] = filterMeta
@@ -120,12 +135,13 @@ export function getFilteredRowModel<TData extends RowData>(): (
 					if (resolvedGlobalFilters.length) {
 						for (let i = 0; i < resolvedGlobalFilters.length; i++) {
 							currentGlobalFilter = resolvedGlobalFilters[i]
-							const id = currentGlobalFilter.id
+							const { id, filteringKey } = currentGlobalFilter
 							// Tag the row with the first truthy global filter state
 							if (
 								currentGlobalFilter.filterFn(
-									row,
-									id,
+									...(filteringKey
+										? [getNestedValueRow(row), filteringKey]
+										: [row, id]),
 									currentGlobalFilter.resolvedValue,
 									(filterMeta) => {
 										row.columnFiltersMeta[id] = filterMeta
