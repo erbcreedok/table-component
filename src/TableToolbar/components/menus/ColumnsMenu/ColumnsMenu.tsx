@@ -1,30 +1,29 @@
-import React, { useCallback, useMemo, useState } from 'react'
-import Box from '@mui/material/Box'
 import { Typography } from '@mui/material'
+import Box from '@mui/material/Box'
+import React, { useCallback, useMemo, useState } from 'react'
 
-import {
-	Table_Column,
-	TableData,
-	TableInstance,
-	ContentTitle,
-	ButtonLink,
-	SidebarPropsWithOnCloseEnd,
-	SidebarWithMuiProps,
-	Colors,
-	TextColor,
-} from '../../../../index'
 import {
 	reorderColumn,
 	Table_DisplayColumnIdsArray,
 } from '../../../../column.utils'
+import {
+	ButtonLink,
+	Colors,
+	ContentTitle,
+	SidebarPropsWithOnCloseEnd,
+	SidebarWithMuiProps,
+	Table_Column,
+	TableData,
+	TableInstance,
+	TextColor,
+} from '../../../../index'
 import { createComponentWithMuiProps } from '../../../../utils/createComponentWithMuiProps'
+import { getTestAttributes } from '../../../../utils/getTestAttributes'
 import { getValidColumnOrder } from '../../../../utils/getValidColumnOrder'
 import { getValueOrFunctionHandler } from '../../../../utils/getValueOrFunctionHandler'
+import { isColumnDisplayed } from '../../../../utils/isColumnDisplayed'
 import { mergeMuiProps } from '../../../../utils/mergeMuiProps'
-import { sortColumns } from '../../../../utils/sortColumns'
 import { splitArrayItems } from '../../../../utils/splitArrayItems'
-import { getColumnsFilteredByDisplay } from '../../../../utils/getFilteredByDisplay'
-import { getTestAttributes } from '../../../../utils/getTestAttributes'
 import { withNativeEvent } from '../../../../utils/withNativeEvent'
 
 import { ColumnsMenuItem } from './ColumnsMenuItem'
@@ -36,34 +35,12 @@ export interface ColumnsMenuProps<TData extends Record<string, any> = {}> {
 	sidebarProps?: SidebarPropsWithOnCloseEnd
 }
 
-const getCompareValue = (colId: string, left?: string[], right?: string[]) => {
-	if (left && left.includes(colId)) {
-		return -left.length + left.indexOf(colId)
-	}
-	if (right && right.includes(colId)) {
-		return right.indexOf(colId) + 1
-	}
-
-	return 0
-}
 export const defaultOrganizeColumnsMenu = <TData extends TableData = {}>(
-	allColumns: Table_Column<TData>[],
-	table: TableInstance<TData>
+	allColumns: Table_Column<TData>[]
 ) => {
-	const {
-		columnPinning: { left, right },
-	} = table.getState()
-
-	return sortColumns(
-		getColumnsFilteredByDisplay(
-			allColumns
-				.filter((col) => !Table_DisplayColumnIdsArray.includes(col.id))
-				.sort(
-					(a, b) =>
-						getCompareValue(a.id, left, right) -
-						getCompareValue(b.id, left, right)
-				)
-		)
+	return allColumns.filter(
+		(col) =>
+			!Table_DisplayColumnIdsArray.includes(col.id) && isColumnDisplayed(col)
 	)
 }
 
@@ -87,11 +64,7 @@ export const ColumnsMenu = <TData extends TableData = TableData>({
 	} = table
 	const [isSearchActive, setIsSearchActive] = useState<boolean>(false)
 	const [searchList, setSearchList] = useState<Array<Table_Column<TData>>>([])
-	const allColumns = organizeColumnsMenu(
-		// TODO: override getAllLeafColumns method, so it reorders and filters columns by itself
-		getAllLeafColumns(),
-		table
-	)
+	const allColumns = organizeColumnsMenu(getAllLeafColumns(), table)
 
 	const [visibleColumns, hiddenColumns] = splitArrayItems(allColumns, (col) =>
 		col.getIsVisible()
@@ -163,7 +136,7 @@ export const ColumnsMenu = <TData extends TableData = TableData>({
 				)
 			}
 		},
-		[table.options, setColumnOrder, setGrouping]
+		[setGrouping, setColumnPinning, setColumnOrder, table.options]
 	)
 
 	const enableDrag = useMemo(() => {

@@ -16,7 +16,6 @@ import {
 import { DeleteIcon } from '../../../../icons/DeleteIcon'
 import { createComponentWithMuiProps } from '../../../../utils/createComponentWithMuiProps'
 import { getE2EAttributes } from '../../../../utils/getE2EAttributes'
-import { getColumnsFilteredByDisplay } from '../../../../utils/getFilteredByDisplay'
 import { getOrderedColumns } from '../../../../utils/getOrderedColumns'
 import { getSuggestedColumns } from '../../../../utils/getSuggestedColumns'
 import { getTestAttributes } from '../../../../utils/getTestAttributes'
@@ -40,10 +39,7 @@ export interface GroupingMenuProps<TData extends Record<string, any> = {}> {
 
 export const defaultOrganizeGroupingMenu = <TData extends TableData = {}>(
 	allColumns: readonly Table_Column<TData>[]
-) =>
-	getColumnsFilteredByDisplay(
-		allColumns.filter((col) => col.getIsVisible() && col.getCanGroup())
-	)
+) => allColumns.filter((col) => col.getIsVisible() && col.getCanGroup())
 
 export const GroupingMenu = <TData extends Record<string, any> = {}>({
 	anchorEl,

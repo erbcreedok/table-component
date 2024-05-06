@@ -8,5 +8,13 @@ export const mapVirtualItems = <T>(
 	if (!items) return []
 	if (!virtualItems) return items.map((col) => [col, undefined])
 
-	return virtualItems.map((col) => [items[col.index], col])
+	return virtualItems.reduce((acc, col) => {
+		if (!items[col.index]) {
+			console.error(`no index ${col.index} in given array`, { col, items })
+		} else {
+			acc.push([items[col.index], col])
+		}
+
+		return acc
+	}, [] as MappedVirtualItem<T>[])
 }

@@ -1,9 +1,9 @@
 /* eslint-disable default-param-last */
 import { Table, Row, RowModel, RowData, memo } from '@tanstack/table-core'
 
-import { Table_Row, TableInstance } from '../TableComponent'
+import { Table_Row, TableData, TableInstance } from '../TableComponent'
 
-import { createRow } from './createRow'
+import { createTableRow } from './createTableRow'
 import { fillRowsWithParents } from './fillRowsWithParents'
 import { flattenRows } from './flattenRows'
 
@@ -43,13 +43,13 @@ export function getCoreRowModel<TData extends RowData>(): (
 
 					for (let i = 0; i < originalRows.length; i++) {
 						// Make the row
-						const row = createRow(
-							table,
+						const row = createTableRow(
+							table as unknown as TableInstance,
 							table._getRowId(originalRows[i], i, parent),
-							originalRows[i],
+							originalRows[i] as TableData,
 							i,
 							depth
-						)
+						) as Row<TData>
 						Object.assign(row, {
 							getParent: () => parent,
 						})

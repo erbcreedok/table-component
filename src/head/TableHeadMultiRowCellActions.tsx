@@ -1,3 +1,6 @@
+import Box from '@mui/material/Box'
+import ListItemIcon from '@mui/material/ListItemIcon'
+import MenuItem from '@mui/material/MenuItem'
 import React, {
 	FC,
 	MouseEvent,
@@ -8,19 +11,15 @@ import React, {
 	useMemo,
 	useState,
 } from 'react'
-import MenuItem from '@mui/material/MenuItem'
-import ListItemIcon from '@mui/material/ListItemIcon'
-import Box from '@mui/material/Box'
 
-import { getColumnsFilteredByDisplay } from '..'
 import type {
-	TableInstance,
-	Table_Column,
-	MultirowColumnAction,
 	MultirowColumn,
+	MultirowColumnAction,
+	Table_Column,
+	TableInstance,
 } from '..'
-import { Menu } from '../components/Menu'
-import { commonMenuItemStyles, commonListItemStyles } from '../menus/constants'
+import { Menu } from '..'
+import { commonListItemStyles, commonMenuItemStyles } from '../menus/constants'
 import { hideColumns } from '../utils/hideColumns'
 
 import { multirowActions } from './constants'
@@ -54,9 +53,7 @@ export const TableHeadMultiRowCellActions: FC<Props> = ({
 
 	const [visible, setVisible] = useState(false)
 
-	const columns: Table_Column[] = getColumnsFilteredByDisplay(
-		table.getVisibleLeafColumns()
-	)
+	const columns: Table_Column[] = table.getVisibleLeafColumns()
 
 	const handleClick = useCallback(
 		(event: MouseEvent<HTMLElement>) => {

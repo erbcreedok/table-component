@@ -17,7 +17,6 @@ import {
 import { DeleteIcon } from '../../../../icons/DeleteIcon'
 import { createComponentWithMuiProps } from '../../../../utils/createComponentWithMuiProps'
 import { getE2EAttributes } from '../../../../utils/getE2EAttributes'
-import { getColumnsFilteredByDisplay } from '../../../../utils/getFilteredByDisplay'
 import { getOrderedColumns } from '../../../../utils/getOrderedColumns'
 import { getPascalCase } from '../../../../utils/getPascalCase'
 import { getSortingText } from '../../../../utils/getSortingInfo'
@@ -45,10 +44,7 @@ export interface SortingMenuProps<TData extends Record<string, any> = {}> {
 
 export const defaultOrganizeSortingMenu = <TData extends TableData = {}>(
 	allColumns: readonly Table_Column<TData>[]
-) =>
-	getColumnsFilteredByDisplay(
-		allColumns.filter((col) => col.getIsVisible() && col.getCanSort())
-	)
+) => allColumns.filter((col) => col.getIsVisible() && col.getCanSort())
 
 export const SortingMenu = <TData extends Record<string, any> = {}>({
 	anchorEl,

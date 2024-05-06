@@ -28,14 +28,11 @@ import {
 import { CreateNewRow } from '../buttons/CreateNewRow'
 import { useComputedMeasureElement } from '../hooks/useComputedMeasureElement'
 import { getCellGroupBorders } from '../utils/getGroupBorders'
-import { getCellsFilteredByDisplay } from '../utils/getFilteredByDisplay'
 import { getColumnId } from '../column.utils'
 import { getIsMockRow } from '../utils/getIsMockRow'
 import { getSubRowIndex } from '../utils/getSubRowIndex'
 import { setHoveredRow } from '../utils/setHoveredRow'
-import { sortMappedVirtualCells } from '../utils/sortColumns'
 import { mapVirtualItems } from '../utils/virtual'
-import { getNonCollapsedColumns } from '../utils/getNonCollapsedColumns'
 
 import { Memo_TableBodyCell, TableBodyCell } from './TableBodyCell'
 import { TableBodyCellEmpty } from './TableBodyCellEmpty'
@@ -99,7 +96,6 @@ export const TableBodyRow: FC<TableBodyRowProps> = (props) => {
 		columnVisibility,
 		openedDetailedPanels,
 		hoveredRow,
-		collapsedMultirow,
 	} = getState()
 	const isEditingRow = !!editingRow && editingRow?.id === row.id
 	const isNewRow = table.getIsNewRow(row)
@@ -288,15 +284,7 @@ export const TableBodyRow: FC<TableBodyRowProps> = (props) => {
 		}
 	}, [columnVisibility])
 
-	const cells = sortMappedVirtualCells(
-		mapVirtualItems(
-			getNonCollapsedColumns(
-				getCellsFilteredByDisplay(row?.getVisibleCells()),
-				collapsedMultirow
-			),
-			virtualColumns
-		)
-	)
+	const cells = mapVirtualItems(row?.getNonCollapsedCells(), virtualColumns)
 
 	return (
 		<>

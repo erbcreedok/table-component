@@ -7,18 +7,24 @@ export type EmptyColumn = {
 	colSpan: number
 }
 
-export const getNonCollapsedColumns = <T>(
+export type NonCollapsedItem<T> = (T & { empty: false }) | EmptyColumn
+
+export const getNonCollapsedColumnItems = <T>(
 	items: T[],
 	collapsedMultirow: { id: string; colIds: string[] }[],
-	keyToId = 'column'
-): ((T & { empty: false }) | EmptyColumn)[] => {
+	getColumn: (item: T) => { id: string } = (item) => item as { id: string }
+): NonCollapsedItem<T>[] => {
 	const collapsedMultirowColIds = getCollapsedMultirowColIds(collapsedMultirow)
 	let collapsedMultirowGroup = ''
 
+	if (collapsedMultirow.length === 0)
+		return items.map((item) => ({ ...item, empty: false }))
+
 	const result = items.reduce((acc, curr) => {
-		if (collapsedMultirowColIds.includes(curr[keyToId].id)) {
+		const column = getColumn(curr)
+		if (collapsedMultirowColIds.includes(column.id)) {
 			const multirowGroup = collapsedMultirow.find((mult) =>
-				mult.colIds.includes(curr[keyToId].id)
+				mult.colIds.includes(column.id)
 			)
 
 			if (!multirowGroup) {

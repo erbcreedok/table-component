@@ -1,22 +1,20 @@
-import type { Table as TableType } from '@tanstack/react-table'
-import { FC, useCallback, useMemo } from 'react'
+import MuiTable from '@mui/material/Table'
 import {
 	defaultRangeExtractor,
 	Range,
 	useVirtualizer,
 	Virtualizer,
 } from '@tanstack/react-virtual'
-import MuiTable from '@mui/material/Table'
+import { FC, useCallback, useMemo } from 'react'
 
-import { VirtualizerProvider } from '../context/VirtualizerProvider'
-import { TableHead } from '../head/TableHead'
+import { TableInstance } from '..'
 import { Memo_TableBody, TableBody } from '../body/TableBody'
 import { TableBodyRow } from '../body/TableBodyRow'
+import { VirtualizerProvider } from '../context/VirtualizerProvider'
 import { TableFooter } from '../footer/TableFooter'
-import { Table_Row, TableInstance, getColumnsFilteredByDisplay } from '..'
+import { TableHead } from '../head/TableHead'
 import { TableHeadInvisible } from '../head/TableHeadInvisible'
-import { createRow } from '../utils/createRow'
-import { getNonCollapsedColumns } from '../utils/getNonCollapsedColumns'
+import { createTableRow } from '../utils'
 
 interface Props {
 	table: TableInstance
@@ -42,14 +40,7 @@ export const Table: FC<Props> = ({ table }) => {
 		},
 		refs: { tableContainerRef },
 	} = table
-	const {
-		isFullScreen,
-		columnPinning,
-		columnVisibility,
-		columnOrder,
-		grouping,
-		collapsedMultirow,
-	} = getState()
+	const { isFullScreen, columnPinning, columnVisibility } = getState()
 
 	const tableProps =
 		muiTableProps instanceof Function ? muiTableProps({ table }) : muiTableProps
@@ -73,22 +64,17 @@ export const Table: FC<Props> = ({ table }) => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [table.getRowModel().rows, columnPinning, columnVisibility])
 
-	const _visibleColumns = getNonCollapsedColumns(
-		getColumnsFilteredByDisplay([
-			...table.getLeftVisibleLeafColumns(),
-			...table.getCenterVisibleLeafColumns(),
-			...table.getRightVisibleLeafColumns(),
-		]),
-		collapsedMultirow,
-		'columnDef'
-	)
+	const _visibleColumns = table.getNonCollapsedColumns()
 
-	const [leftPinnedIndexes, rightPinnedIndexes] = useMemo(
+	const [leftPinnedIndexes, rightPinnedIndexes, groupedIndexes] = useMemo(
 		() =>
 			enableColumnVirtualization
 				? _visibleColumns.reduce(
-						([left, right], column, index) => {
+						([left, right, grouped], column, index) => {
 							if (!column.empty) {
+								if (column.getIsGrouped()) {
+									grouped.push(index)
+								}
 								switch (column.getIsPinned()) {
 									case 'left':
 										left.push(index)
@@ -101,20 +87,12 @@ export const Table: FC<Props> = ({ table }) => {
 								}
 							}
 
-							return [left, right]
+							return [left, right, grouped]
 						},
-						[[], []] as [number[], number[]]
+						[[], [], []] as [number[], number[], number[]]
 				  )
-				: [[], []],
-		[
-			enableColumnVirtualization,
-			table,
-			columnOrder,
-			columnPinning,
-			columnVisibility,
-			grouping,
-			_visibleColumns.length,
-		]
+				: [[], [], []],
+		[enableColumnVirtualization, _visibleColumns]
 	)
 
 	const columnVirtualizer:
@@ -129,15 +107,19 @@ export const Table: FC<Props> = ({ table }) => {
 				overscan: 1,
 				// eslint-disable-next-line react-hooks/rules-of-hooks
 				rangeExtractor: useCallback(
-					(range: Range) =>
-						Array.from(
+					(range: Range) => {
+						const rangeList = defaultRangeExtractor(range)
+
+						return Array.from(
 							new Set([
+								...groupedIndexes.filter((index) => rangeList.includes(index)),
 								...leftPinnedIndexes,
-								...defaultRangeExtractor(range),
+								...rangeList,
 								...rightPinnedIndexes,
 							])
-						),
-					[leftPinnedIndexes, rightPinnedIndexes]
+						)
+					},
+					[groupedIndexes, leftPinnedIndexes, rightPinnedIndexes]
 				),
 				...vProps,
 		  })
@@ -192,14 +174,7 @@ export const Table: FC<Props> = ({ table }) => {
 			rowNumber: -1,
 			table,
 			virtualColumns,
-			row: createRow(
-				table as TableType<{}>,
-				'summaryRow',
-				{},
-				-1,
-				0,
-				[]
-			) as Table_Row,
+			row: createTableRow(table, 'summaryRow', {}, -1, 0, []),
 		}),
 		[columnVirtualizer, table, virtualColumns]
 	)

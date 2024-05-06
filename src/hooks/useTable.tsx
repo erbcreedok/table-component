@@ -1,21 +1,19 @@
 import {
-	getFacetedRowModel,
-	getPaginationRowModel,
-	getFacetedUniqueValues,
-	GroupingState,
-	TableState,
 	ColumnFiltersState,
-	useReactTable,
-	VisibilityState,
-	SortingState,
 	ColumnOrderState,
 	ColumnPinningState,
-	Updater,
 	ColumnSizingState,
+	getFacetedRowModel,
+	getFacetedUniqueValues,
+	getPaginationRowModel,
+	GroupingState,
+	SortingState,
+	TableState,
+	useReactTable,
+	VisibilityState,
 } from '@tanstack/react-table'
 import React, { useCallback, useMemo, useRef, useState } from 'react'
 
-import { getDefaultPreset } from '../TableToolbar/components/buttons/presetContants'
 import { ExpandAllButton } from '../buttons/ExpandAllButton'
 import { ExpandButton } from '../buttons/ExpandButton'
 import { ToggleRowActionMenuButton } from '../buttons/ToggleRowActionMenuButton'
@@ -40,21 +38,21 @@ import {
 	TableData,
 	TableInstance,
 } from '../TableComponent'
+import { getDefaultPreset } from '../TableToolbar/components/buttons/presetContants'
 import { getUtilColumn, utilColumns } from '../utilColumns'
+import { defaultGetSubRows } from '../utils/defaultGetSubRows'
 import { flatHierarchyTree } from '../utils/flatHierarchyTree'
-import { getColumnPinningAffectedByGrouping } from '../utils/getColumnPinningAffectedByGrouping'
 import { getCoreRowModel } from '../utils/getCoreRowModel'
 import { getExpandableColumn } from '../utils/getExpandableColumn'
 import { getExpandedRowModel } from '../utils/getExpandedRowModel'
-import { getColumnsFilteredByDisplay } from '../utils/getFilteredByDisplay'
 import { getFilteredRowModel } from '../utils/getFilteredRowModel'
 import { getGroupedRowModel } from '../utils/getGroupedRowModel'
 import { getSortedRowModel } from '../utils/getSortedRowModel'
 import { showRowActionsColumn } from '../utils/showRowActionsColumn'
-import { defaultGetSubRows } from '../utils/defaultGetSubRows'
 import { showUtilityColumn } from '../utils/showUtilityColumn'
 
 import { NewRowState, useCreateNewRow } from './useCreateNewRow'
+import { useTableColumns } from './useTableColumns'
 import { useTableHierarchy } from './useTableHierarchy'
 
 export const useTable = <TData extends TableData = TableData>(
@@ -408,37 +406,11 @@ export const useTable = <TData extends TableData = TableData>(
 					}
 				}
 				_setColumnSizing(newGrouping)
-				const currentSetColumnPinning =
-					config.onColumnPinningChange ?? setColumnPinning
-				currentSetColumnPinning((columnPinning) =>
-					getColumnPinningAffectedByGrouping(columnPinning, newGrouping)
-				)
 
 				return newGrouping
 			})
 		},
-		[
-			config.onGroupingChange,
-			config.onColumnPinningChange,
-			config.onColumnSizingChange,
-		]
-	)
-
-	const onColumnPinningChange = useCallback(
-		(valueOrFunction: Updater<ColumnPinningState>) => {
-			const currentSetColumnPinning =
-				config.onColumnPinningChange ?? setColumnPinning
-			const { columnPinning, grouping } = state
-			const newColumnPinning =
-				valueOrFunction instanceof Function
-					? valueOrFunction(columnPinning)
-					: valueOrFunction
-
-			return currentSetColumnPinning(
-				getColumnPinningAffectedByGrouping(newColumnPinning, grouping)
-			)
-		},
-		[config.onColumnPinningChange, state.columnPinning, state.grouping]
+		[config.onGroupingChange, config.onColumnSizingChange, collapsedMultirow]
 	)
 
 	// eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -460,11 +432,11 @@ export const useTable = <TData extends TableData = TableData>(
 			onColumnOrderChange: setColumnOrder,
 			onColumnSizingChange: setColumnSizing,
 			onRowSelectionChange: setRowSelection,
+			onColumnPinningChange: setColumnPinning,
 			onColumnVisibilityChange: setColumnVisibility,
 			onSortingChange: setSorting,
 			onStateChange: config.onStateChange,
 			...config,
-			onColumnPinningChange,
 			onGroupingChange,
 			detailPanelBorderColor:
 				config.detailPanelBorderColor ?? config.theme?.palette.primary.main,
@@ -532,9 +504,8 @@ export const useTable = <TData extends TableData = TableData>(
 		config.tableInstanceRef.current = table
 	}
 
-	const visibleLeafColumns = getColumnsFilteredByDisplay(
-		table.getAllLeafColumns()
-	)
+	const visibleLeafColumns = table.getAllLeafColumns()
+
 	table.constants.expandableColumn = useMemo(
 		() => (table ? getExpandableColumn(visibleLeafColumns, table) : null),
 		// recalculate expandable row, if column order changes
@@ -544,6 +515,7 @@ export const useTable = <TData extends TableData = TableData>(
 	table.constants.disableActionButtons =
 		table.getState().isEditingTable && table.options.editingMode === 'table'
 
+	useTableColumns(table)
 	useCreateNewRow(table)
 	useTableHierarchy(table)
 

@@ -4,14 +4,12 @@ import ListItemIcon from '@mui/material/ListItemIcon'
 import MenuItem from '@mui/material/MenuItem'
 import { FC } from 'react'
 
-import { SelectedChevron } from '../components/SelectedChevron'
-import { Table_Column, TableInstance } from '../TableComponent'
-import { getColumnsFilteredByDisplay } from '../utils/getFilteredByDisplay'
+import { SelectedChevron } from '..'
+import type { Table_Column, TableInstance } from '..'
 import { getPascalCase } from '../utils/getPascalCase'
 import { getShouldForwardProps } from '../utils/getShouldForwardProps'
-import { sortColumns } from '../utils/sortColumns'
-import { withNativeEvent } from '../utils/withNativeEvent'
 import { getTestAttributes } from '../utils/getTestAttributes'
+import { withNativeEvent } from '../utils/withNativeEvent'
 
 import { commonListItemStyles, commonMenuItemStyles } from './constants'
 
@@ -56,9 +54,13 @@ export const QuickColumnPinningMenuItemOptions: FC<Props> = ({
 	}
 
 	const handleFreezeUpToThisColumn = () => {
-		const sortedColumns = sortColumns(
-			getColumnsFilteredByDisplay(table.getVisibleLeafColumns())
-		).map((col) => col.id)
+		const { collapsedMultirow } = table.getState()
+		const sortedColumns = table
+			.getVisibleLeafColumns()
+			.map((col) => col.id)
+			.filter(
+				(id) => !collapsedMultirow.some((group) => group.colIds.includes(id))
+			)
 		const index = sortedColumns.indexOf(column.id)
 		if (index < 0) {
 			setVisible(false)

@@ -8,13 +8,12 @@ import {
 } from '..'
 import { getColumnId, getTotalRight } from '../column.utils'
 
-import type { EmptyColumn } from './getNonCollapsedColumns'
+import type { EmptyColumn } from './getNonCollapsedColumnItems'
 
 export const makeMultirowColumns = <TData extends TableData = {}>(
 	columns: ((Table_Column<TData> & { empty?: false }) | EmptyColumn)[],
 	multiHeaderRow: MultirowHeaderRow,
-	table: TableInstance,
-	filterMultirowCanHide = false
+	table: TableInstance
 ) => {
 	const columnIdsText = multiHeaderRow.columns.reduce((result, current) => {
 		const obj = result

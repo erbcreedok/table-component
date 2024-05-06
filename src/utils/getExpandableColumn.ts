@@ -1,8 +1,6 @@
 import { Table_Column, TableData, TableInstance } from '../TableComponent'
 import { utilColumnsList } from '../utilColumns'
 
-import { getColumnsFilteredByDisplay } from './getFilteredByDisplay'
-
 export const defaultGetExpandableColumn = <TData extends TableData = TableData>(
 	columns: Table_Column<TData>[]
 ) =>

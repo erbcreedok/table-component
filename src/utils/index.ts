@@ -1,3 +1,5 @@
+export * from './buildTableHeaderGroups'
+export * from './createTableRow'
 export * from './findRelativeParent'
 export * from './getCellFieldId'
 export * from './getDirtyFields'

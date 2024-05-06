@@ -1,5 +1,4 @@
-import { getColumnsFilteredByDisplay, TableInstance } from '../../'
-import { sortColumns } from '../../utils/sortColumns'
+import { TableInstance } from '../../'
 import { splitArrayItems } from '../../utils/splitArrayItems'
 
 export const useGroupingControls = <TData extends Record<string, any> = {}>(
@@ -7,9 +6,7 @@ export const useGroupingControls = <TData extends Record<string, any> = {}>(
 ) => {
 	const { getVisibleLeafColumns } = table
 
-	const allColumns = sortColumns(
-		getColumnsFilteredByDisplay(getVisibleLeafColumns())
-	)
+	const allColumns = getVisibleLeafColumns().filter((col) => col.getCanGroup())
 
 	const [groupedList, nonGroupedList] = splitArrayItems(allColumns, (col) =>
 		col.getIsGrouped()

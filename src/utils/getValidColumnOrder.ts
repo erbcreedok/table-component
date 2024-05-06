@@ -3,7 +3,7 @@ import { ColumnOrderState } from '@tanstack/react-table'
 import { getDefaultColumnOrderIds } from '../column.utils'
 import { TableData, TableInstance } from '../TableComponent'
 
-export const getValidColumnOrder = <TData extends TableData = TableData>(
+export const getValidColumnOrder = <TData extends TableData = {}>(
 	tableOptions: TableInstance<TData>['options'],
 	_columnOrder?: ColumnOrderState
 ) => {

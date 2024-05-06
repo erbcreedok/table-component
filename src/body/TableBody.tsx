@@ -1,18 +1,17 @@
 /* eslint-disable react/jsx-pascal-case */
-import { FC, memo, useMemo, useEffect } from 'react'
-import { Virtualizer, VirtualItem } from '@tanstack/react-virtual'
-import MuiTableBody from '@mui/material/TableBody'
 import Box from '@mui/material/Box'
+import MuiTableBody from '@mui/material/TableBody'
 import Typography from '@mui/material/Typography'
+import { VirtualItem, Virtualizer } from '@tanstack/react-virtual'
+import { FC, memo, useEffect, useMemo } from 'react'
 
-import { HoveredRowLine } from '../components/HoveredRowLine'
-import { LinearProgressBar } from '../toolbar/LinearProgressBar'
-import { rankGlobalFuzzy } from '../sortingFns'
 import type { TableInstance } from '..'
-import { isColumnDisplayed } from '../utils/getFilteredByDisplay'
+import { HoveredRowLine } from '..'
+import { useIntersectionObserver } from '../hooks/useIntersectionObserver'
+import { rankGlobalFuzzy } from '../sortingFns'
+import { LinearProgressBar } from '../toolbar/LinearProgressBar'
 import { getTableRowVirtualizer } from '../utils/getTableRowVirtualizer'
 import { getValueOrFunctionHandler } from '../utils/getValueOrFunctionHandler'
-import { useIntersectionObserver } from '../hooks/useIntersectionObserver'
 
 import { TableBodyRows } from './TableBodyRows'
 
@@ -162,7 +161,7 @@ export const TableBody: FC<Props> = ({
 
 	const columnsCount = virtualColumns
 		? virtualColumns.length
-		: table.getVisibleLeafColumns().filter(isColumnDisplayed).length
+		: table.getVisibleLeafColumns().length
 
 	return (
 		<MuiTableBody

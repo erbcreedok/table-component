@@ -1,14 +1,11 @@
 import React, { FC } from 'react'
 import { VirtualItem } from '@tanstack/react-virtual'
 
-import { ColumnVirtualizerWrapper } from '../components/ColumnVirtualizerWrapper'
+import { ColumnVirtualizerWrapper } from '../'
 import { DEFAULT_EXPAND_PADDING, utilColumns } from '../utilColumns'
 import { getColumnWidth } from '../column.utils'
 import { TableInstance } from '../TableComponent'
-import { getHeadersFilteredByDisplay } from '../utils/getFilteredByDisplay'
-import { sortMappedVirtualHeaders } from '../utils/sortColumns'
 import { mapVirtualItems } from '../utils/virtual'
-import { getNonCollapsedColumns } from '../utils/getNonCollapsedColumns'
 
 type TableHeadInvisibleProps = {
 	measureElement?: (element: HTMLTableCellElement) => void
@@ -24,15 +21,13 @@ export const TableHeadInvisible: FC<TableHeadInvisibleProps> = ({
 	virtualColumns,
 }) => {
 	const {
-		getHeaderGroups,
+		getNonCollapsedLeafHeaders,
 		getPaginationRowModel,
 		options: {
 			expandPaddingSize = DEFAULT_EXPAND_PADDING,
 			getPinnedColumnPosition,
 		},
-		getState,
 	} = table
-	const { collapsedMultirow } = getState()
 	const expandedDepth = getPaginationRowModel().rows.reduce(
 		(max, row) => Math.max(row.depth, max),
 		0
@@ -40,18 +35,10 @@ export const TableHeadInvisible: FC<TableHeadInvisibleProps> = ({
 
 	return (
 		<thead>
-			{getHeaderGroups().map((headerGroup) => (
-				<tr key={headerGroup.id}>
-					<ColumnVirtualizerWrapper>
-						{sortMappedVirtualHeaders(
-							mapVirtualItems(
-								getNonCollapsedColumns(
-									getHeadersFilteredByDisplay(headerGroup.headers),
-									collapsedMultirow
-								),
-								virtualColumns
-							)
-						).map(([header, virtualColumn]) => {
+			<tr className="table-invisible-row">
+				<ColumnVirtualizerWrapper>
+					{mapVirtualItems(getNonCollapsedLeafHeaders(), virtualColumns).map(
+						([header, virtualColumn]) => {
 							if (header.empty) {
 								return (
 									<th
@@ -90,10 +77,10 @@ export const TableHeadInvisible: FC<TableHeadInvisibleProps> = ({
 									}}
 								/>
 							)
-						})}
-					</ColumnVirtualizerWrapper>
-				</tr>
-			))}
+						}
+					)}
+				</ColumnVirtualizerWrapper>
+			</tr>
 		</thead>
 	)
 }

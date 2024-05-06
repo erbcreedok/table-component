@@ -11,6 +11,7 @@ import {
 	Table_Cell,
 	Table_Column,
 	Table_Row,
+	TableData,
 	TableInstance,
 } from '../TableComponent'
 import { getIsGroupCollapsedDefault } from '../utils/getIsGroupCollapsed'
@@ -50,14 +51,14 @@ const Wrapper = styled(
 	line-clamp: 2;
 `
 
-type Props<TData extends object> = PropsWithChildren<{
+type Props<TData extends TableData = {}> = PropsWithChildren<{
 	cell: Table_Cell<TData>
 	column: Table_Column<TData>
 	row: Table_Row<TData>
 	table: TableInstance<TData>
 	borderColor?: string
 }>
-export const GroupedCellBase = <TData extends object>({
+export const GroupedCellBase = <TData extends TableData = {}>({
 	cell,
 	row,
 	column,

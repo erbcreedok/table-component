@@ -1,53 +1,33 @@
-import {
-	Table_CellOrEmpty,
-	Table_Column,
-	Table_ColumnOrEmpty,
-	Table_HeaderOrEmpty,
-	TableData,
-} from '../TableComponent'
+import { ColumnPinningState, GroupingState } from '@tanstack/react-table'
 
-import { sortArrayBy } from './sortArrayBy'
-import { MappedVirtualItem } from './virtual'
+import { Table_Column, TableData } from '../TableComponent'
 
-export const getColumnFromHeaderOrCell = <TData extends TableData = TableData>([
-	col,
-]: MappedVirtualItem<
-	Table_HeaderOrEmpty<TData> | Table_CellOrEmpty<TData>
->) => {
-	if (col.empty) {
-		return col
-	}
-
-	return col.column
-}
-
-const getCompareValue = <TData extends TableData = TableData>(
-	column: Table_ColumnOrEmpty<TData>
-) => {
-	if (column.empty) {
-		return 0
-	}
-	if (column.getIsGrouped()) {
-		return -2 + column.getGroupedIndex() * 0.001
-	}
-	if (!column.getIsGrouped() && column.getIsPinned() === 'left') {
-		return -1
-	}
-
-	return 0
-}
-export const sortMappedVirtualHeaders = <TData extends TableData>(
-	array: MappedVirtualItem<Table_HeaderOrEmpty<TData>>[]
-) => {
-	return sortArrayBy(array, getColumnFromHeaderOrCell, getCompareValue)
-}
-export const sortMappedVirtualCells = <TData extends TableData>(
-	array: MappedVirtualItem<Table_CellOrEmpty<TData>>[]
-) => {
-	return sortArrayBy(array, getColumnFromHeaderOrCell, getCompareValue)
-}
 export const sortColumns = <TData extends TableData>(
-	array: Table_Column<TData>[]
+	columns: Table_Column<TData>[],
+	columnPinning: ColumnPinningState,
+	grouping: GroupingState
 ) => {
-	return sortArrayBy(array, (i) => i, getCompareValue)
+	const pinningLeft = columnPinning.left ?? []
+	const pinningRight = columnPinning.right ?? []
+	const sorted = new Set<Table_Column<TData>>()
+	grouping.forEach((columnId) => {
+		const col = columns.find((column) => column.id === columnId)
+		if (col) sorted.add(col)
+	})
+	pinningLeft.forEach((columnId) => {
+		const col = columns.find((column) => column.id === columnId)
+		if (col) sorted.add(col)
+	})
+	columns.forEach((column) => {
+		sorted.add(column)
+	})
+	pinningRight.forEach((columnId) => {
+		const col = columns.find((column) => column.id === columnId)
+		if (col && grouping.indexOf(col.id) === -1) {
+			sorted.delete(col)
+			sorted.add(col)
+		}
+	})
+
+	return new Array(...sorted)
 }

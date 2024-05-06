@@ -19,7 +19,7 @@ import {
 } from '../../../../'
 import { arrayHasAll } from '../../../../utils/arrayHasAll'
 import { createComponentWithMuiProps } from '../../../../utils/createComponentWithMuiProps'
-import { getColumnsFilteredByDisplay } from '../../../../utils/getFilteredByDisplay'
+import { isColumnDisplayed } from '../../../../utils/isColumnDisplayed'
 import { getMultirowHeaderGroupLeafColumnIds } from '../../../../utils/getMultirowHeaderGroupLeafColumnIds'
 import { getTestAttributes } from '../../../../utils/getTestAttributes'
 import { getValidColumnOrder } from '../../../../utils/getValidColumnOrder'
@@ -70,8 +70,11 @@ export const ColumnsMultirowMenu = <TData extends TableData = {}>({
 		const multirowColumnIds = getMultirowHeaderGroupLeafColumnIds(lastRow)
 		const columnsRow: MultirowHeaderRow = {
 			depth: lastRow.depth + 1,
-			columns: getColumnsFilteredByDisplay(getAllLeafColumns())
-				.filter((column) => multirowColumnIds.includes(column.id))
+			columns: getAllLeafColumns()
+				.filter(
+					(column) =>
+						multirowColumnIds.includes(column.id) && isColumnDisplayed(column)
+				)
 				.map((column) => ({
 					text: column.columnDef.header ?? column.id,
 					shorthandText: column.columnDef.shortHeader,
@@ -348,8 +351,7 @@ export const ColumnsMultirowMenu = <TData extends TableData = {}>({
 				const multirowColumns = makeMultirowColumns(
 					columns,
 					multirowDepthMatchingRow,
-					table as TableInstance,
-					true
+					table as TableInstance
 				)
 
 				const multirowColumnsWithParents = addMultirowColumnsParents(

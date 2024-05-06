@@ -1,30 +1,24 @@
-import React, { useCallback, useRef, useEffect, useMemo } from 'react'
 import TableRow, { TableRowProps } from '@mui/material/TableRow'
 import type { VirtualItem } from '@tanstack/react-virtual'
+import React, { useCallback, useEffect, useMemo, useRef } from 'react'
 
-import type {
+import {
+	Colors,
+	ColumnVirtualizerWrapper,
 	Table_Column,
 	Table_HeaderGroup,
 	Table_Row,
 	TableInstance,
 } from '..'
-import { ColumnVirtualizerWrapper } from '../components/ColumnVirtualizerWrapper'
 import type { StickyElement } from '../hooks/useMultiSticky'
-import { Colors } from '../components/styles'
-import { getHeadersFilteredByDisplay } from '../utils/getFilteredByDisplay'
 import { getHeaderGroupBorders } from '../utils/getGroupBorders'
 import { getIsColumnAllGroupsCollapsedDefault } from '../utils/getIsColumnAllGroupsCollapsed'
-import { handleTableHeadDragEnter } from '../utils/handleTableHeadDragEnter'
-import { sortMappedVirtualHeaders } from '../utils/sortColumns'
-import { mapVirtualItems } from '../utils/virtual'
-import { onGroupCollapsedToggleAllDefault } from '../utils/onGroupCollapseToggleAll'
 import { getTestAttributes } from '../utils/getTestAttributes'
-import {
-	getNonCollapsedColumns,
-	EmptyColumn,
-} from '../utils/getNonCollapsedColumns'
+import { handleTableHeadDragEnter } from '../utils/handleTableHeadDragEnter'
+import { onGroupCollapsedToggleAllDefault } from '../utils/onGroupCollapseToggleAll'
+import { mapVirtualItems } from '../utils/virtual'
 
-import { TableHeadCell, TableHeadCellProps } from './TableHeadCell'
+import { TableHeadCell } from './TableHeadCell'
 import { TableHeadCellEmpty } from './TableHeadCellEmpty'
 
 type Props = {
@@ -68,9 +62,7 @@ export const TableHeadRow = ({
 			getIsColumnAllGroupsCollapsed,
 			e2eLabels,
 		},
-		getState,
 	} = table
-	const { collapsedMultirow, grouping } = getState()
 
 	useEffect(() => {
 		if (ref.current) {
@@ -100,19 +92,11 @@ export const TableHeadRow = ({
 		[onGroupCollapsedToggleAll, table]
 	)
 
-	const getHeaderCellProps = (): (
-		| (TableHeadCellProps & { empty: false })
-		| EmptyColumn
-	)[] => {
+	const tableHeadCells = useMemo(() => {
 		let isPrevColumnAllGroupsCollapsed = false
-		const headers = sortMappedVirtualHeaders(
-			mapVirtualItems(
-				getNonCollapsedColumns(
-					getHeadersFilteredByDisplay(headerGroup.headers),
-					collapsedMultirow
-				),
-				virtualColumns
-			)
+		const headers = mapVirtualItems(
+			headerGroup.getNonCollapsedHeaders(),
+			virtualColumns
 		)
 
 		return headers.map(([header]) => {
@@ -149,12 +133,16 @@ export const TableHeadRow = ({
 
 			return props
 		})
-	}
-
-	const tableHeadCells = useMemo(
-		() => getHeaderCellProps(),
-		[collapsedMultirow.length, collapsedMultirow, table, grouping, headerGroup]
-	)
+	}, [
+		headerGroup,
+		virtualColumns,
+		table,
+		getIsColumnAllGroupsCollapsed,
+		parentRow,
+		cellBackgroundColor,
+		cellBackgroundColorHover,
+		getOnToggleGroupCollapse,
+	])
 
 	return (
 		<>

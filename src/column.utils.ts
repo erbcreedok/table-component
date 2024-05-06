@@ -4,16 +4,13 @@ import type { TableCellProps } from '@mui/material/TableCell'
 import type { Theme } from '@mui/material/styles'
 
 import { Table_AggregationFns } from './aggregationFns'
-import { GroupedCellBase } from './components/GroupedCellBase'
-import { CellBase } from './components/CellBase'
-import { Colors } from './components/styles'
 import { Table_FilterFns } from './filterFns'
 import { Table_SortingFns } from './sortingFns'
 import { utilColumns } from './utilColumns'
 import { showRowActionsColumn } from './utils/showRowActionsColumn'
 import { showUtilityColumn } from './utils/showUtilityColumn'
 
-import type {
+import {
 	TableComponentProps,
 	Table_Column,
 	Table_ColumnDef,
@@ -22,18 +19,22 @@ import type {
 	Table_FilterOption,
 	Table_Header,
 	TableInstance,
+	TableData,
+	Colors,
+	GroupedCellBase,
+	CellBase,
 } from '.'
 
-const getColumnIdHelper = <TData extends Record<string, any> = {}>(
+const getColumnIdHelper = <TData extends TableData = {}>(
 	columnDef: Table_ColumnDef<TData> | Table_DefinedColumnDef<TData>
 ): string =>
 	columnDef.id ?? columnDef.accessorKey?.toString?.() ?? columnDef.header
 
-export const getColumnId = <TData extends Record<string, any> = {}>(
+export const getColumnId = <TData extends TableData = {}>(
 	column: Table_Column<TData> | Table_ColumnDef<TData>
 ) => getColumnIdHelper('columnDef' in column ? column.columnDef : column)
 
-export const getAllLeafColumnDefs = <TData extends Record<string, any> = {}>(
+export const getAllLeafColumnDefs = <TData extends TableData = {}>(
 	columns: Table_ColumnDef<TData>[]
 ): Table_ColumnDef<TData>[] => {
 	const allLeafColumnDefs: Table_ColumnDef<TData>[] = []
@@ -51,7 +52,7 @@ export const getAllLeafColumnDefs = <TData extends Record<string, any> = {}>(
 	return allLeafColumnDefs
 }
 
-export const prepareColumns = <TData extends Record<string, any> = {}>({
+export const prepareColumns = <TData extends TableData = {}>({
 	aggregationFns,
 	columnDefs,
 	columnFilterFns,
@@ -156,7 +157,7 @@ export const prepareColumns = <TData extends Record<string, any> = {}>({
 		return columnDef
 	}) as Table_DefinedColumnDef<TData>[]
 
-export const reorderColumn = <TData extends Record<string, any> = {}>(
+export const reorderColumn = <TData extends TableData = {}>(
 	draggedColumn: Table_Column<TData>,
 	targetColumn: Table_Column<TData>,
 	columnOrder: ColumnOrderState
@@ -171,7 +172,7 @@ export const reorderColumn = <TData extends Record<string, any> = {}>(
 	return newColumnOrder
 }
 
-export const reorderColumnSet = <TData extends Record<string, any>>(
+export const reorderColumnSet = <TData extends TableData>(
 	draggedColumns: Table_Column<TData>[],
 	targetColumns: Table_Column<TData>[],
 	columnOrder: ColumnOrderState
@@ -190,13 +191,11 @@ export const reorderColumnSet = <TData extends Record<string, any>>(
 	return newColumnOrder
 }
 
-export const showExpandColumn = <TData extends Record<string, any> = {}>(
+export const showExpandColumn = <TData extends TableData = {}>(
 	props: TableComponentProps<TData>
 ) => props.renderDetailPanel && !props.hideExpandColumn
 
-export const getLeadingDisplayColumnIds = <
-	TData extends Record<string, any> = {}
->(
+export const getLeadingDisplayColumnIds = <TData extends TableData = {}>(
 	props: TableComponentProps<TData>
 ) =>
 	[
@@ -209,9 +208,7 @@ export const getLeadingDisplayColumnIds = <
 			utilColumns.expand,
 	].filter(Boolean) as Table_DisplayColumnIds[]
 
-export const getTrailingDisplayColumnIds = <
-	TData extends Record<string, any> = {}
->(
+export const getTrailingDisplayColumnIds = <TData extends TableData = {}>(
 	props: TableComponentProps<TData>
 ) => [
 	props.positionActionsColumn === 'last' &&
@@ -220,9 +217,7 @@ export const getTrailingDisplayColumnIds = <
 	showExpandColumn(props) && utilColumns.expand,
 ]
 
-export const getDefaultColumnOrderIds = <
-	TData extends Record<string, any> = {}
->(
+export const getDefaultColumnOrderIds = <TData extends TableData = {}>(
 	props: TableComponentProps<TData>
 ) =>
 	[
@@ -233,9 +228,7 @@ export const getDefaultColumnOrderIds = <
 		...getTrailingDisplayColumnIds(props),
 	].filter(Boolean) as string[]
 
-export const getDefaultColumnFilterFn = <
-	TData extends Record<string, any> = {}
->(
+export const getDefaultColumnFilterFn = <TData extends TableData = {}>(
 	columnDef: Table_ColumnDef<TData>
 ): Table_FilterOption => {
 	if (columnDef.filterVariant === 'multi-select') return 'arrIncludesSome'
@@ -264,7 +257,7 @@ export const getIsFirstRightPinnedColumn = (column: Table_Column) => {
 	return column.getIsPinned() === 'right' && column.getPinnedIndex() === 0
 }
 
-export const getTotalRight = <TData extends Record<string, any> = {}>(
+export const getTotalRight = <TData extends TableData = {}>(
 	table: TableInstance,
 	column: Table_Column<TData>
 ) => {

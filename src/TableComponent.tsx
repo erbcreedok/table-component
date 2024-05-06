@@ -68,9 +68,9 @@ import {
 	HierarchyTreeConfig,
 	NewRowState,
 	TableInstanceWithCreateNewRow,
+	TableInstanceWithForm,
 	TableInstanceWithTableHierarchy,
 	TablePropsWithCreateNewRow,
-	TableInstanceWithForm,
 	TablePropsWithForm,
 } from './hooks'
 import { Table_Icons } from './icons'
@@ -93,7 +93,10 @@ import { GroupingMenuProps } from './TableToolbar/components/menus/GroupingMenu/
 import type { TableToolbarProps } from './TableToolbar/TableToolbar'
 import type { GetIsColumnAllGroupsCollapsedProps } from './utils/getIsColumnAllGroupsCollapsed'
 import type { GetIsGroupCollapsedProps } from './utils/getIsGroupCollapsed'
-import type { EmptyColumn } from './utils/getNonCollapsedColumns'
+import {
+	EmptyColumn,
+	NonCollapsedItem,
+} from './utils/getNonCollapsedColumnItems'
 import type { OnGroupCollapsedToggleProps } from './utils/onGroupCollapsedToggle'
 import type { OnGroupCollapsedToggleAllProps } from './utils/onGroupCollapseToggleAll'
 
@@ -127,19 +130,20 @@ export type DraggingMessage = {
 	type?: string | 'danger' | 'warning'
 }
 
-export type Table_RowModel<TData extends Record<string, any> = {}> = {
+export type Table_RowModel<TData extends TableData = {}> = {
 	flatRows: Table_Row<TData>[]
 	rows: Table_Row<TData>[]
 	rowsById: { [key: string]: Table_Row<TData> }
 }
 
-export type OpenedDetailPanel<TData extends TableData = TableData> = {
+export type OpenedDetailPanel<TData extends TableData = {}> = {
 	cell: Table_Cell<TData>
 	row: Table_Row<TData>
 }
 
 export type TableInstance<TData extends TableData = TableData> = Omit<
 	Table<TData>,
+	| '_getOrderColumnsFn'
 	| 'getAllColumns'
 	| 'getAllFlatColumns'
 	| 'getAllLeafColumns'
@@ -150,6 +154,7 @@ export type TableInstance<TData extends TableData = TableData> = Omit<
 	| 'getExpandedRowModel'
 	| 'getFlatHeaders'
 	| 'getHeaderGroups'
+	| 'getLeafHeaders'
 	| 'getLeftLeafColumns'
 	| 'getLeftVisibleLeafColumns'
 	| 'getPaginationRowModel'
@@ -172,6 +177,10 @@ export type TableInstance<TData extends TableData = TableData> = Omit<
 			expandableColumn: Table_Column<TData> | null
 			disableActionButtons: boolean
 		}
+		_getOrderColumnsFn: () => (
+			columns: Table_Column<TData>[]
+		) => Table_Column<TData>[]
+		_getAllColumns: () => Table_Column<TData>[]
 		getAllColumns: () => Table_Column<TData>[]
 		getAllFlatColumns: () => Table_Column<TData>[]
 		getAllLeafColumns: () => Table_Column<TData>[]
@@ -182,8 +191,11 @@ export type TableInstance<TData extends TableData = TableData> = Omit<
 		getExpandedRowModel: () => Table_RowModel<TData>
 		getFlatHeaders: () => Table_Header<TData>[]
 		getHeaderGroups: () => Table_HeaderGroup<TData>[]
+		getLeafHeaders: () => Table_Header<TData>[]
 		getLeftLeafColumns: () => Table_Column<TData>[]
 		getLeftVisibleLeafColumns: () => Table_Column<TData>[]
+		getNonCollapsedLeafHeaders: () => NonCollapsedItem<Table_Header<TData>>[]
+		getNonCollapsedColumns: () => NonCollapsedItem<Table_Column<TData>>[]
 		getPaginationRowModel: () => Table_RowModel<TData>
 		getPreExpandedRowModel: () => Table_RowModel<TData>
 		getPreFilteredRowModel: () => Table_RowModel<TData>
@@ -457,7 +469,7 @@ export type GroupingKey =
 			columnId: string
 	  }) => T)
 
-export type Table_ColumnDef<TData extends TableData = TableData> = Omit<
+export type Table_ColumnDef<TData extends TableData = {}> = Omit<
 	ColumnDef<TData, unknown>,
 	| 'accessorKey'
 	| 'aggregatedCell'
@@ -898,12 +910,13 @@ export type Table_DefinedColumnDef<TData extends TableData = TableData> = Omit<
 
 export type Table_Column<TData extends TableData = TableData> = Omit<
 	Column<TData, unknown>,
-	'header' | 'footer' | 'columns' | 'columnDef' | 'filterFn'
+	'header' | 'footer' | 'columns' | 'columnDef' | 'filterFn' | 'getLeafColumns'
 > & {
 	columnDef: Table_DefinedColumnDef<TData>
 	columns?: Table_Column<TData>[]
 	filterFn?: Table_FilterFn<TData>
 	footer: string
+	getLeafColumns: () => Table_Column<TData>[]
 	header: string
 }
 
@@ -918,15 +931,16 @@ export type Table_Header<TData extends TableData = TableData> = Omit<
 	column: Table_Column<TData>
 }
 
-export type Table_HeaderOrEmpty<TData extends TableData = TableData> =
+export type Table_HeaderOrEmpty<TData extends TableData = {}> =
 	| (Table_Header<TData> & { empty?: false })
 	| EmptyColumn
 
-export type Table_HeaderGroup<TData extends TableData = TableData> = Omit<
+export type Table_HeaderGroup<TData extends TableData = {}> = Omit<
 	HeaderGroup<TData>,
 	'headers'
 > & {
 	headers: Table_Header<TData>[]
+	getNonCollapsedHeaders: () => NonCollapsedItem<Table_Header<TData>>[]
 }
 
 export type Table_HeaderGroupOrEmpty<TData extends TableData = TableData> =
@@ -936,10 +950,17 @@ export type Table_HeaderGroupOrEmpty<TData extends TableData = TableData> =
 
 export type Table_Row<TData extends TableData = TableData> = Omit<
 	Row<TData>,
-	'getVisibleCells' | 'getAllCells' | 'subRows' | '_valuesCache' | 'getParent'
+	| '_getAllVisibleCells'
+	| 'getVisibleCells'
+	| 'getAllCells'
+	| 'subRows'
+	| '_valuesCache'
+	| 'getParent'
 > & {
+	_getAllVisibleCells: () => Table_Cell<TData>[]
 	getAllCells: () => Table_Cell<TData>[]
 	getVisibleCells: () => Table_Cell<TData>[]
+	getNonCollapsedCells: () => NonCollapsedItem<Table_Cell<TData>>[]
 	subRows?: Table_Row<TData>[]
 	_valuesCache: Record<LiteralUnion<string & DeepKeys<TData>>, any>
 	groupIds?: Record<string, string>

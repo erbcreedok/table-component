@@ -1,15 +1,13 @@
-import React, { useRef, useEffect, useMemo } from 'react'
 import TableRow, { TableRowProps } from '@mui/material/TableRow'
 import type { VirtualItem } from '@tanstack/react-virtual'
+import React, { useEffect, useMemo, useRef } from 'react'
 
-import { ColumnVirtualizerWrapper, getColumnsFilteredByDisplay } from '..'
-import type { Table_Row, TableInstance, MultirowHeader } from '..'
+import type { MultirowHeader, Table_Row, TableInstance } from '..'
+import { ColumnVirtualizerWrapper, Colors, TextColor } from '..'
 import type { StickyElement } from '../hooks/useMultiSticky'
-import { Colors, TextColor } from '../components/styles'
-import { mapVirtualItems } from '../utils/virtual'
 import { arrayHasAll } from '../utils/arrayHasAll'
 import { makeMultirowColumns } from '../utils/makeMultirowColumns'
-import { getNonCollapsedColumns } from '../utils/getNonCollapsedColumns'
+import { mapVirtualItems } from '../utils/virtual'
 
 import { TableHeadMultiRowCell } from './TableHeadMultiRowCell'
 import { TableHeadMultiRowCellEmpty } from './TableHeadMultiRowCellEmpty'
@@ -84,22 +82,14 @@ export const TableHeadMultiRow = ({
 	}, [rowsRef.current, registerSticky])
 
 	const getMultirowColumns = (multiHeaderRow) => {
+		// TODO: create table.getMultirowColumns() method
+		// currently, we are very strict about the structure of the multirowHeader, because of virtual items
 		const columns = mapVirtualItems(
-			getNonCollapsedColumns(
-				getColumnsFilteredByDisplay([
-					...table.getLeftVisibleLeafColumns(),
-					...table.getCenterVisibleLeafColumns(),
-					...table.getRightVisibleLeafColumns(),
-				]),
-				collapsedMultirow,
-				'columnDef'
-			),
+			table.getNonCollapsedColumns(),
 			virtualColumns
 		).map(([col]) => col)
 
-		const multirowColumns = makeMultirowColumns(columns, multiHeaderRow, table)
-
-		return multirowColumns
+		return makeMultirowColumns(columns, multiHeaderRow, table)
 	}
 
 	const getRowStyles = (theme, row, stickyId) => {

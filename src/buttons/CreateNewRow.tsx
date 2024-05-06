@@ -2,9 +2,8 @@ import { css, styled, TableCell } from '@mui/material'
 import { useMemo, useState } from 'react'
 
 import { TableBodyRow, TableBodyRowProps } from '../body/TableBodyRow'
-import { Colors } from '../components/styles'
+import { Colors } from '..'
 import { useTableContext } from '../context/useTableContext'
-import { getColumnsFilteredByDisplay } from '../utils/getFilteredByDisplay'
 import { getShouldForwardProps } from '../utils/getShouldForwardProps'
 import { getValueOrFunctionHandler } from '../utils/getValueOrFunctionHandler'
 
@@ -66,10 +65,7 @@ const CreateNewRowMain = (props: CreateNewRowProps) => {
 							p: 0,
 							border: 0,
 						}}
-						colSpan={
-							getColumnsFilteredByDisplay(getVisibleLeafColumns()).length -
-							grouping.length
-						}
+						colSpan={getVisibleLeafColumns().length - grouping.length}
 					>
 						<CreateNewRowCellWrapper visible={!!menuOpen} disabled={!!newRow}>
 							<Line />

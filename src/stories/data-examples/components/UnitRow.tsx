@@ -8,7 +8,6 @@ import { TableHeadMultiRow } from '../../../head/TableHeadMultiRow'
 import { TableHeadRow } from '../../../head/TableHeadRow'
 import { useComputedMeasureElement } from '../../../hooks/useComputedMeasureElement'
 import { useMultiSticky } from '../../../hooks/useMultiSticky'
-import { getHeaderGroupFilteredByDisplay } from '../../../utils/getFilteredByDisplay'
 import { handleTableHeadDragEnter } from '../../../utils/handleTableHeadDragEnter'
 import { isUnitTreeItem } from '../../utils/getTeamMembers'
 
@@ -135,7 +134,7 @@ export const UnitRow = <TData extends Record<string, any> = {}>(
 							parentRow={row}
 							stickyElements={stickyElements}
 							registerSticky={registerSticky}
-							headerGroup={getHeaderGroupFilteredByDisplay(headerGroup as any)}
+							headerGroup={headerGroup}
 							key={headerGroup.id}
 							table={table}
 							virtualColumns={virtualColumns}

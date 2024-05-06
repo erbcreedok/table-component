@@ -105,8 +105,8 @@ export const useTableInitialization = <TData extends Record<string, any>>(
 		}, [] as { id: string; colIds: string[] }[])
 	}, [props.multirowHeader, props.enableMultirowExpandCollapse])
 
-	if (props.enablePagination !== true && props.manualPagination === undefined) {
-		props.manualPagination = true
+	if (props.manualPagination === undefined) {
+		props.manualPagination = !props.enablePagination
 	}
 
 	if (props.onInfiniteScrollLoad) {

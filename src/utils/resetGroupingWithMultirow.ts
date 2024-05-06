@@ -9,7 +9,7 @@ export const resetGroupingWithMultirow = <TData extends TableData = {}>(
 
 	for (const groupedColumn of grouping) {
 		const collapsedMultirowExcludeIndex = collapsedMultirow.findIndex((mult) =>
-			mult.originalColIds.includes(groupedColumn)
+			mult.originalColIds?.includes(groupedColumn)
 		)
 
 		if (collapsedMultirowExcludeIndex !== -1) {

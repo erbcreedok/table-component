@@ -8,8 +8,7 @@ import React, {
 } from 'react'
 import Box from '@mui/material/Box'
 
-import { Colors, TextColor } from '../components'
-import type { TableInstance } from '../index'
+import { Colors, TextColor, TableData, TableInstance } from '../'
 import { mergeMuiProps } from '../utils/mergeMuiProps'
 import { withNativeEvent } from '../utils/withNativeEvent'
 import { getValueOrFunctionHandler } from '../utils/getValueOrFunctionHandler'
@@ -46,7 +45,7 @@ const Wrapper = styled(Box)`
 	}
 `
 
-export type Adornment<TData extends Record<string, any> = {}> =
+export type Adornment<TData extends TableData = {}> =
 	| ReactNode
 	| ((config: { table: TableInstance<TData> }) => ReactNode)
 

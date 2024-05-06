@@ -9,7 +9,6 @@ import { TableHeadMultiRow } from '../head/TableHeadMultiRow'
 import { TableHeadRow } from '../head/TableHeadRow'
 import { useComputedMeasureElement } from '../hooks/useComputedMeasureElement'
 import { useMultiSticky } from '../hooks/useMultiSticky'
-import { getHeaderGroupFilteredByDisplay } from '../utils/getFilteredByDisplay'
 import { getValueOrFunctionHandler } from '../utils/getValueOrFunctionHandler'
 import { handleTableHeadDragEnter } from '../utils/handleTableHeadDragEnter'
 
@@ -106,10 +105,7 @@ export const HierarchyRow = (props: TableBodyRowProps) => {
 				<td
 					className="table-hierarchy-cell"
 					style={{ padding: 0, background: Colors.LightestGray }}
-					colSpan={
-						getVisibleLeafColumns().filter((col) => !col.columnDef.notDisplayed)
-							.length
-					}
+					colSpan={getVisibleLeafColumns().length}
 				>
 					{HierarchyComponent ? (
 						<HierarchyComponent {...props} />
@@ -166,7 +162,7 @@ export const HierarchyRow = (props: TableBodyRowProps) => {
 							parentRow={row}
 							stickyElements={stickyElements}
 							registerSticky={registerSticky}
-							headerGroup={getHeaderGroupFilteredByDisplay(headerGroup as any)}
+							headerGroup={headerGroup}
 							key={headerGroup.id}
 							table={table}
 							virtualColumns={virtualColumns}

@@ -1,10 +1,8 @@
-import { Table } from '@tanstack/react-table'
-
 import { NewRowPlaceholderId } from '../constants'
 import { NewRowState } from '../hooks'
 import { Table_Row, TableData, TableInstance } from '../TableComponent'
 
-import { createRow } from './createRow'
+import { createTableRow } from './createTableRow'
 
 const findParent = <TData extends TableData = TableData>(
 	row: Table_Row<TData>,
@@ -42,9 +40,9 @@ const findPreviousRow = <TData extends TableData = TableData>(
 	return parent ?? row
 }
 
-const getInitialValues = <TData extends TableData = TableData>(props: {
+const getInitialValues = <TData extends TableData = {}>(props: {
 	row: Table_Row<TData>
-	initialValues?: TableData
+	initialValues?: Record<string, any>
 }) => {
 	const { row, initialValues = {} } = props
 
@@ -56,11 +54,11 @@ const getInitialValues = <TData extends TableData = TableData>(props: {
 						[column.id]: getValue(),
 				  }
 				: acc,
-		initialValues as TData
+		initialValues ?? {}
 	)
 }
 
-export const getNewRow = <TData extends TableData = TableData>(props: {
+export const getNewRow = <TData extends TableData = {}>(props: {
 	row: Table_Row<TData>
 	table: TableInstance<TData>
 	depth: number
@@ -69,8 +67,8 @@ export const getNewRow = <TData extends TableData = TableData>(props: {
 	const { row, table, depth, initialValues } = props
 	const previousRow = findPreviousRow(row, depth) ?? row
 	const newRow: NewRowState<TData> = {
-		...(createRow(
-			table as Table<TData>,
+		...(createTableRow(
+			table as TableInstance,
 			NewRowPlaceholderId,
 			getInitialValues({ row, initialValues }),
 			row.index,
