@@ -1513,6 +1513,9 @@ export type TableComponentProps<TData extends TableData = TableData> = Omit<
 			  }: {
 					table: TableInstance<TData>
 			  }) => TableStatusBarWrapperProps)
+		muiTableStatusClearAllButtonProps?:
+			| ButtonProps
+			| (({ table }: { table: TableInstance<TData> }) => ButtonProps)
 		muiToolbarAlertBannerChipProps?:
 			| ChipProps
 			| (({ table }: { table: TableInstance<TData> }) => ChipProps)

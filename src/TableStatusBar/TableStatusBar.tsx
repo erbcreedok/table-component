@@ -68,23 +68,28 @@ export const TableStatusBar = <TData extends Record<string, any> = {}>({
 		getState,
 		resetSorting,
 		resetColumnFilters,
-		options: { muiTableStatusBarWrapperProps },
+		options: {
+			muiTableStatusBarWrapperProps,
+			muiTableStatusClearAllButtonProps,
+		},
 	} = table
 
 	const { grouping, sorting, columnFilters } = getState()
 
 	const barRef = useRef<HTMLDivElement>(null)
 
-	const handleClearAll = () => {
+	const { lineProps: mLineProps, ...mProps } = {
+		...getValueOrFunctionHandler(muiTableStatusBarWrapperProps)({ table }),
+	}
+	const clearAllButtonProps = getValueOrFunctionHandler(
+		muiTableStatusClearAllButtonProps
+	)({ table })
+
+	const handleClearAll = (event) => {
 		resetGroupingWithMultirow(table)
 		resetSorting(true)
 		resetColumnFilters(true)
-	}
-
-	const { lineProps: mLineProps, ...mProps } = {
-		...(typeof muiTableStatusBarWrapperProps === 'function'
-			? muiTableStatusBarWrapperProps({ table })
-			: muiTableStatusBarWrapperProps),
+		clearAllButtonProps?.onClick?.(event)
 	}
 	const props = mergeMuiProps<TableStatusBarWrapperProps>(
 		{ sx: { p: '6px' } },
@@ -130,7 +135,10 @@ export const TableStatusBar = <TData extends Record<string, any> = {}>({
 
 				{cAdornment}
 				<ClearAllButton
-					className={clearButtonClassName}
+					{...clearAllButtonProps}
+					className={[clearButtonClassName, clearAllButtonProps?.className]
+						.filter(Boolean)
+						.join()}
 					onClick={withNativeEvent(
 						{
 							el: 'ActionBar_ClearAll',
