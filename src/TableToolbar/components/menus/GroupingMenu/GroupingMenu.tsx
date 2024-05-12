@@ -1,30 +1,41 @@
-import { useMemo, useState } from 'react'
-import Box from '@mui/material/Box'
 import { Divider, IconButton, Typography } from '@mui/material'
+import Box from '@mui/material/Box'
+import { useCallback, useMemo, useState } from 'react'
 
-import { TableInstance, TableData, Table_Column } from '../../../../index'
-import { splitArrayItems } from '../../../../utils/splitArrayItems'
+import { getColumnId, reorderColumn } from '../../../../column.utils'
+import {
+	ButtonLink,
+	ListTitle,
+	SidebarPropsWithOnCloseEnd,
+	SidebarWithMuiProps,
+	SidebarSearch,
+	Table_Column,
+	TableData,
+	TableInstance,
+} from '../../../../'
+import { DeleteIcon } from '../../../../icons/DeleteIcon'
+import { createComponentWithMuiProps } from '../../../../utils/createComponentWithMuiProps'
+import { getE2EAttributes } from '../../../../utils/getE2EAttributes'
 import { getColumnsFilteredByDisplay } from '../../../../utils/getFilteredByDisplay'
+import { getOrderedColumns } from '../../../../utils/getOrderedColumns'
+import { getSuggestedColumns } from '../../../../utils/getSuggestedColumns'
+import { getTestAttributes } from '../../../../utils/getTestAttributes'
+import { getValueOrFunctionHandler } from '../../../../utils/getValueOrFunctionHandler'
+import { mergeMuiProps } from '../../../../utils/mergeMuiProps'
+import { resetGroupingWithMultirow } from '../../../../utils/resetGroupingWithMultirow'
+import { sortByStringArray } from '../../../../utils/sortByStringArray'
+import { splitArrayItems } from '../../../../utils/splitArrayItems'
 import {
 	SimpleMenuItem,
 	SimpleMenuItemProps,
 } from '../components/SimpleMenuItem'
-import { ButtonLink } from '../../../../components/ButtonLink'
-import { getColumnId, reorderColumn } from '../../../../column.utils'
-import { ListTitle } from '../../../../components/ListTitle'
-import { Sidebar } from '../../../../components/Sidebar'
-import { DeleteIcon } from '../../../../icons/DeleteIcon'
-import { SidebarSearch } from '../../../../components/SidebarSearch'
-import { getOrderedColumns } from '../../../../utils/getOrderedColumns'
-import { getSuggestedColumns } from '../../../../utils/getSuggestedColumns'
-import { sortByStringArray } from '../../../../utils/sortByStringArray'
-import { resetGroupingWithMultirow } from '../../../../utils/resetGroupingWithMultirow'
 
-interface Props<TData extends Record<string, any> = {}> {
+export interface GroupingMenuProps<TData extends Record<string, any> = {}> {
 	anchorEl: HTMLElement | null
 	isSubMenu?: boolean
 	setAnchorEl(anchorEl: HTMLElement | null): void
 	table: TableInstance<TData>
+	sidebarProps?: SidebarPropsWithOnCloseEnd
 }
 
 export const defaultOrganizeGroupingMenu = <TData extends TableData = {}>(
@@ -38,7 +49,8 @@ export const GroupingMenu = <TData extends Record<string, any> = {}>({
 	anchorEl,
 	setAnchorEl,
 	table,
-}: Props<TData>) => {
+	sidebarProps,
+}: GroupingMenuProps<TData>) => {
 	const {
 		getState,
 		getAllColumns,
@@ -98,7 +110,11 @@ export const GroupingMenu = <TData extends Record<string, any> = {}>({
 			suggestedColumns?.grouping,
 		])
 
-	const handleCloseClick = () => setAnchorEl(null)
+	const onCloseEnd = sidebarProps?.onCloseEnd
+	const handleCloseClick = useCallback(() => {
+		setAnchorEl(null)
+		onCloseEnd?.()
+	}, [setAnchorEl, onCloseEnd])
 
 	const removeAllGroup = () => {
 		resetGroupingWithMultirow(table)
@@ -112,10 +128,10 @@ export const GroupingMenu = <TData extends Record<string, any> = {}>({
 	}
 
 	return (
-		<Sidebar
+		<SidebarWithMuiProps
+			table={table as TableInstance}
 			open={!!anchorEl}
 			onClose={handleCloseClick}
-			styles={{ minWidth: 500 }}
 			withHeader
 			headerTitle={localization.group}
 			topPanel={
@@ -125,6 +141,14 @@ export const GroupingMenu = <TData extends Record<string, any> = {}>({
 				</>
 			}
 			innerTableSidebar={innerTable}
+			{...sidebarProps}
+			PaperProps={mergeMuiProps(
+				{
+					sx: { minWidth: 500 },
+				},
+				getTestAttributes(table.options.e2eLabels, 'sidebarGrouping'),
+				sidebarProps?.PaperProps
+			)}
 		>
 			<Box sx={{ marginTop: '12px' }}>
 				{searchValue ? (
@@ -164,7 +188,15 @@ export const GroupingMenu = <TData extends Record<string, any> = {}>({
 									}}
 								>
 									<ListTitle>Grouped</ListTitle>
-									<ButtonLink onClick={removeAllGroup}>Remove all</ButtonLink>
+									<ButtonLink
+										onClick={removeAllGroup}
+										{...getTestAttributes(
+											table.options.e2eLabels,
+											'sidebarGroupingRemoveAll'
+										)}
+									>
+										Remove all
+									</ButtonLink>
 								</Box>
 
 								{groupedColumns.map((column) => (
@@ -210,7 +242,7 @@ export const GroupingMenu = <TData extends Record<string, any> = {}>({
 					</>
 				)}
 			</Box>
-		</Sidebar>
+		</SidebarWithMuiProps>
 	)
 }
 
@@ -226,17 +258,44 @@ const MenuItem = <TData extends Record<string, any> = {}>({
 			key={column.id}
 			isCompact={isCompact}
 			onClick={onClick}
+			{...getE2EAttributes(
+				'sidebarGroupingMenuItem',
+				`sidebarGroupingMenuItem_${column.id}`
+			)}
 			{...rest}
 		>
 			{isCompact ? (
-				<IconButton disableRipple onClick={column.toggleGrouping} size="small">
+				<IconButton
+					disableRipple
+					onClick={column.toggleGrouping}
+					size="small"
+					{...getE2EAttributes(
+						'sidebarGroupingRemoveItem',
+						`sidebarGroupingRemoveItem_${column.id}`
+					)}
+				>
 					<DeleteIcon />
 				</IconButton>
 			) : (
-				<ButtonLink onClick={onClick} style={{ fontWeight: 600 }}>
+				<ButtonLink
+					onClick={onClick}
+					style={{ fontWeight: 600 }}
+					{...getE2EAttributes(
+						'sidebarGroupingAddItem',
+						`sidebarGroupingAddItem_${column.id}`
+					)}
+				>
 					Add Item +
 				</ButtonLink>
 			)}
 		</SimpleMenuItem>
 	)
 }
+
+export const GroupingMenuWithMuiProps = createComponentWithMuiProps(
+	GroupingMenu,
+	({ table }) =>
+		getValueOrFunctionHandler(table.options.muiGroupingMenuProps)({
+			table,
+		})
+)

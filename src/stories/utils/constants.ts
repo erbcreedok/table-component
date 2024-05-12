@@ -109,3 +109,80 @@ export const performanceValues = [
 	'Exceed',
 	'Exceed++',
 ]
+
+export const muiTableHeadCellFilterLabelProps = {
+	control: { type: 'select' },
+	defaultValue: 'None',
+	options: [
+		'None',
+		'Hide filter icon',
+		'Custom tooltip text',
+		'Custom tooltip text with value context',
+		'Prevent TableHeadMenu open on click',
+	],
+	mapping: {
+		'None': undefined,
+		'Hide filter icon': {
+			boxProps: { sx: { display: 'none' }}
+		},
+		'Custom tooltip text': {
+			tooltipProps: { title: 'Custom tooltip text' }
+		},
+		'Custom tooltip text with value context': ({ column }) => {
+			const columnTitle = column.columnDef.header
+			const filterValue = column.getFilterValue()?.toString() ?? ''
+			return {
+				tooltipProps: { title: `${columnTitle}: ${filterValue}` }
+			}
+		},
+		'Prevent TableHeadMenu open on click': {
+			buttonProps: { onClick: (e) => { e.stopPropagation() }}
+		},
+	},
+}
+
+
+export const muiSidebarProps = {
+	control: { type: 'select' },
+	defaultValue: 'None',
+	options: [
+		'None',
+		'Full Width',
+		'Dark background',
+	],
+	mapping: {
+		'None': undefined,
+		'Full Width': { PaperProps: { sx: { width: '100%' }}},
+		'Dark background': {
+			PaperProps: { sx: { backgroundColor: Colors.lightGrey }}
+		},
+	},
+	description: 'Props for sidebars in Table Component, overrides default values',
+}
+
+export const muiMenuProps = {
+	control: { type: 'select' },
+	defaultValue: 'None',
+	options: [
+		'None',
+		'Width: 360px',
+		'LightGray background',
+	],
+	mapping: {
+		'None': undefined,
+		'Width: 360px': {
+			// `minWidth: 0` is needed to override default `minWidth: 660`
+			sidebarProps: { PaperProps: { sx: { width: 360, minWidth: 0 }}}
+		},
+		'LightGray background': {
+			sidebarProps: { PaperProps: { sx: { backgroundColor: Colors.lightestGrey }}}
+		},
+	},
+	description: 'Props for the menu sidebar, overrides default values and also muiSidebarProps',
+}
+
+
+export const muiColumnsMenuProps = muiMenuProps
+export const muiGroupingMenuProps = muiMenuProps
+export const muiFiltersMenuProps = muiMenuProps
+export const muiSortingMenuProps = muiMenuProps

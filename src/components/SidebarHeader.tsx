@@ -1,7 +1,9 @@
 import { styled, Box, Divider, IconButton } from '@mui/material'
+import { IconButtonProps } from '@mui/material/IconButton'
 import React, { ReactElement } from 'react'
 
 import { CloseIcon } from '../icons/CloseIcon'
+import { getE2EAttributes } from '../utils/getE2EAttributes'
 
 import { DEFAULT_FONT_FAMILY, TextColor } from './styles'
 
@@ -30,7 +32,7 @@ const SidebarHeader = styled(Box)`
 type Props = {
 	title: string
 	subHeader?: string | ReactElement | null
-	onClick(): void
+	onClick: IconButtonProps['onClick']
 }
 
 export const SidebarHeaderComponent = ({
@@ -43,7 +45,11 @@ export const SidebarHeaderComponent = ({
 			<SidebarHeader>
 				<div>
 					{title}
-					<IconButton disableRipple onClick={onClick}>
+					<IconButton
+						disableRipple
+						{...getE2EAttributes('closeSidebar', `closeSidebar_${title}`)}
+						onClick={onClick}
+					>
 						<CloseIcon />
 					</IconButton>
 				</div>

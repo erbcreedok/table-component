@@ -1,18 +1,21 @@
 import React, { useRef } from 'react'
 import Box from '@mui/material/Box'
-import MenuItem from '@mui/material/MenuItem'
+import MenuItem, { MenuItemProps } from '@mui/material/MenuItem'
 import Typography from '@mui/material/Typography'
 
 import type { Table_Column } from '../../../..'
+import { getE2EAttributes } from '../../../../utils/getE2EAttributes'
+import { mergeSx } from '../../../../utils/mergeSx'
 
-interface Props<TData extends Record<string, any> = {}> {
+type Props<TData extends Record<string, any> = {}> = {
 	column: Table_Column<TData>
 	onAddFilter(column: Table_Column<TData>): void
-}
+} & MenuItemProps
 
 export const FiltersMenuListItem = <TData extends Record<string, any> = {}>({
 	column,
 	onAddFilter,
+	...rest
 }: Props<TData>) => {
 	const { columnDef } = column
 
@@ -22,26 +25,37 @@ export const FiltersMenuListItem = <TData extends Record<string, any> = {}>({
 		<>
 			<MenuItem
 				ref={menuItemRef as any}
-				sx={(theme) => ({
-					alignItems: 'center',
-					justifyContent: 'flex-start',
-					my: 0,
-					mx: '9px',
-					px: '16px',
-					py: '6px',
-					height: 48,
-					borderRadius: '6px',
-					'&:hover': {
-						backgroundColor: theme.palette.grey[100],
-					},
-					'& .add-item': {
-						visibility: 'hidden',
-					},
-					'&:hover .add-item': {
-						visibility: 'visible',
-					},
-				})}
-				onClick={() => onAddFilter(column)}
+				{...rest}
+				sx={mergeSx(
+					(theme) => ({
+						alignItems: 'center',
+						justifyContent: 'flex-start',
+						my: 0,
+						mx: '9px',
+						px: '16px',
+						py: '6px',
+						height: 48,
+						borderRadius: '6px',
+						'&:hover': {
+							backgroundColor: theme.palette.grey[100],
+						},
+						'& .add-item': {
+							visibility: 'hidden',
+						},
+						'&:hover .add-item': {
+							visibility: 'visible',
+						},
+					}),
+					rest.sx
+				)}
+				onClick={(e) => {
+					onAddFilter(column)
+					rest.onClick?.(e)
+				}}
+				{...getE2EAttributes(
+					'filtersMenuListItem',
+					`filtersMenuListItem_${column.id}`
+				)}
 			>
 				<Box
 					sx={{
@@ -60,6 +74,10 @@ export const FiltersMenuListItem = <TData extends Record<string, any> = {}>({
 					<Typography
 						className="add-item"
 						sx={{ color: '#009ECC', fontWeight: 600 }}
+						{...getE2EAttributes(
+							'filtersMenuAddItem',
+							`filtersMenuAddItem_${column.id}`
+						)}
 					>
 						Add Item +
 					</Typography>

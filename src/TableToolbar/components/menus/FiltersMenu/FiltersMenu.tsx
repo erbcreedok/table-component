@@ -1,35 +1,45 @@
-import { useState, useMemo, useCallback, useEffect } from 'react'
+import { Typography } from '@mui/material'
 import Box from '@mui/material/Box'
 import Divider from '@mui/material/Divider'
-import { Typography } from '@mui/material'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 
-import { ListTitle } from '../../../../components/ListTitle'
-import { ButtonBordered } from '../../../../components/ButtonBordered'
-import { TableData } from '../../../../index'
-import type { Table_Column, TableInstance } from '../../../../index'
 import { getColumnId } from '../../../../column.utils'
-import { SidebarSearchComponent } from '../../../../components/SidebarSearch'
-import { Sidebar } from '../../../../components/Sidebar'
+import {
+	Table_Column,
+	TableInstance,
+	ButtonBordered,
+	ListTitle,
+	SidebarPropsWithOnCloseEnd,
+	SidebarWithMuiProps,
+	SidebarSearchComponent,
+	TableData,
+} from '../../../../'
+import { createComponentWithMuiProps } from '../../../../utils/createComponentWithMuiProps'
 import { getOrderedColumns } from '../../../../utils/getOrderedColumns'
 import { getSuggestedColumns } from '../../../../utils/getSuggestedColumns'
+import { getTestAttributes } from '../../../../utils/getTestAttributes'
+import { getValueOrFunctionHandler } from '../../../../utils/getValueOrFunctionHandler'
+import { mergeMuiProps } from '../../../../utils/mergeMuiProps'
 import { sortByStringArray } from '../../../../utils/sortByStringArray'
 import { splitArrayItems } from '../../../../utils/splitArrayItems'
 
-import { FiltersMenuListItem } from './FiltersMenuListItem'
 import { ColumnFilterField } from './ColumnFilterField'
+import { FiltersMenuListItem } from './FiltersMenuListItem'
 import { FilterWrapper } from './FilterWrapper'
 
-interface Props<TData extends TableData> {
+export interface FiltersMenuProps<TData extends TableData> {
 	open: boolean
 	onClose: () => void
 	table: TableInstance<TData>
+	sidebarProps?: SidebarPropsWithOnCloseEnd
 }
 
 export const FiltersMenu = <TData extends TableData>({
 	open,
 	onClose,
 	table,
-}: Props<TData>) => {
+	sidebarProps,
+}: FiltersMenuProps<TData>) => {
 	const {
 		getAllLeafColumns,
 		getState,
@@ -125,15 +135,28 @@ export const FiltersMenu = <TData extends TableData>({
 		setNewColumnFilter(column)
 	}, [])
 
-	//
+	const onCloseEnd = sidebarProps?.onCloseEnd
+	const handleCloseClick = useCallback(() => {
+		onClose?.()
+		onCloseEnd?.()
+	}, [onClose, onCloseEnd])
+
 	return (
-		<Sidebar
+		<SidebarWithMuiProps
+			table={table as TableInstance}
 			open={open}
-			onClose={onClose}
-			styles={{ minWidth: 660 }}
+			onClose={handleCloseClick}
 			withHeader
 			headerTitle={localization.showFiltering}
 			innerTableSidebar={innerTable}
+			{...sidebarProps}
+			PaperProps={mergeMuiProps(
+				{
+					sx: { minWidth: 660 },
+				},
+				getTestAttributes(table.options.e2eLabels, 'sidebarFilters'),
+				sidebarProps?.PaperProps
+			)}
 		>
 			{!isSearchActive && filteredColumns.length > 0 ? (
 				<>
@@ -173,10 +196,20 @@ export const FiltersMenu = <TData extends TableData>({
 							<ButtonBordered
 								variant="outlined"
 								onClick={() => setSearchActive(true)}
+								{...getTestAttributes(
+									table.options.e2eLabels,
+									'sidebarFiltersAddFilter'
+								)}
 							>
 								{localization.addFilter} +
 							</ButtonBordered>
-							<ButtonBordered onClick={() => handleRemoveAllFilter()}>
+							<ButtonBordered
+								onClick={() => handleRemoveAllFilter()}
+								{...getTestAttributes(
+									table.options.e2eLabels,
+									'sidebarFiltersRemoveAll'
+								)}
+							>
 								{localization.removeAll}
 							</ButtonBordered>
 						</Box>
@@ -210,6 +243,14 @@ export const FiltersMenu = <TData extends TableData>({
 					)}
 				</>
 			)}
-		</Sidebar>
+		</SidebarWithMuiProps>
 	)
 }
+
+export const FiltersMenuWithMuiProps = createComponentWithMuiProps(
+	FiltersMenu,
+	({ table }) =>
+		getValueOrFunctionHandler(table.options.muiFiltersMenuProps)({
+			table,
+		})
+)

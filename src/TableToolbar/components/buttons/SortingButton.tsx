@@ -1,13 +1,16 @@
-import React, { MouseEvent, useState } from 'react'
-import type { IconButtonProps } from '@mui/material/IconButton'
 import { Typography } from '@mui/material'
+import type { IconButtonProps } from '@mui/material/IconButton'
+import React, { MouseEvent, useState } from 'react'
 
-import { Tooltip } from '../../../components/Tooltip'
-import type { TableData, TableInstance } from '../../../index'
-import { ToolbarIconButton } from '../../../components/ToolbarIconButton'
-import { IconsColor } from '../../../components/styles'
-import { SortingMenu } from '../menus/SortingMenu/SortingMenu'
+import {
+	TableData,
+	TableInstance,
+	IconsColor,
+	ToolbarIconButton,
+	Tooltip,
+} from '../../../'
 import { withNativeEvent } from '../../../utils/withNativeEvent'
+import { SortingMenuWithMuiProps } from '../menus/SortingMenu/SortingMenu'
 
 type Props<TData extends TableData> = IconButtonProps & {
 	table: TableInstance<TData>
@@ -67,10 +70,10 @@ export const SortingButton = <TData extends TableData = {}>({
 				</ToolbarIconButton>
 			</Tooltip>
 			{anchorEl && (
-				<SortingMenu
+				<SortingMenuWithMuiProps
 					anchorEl={anchorEl}
 					setAnchorEl={setAnchorEl}
-					table={table}
+					table={table as TableInstance}
 				/>
 			)}
 		</>

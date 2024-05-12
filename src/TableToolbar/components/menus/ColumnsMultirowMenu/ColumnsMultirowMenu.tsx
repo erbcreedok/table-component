@@ -1,29 +1,33 @@
-import React, { useCallback, useMemo, useState } from 'react'
-import Box from '@mui/material/Box'
 import { Typography } from '@mui/material'
+import Box from '@mui/material/Box'
+import React, { useCallback, useMemo, useState } from 'react'
 
-import { MultirowHeader, MultirowHeaderRow } from 'src/TableComponent'
-
-import type {
+import { MultirowHeader, MultirowHeaderRow } from '../../../../TableComponent'
+import { reorderColumn, reorderColumnSet } from '../../../../column.utils'
+import {
+	ButtonLink,
+	ContentTitle,
+	SidebarPropsWithOnCloseEnd,
+	SidebarWithMuiProps,
+	Colors,
+	TextColor,
+	MultirowColumn,
+	MultirowColumnsGroup,
 	Table_Column,
 	TableData,
 	TableInstance,
-	MultirowColumnsGroup,
-	MultirowColumn,
-} from '../../../../index'
-import { ContentTitle } from '../../../../components/ContentTitle'
-import { ButtonLink } from '../../../../components/ButtonLink'
-import { reorderColumn, reorderColumnSet } from '../../../../column.utils'
-import { Sidebar } from '../../../../components/Sidebar'
-import { Colors, TextColor } from '../../../../components/styles'
-import { getMultirowHeaderGroupLeafColumnIds } from '../../../../utils/getMultirowHeaderGroupLeafColumnIds'
-import { getValidColumnOrder } from '../../../../utils/getValidColumnOrder'
+} from '../../../../'
 import { arrayHasAll } from '../../../../utils/arrayHasAll'
-import { splitArrayItems } from '../../../../utils/splitArrayItems'
+import { createComponentWithMuiProps } from '../../../../utils/createComponentWithMuiProps'
 import { getColumnsFilteredByDisplay } from '../../../../utils/getFilteredByDisplay'
+import { getMultirowHeaderGroupLeafColumnIds } from '../../../../utils/getMultirowHeaderGroupLeafColumnIds'
 import { getTestAttributes } from '../../../../utils/getTestAttributes'
-import { withNativeEvent } from '../../../../utils/withNativeEvent'
+import { getValidColumnOrder } from '../../../../utils/getValidColumnOrder'
+import { getValueOrFunctionHandler } from '../../../../utils/getValueOrFunctionHandler'
 import { makeMultirowColumns } from '../../../../utils/makeMultirowColumns'
+import { mergeMuiProps } from '../../../../utils/mergeMuiProps'
+import { splitArrayItems } from '../../../../utils/splitArrayItems'
+import { withNativeEvent } from '../../../../utils/withNativeEvent'
 import { defaultOrganizeColumnsMenu } from '../ColumnsMenu/ColumnsMenu'
 import { ColumnsMenuItem } from '../ColumnsMenu/ColumnsMenuItem'
 
@@ -31,17 +35,19 @@ import { ColumnsMultirowMenuGroupItem } from './ColumnsMultirowMenuGroupItem'
 import { MultirowColumnDef, MultirowColumnParent } from './multirowMenu.types'
 import { MultiRowTree } from './MultiRowTree'
 
-interface Props<TData extends Record<string, any> = {}> {
+export interface ColumnsMultirowMenuProps<TData extends TableData = {}> {
 	anchorEl: HTMLElement | null
 	setAnchorEl(anchorEl: HTMLElement | null): void
 	table: TableInstance<TData>
+	sidebarProps?: SidebarPropsWithOnCloseEnd
 }
 
 export const ColumnsMultirowMenu = <TData extends TableData = {}>({
 	anchorEl,
 	setAnchorEl,
 	table,
-}: Props<TData>) => {
+	sidebarProps,
+}: ColumnsMultirowMenuProps<TData>) => {
 	const {
 		getAllLeafColumns,
 		setColumnOrder,
@@ -131,7 +137,11 @@ export const ColumnsMultirowMenu = <TData extends TableData = {}>({
 	const visibleColumnsCount = visibleColumns.length
 	const hiddenColumnsCount = hiddenColumns.length
 
-	const handleCloseClick = () => setAnchorEl(null)
+	const onCloseEnd = sidebarProps?.onCloseEnd
+	const handleCloseClick = useCallback(() => {
+		setAnchorEl(null)
+		onCloseEnd?.()
+	}, [setAnchorEl, onCloseEnd])
 
 	const handleOnSearchChange = (value: string) => {
 		if (value) {
@@ -374,10 +384,10 @@ export const ColumnsMultirowMenu = <TData extends TableData = {}>({
 	}, [getMultirowHeaderGroups, middleColumns, hiddenColumns])
 
 	return (
-		<Sidebar
+		<SidebarWithMuiProps
+			table={table as TableInstance}
 			open={!!anchorEl}
 			onClose={handleCloseClick}
-			styles={{ minWidth: 660 }}
 			withHeader
 			headerTitle={localization.columns}
 			subHeader={
@@ -389,7 +399,12 @@ export const ColumnsMultirowMenu = <TData extends TableData = {}>({
 			withSearch
 			onSearchChange={handleOnSearchChange}
 			innerTableSidebar={innerTable}
-			PaperProps={getTestAttributes(e2eLabels, 'sidebarColumns')}
+			{...sidebarProps}
+			PaperProps={mergeMuiProps(
+				{ sx: { minWidth: 660 } },
+				getTestAttributes(e2eLabels, 'sidebarColumns'),
+				sidebarProps?.PaperProps
+			)}
 		>
 			{isSearchActive ? (
 				multirowHeader && searchList.length ? (
@@ -543,6 +558,14 @@ export const ColumnsMultirowMenu = <TData extends TableData = {}>({
 					</Box>
 				</>
 			)}
-		</Sidebar>
+		</SidebarWithMuiProps>
 	)
 }
+
+export const ColumnsMultirowMenuWithMuiProps = createComponentWithMuiProps(
+	ColumnsMultirowMenu,
+	({ table }) =>
+		getValueOrFunctionHandler(table.options.muiColumnsMenuProps)({
+			table,
+		})
+)

@@ -153,6 +153,7 @@ export const useTable = <TData extends TableData = TableData>(
 	const [showAlertBanner, setShowAlertBanner] = useState(
 		config.initialState?.showAlertBanner ?? false
 	)
+	// TODO: remove this state, its not used anymore
 	const [showColumnFilters, setShowFilters] = useState(
 		initialState?.showColumnFilters ?? false
 	)

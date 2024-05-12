@@ -2,16 +2,25 @@ import React, { useCallback, useMemo, useState } from 'react'
 import Box from '@mui/material/Box'
 import { Typography } from '@mui/material'
 
-import type { Table_Column, TableData, TableInstance } from '../../../../index'
-import { ContentTitle } from '../../../../components/ContentTitle'
-import { ButtonLink } from '../../../../components/ButtonLink'
+import {
+	Table_Column,
+	TableData,
+	TableInstance,
+	ContentTitle,
+	ButtonLink,
+	SidebarPropsWithOnCloseEnd,
+	SidebarWithMuiProps,
+	Colors,
+	TextColor,
+} from '../../../../index'
 import {
 	reorderColumn,
 	Table_DisplayColumnIdsArray,
 } from '../../../../column.utils'
-import { Sidebar } from '../../../../components/Sidebar'
-import { Colors, TextColor } from '../../../../components/styles'
+import { createComponentWithMuiProps } from '../../../../utils/createComponentWithMuiProps'
 import { getValidColumnOrder } from '../../../../utils/getValidColumnOrder'
+import { getValueOrFunctionHandler } from '../../../../utils/getValueOrFunctionHandler'
+import { mergeMuiProps } from '../../../../utils/mergeMuiProps'
 import { sortColumns } from '../../../../utils/sortColumns'
 import { splitArrayItems } from '../../../../utils/splitArrayItems'
 import { getColumnsFilteredByDisplay } from '../../../../utils/getFilteredByDisplay'
@@ -20,10 +29,11 @@ import { withNativeEvent } from '../../../../utils/withNativeEvent'
 
 import { ColumnsMenuItem } from './ColumnsMenuItem'
 
-interface Props<TData extends Record<string, any> = {}> {
+export interface ColumnsMenuProps<TData extends Record<string, any> = {}> {
 	anchorEl: HTMLElement | null
 	setAnchorEl(anchorEl: HTMLElement | null): void
 	table: TableInstance<TData>
+	sidebarProps?: SidebarPropsWithOnCloseEnd
 }
 
 const getCompareValue = (colId: string, left?: string[], right?: string[]) => {
@@ -61,7 +71,8 @@ export const ColumnsMenu = <TData extends TableData = TableData>({
 	anchorEl,
 	setAnchorEl,
 	table,
-}: Props<TData>) => {
+	sidebarProps,
+}: ColumnsMenuProps<TData>) => {
 	const {
 		getAllLeafColumns,
 		setColumnOrder,
@@ -94,7 +105,11 @@ export const ColumnsMenu = <TData extends TableData = TableData>({
 	const visibleColumnsCount = visibleColumns.length
 	const hiddenColumnsCount = hiddenColumns.length
 
-	const handleCloseClick = () => setAnchorEl(null)
+	const onCloseEnd = sidebarProps?.onCloseEnd
+	const handleCloseClick = useCallback(() => {
+		setAnchorEl(null)
+		onCloseEnd?.()
+	}, [setAnchorEl, onCloseEnd])
 
 	const handleOnSearchChange = (value: string) => {
 		if (value) {
@@ -185,10 +200,10 @@ export const ColumnsMenu = <TData extends TableData = TableData>({
 	}, [visibleColumns])
 
 	return (
-		<Sidebar
+		<SidebarWithMuiProps
+			table={table as TableInstance}
 			open={!!anchorEl}
 			onClose={handleCloseClick}
-			styles={{ minWidth: 660 }}
 			withHeader
 			headerTitle={localization.columns}
 			subHeader={
@@ -200,7 +215,12 @@ export const ColumnsMenu = <TData extends TableData = TableData>({
 			withSearch
 			onSearchChange={handleOnSearchChange}
 			innerTableSidebar={innerTable}
-			PaperProps={getTestAttributes(e2eLabels, 'sidebarColumns')}
+			{...sidebarProps}
+			PaperProps={mergeMuiProps(
+				{ sx: { minWidth: 660 } },
+				getTestAttributes(e2eLabels, 'sidebarColumns'),
+				sidebarProps?.PaperProps
+			)}
 		>
 			{isSearchActive ? (
 				searchList.length ? (
@@ -311,6 +331,14 @@ export const ColumnsMenu = <TData extends TableData = TableData>({
 					</Box>
 				</>
 			)}
-		</Sidebar>
+		</SidebarWithMuiProps>
 	)
 }
+
+export const ColumnsMenuWithMuiProps = createComponentWithMuiProps(
+	ColumnsMenu,
+	({ table }) =>
+		getValueOrFunctionHandler(table.options.muiColumnsMenuProps)({
+			table,
+		})
+)

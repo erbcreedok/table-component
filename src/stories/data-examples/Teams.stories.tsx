@@ -1,13 +1,13 @@
+import ModeIcon from '@mui/icons-material/Mode'
 import { Box } from '@mui/material'
 import Button from '@mui/material/Button'
-import { Meta, Story } from '@storybook/react'
-import ModeIcon from '@mui/icons-material/Mode'
 import LinearProgress from '@mui/material/LinearProgress'
 import MuiTableCell from '@mui/material/TableCell'
+import { Meta, Story } from '@storybook/react'
 import {
 	ColumnOrderState,
-	VisibilityState,
 	SortingState,
+	VisibilityState,
 } from '@tanstack/react-table'
 import React, { useCallback, useState } from 'react'
 import { getColumnId } from '../../column.utils'
@@ -15,24 +15,31 @@ import { LocationRight } from '../../icons/LocationRight'
 import { LockedIcon } from '../../icons/LockedIcon'
 import { TrashIcon } from '../../icons/TrashIcon'
 import TableComponent, {
+	CommonChipWithPopover,
 	MuiTableBodyRowDragHandleFnProps,
 	Sidebar,
 	Table_ColumnDef,
 	TableComponentProps,
 	TableInstance,
 	utilColumns,
-	CommonChipWithPopover,
 } from '../../index'
 import {
 	CustomNoRecordsToDisplay,
 	CustomNoResultsFound,
 } from '../components/CustomNoResultsFound'
 import { TeamMember, UnitTreeItem } from '../types/TeamMember'
-import { Colors } from '../utils/constants'
+import {
+	Colors,
+	muiColumnsMenuProps,
+	muiFiltersMenuProps,
+	muiGroupingMenuProps, muiSidebarProps,
+	muiSortingMenuProps,
+	muiTableHeadCellFilterLabelProps,
+} from '../utils/constants'
+import { getDndTargetGroupingUpdateValues } from '../utils/getDndTargetGroupingUpdateValues'
 import { getIndexedExpandableColumn } from '../utils/getIndexedExpandableColumn'
 import { getOrganizeCreateNewRowButtons } from '../utils/getOrganizeCreateNewRowButtons'
 import { getTablePresetProps } from '../utils/getTablePresetProps'
-import { getDndTargetGroupingUpdateValues } from '../utils/getDndTargetGroupingUpdateValues'
 import {
 	getExpandingTeamMembers,
 	getTeamMembers,
@@ -48,12 +55,12 @@ import { useEditingProps } from '../utils/useEditingProps'
 import { useHierarchyProps } from '../utils/useHierarchyProps'
 import { ColumnActionsFiltersMenu } from './components/ColumnActionsFiltersMenu'
 import { CUSTOM_FIRST_ROW_MEMBERS_CONFIG } from './components/constants'
-import { UnitRow } from './components/UnitRow'
 import {
 	TestRowTooltipComponent,
-	TestRowTooltipStyledComponent,
 	TestRowTooltipFollowCursor,
+	TestRowTooltipStyledComponent,
 } from './components/CustomTooltip'
+import { UnitRow } from './components/UnitRow'
 
 const columns = getTeamMembersColumns()
 
@@ -1133,6 +1140,12 @@ const meta: Meta = {
 			control: { type: 'object' },
 			description: 'Redefine default translation phrases.',
 		},
+		muiColumnsMenuProps,
+		muiGroupingMenuProps,
+		muiSortingMenuProps,
+		muiFiltersMenuProps,
+		muiSidebarProps,
+		muiTableHeadCellFilterLabelProps,
 		multirowHeader: {
 			control: { type: 'select' },
 			defaultValue: 'Not enabled',

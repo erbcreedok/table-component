@@ -2,6 +2,7 @@ import React from 'react'
 import Box from '@mui/material/Box'
 import { IconButton, SxProps } from '@mui/material'
 
+import { getE2EAttributes } from '../../../../utils/getE2EAttributes'
 import {
 	getSortingIcon,
 	getSortingText,
@@ -19,12 +20,13 @@ interface Props<TData extends Record<string, any> = {}> {
 	hideUnselected?: boolean
 	groupButtons?: boolean
 	isInChip?: boolean
+	e2ePrefix?: string
 }
 export const SortingButtons = <TData extends Record<string, any> = {}>(
 	props: Props<TData>
 ) => {
 	const { table } = useTableContext()
-	const { column, hideUnselected } = props
+	const { column, e2ePrefix, hideUnselected } = props
 	const sorting = column?.getIsSorted()
 	const ascSortingText = getSortingText({
 		column,
@@ -93,6 +95,10 @@ export const SortingButtons = <TData extends Record<string, any> = {}>(
 						marginRight: hideUnselected ? '0px' : '4px',
 					}}
 					size="small"
+					{...getE2EAttributes(
+						`${e2ePrefix}SortButtonByAsc`,
+						`${e2ePrefix}SortButtonByAsc_${column.id}`
+					)}
 				>
 					{getSortingIcon({
 						column,
@@ -125,6 +131,10 @@ export const SortingButtons = <TData extends Record<string, any> = {}>(
 							: 'initial',
 					}}
 					size="small"
+					{...getE2EAttributes(
+						`${e2ePrefix}SortButtonByDesc`,
+						`${e2ePrefix}SortButtonByDesc_${column.id}`
+					)}
 				>
 					{getSortingIcon({
 						column,

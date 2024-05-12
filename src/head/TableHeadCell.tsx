@@ -28,7 +28,7 @@ import { withStopPropagation } from '../utils/withStopPropagation'
 
 import { ExpandableAllColumnButton } from './ExpandableAllColumnButton'
 import { TableHeadCellActionsButton } from './TableHeadCellActionsButton'
-import { TableHeadCellFilterLabel } from './TableHeadCellFilterLabel'
+import { TableHeadCellFilterLabelWithMuiProps } from './TableHeadCellFilterLabel'
 import { TableHeadCellGrabHandle } from './TableHeadCellGrabHandle'
 import { TableHeadCellResizeHandle } from './TableHeadCellResizeHandle'
 import { TableHeadCellSortLabel } from './TableHeadCellSortLabel'
@@ -422,7 +422,10 @@ export const TableHeadCell: FC<TableHeadCellProps> = ({
 											/>
 										)}
 										{column.getCanFilter() && (
-											<TableHeadCellFilterLabel header={header} table={table} />
+											<TableHeadCellFilterLabelWithMuiProps
+												header={header}
+												table={table}
+											/>
 										)}
 									</Box>
 								</Box>

@@ -2,7 +2,7 @@ import React from 'react'
 import Box from '@mui/material/Box'
 import Toolbar from '@mui/material/Toolbar'
 import useMediaQuery from '@mui/material/useMediaQuery'
-import { alpha } from '@mui/material/styles'
+import { alpha, lighten, type Theme } from '@mui/material/styles'
 
 import type { TableInstance } from '..'
 
@@ -10,7 +10,19 @@ import { TablePagination } from './TablePagination'
 import { ToolbarAlertBanner } from './ToolbarAlertBanner'
 import { ToolbarDropZone } from './ToolbarDropZone'
 import { LinearProgressBar } from './LinearProgressBar'
-import { commonToolbarStyles } from './TopToolbar'
+
+export const commonToolbarStyles = ({ theme }: { theme: Theme }) => ({
+	alignItems: 'flex-start',
+	backgroundColor: lighten(theme.palette.background.default, 0.04),
+	backgroundImage: 'none',
+	display: 'grid',
+	flexWrap: 'wrap-reverse',
+	minHeight: '3.5rem',
+	overflow: 'hidden',
+	p: '0 !important',
+	transition: 'all 150ms ease-in-out',
+	zIndex: 1,
+})
 
 interface Props<TData extends Record<string, any> = {}> {
 	table: TableInstance<TData>

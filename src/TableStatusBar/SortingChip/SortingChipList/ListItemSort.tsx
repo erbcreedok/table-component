@@ -2,6 +2,7 @@ import React, { DragEvent, FC, useRef, useState } from 'react'
 import { Box, MenuItem, Typography } from '@mui/material'
 
 import { GrabHandleButton } from '../../../buttons/GrabHandleButton'
+import { getE2EAttributes } from '../../../utils/getE2EAttributes'
 import { SortingItemBoxStyled } from '../SortingChip.styled'
 import { SortingButtons } from '../../../TableToolbar/components/menus/SortingMenu/SortingButtons'
 import { IconsColor } from '../../../components/styles'
@@ -103,6 +104,7 @@ export const ListItemSort: FC<ListItemSortProps> = (props) => {
 						groupButtons
 						hideUnselected={!hovered}
 						isInChip
+						e2ePrefix="chip"
 					/>
 
 					<Box
@@ -122,6 +124,10 @@ export const ListItemSort: FC<ListItemSortProps> = (props) => {
 								},
 								table
 							)(handleDelete)}
+							{...getE2EAttributes(
+								'chipRemoveSorting',
+								`chipRemoveSorting_${column.id}`
+							)}
 							htmlColor={IconsColor.default}
 						/>
 					</Box>

@@ -1,12 +1,14 @@
-import React, { MouseEvent, useState } from 'react'
-import type { IconButtonProps } from '@mui/material/IconButton'
 import { Typography } from '@mui/material'
+import type { IconButtonProps } from '@mui/material/IconButton'
+import React, { MouseEvent, useState } from 'react'
 
-import { Tooltip } from '../../../components/Tooltip'
-import type { TableInstance } from '../../../index'
-import { ToolbarIconButton } from '../../../components/ToolbarIconButton'
-import { GroupingMenu } from '../menus/GroupingMenu/GroupingMenu'
-import { IconsColor } from '../../../components/styles'
+import {
+	TableInstance,
+	IconsColor,
+	ToolbarIconButton,
+	Tooltip,
+} from '../../../'
+import { GroupingMenuWithMuiProps } from '../menus/GroupingMenu/GroupingMenu'
 
 interface Props<TData extends Record<string, any> = {}>
 	extends IconButtonProps {
@@ -61,10 +63,10 @@ export const GroupingButton = <TData extends Record<string, any> = {}>({
 			</Tooltip>
 
 			{anchorEl && (
-				<GroupingMenu
+				<GroupingMenuWithMuiProps
 					anchorEl={anchorEl}
 					setAnchorEl={setAnchorEl}
-					table={table}
+					table={table as TableInstance}
 				/>
 			)}
 		</>

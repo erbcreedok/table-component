@@ -1,17 +1,5 @@
 /* eslint-disable no-param-reassign */
 import { BoxProps, TooltipProps } from '@mui/material'
-import { Theme } from '@mui/material/styles'
-import React, {
-	Dispatch,
-	FC,
-	MouseEventHandler,
-	MutableRefObject,
-	PropsWithChildren,
-	ReactElement,
-	ReactNode,
-	RefObject,
-	SetStateAction,
-} from 'react'
 import type { AlertProps } from '@mui/material/Alert'
 import type { ButtonProps } from '@mui/material/Button'
 import type { CheckboxProps } from '@mui/material/Checkbox'
@@ -21,6 +9,7 @@ import type { LinearProgressProps } from '@mui/material/LinearProgress'
 import type { PaperProps } from '@mui/material/Paper'
 import type { RadioProps } from '@mui/material/Radio'
 import type { SkeletonProps } from '@mui/material/Skeleton'
+import { Theme } from '@mui/material/styles'
 import type { TableProps } from '@mui/material/Table'
 import type { TableBodyProps } from '@mui/material/TableBody'
 import type { TableCellProps } from '@mui/material/TableCell'
@@ -38,6 +27,7 @@ import type {
 	ColumnDef,
 	DeepKeys,
 	FilterFn,
+	GroupingState,
 	Header,
 	HeaderGroup,
 	OnChangeFn,
@@ -46,13 +36,26 @@ import type {
 	Table,
 	TableOptions,
 	TableState,
-	GroupingState,
 } from '@tanstack/react-table'
-import type { VirtualizerOptions, Virtualizer } from '@tanstack/react-virtual'
+import type { Virtualizer, VirtualizerOptions } from '@tanstack/react-virtual'
+import React, {
+	Dispatch,
+	FC,
+	MouseEventHandler,
+	MutableRefObject,
+	PropsWithChildren,
+	ReactElement,
+	ReactNode,
+	RefObject,
+	SetStateAction,
+} from 'react'
 
+import { Table_Localization_EN } from './_locales/en'
 import { Table_AggregationFns } from './aggregationFns'
 import { TableBodyRowProps } from './body/TableBodyRow'
 import { NotificationBoxProps } from './components/NotificationBox'
+import type { RowTooltipProps } from './components/RowTooltip'
+import { SidebarProps } from './components/Sidebar'
 import {
 	BulkActionButtonProps,
 	TableBulkActionsProps,
@@ -60,12 +63,13 @@ import {
 import { TableProvider } from './context/TableProvider'
 import { Table_FilterFns } from './filterFns'
 import { multirowActions } from './head/constants'
+import { TableHeadCellFilterLabelProps } from './head/TableHeadCellFilterLabel'
 import {
+	HierarchyTreeConfig,
 	NewRowState,
 	TableInstanceWithCreateNewRow,
-	TablePropsWithCreateNewRow,
-	HierarchyTreeConfig,
 	TableInstanceWithTableHierarchy,
+	TablePropsWithCreateNewRow,
 } from './hooks'
 import { Table_Icons } from './icons'
 import { DayPickerInputProps } from './inputs/DayPickerInput'
@@ -74,21 +78,22 @@ import { SelectProps } from './inputs/Select'
 import { Table_SortingFns } from './sortingFns'
 import { TableMain } from './table/TableMain'
 import {
-	TableStatusBarWrapperProps,
 	TableStatusBarAdornment,
+	TableStatusBarWrapperProps,
 } from './TableStatusBar'
 import {
 	Preset,
 	PresetState,
 } from './TableToolbar/components/buttons/PresetButton'
+import { ColumnsMenuProps } from './TableToolbar/components/menus/ColumnsMenu/ColumnsMenu'
+import { FiltersMenuProps } from './TableToolbar/components/menus/FiltersMenu/FiltersMenu'
+import { GroupingMenuProps } from './TableToolbar/components/menus/GroupingMenu/GroupingMenu'
 import type { TableToolbarProps } from './TableToolbar/TableToolbar'
-import type { RowTooltipProps } from './components/RowTooltip'
 import type { GetIsColumnAllGroupsCollapsedProps } from './utils/getIsColumnAllGroupsCollapsed'
 import type { GetIsGroupCollapsedProps } from './utils/getIsGroupCollapsed'
+import type { EmptyColumn } from './utils/getNonCollapsedColumns'
 import type { OnGroupCollapsedToggleProps } from './utils/onGroupCollapsedToggle'
 import type { OnGroupCollapsedToggleAllProps } from './utils/onGroupCollapseToggleAll'
-import type { EmptyColumn } from './utils/getNonCollapsedColumns'
-import { Table_Localization_EN } from './_locales/en'
 
 /**
  * Most of this file is just TypeScript types
@@ -361,8 +366,26 @@ export type TableCellDataProps<TData extends TableData> = {
 }
 export type TableFunctionalProp<Prop, TData extends TableData> = FunctionProps<
 	Partial<Prop>,
-	TableCellDataProps<TData>
+	{ table: TableInstance<TData> }
 >
+export type TableRowFunctionalProp<
+	Prop,
+	TData extends TableData
+> = FunctionProps<
+	Partial<Prop>,
+	{ table: TableInstance<TData>; row: Table_Row<TData> }
+>
+export type TableColumnFunctionalProp<
+	Prop,
+	TData extends TableData
+> = FunctionProps<
+	Partial<Prop>,
+	{ table: TableInstance<TData>; column: Table_Column<TData> }
+>
+export type TableCellFunctionalProp<
+	Prop,
+	TData extends TableData
+> = FunctionProps<Partial<Prop>, TableCellDataProps<TData>>
 
 export type TableColumnEditProps<TData extends TableData> = {
 	editVariant?:
@@ -376,9 +399,12 @@ export type TableColumnEditProps<TData extends TableData> = {
 		| 'date-range'
 	required?: boolean
 	editSelectOptions?: (string | SelectOption)[]
-	muiEditDayPickerInputProps?: TableFunctionalProp<DayPickerInputProps, TData>
-	muiEditInputProps?: TableFunctionalProp<InputProps, TData>
-	muiEditSelectProps?: TableFunctionalProp<SelectProps, TData>
+	muiEditDayPickerInputProps?: TableCellFunctionalProp<
+		DayPickerInputProps,
+		TData
+	>
+	muiEditInputProps?: TableCellFunctionalProp<InputProps, TData>
+	muiEditSelectProps?: TableCellFunctionalProp<SelectProps, TData>
 	Edit?: FC<TableCellDataProps<TData>> | ReactNode | null
 	getEditValue?: (rowOriginal: TData) => any
 }
@@ -1038,6 +1064,11 @@ export interface TestIds {
 	sidebarColumnsShowAll?: string
 	sidebarSorting?: string
 	sidebarSortingRemoveAll?: string
+	sidebarFilters?: string
+	sidebarFiltersAddFilter?: string
+	sidebarFiltersRemoveAll?: string
+	sidebarGrouping?: string
+	sidebarGroupingRemoveAll?: string
 	bulkActions?: string
 }
 
@@ -1281,250 +1312,104 @@ export type TableComponentProps<TData extends TableData = TableData> = Omit<
 		 * @link https://www.material-react-table.com/docs/guides/memoize-components
 		 */
 		memoMode?: 'cells' | 'rows' | 'table-body'
-		muiBottomToolbarProps?:
-			| ToolbarProps
-			| (({ table }: { table: TableInstance<TData> }) => ToolbarProps)
-		muiEditInputProps?: TableFunctionalProp<InputProps, TData>
-		muiEditSelectProps?: TableFunctionalProp<SelectProps, TData>
-		muiEditDayPickerInputProps?: TableFunctionalProp<DayPickerInputProps, TData>
-		muiExpandAllButtonProps?:
-			| IconButtonProps
-			| (({ table }: { table: TableInstance<TData> }) => IconButtonProps)
-		muiExpandButtonProps?:
-			| IconButtonProps
-			| (({
-					row,
-					table,
-			  }: {
-					table: TableInstance<TData>
-					row: Table_Row<TData>
-			  }) => IconButtonProps)
-		muiLinearProgressProps?:
-			| LinearProgressProps
-			| (({
-					isTopToolbar,
-					table,
-			  }: {
-					isTopToolbar: boolean
-					table: TableInstance<TData>
-			  }) => LinearProgressProps)
-		muiSearchTextFieldProps?:
-			| TextFieldProps
-			| (({ table }: { table: TableInstance<TData> }) => TextFieldProps)
-		muiSelectAllCheckboxProps?:
-			| CheckboxProps
-			| (({ table }: { table: TableInstance<TData> }) => CheckboxProps)
-		muiSelectCheckboxProps?:
-			| (CheckboxProps | RadioProps)
-			| (({
-					table,
-					row,
-			  }: {
-					table: TableInstance<TData>
-					row: Table_Row<TData>
-			  }) => CheckboxProps | RadioProps)
-		muiTableBodyCellCopyButtonProps?:
-			| ButtonProps
-			| (({
-					cell,
-					column,
-					row,
-					table,
-			  }: {
-					cell: Table_Cell<TData>
-					column: Table_Column<TData>
-					row: Table_Row<TData>
-					table: TableInstance<TData>
-			  }) => ButtonProps)
-		muiTableBodyCellProps?:
-			| TableCellProps
-			| (({
-					cell,
-					column,
-					row,
-					table,
-			  }: {
-					cell: Table_Cell<TData>
-					column: Table_Column<TData>
-					row: Table_Row<TData>
-					table: TableInstance<TData>
-			  }) => TableCellProps)
-		muiTableBodyCellWrapperProps?:
-			| BoxProps
-			| (({
-					cell,
-					column,
-					row,
-					table,
-			  }: {
-					cell: Table_Cell<TData>
-					column: Table_Column<TData>
-					row: Table_Row<TData>
-					table: TableInstance<TData>
-			  }) => BoxProps)
-		muiTableBodyCellSkeletonProps?:
-			| SkeletonProps
-			| (({
-					cell,
-					column,
-					row,
-					table,
-			  }: {
-					cell: Table_Cell<TData>
-					column: Table_Column<TData>
-					row: Table_Row<TData>
-					table: TableInstance<TData>
-			  }) => SkeletonProps)
-		muiTableBodyProps?:
-			| TableBodyProps
-			| (({ table }: { table: TableInstance<TData> }) => TableBodyProps)
-		muiTableBodyRowDragHandleProps?:
-			| IconButtonProps
-			| MuiTableBodyRowDragHandleFnProps<TData>
-		muiTableBodyRowProps?:
-			| TableRowProps
-			| (({
-					isDetailPanel = false,
-					row,
-					table,
-			  }: {
-					isDetailPanel?: boolean
-					row: Table_Row<TData>
-					table: TableInstance<TData>
-			  }) => TableRowProps)
-		muiTableContainerProps?:
-			| TableContainerProps
-			| (({ table }: { table: TableInstance<TData> }) => TableContainerProps)
-		muiTableDetailPanelProps?:
-			| TableCellProps
-			| (({
-					table,
-					row,
-			  }: {
-					table: TableInstance<TData>
-					row: Table_Row<TData>
-			  }) => TableCellProps)
-		muiTableFooterCellProps?:
-			| TableCellProps
-			| (({
-					table,
-					column,
-			  }: {
-					table: TableInstance<TData>
-					column: Table_Column<TData>
-			  }) => TableCellProps)
-		muiTableFooterProps?:
-			| TableFooterProps
-			| (({ table }: { table: TableInstance<TData> }) => TableFooterProps)
-		muiTableFooterRowProps?:
-			| TableRowProps
-			| (({
-					table,
-					footerGroup,
-			  }: {
-					table: TableInstance<TData>
-					footerGroup: Table_HeaderGroup<TData>
-			  }) => TableRowProps)
-		muiTableHeadCellColumnActionsButtonProps?:
-			| IconButtonProps
-			| (({
-					table,
-					column,
-			  }: {
-					table: TableInstance<TData>
-					column: Table_Column<TData>
-			  }) => IconButtonProps)
-		muiTableHeadCellDragHandleProps?:
-			| IconButtonProps
-			| (({
-					table,
-					column,
-			  }: {
-					table: TableInstance<TData>
-					column: Table_Column<TData>
-			  }) => IconButtonProps)
-		muiTableHeadCellFilterCheckboxProps?:
-			| CheckboxProps
-			| (({
-					column,
-					table,
-			  }: {
-					column: Table_Column<TData>
-					table: TableInstance<TData>
-			  }) => CheckboxProps)
-		muiTableHeadCellFilterTextFieldProps?:
-			| TextFieldProps
-			| (({
-					table,
-					column,
-					rangeFilterIndex,
-			  }: {
-					table: TableInstance<TData>
-					column: Table_Column<TData>
-					rangeFilterIndex?: number
-			  }) => TextFieldProps)
-		muiTableHeadCellProps?:
-			| TableCellProps
-			| (({
-					table,
-					column,
-			  }: {
-					table: TableInstance<TData>
-					column: Table_Column<TData>
-			  }) => TableCellProps)
-		muiTableHeadCellWrapperProps?:
-			| BoxProps
-			| (({
-					table,
-					column,
-			  }: {
-					table: TableInstance<TData>
-					column: Table_Column<TData>
-			  }) => BoxProps)
-		muiTableHeadProps?:
-			| TableHeadProps
-			| (({ table }: { table: TableInstance<TData> }) => TableHeadProps)
-		muiTableHeadRowProps?:
-			| TableRowProps
-			| (({
-					table,
-					headerGroup,
-			  }: {
-					table: TableInstance<TData>
-					headerGroup: Table_HeaderGroup<TData>
-			  }) => TableRowProps)
-		muiTablePaginationProps?:
-			| Partial<TablePaginationProps>
-			| (({
-					table,
-			  }: {
-					table: TableInstance<TData>
-			  }) => Partial<TablePaginationProps>)
-		muiTablePaperProps?:
-			| PaperProps
-			| (({ table }: { table: TableInstance<TData> }) => PaperProps)
-		muiTableProps?:
-			| TableProps
-			| (({ table }: { table: TableInstance<TData> }) => TableProps)
-		muiTableStatusBarWrapperProps?:
-			| TableStatusBarWrapperProps
-			| (({
-					table,
-			  }: {
-					table: TableInstance<TData>
-			  }) => TableStatusBarWrapperProps)
-		muiTableStatusClearAllButtonProps?:
-			| ButtonProps
-			| (({ table }: { table: TableInstance<TData> }) => ButtonProps)
-		muiToolbarAlertBannerChipProps?:
-			| ChipProps
-			| (({ table }: { table: TableInstance<TData> }) => ChipProps)
-		muiToolbarAlertBannerProps?:
-			| AlertProps
-			| (({ table }: { table: TableInstance<TData> }) => AlertProps)
-		muiTopToolbarProps?:
-			| ToolbarProps
-			| (({ table }: { table: TableInstance<TData> }) => ToolbarProps)
+		muiBottomToolbarProps?: TableFunctionalProp<ToolbarProps, TData>
+		muiColumnsMenuProps?: TableFunctionalProp<ColumnsMenuProps<TData>, TData>
+		muiGroupingMenuProps?: TableFunctionalProp<GroupingMenuProps<TData>, TData>
+		muiFiltersMenuProps?: TableFunctionalProp<FiltersMenuProps<TData>, TData>
+		muiSortingMenuProps?: TableFunctionalProp<FiltersMenuProps<TData>, TData>
+		muiEditInputProps?: TableCellFunctionalProp<InputProps, TData>
+		muiEditSelectProps?: TableCellFunctionalProp<SelectProps, TData>
+		muiEditDayPickerInputProps?: TableCellFunctionalProp<
+			DayPickerInputProps,
+			TData
+		>
+		muiExpandAllButtonProps?: TableFunctionalProp<IconButtonProps, TData>
+		muiExpandButtonProps?: TableRowFunctionalProp<IconButtonProps, TData>
+		muiLinearProgressProps?: FunctionProps<
+			LinearProgressProps,
+			{
+				isTopToolbar: boolean
+				table: TableInstance<TData>
+			}
+		>
+		muiSearchTextFieldProps?: TableFunctionalProp<TextFieldProps, TData>
+		muiSelectAllCheckboxProps?: TableFunctionalProp<CheckboxProps, TData>
+		muiSelectCheckboxProps?: TableRowFunctionalProp<
+			CheckboxProps | RadioProps,
+			TData
+		>
+		muiSidebarProps?: TableFunctionalProp<SidebarProps, TData>
+		muiTableBodyCellCopyButtonProps?: TableCellFunctionalProp<
+			ButtonProps,
+			TData
+		>
+		muiTableBodyCellProps?: TableCellFunctionalProp<TableCellProps, TData>
+		muiTableBodyCellWrapperProps?: TableCellFunctionalProp<BoxProps, TData>
+		muiTableBodyCellSkeletonProps?: TableCellFunctionalProp<
+			SkeletonProps,
+			TData
+		>
+		muiTableBodyProps?: TableFunctionalProp<TableBodyProps, TData>
+		muiTableBodyRowDragHandleProps?: TableRowFunctionalProp<
+			IconButtonProps,
+			TData
+		>
+		muiTableBodyRowProps?: FunctionProps<
+			TableRowProps,
+			{
+				isDetailPanel?: boolean
+				row: Table_Row<TData>
+				table: TableInstance<TData>
+			}
+		>
+		muiTableContainerProps?: TableFunctionalProp<TableContainerProps, TData>
+		muiTableDetailPanelProps?: TableRowFunctionalProp<TableCellProps, TData>
+		muiTableFooterCellProps?: TableColumnFunctionalProp<TableCellProps, TData>
+		muiTableFooterProps?: TableFunctionalProp<TableFooterProps, TData>
+		muiTableFooterRowProps?: FunctionProps<
+			TableRowProps,
+			{
+				table: TableInstance<TData>
+				footerGroup: Table_HeaderGroup<TData>
+			}
+		>
+		muiTableHeadCellColumnActionsButtonProps?: TableColumnFunctionalProp<
+			IconButtonProps,
+			TData
+		>
+		muiTableHeadCellDragHandleProps?: TableColumnFunctionalProp<
+			IconButtonProps,
+			TData
+		>
+		muiTableHeadCellFilterCheckboxProps?: TableColumnFunctionalProp<
+			CheckboxProps,
+			TData
+		>
+		muiTableHeadCellFilterLabelProps?: TableColumnFunctionalProp<
+			TableHeadCellFilterLabelProps<TData>,
+			TData
+		>
+		muiTableHeadCellProps?: TableColumnFunctionalProp<TableCellProps, TData>
+		muiTableHeadCellWrapperProps?: TableColumnFunctionalProp<BoxProps, TData>
+		muiTableHeadProps?: TableFunctionalProp<TableHeadProps, TData>
+		muiTableHeadRowProps?: FunctionProps<
+			TableRowProps,
+			{
+				table: TableInstance<TData>
+				headerGroup: Table_HeaderGroup<TData>
+			}
+		>
+		muiTablePaginationProps?: TableFunctionalProp<TablePaginationProps, TData>
+		muiTablePaperProps?: TableFunctionalProp<PaperProps, TData>
+		muiTableProps?: TableFunctionalProp<TableProps, TData>
+		muiTableStatusBarWrapperProps?: TableFunctionalProp<
+			TableStatusBarWrapperProps,
+			TData
+		>
+		muiTableStatusClearAllButtonProps?: TableFunctionalProp<ButtonProps, TData>
+		muiToolbarAlertBannerChipProps?: TableFunctionalProp<ChipProps, TData>
+		muiToolbarAlertBannerProps?: TableFunctionalProp<AlertProps, TData>
+		muiTopToolbarProps?: TableFunctionalProp<ToolbarProps, TData>
 		multirowHeader?: MultirowHeader
 		multirowColumnsDisplayDepth?: number
 		onDraggingColumnChange?: OnChangeFn<Table_Column<TData> | null>

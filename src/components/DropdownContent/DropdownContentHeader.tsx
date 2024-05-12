@@ -1,6 +1,7 @@
 import { Box, Typography } from '@mui/material'
 import React from 'react'
 
+import { getE2EAttributes } from '../../utils/getE2EAttributes'
 import { withNativeEvent } from '../../utils/withNativeEvent'
 import { TableData, TableInstance } from '../../TableComponent'
 
@@ -43,6 +44,7 @@ export const DropdownContentHeader = <TData extends TableData>({
 						: onClearAll
 				}
 				style={{ color: '#009ECC', fontSize: 12, cursor: 'pointer' }}
+				{...getE2EAttributes(`chip${headerTitle}ClearAll`)}
 			>
 				Clear All
 			</Typography>

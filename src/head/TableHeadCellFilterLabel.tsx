@@ -1,24 +1,36 @@
-import React, { FC, MouseEvent } from 'react'
+import { BoxProps, GrowProps, TooltipProps } from '@mui/material'
 import Box from '@mui/material/Box'
 import Grow from '@mui/material/Grow'
-import IconButton from '@mui/material/IconButton'
+import IconButton, { IconButtonProps } from '@mui/material/IconButton'
+import React from 'react'
 
-import { Table_Header, TableInstance } from '..'
+import { Table_Header, TableData, TableInstance } from '..'
 import { Tooltip } from '../components/Tooltip'
+import { getValueOrFunctionHandler } from '../utils/getValueOrFunctionHandler'
+import { mergeSx } from '../utils/mergeSx'
 
-interface Props {
-	header: Table_Header
-	table: TableInstance
+export type TableHeadCellFilterLabelProps<TData extends TableData = {}> = {
+	header: Table_Header<TData>
+	table: TableInstance<TData>
+	buttonProps?: IconButtonProps
+	tooltipProps?: TooltipProps
+	growProps?: GrowProps
+	boxProps?: BoxProps
 }
 
-export const TableHeadCellFilterLabel: FC<Props> = ({ header, table }) => {
+export const TableHeadCellFilterLabel = ({
+	header,
+	table,
+	tooltipProps,
+	buttonProps,
+	growProps,
+	boxProps,
+}: TableHeadCellFilterLabelProps) => {
 	const {
 		options: {
 			icons: { FiltersIcon },
 			localization,
 		},
-		refs: { filterInputRefs },
-		setShowFilters,
 	} = table
 	const { column } = header
 	const { columnDef } = column
@@ -29,30 +41,33 @@ export const TableHeadCellFilterLabel: FC<Props> = ({ header, table }) => {
 			columnDef._filterFn
 		)
 	const currentFilterOption = columnDef._filterFn
-	const filterTooltip = localization.filteringByColumn
-		.replace('{column}', String(columnDef.header))
-		.replace(
-			'{filterType}',
-			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-			// @ts-ignore
-			localization[
-				`filter${
-					currentFilterOption?.charAt(0)?.toUpperCase() +
-					currentFilterOption?.slice(1)
-				}`
-			]
-		)
-		.replace(
-			'{filterValue}',
-			`"${
-				Array.isArray(column.getFilterValue())
-					? (column.getFilterValue() as [string, string]).join(
-							`" ${isRangeFilter ? localization.and : localization.or} "`
-					  )
-					: (column.getFilterValue() as string)
-			}"`
-		)
-		.replace('" "', '')
+
+	const filterTooltip =
+		tooltipProps?.title ??
+		localization.filteringByColumn
+			.replace('{column}', String(columnDef.header))
+			.replace(
+				'{filterType}',
+				// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+				// @ts-ignore
+				localization[
+					`filter${
+						currentFilterOption?.charAt(0)?.toUpperCase() +
+						currentFilterOption?.slice(1)
+					}`
+				]
+			)
+			.replace(
+				'{filterValue}',
+				`"${
+					Array.isArray(column.getFilterValue())
+						? (column.getFilterValue() as [string, string]).join(
+								`" ${isRangeFilter ? localization.and : localization.or} "`
+						  )
+						: (column.getFilterValue() as string)
+				}"`
+			)
+			.replace('" "', '')
 
 	return (
 		<Grow
@@ -63,28 +78,29 @@ export const TableHeadCellFilterLabel: FC<Props> = ({ header, table }) => {
 				(isRangeFilter && // @ts-ignore
 					(!!column.getFilterValue()?.[0] || !!column.getFilterValue()?.[1]))
 			}
+			{...growProps}
 		>
-			<Box component="span" sx={{ flex: '0 0' }}>
-				<Tooltip arrow placement="top" title={filterTooltip}>
+			<Box
+				component="span"
+				{...boxProps}
+				sx={mergeSx({ flex: '0 0' }, boxProps?.sx)}
+			>
+				<Tooltip arrow placement="top" title={filterTooltip} {...tooltipProps}>
 					<IconButton
 						disableRipple
-						onClick={(event: MouseEvent<HTMLButtonElement>) => {
-							setShowFilters(true)
-							queueMicrotask(() => {
-								filterInputRefs.current[`${column.id}-0`]?.focus()
-								filterInputRefs.current[`${column.id}-0`]?.select()
-							})
-							event.stopPropagation()
-						}}
 						size="small"
-						sx={{
-							height: '12px',
-							m: 0,
-							opacity: 0.8,
-							p: '2px',
-							transform: 'scale(0.66)',
-							width: '12px',
-						}}
+						{...buttonProps}
+						sx={mergeSx(
+							{
+								height: '12px',
+								m: 0,
+								opacity: 0.8,
+								p: '2px',
+								transform: 'scale(0.66)',
+								width: '12px',
+							},
+							buttonProps?.sx
+						)}
 					>
 						<FiltersIcon />
 					</IconButton>
@@ -92,4 +108,19 @@ export const TableHeadCellFilterLabel: FC<Props> = ({ header, table }) => {
 			</Box>
 		</Grow>
 	)
+}
+
+export const TableHeadCellFilterLabelWithMuiProps = (
+	_props: TableHeadCellFilterLabelProps
+) => {
+	const { table, header } = _props
+	const {
+		options: { muiTableHeadCellFilterLabelProps },
+	} = table
+	const props = getValueOrFunctionHandler(muiTableHeadCellFilterLabelProps)({
+		table,
+		column: header.column,
+	})
+
+	return <TableHeadCellFilterLabel {...props} header={header} table={table} />
 }

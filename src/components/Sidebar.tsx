@@ -1,7 +1,20 @@
-import { backdropClasses, paperClasses, PaperProps } from '@mui/material'
+import {
+	backdropClasses,
+	BoxProps,
+	DrawerProps,
+	paperClasses,
+} from '@mui/material'
 import { ReactElement, ReactNode, MouseEvent } from 'react'
 import Box from '@mui/material/Box'
 import Drawer from '@mui/material/Drawer'
+
+import { TableInstance } from '../TableComponent'
+import { createComponentWithMuiProps } from '../utils/createComponentWithMuiProps'
+import { getE2EAttributes } from '../utils/getE2EAttributes'
+import { getValueOrFunctionHandler } from '../utils/getValueOrFunctionHandler'
+import { mergeMuiProps } from '../utils/mergeMuiProps'
+import { mergeSx } from '../utils/mergeSx'
+import { omit } from '../utils/omit'
 
 import { SidebarHeaderComponent } from './SidebarHeader'
 import { SidebarSearchComponent } from './SidebarSearch'
@@ -21,16 +34,18 @@ interface SidebarTemplateProps {
 	headerTitle?: string
 	/** @deprecated use topPanel */
 	subHeader?: string | ReactElement | null
-	styles?: Record<string, any>
 	children?: ReactNode
 	innerTable?: boolean
+	wrapperProps?: BoxProps
+	contentProps?: BoxProps
 }
-interface SidebarProps extends SidebarTemplateProps {
-	onClose(): void
-	open: boolean
-	children?: ReactNode
+
+export type SidebarProps = SidebarTemplateProps & {
 	innerTableSidebar?: boolean
-	PaperProps?: PaperProps
+	onClose?: () => void
+} & Omit<DrawerProps, 'onClose'>
+export type SidebarPropsWithOnCloseEnd = Partial<SidebarProps> & {
+	onCloseEnd?: () => void
 }
 
 export const SidebarTemplate = ({
@@ -42,16 +57,20 @@ export const SidebarTemplate = ({
 	onSearchClear,
 	headerTitle = '',
 	subHeader,
-	styles = { minWidth: 400, maxWidth: '80vw' },
 	children,
 	innerTable,
+	wrapperProps,
+	contentProps,
 }: SidebarTemplateProps) => {
 	return (
 		<Box
-			sx={{
-				...styles,
-				...(innerTable ? { maxHeight: '100%', flexGrow: 1 } : {}),
-			}}
+			{...wrapperProps}
+			sx={mergeSx(
+				{
+					...(innerTable ? { maxHeight: '100%', flexGrow: 1 } : {}),
+				},
+				wrapperProps?.sx
+			)}
 		>
 			{withHeader && (
 				<SidebarHeaderComponent
@@ -68,14 +87,18 @@ export const SidebarTemplate = ({
 			)}
 			{topPanel}
 			<Box
-				sx={{
-					maxHeight: `calc(100% - ${withSearch ? '116' : '65'}px)`,
-					boxSizing: 'border-box',
-					display: innerTable ? 'flex' : 'block',
-					width: '100%',
-					overflow: 'hidden',
-					position: 'relative',
-				}}
+				{...contentProps}
+				sx={mergeSx(
+					{
+						maxHeight: `calc(100% - ${withSearch ? '116' : '65'}px)`,
+						boxSizing: 'border-box',
+						display: innerTable ? 'flex' : 'block',
+						width: '100%',
+						overflow: 'hidden',
+						position: 'relative',
+					},
+					contentProps?.sx
+				)}
 			>
 				{children}
 			</Box>
@@ -84,7 +107,7 @@ export const SidebarTemplate = ({
 }
 
 export const Sidebar = (props: SidebarProps) => {
-	const { open, onClose, innerTableSidebar, children, PaperProps } = props
+	const { innerTableSidebar, children, PaperProps, ...rest } = props
 	const innerTableDrawerStyles = {
 		[`& > .${backdropClasses.root}`]: {
 			backgroundColor: 'transparent',
@@ -94,16 +117,50 @@ export const Sidebar = (props: SidebarProps) => {
 		},
 	}
 
+	// omit headerTitle and subHeader from Drawer props, so they don't get passed to html element
+	const drawerProps = omit(
+		rest,
+		'headerTitle',
+		'subHeader',
+		'wrapperProps',
+		'contentProps',
+		'topPanel'
+	)
+
 	return (
 		<Drawer
 			anchor="right"
-			open={open}
-			onClose={onClose}
 			transitionDuration={400}
-			sx={innerTableSidebar ? innerTableDrawerStyles : null}
-			PaperProps={PaperProps}
+			{...drawerProps}
+			sx={mergeSx(
+				innerTableSidebar ? innerTableDrawerStyles : null,
+				drawerProps.sx
+			)}
+			PaperProps={mergeMuiProps(getE2EAttributes('sidebarPaper'), PaperProps)}
 		>
-			<SidebarTemplate {...props}>{children}</SidebarTemplate>
+			<SidebarTemplate innerTable={innerTableSidebar} {...props}>
+				{children}
+			</SidebarTemplate>
 		</Drawer>
 	)
 }
+
+export const SidebarWithMuiProps = createComponentWithMuiProps<
+	SidebarProps & { table: TableInstance }
+>(Sidebar, ({ table, ...rest }) => {
+	const muiProps = getValueOrFunctionHandler(table.options.muiSidebarProps)({
+		table,
+	})
+	const props = mergeMuiProps(muiProps, rest)
+	const PaperProps = mergeMuiProps(muiProps?.PaperProps, rest.PaperProps)
+	const wrapperProps = mergeMuiProps(muiProps?.wrapperProps, rest.wrapperProps)
+	const contentProps = mergeMuiProps(muiProps?.contentProps, rest.contentProps)
+
+	return {
+		...props,
+		PaperProps,
+		wrapperProps,
+		contentProps,
+		table: undefined,
+	}
+})

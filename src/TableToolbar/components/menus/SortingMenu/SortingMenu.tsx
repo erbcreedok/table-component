@@ -1,36 +1,46 @@
-import { useMemo, useState } from 'react'
-import Box from '@mui/material/Box'
 import { Divider, IconButton, Typography } from '@mui/material'
+import Box from '@mui/material/Box'
+import { useCallback, useMemo, useState } from 'react'
 
-import { TableData, useTableContext } from '../../../../index'
-import type { TableInstance, Table_Column } from '../../../../index'
+import { getColumnId, reorderColumn } from '../../../../column.utils'
+import {
+	ButtonLink,
+	ListTitle,
+	SidebarPropsWithOnCloseEnd,
+	SidebarWithMuiProps,
+	Table_Column,
+	TableInstance,
+	SidebarSearch,
+	TableData,
+	useTableContext,
+} from '../../../../'
+import { DeleteIcon } from '../../../../icons/DeleteIcon'
+import { createComponentWithMuiProps } from '../../../../utils/createComponentWithMuiProps'
+import { getE2EAttributes } from '../../../../utils/getE2EAttributes'
+import { getColumnsFilteredByDisplay } from '../../../../utils/getFilteredByDisplay'
+import { getOrderedColumns } from '../../../../utils/getOrderedColumns'
+import { getPascalCase } from '../../../../utils/getPascalCase'
+import { getSortingText } from '../../../../utils/getSortingInfo'
+import { getSuggestedColumns } from '../../../../utils/getSuggestedColumns'
+import { getTestAttributes } from '../../../../utils/getTestAttributes'
+import { getValueOrFunctionHandler } from '../../../../utils/getValueOrFunctionHandler'
+import { mergeMuiProps } from '../../../../utils/mergeMuiProps'
+import { sortByStringArray } from '../../../../utils/sortByStringArray'
+import { splitArrayItems } from '../../../../utils/splitArrayItems'
+import { withNativeEvent } from '../../../../utils/withNativeEvent'
 import {
 	SimpleMenuItem,
 	SimpleMenuItemProps,
 } from '../components/SimpleMenuItem'
-import { ButtonLink } from '../../../../components/ButtonLink'
-import { getColumnId, reorderColumn } from '../../../../column.utils'
-import { ListTitle } from '../../../../components/ListTitle'
-import { Sidebar } from '../../../../components/Sidebar'
-import { getPascalCase } from '../../../../utils/getPascalCase'
-import { withNativeEvent } from '../../../../utils/withNativeEvent'
-import { getSortingText } from '../../../../utils/getSortingInfo'
-import { getColumnsFilteredByDisplay } from '../../../../utils/getFilteredByDisplay'
-import { DeleteIcon } from '../../../../icons/DeleteIcon'
-import { SidebarSearch } from '../../../../components/SidebarSearch'
-import { getOrderedColumns } from '../../../../utils/getOrderedColumns'
-import { getSuggestedColumns } from '../../../../utils/getSuggestedColumns'
-import { splitArrayItems } from '../../../../utils/splitArrayItems'
-import { sortByStringArray } from '../../../../utils/sortByStringArray'
-import { getTestAttributes } from '../../../../utils/getTestAttributes'
 
 import { SortingButtons } from './SortingButtons'
 
-interface Props<TData extends Record<string, any> = {}> {
+export interface SortingMenuProps<TData extends Record<string, any> = {}> {
 	anchorEl: HTMLElement | null
 	isSubMenu?: boolean
 	setAnchorEl(anchorEl: HTMLElement | null): void
 	table: TableInstance<TData>
+	sidebarProps?: Partial<SidebarPropsWithOnCloseEnd>
 }
 
 export const defaultOrganizeSortingMenu = <TData extends TableData = {}>(
@@ -44,7 +54,8 @@ export const SortingMenu = <TData extends Record<string, any> = {}>({
 	anchorEl,
 	setAnchorEl,
 	table,
-}: Props<TData>) => {
+	sidebarProps,
+}: SortingMenuProps<TData>) => {
 	const [searchValue, setSearchValue] = useState('')
 	const {
 		getAllLeafColumns,
@@ -60,7 +71,12 @@ export const SortingMenu = <TData extends Record<string, any> = {}>({
 	} = table
 	const [hoveredColumn, setHoveredColumn] =
 		useState<Table_Column<TData> | null>(null)
-	const handleCloseClick = () => setAnchorEl(null)
+
+	const onCloseEnd = sidebarProps?.onCloseEnd
+	const handleCloseClick = useCallback(() => {
+		setAnchorEl(null)
+		onCloseEnd?.()
+	}, [setAnchorEl, onCloseEnd])
 
 	const { sorting } = getState() // this updates memo below
 	const { allColumns, sortedColumns, unsortedColumns, areSuggestedShown } =
@@ -131,10 +147,10 @@ export const SortingMenu = <TData extends Record<string, any> = {}>({
 	}
 
 	return (
-		<Sidebar
+		<SidebarWithMuiProps
+			table={table as TableInstance}
 			open={!!anchorEl}
 			onClose={handleCloseClick}
-			styles={{ minWidth: 600 }}
 			withHeader
 			headerTitle={localization.sort}
 			topPanel={
@@ -144,7 +160,12 @@ export const SortingMenu = <TData extends Record<string, any> = {}>({
 				</>
 			}
 			innerTableSidebar={innerTable}
-			PaperProps={getTestAttributes(e2eLabels, 'sidebarSorting')}
+			{...sidebarProps}
+			PaperProps={mergeMuiProps(
+				{ sx: { minWidth: 600 } },
+				getTestAttributes(e2eLabels, 'sidebarSorting'),
+				sidebarProps?.PaperProps
+			)}
 		>
 			<Box sx={{ marginTop: '12px' }}>
 				{searchValue ? (
@@ -235,7 +256,7 @@ export const SortingMenu = <TData extends Record<string, any> = {}>({
 					</>
 				)}
 			</Box>
-		</Sidebar>
+		</SidebarWithMuiProps>
 	)
 }
 
@@ -275,7 +296,11 @@ const MenuItem = <TData extends Record<string, any> = {}>({
 		>
 			{isCompact ? (
 				<>
-					<SortingButtons column={column} sx={{ marginRight: '20px' }} />
+					<SortingButtons
+						column={column}
+						sx={{ marginRight: '20px' }}
+						e2ePrefix="sidebar"
+					/>
 					<IconButton
 						disableRipple
 						onClick={withNativeEvent(
@@ -288,6 +313,10 @@ const MenuItem = <TData extends Record<string, any> = {}>({
 							table
 						)(column.clearSorting)}
 						size="small"
+						{...getE2EAttributes(
+							'sidebarRemoveSorting',
+							`sidebarRemoveSorting_${column.id}`
+						)}
 					>
 						<DeleteIcon />
 					</IconButton>
@@ -308,6 +337,10 @@ const MenuItem = <TData extends Record<string, any> = {}>({
 							setSearchValue?.('')
 							column.toggleSorting(false, true)
 						})}
+						{...getE2EAttributes(
+							'sidebarSortByAsc',
+							`sidebarSortByAsc_${column.id}`
+						)}
 					>
 						{ascSortingText} +
 					</ButtonLink>
@@ -325,6 +358,10 @@ const MenuItem = <TData extends Record<string, any> = {}>({
 							column.toggleSorting(true, true)
 						})}
 						style={{ fontWeight: 600 }}
+						{...getE2EAttributes(
+							'sidebarSortByDesc',
+							`sidebarSortByDesc${column.id}`
+						)}
 					>
 						{descSortingText} +
 					</ButtonLink>
@@ -333,3 +370,11 @@ const MenuItem = <TData extends Record<string, any> = {}>({
 		</SimpleMenuItem>
 	)
 }
+
+export const SortingMenuWithMuiProps = createComponentWithMuiProps(
+	SortingMenu,
+	({ table }) =>
+		getValueOrFunctionHandler(table.options.muiSortingMenuProps)({
+			table,
+		})
+)
