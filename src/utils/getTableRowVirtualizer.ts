@@ -7,7 +7,7 @@ import {
 import { FC, ReactElement } from 'react'
 
 type Props<T extends Window | HTMLDivElement> = {
-	children(virtualizer: Virtualizer<T, HTMLTableRowElement>): ReactElement
+	children(virtualizer?: Virtualizer<T, HTMLTableRowElement>): ReactElement
 	virtualizerProps: VirtualizerOptions<T, HTMLTableRowElement>
 }
 
@@ -29,5 +29,16 @@ const ScrollElementVirtualizer: FC<Props<HTMLDivElement>> = ({
 	return children(virtualizer)
 }
 
-export const getTableRowVirtualizer = (isWindow?: boolean) =>
-	isWindow ? WindowVirtualizer : ScrollElementVirtualizer
+const DisabledVirtualizer: FC<Props<HTMLDivElement>> = ({ children }) => {
+	return children()
+}
+
+export const getTableRowVirtualizer = (
+	isEnabled?: boolean,
+	isWindow?: boolean
+) =>
+	isEnabled
+		? isWindow
+			? WindowVirtualizer
+			: ScrollElementVirtualizer
+		: DisabledVirtualizer

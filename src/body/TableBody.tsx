@@ -33,6 +33,7 @@ export const TableBody: FC<Props> = ({
 		getState,
 		resetRowSelection,
 		options: {
+			enableRowVirtualization,
 			enableGlobalFilterRankedResults,
 			enablePagination,
 			layoutMode,
@@ -141,7 +142,7 @@ export const TableBody: FC<Props> = ({
 	}
 
 	const Virtualizer = useMemo(() => {
-		return getTableRowVirtualizer(windowVirtualizer)
+		return getTableRowVirtualizer(enableRowVirtualization, windowVirtualizer)
 	}, [windowVirtualizer])
 
 	const getNoResultsSlot = (message: string) => (
