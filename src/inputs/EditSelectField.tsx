@@ -1,6 +1,7 @@
-import React from 'react'
+import React, { useMemo } from 'react'
 
 import { TableData } from '../TableComponent'
+import { getCellFieldId } from '../utils'
 import { getValueOrFunctionHandler } from '../utils/getValueOrFunctionHandler'
 import { normalizeSelectOptions } from '../utils/normalizeSelectOptions'
 import { isEditInputDisabled } from '../utils/isEditingEnabled'
@@ -50,6 +51,14 @@ export const EditSelectField = <TData extends TableData>({
 		onCellSave()
 	}
 
+	const value = useMemo(() => {
+		if (!multiple) return field.value
+		if (Array.isArray(field.value)) return field.value
+		if (field.value === null || field.value === undefined) return []
+
+		return [field.value]
+	}, [field.value, multiple])
+
 	const selectProps: SelectProps = {
 		disabled: isEditInputDisabled(enableEditing, { table, row }),
 		multiple,
@@ -60,7 +69,7 @@ export const EditSelectField = <TData extends TableData>({
 			e.stopPropagation()
 			muiSelectProps?.onClick?.(e)
 		},
-		value: field.value,
+		value: value ?? null,
 		onBlur: handleBlur,
 		onChange: handleChange,
 		inputProps: {
@@ -68,6 +77,7 @@ export const EditSelectField = <TData extends TableData>({
 			inputRef: (inputRef) => {
 				if (inputRef) {
 					editInputRefs.current[column.id] = inputRef
+					editInputRefs.current[getCellFieldId(cell)] = inputRef
 					if (muiSelectProps.inputRef) {
 						muiSelectProps.inputRef = inputRef
 					}

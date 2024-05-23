@@ -36,6 +36,12 @@ const getNumberOrEmpty = (emptinessRarity = 6) =>
 		? Number(faker.random.numeric(5))
 		: undefined
 
+const getCompletion = () => {
+	const number = getNumberOrEmpty()
+	if (number) return Math.round(number / 5) * 5
+	else return number
+}
+
 export const getTeamMember = (user?: User) => ({
 	id: faker.datatype.uuid(),
 	member: user ?? getRandomFromArray(savedUsers),
@@ -45,7 +51,7 @@ export const getTeamMember = (user?: User) => ({
 	successionStatus: getRandomFromArray(successionStatuses),
 	location: faker.address.city(),
 	hiredAt: getDateOrEmpty()?.toString(),
-	completion: getNumberOrEmpty(),
+	completion: getCompletion(),
 	lorem: faker.lorem.lines(3),
 	userAgent: faker.internet.userAgent(),
 	zipCode: faker.address.zipCode(),
@@ -68,7 +74,7 @@ export const getTeamMembers = (length = 200, prefix = ''): TeamMember[] =>
 		successionStatus: getRandomFromArray(successionStatuses),
 		location: faker.address.city(),
 		hiredAt: getDateOrEmpty(),
-		completion: getNumberOrEmpty(),
+		completion: getCompletion(),
 		lorem: faker.lorem.lines(3),
 		userAgent: faker.internet.userAgent(),
 		zipCode: faker.address.zipCode(),
@@ -85,7 +91,7 @@ export const getExpandingTeamMembers = (
 	length = 200,
 	prefix = '',
 	depthLimit = 1,
-	childrenLength: number = 3,
+	childrenLength: number = 3
 ): TeamMember[] => {
 	const members = getTeamMembers(length, prefix)
 	if (depthLimit > 0) {
@@ -94,7 +100,7 @@ export const getExpandingTeamMembers = (
 				childrenLength,
 				`${prefix}${i + 1}.`,
 				depthLimit - 1,
-				childrenLength,
+				childrenLength
 			)
 		}
 	}

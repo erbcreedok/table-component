@@ -197,7 +197,7 @@ export const DayPicker: FC<DayPickerProps> = ({
 								position: strategy,
 								left: x ?? '',
 								top: y ?? '',
-								zIndex: 2,
+								zIndex: 100,
 							},
 						})}
 					>

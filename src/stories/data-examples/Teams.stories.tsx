@@ -456,7 +456,7 @@ const TeamsTable: Story<TeamsTableConfigs> = (args) => {
 	const [innerData, setInnerData] = useState(
 		getExpandingTeamMembers(3, '', 3, 2)
 	)
-	const { handleAddRow, handleEditRow, updateRow } = useEditingProps([
+	const { handleAddRow, handleEditRow, handleEditTable, updateRow } = useEditingProps([
 		data,
 		setData,
 	])
@@ -521,6 +521,7 @@ const TeamsTable: Story<TeamsTableConfigs> = (args) => {
 				/>
 			</Sidebar>
 			<TableComponent
+				getRowId={(originalRow) => originalRow.id}
 				data={data}
 				multirowHeader={multirowHeader}
 				columns={getPropsHandledColumns(columns, args)}
@@ -532,6 +533,7 @@ const TeamsTable: Story<TeamsTableConfigs> = (args) => {
 					columnVisibility: defaultColumnVisibility,
 					...initialState,
 				}}
+				onEditingTableSave={handleEditTable}
 				onEditingRowSave={handleEditRow}
 				onNewRowSave={handleAddRow}
 				onEditingCellSave={({ cell, value, error, exitEditingMode }) => {
@@ -684,7 +686,7 @@ export const HierarchyWithCustomRowExample: Story = (args) => {
 		muiTableBodyRowDragHandleProps,
 		getRowDragValuesChangeMessage,
 	} = useHierarchyProps()
-	const { handleAddRow, handleEditRow, updateRow } = useEditingProps([
+	const { handleAddRow, handleEditRow } = useEditingProps([
 		data,
 		setData,
 	])
@@ -692,6 +694,7 @@ export const HierarchyWithCustomRowExample: Story = (args) => {
 	return (
 		<>
 			<TableComponent
+				getRowId={(originalRow) => originalRow.id}
 				columns={
 					(args.enableColumnVirtualization
 						? manyColumns
@@ -724,7 +727,7 @@ export const HierarchyWithConfigExample: Story = (args) => {
 		getRowDragValuesChangeMessage,
 	} = useHierarchyProps()
 	const [isHierarchyEnabled, setHierarchyEnabled] = useState(true)
-	const { handleAddRow, handleEditRow, updateRow } = useEditingProps([
+	const { handleAddRow, handleEditRow } = useEditingProps([
 		data,
 		setData,
 	])
@@ -735,6 +738,7 @@ export const HierarchyWithConfigExample: Story = (args) => {
 				Toggle hierarchy view
 			</Button>
 			<TableComponent
+				getRowId={(originalRow) => originalRow.id}
 				columns={
 					(args.enableColumnVirtualization
 						? manyColumns

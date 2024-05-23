@@ -14,17 +14,22 @@ import { lighten } from '@mui/material/styles'
 import type { VirtualItem, Virtualizer } from '@tanstack/react-virtual'
 import { useResizeDetector } from 'react-resize-detector'
 
-import { RowTooltip } from '../components/RowTooltip'
+import {
+	RowTooltip,
+	ColumnVirtualizerWrapper,
+	EditingRowActionButtons,
+	EmptyCell,
+	Colors,
+	Table_Cell,
+	Table_Row,
+	TableData,
+	TableInstance,
+} from '../'
 import { CreateNewRow } from '../buttons/CreateNewRow'
-import { ColumnVirtualizerWrapper } from '../components/ColumnVirtualizerWrapper'
-import { EditingRowActionButtons } from '../components/EditingRowActionButtons'
-import { EmptyCell } from '../components/EmptyCell'
 import { useComputedMeasureElement } from '../hooks/useComputedMeasureElement'
 import { getCellGroupBorders } from '../utils/getGroupBorders'
 import { getCellsFilteredByDisplay } from '../utils/getFilteredByDisplay'
-import type { Table_Cell, Table_Row, TableData, TableInstance } from '..'
 import { getColumnId } from '../column.utils'
-import { Colors } from '../components/styles'
 import { getIsMockRow } from '../utils/getIsMockRow'
 import { getSubRowIndex } from '../utils/getSubRowIndex'
 import { setHoveredRow } from '../utils/setHoveredRow'
@@ -310,6 +315,7 @@ export const TableBodyRow: FC<TableBodyRowProps> = (props) => {
 							onDragOver={
 								enableExpanding && isHoveredRow ? handleDragOver : noop
 							}
+							{...table.getEditableTableRowProps(row)}
 							ref={(node: HTMLTableRowElement) => {
 								if (node) {
 									ref(node)

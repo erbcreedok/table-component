@@ -3,7 +3,6 @@ import ArrowRightIcon from '@mui/icons-material/ArrowRight'
 import CancelIcon from '@mui/icons-material/Cancel'
 import ClearAllIcon from '@mui/icons-material/ClearAll'
 import DynamicFeedIcon from '@mui/icons-material/DynamicFeed'
-import EditIcon from '@mui/icons-material/Edit'
 import ExpandLessIcon from '@mui/icons-material/ExpandLess'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 import FilterListIcon from '@mui/icons-material/FilterList'
@@ -25,12 +24,14 @@ import { ArrowDownIcon } from './icons/ArrowDownIcon'
 import { AnalyticsIcon } from './icons/AnalyticsIcon'
 import { AscIcon } from './icons/AscIcon'
 import { CheckIcon } from './icons/CheckIcon'
+import { CheckCircleFilledIcon } from './icons/CheckCircleFilledIcon'
 import { CheckboxCheckedIcon } from './icons/CheckboxCheckedIcon'
 import { CheckboxIcon } from './icons/CheckboxIcon'
 import { CheckboxIndeterminateIcon } from './icons/CheckboxIndeterminateIcon'
 import { ChevronDownIcon } from './icons/ChevronDownIcon'
 import { ChevronNumberDownIcon } from './icons/ChevronNumberDownIcon'
 import { ClearIcon } from './icons/ClearIcon'
+import { CancelCircleIcon } from './icons/CancelCircleIcon'
 import { CloseIcon } from './icons/CloseIcon'
 import { CollapseFilledIcon } from './icons/CollapseFilledIcon'
 import { CollapseIcon } from './icons/CollapseIcon'
@@ -38,6 +39,7 @@ import { DescIcon } from './icons/DescIcon'
 import { DragIcon } from './icons/DragIcon'
 import { GroupIcon } from './icons/GroupIcon'
 import { GroupingIcon } from './icons/GroupingIcon'
+import { EditIcon } from './icons/EditIcon'
 import { ExpandIcon } from './icons/ExpandIcon'
 import { ExpandFilledIcon } from './icons/ExpandFilledIcon'
 import { EyeIcon } from './icons/EyeIcon'
@@ -83,7 +85,9 @@ export interface Table_Icons {
 	AscIcon: any
 	DescIcon: any
 	CancelIcon: any
+	CancelCircleIcon: any
 	CheckIcon: any
+	CheckCircleFilledIcon: any
 	CheckboxIcon: any
 	CheckboxCheckedIcon: any
 	CheckboxIndeterminateIcon: any
@@ -160,7 +164,9 @@ export const Default_Icons: Table_Icons = {
 	AscIcon,
 	DescIcon,
 	CancelIcon,
+	CancelCircleIcon,
 	CheckIcon,
+	CheckCircleFilledIcon,
 	CheckboxIcon,
 	CheckboxCheckedIcon,
 	CheckboxIndeterminateIcon,

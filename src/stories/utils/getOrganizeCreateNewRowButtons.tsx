@@ -58,10 +58,10 @@ export const getOrganizeCreateNewRowButtons = (): Record<string, any> & {
 
 const getHint = (row, depth) => {
 	if (isUnitTreeItem(row.original)) return `As child of ${row.original.name}`
-	if (depth > row.depth) return `As child of ${row.getValue('teamMember')}`
-	if (depth === row.depth) return `As sibling of ${row.getValue('teamMember')}`
+	if (depth > row.depth) return `As child of ${row.getValue('teamMember').fullName}`
+	if (depth === row.depth) return `As sibling of ${row.getValue('teamMember').fullName}`
 	if (depth === row.depth - 1)
-		return `As parent of ${row.getValue('teamMember')}`
+		return `As parent of ${row.getValue('teamMember').fullName}`
 	return `Create row ${row.depth - depth} levels higher`
 }
 const handleCloneClick =

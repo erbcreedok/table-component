@@ -3,8 +3,7 @@ import { useFormContext } from 'react-hook-form'
 
 import { isNumeric, roundDecimalPlaces } from '../utils/numeric'
 import { useOnClickOutside } from '../hooks/useOnClickOutside'
-import { getCellFieldId } from '../stories/utils/getCellFieldId'
-import { NumericColumn, TableData } from '../TableComponent'
+import { getCellFieldId, NumericColumn, TableData } from '../'
 import { getValueOrFunctionHandler } from '../utils/getValueOrFunctionHandler'
 import { isEditInputDisabled } from '../utils/isEditingEnabled'
 
@@ -93,6 +92,7 @@ export const EditTextField = <TData extends TableData>({
 			if (inputRef) {
 				cellRef.current = inputRef
 				editInputRefs.current[column.id] = inputRef
+				editInputRefs.current[getCellFieldId(cell)] = inputRef
 				if (muiInputProps.inputRef) {
 					muiInputProps.inputRef = inputRef
 				}

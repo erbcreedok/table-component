@@ -30,6 +30,7 @@ export const Colors = {
 	Amber2: '#FFDD96',
 	Amber3: '#FCAA00',
 	Amber4: '#F67E00',
+	Yellow: '#FFF2D3',
 } as const
 
 export const IconsColor = {

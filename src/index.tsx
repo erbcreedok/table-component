@@ -12,7 +12,6 @@ import { Select } from './inputs/Select'
 import { createTheme } from './theme/createTheme'
 import TableComponent from './TableComponent'
 import type { Table_Icons } from './icons'
-import { CopyButton } from './buttons/CopyButton'
 import { FilterOptionMenu } from './menus/FilterOptionMenu'
 import {
 	FilterChipSelectField,
@@ -59,6 +58,7 @@ export * from './utilColumns'
 export * from './components'
 export * from './context'
 export * from './hooks'
+export * from './utils'
 export type {
 	Table_Icons,
 	TableBodyRowProps,
@@ -68,7 +68,6 @@ export type {
 
 export {
 	BottomToolbar,
-	CopyButton,
 	createTheme,
 	DateInput,
 	DayPicker,

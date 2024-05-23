@@ -1,1 +1,5 @@
 export * from './findRelativeParent'
+export * from './getCellFieldId'
+export * from './getDirtyFields'
+export * from './validate'
+export * from './validateAllFields'

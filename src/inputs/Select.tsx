@@ -55,7 +55,7 @@ const renderTags = <T extends Record<string, any> = SelectOption>(
 	getTagProps: AutocompleteRenderGetTagProps,
 	ownerState
 ) => (
-	<Flex gap="3px" flexWrap="wrap" width="100%">
+	<Flex gap="3px" flexWrap="wrap" flexGrow={1}>
 		{options.map((option, index) => {
 			const { key, ...props } = getTagProps({ index })
 
@@ -86,7 +86,7 @@ export const Select = <
 		},
 	} = useTableContext()
 
-	const getMultipltOptions = () => {
+	const getMultipleOptions = () => {
 		if (Array.isArray(value)) {
 			return options.filter((opt) => !value?.includes(opt.value))
 		}
@@ -104,7 +104,7 @@ export const Select = <
 			renderInput={(params) => <Input {...inputProps} {...params} />}
 			isOptionEqualToValue={isOptionEqualToValue}
 			renderTags={renderTags}
-			options={props.multiple ? getMultipltOptions() : options}
+			options={props.multiple ? getMultipleOptions() : options}
 			value={value as AutocompleteValue<T, Multiple, boolean, false>}
 			{...props}
 			disableCloseOnSelect={props.multiple}

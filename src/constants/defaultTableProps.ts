@@ -38,6 +38,8 @@ export const Default_Table_Props = {
 	enableToolbarInternalActions: true,
 	enableTopToolbar: true,
 	expandPaddingSize: DEFAULT_EXPAND_PADDING,
+	getRowId: (_, index, parentRow) =>
+		`${parentRow ? [parentRow.id, index].join('_') : index}`,
 	getPinnedColumnPosition: getDefaultPinnedColumnPosition,
 	groupBorder: '6px solid white',
 	innerTable: false,

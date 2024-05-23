@@ -1,9 +1,9 @@
-import { styled, IconButton, css } from '@mui/material'
+import { css, IconButton, styled } from '@mui/material'
 
 import { getColorAlpha } from '../utils/getColorAlpha'
 import { makeShouldForwardProp } from '../utils/makeShouldForwardProp'
 
-import { TextColor, Colors } from './styles'
+import { Colors, TextColor } from './styles'
 
 export const ToolbarIconButton = styled(
 	IconButton,

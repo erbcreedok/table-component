@@ -6,7 +6,6 @@ import {
 } from '@mui/material'
 import IconButton from '@mui/material/IconButton'
 import { TextFieldProps } from '@mui/material/TextField'
-import Box from '@mui/material/Box'
 import { PartialKeys } from '@tanstack/table-core'
 import {
 	ChangeEventHandler,
@@ -15,18 +14,22 @@ import {
 	useRef,
 } from 'react'
 
-import { TableColumnEditProps } from '../TableComponent'
-import { Tooltip } from '../components/Tooltip'
-import { NumberStepButtons } from '../components/NumberStepButtons'
-import { Colors, IconsColor, TextColor } from '../components/styles'
+import {
+	ErrorTooltipIconWithTable,
+	NumberStepButtons,
+	Colors,
+	IconsColor,
+	TextColor,
+} from '../'
 import { useTableContext } from '../context/useTableContext'
 import { useFocusEvents } from '../hooks/useFocusEvents'
-import { isGreaterThan } from '../stories/utils/isGreaterThan'
-import { isLessThan } from '../stories/utils/isLessThan'
-import { sumAnyTwoValues } from '../stories/utils/sumAnyTwoValues'
+import { isGreaterThan } from '../utils/isGreaterThan'
+import { isLessThan } from '../utils/isLessThan'
+import { sumAnyTwoValues } from '../utils/sumAnyTwoValues'
+import { TableColumnEditProps } from '../TableComponent'
 import { createNativeChangeEvent } from '../utils/createNativeChangeEvent'
-import { sanitizeNumeric } from '../utils/numeric'
 import { mergeSx } from '../utils/mergeSx'
+import { sanitizeNumeric } from '../utils/numeric'
 import {
 	handleStopPropagation,
 	useStopPropagation,
@@ -64,7 +67,7 @@ export const Input = ({
 	const {
 		table: {
 			options: {
-				icons: { CloseIcon, WarningOutlineIcon },
+				icons: { CloseIcon },
 			},
 		},
 	} = useTableContext()
@@ -145,18 +148,7 @@ export const Input = ({
 				...props.InputProps,
 				endAdornment: (
 					<>
-						{showError && (
-							<Tooltip
-								placement="top"
-								arrow
-								disabled={typeof error !== 'string'}
-								title={error}
-							>
-								<Box sx={{ display: 'flex', mr: '9px' }}>
-									<WarningOutlineIcon sx={{ color: Colors.Red, m: 'auto' }} />
-								</Box>
-							</Tooltip>
-						)}
+						{showError && <ErrorTooltipIconWithTable error={error} />}
 						{!!props.value && onClear && (
 							<IconButton
 								onClick={onClearStop}

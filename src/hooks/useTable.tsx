@@ -124,6 +124,7 @@ export const useTable = <TData extends TableData = TableData>(
 	const [editingRow, setEditingRow] = useState<Table_Row<TData> | null>(
 		initialState.editingRow ?? null
 	)
+	const [isEditingTable, setIsEditingTable] = useState<boolean>(false)
 	const [customColumnEditor, setCustomColumnEditor] = useState<
 		string | undefined
 	>()
@@ -342,6 +343,7 @@ export const useTable = <TData extends TableData = TableData>(
 		hoveredColumn,
 		hoveredRow,
 		openedDetailedPanels,
+		isEditingTable,
 		isFullScreen,
 		newRow,
 		showAlertBanner,
@@ -506,6 +508,7 @@ export const useTable = <TData extends TableData = TableData>(
 			setHoveredColumn: config.onHoveredColumnChange ?? setHoveredColumn,
 			setHoveredRow: config.onHoveredRowChange ?? setHoveredRow,
 			setOpenedDetailedPanels,
+			setIsEditingTable: config.onIsEditingTableChange ?? setIsEditingTable,
 			setIsFullScreen: config.onIsFullScreenChange ?? setIsFullScreen,
 			setNewRow: config.setNewRow ?? setNewRow,
 			setShowAlertBanner: config.onShowAlertBannerChange ?? setShowAlertBanner,

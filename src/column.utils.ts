@@ -356,7 +356,6 @@ export const Table_DefaultColumn = {
 
 export const Table_DefaultDisplayColumn: Partial<Table_ColumnDef> = {
 	columnDefType: 'display',
-	enableClickToCopy: false,
 	enableColumnActions: false,
 	enableColumnDragging: false,
 	enableColumnFilter: false,

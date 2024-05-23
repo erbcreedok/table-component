@@ -7,7 +7,7 @@ export const withNativeEvent =
 		args: Omit<NativeEventArgs, 'event'>,
 		table: TableInstance | TableInstance<TData>
 	) =>
-	(callback: (event: E) => void) =>
+	(callback?: (event: E) => void) =>
 	(event: E) => {
 		const {
 			options: { onNativeEvent },
@@ -17,5 +17,5 @@ export const withNativeEvent =
 			...args,
 			[typeof event === 'string' ? 'value' : 'event']: event,
 		})
-		callback(event)
+		callback?.(event)
 	}

@@ -2,8 +2,7 @@ import React, { useRef } from 'react'
 import { useFormContext } from 'react-hook-form'
 
 import { useOnClickOutside } from '../hooks/useOnClickOutside'
-import { getCellFieldId } from '../stories/utils/getCellFieldId'
-import { SimpleEvent, TableData } from '../TableComponent'
+import { getCellFieldId, SimpleEvent, TableData } from '../'
 import { getValueOrFunctionHandler } from '../utils/getValueOrFunctionHandler'
 import { isEditInputDisabled } from '../utils/isEditingEnabled'
 
@@ -79,6 +78,7 @@ export const EditDateField = <TData extends TableData>({
 				if (inputRef) {
 					cellRef.current = inputRef
 					editInputRefs.current[column.id] = inputRef
+					editInputRefs.current[getCellFieldId(cell)] = inputRef
 					if (muiDayPickerInputProps.inputRef) {
 						muiDayPickerInputProps.inputRef = inputRef
 					}

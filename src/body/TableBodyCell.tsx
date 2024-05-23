@@ -16,6 +16,7 @@ import React, {
 	useMemo,
 	useState,
 } from 'react'
+import { ControllerFieldState, useFormContext } from 'react-hook-form'
 
 import {
 	DEFAULT_EXPAND_PADDING,
@@ -23,10 +24,11 @@ import {
 	type Table_Cell,
 	type Table_Row,
 	type TableInstance,
+	Colors,
 } from '..'
-import { CopyButton } from '../buttons/CopyButton'
 import { getCommonCellStyles, Table_DefaultColumn } from '../column.utils'
-import { Colors } from '../components/styles'
+import { CellFormController } from '../components/CellFormController'
+import { ErrorTooltipIconWithTable } from '../components/ErrorTooltipIcon'
 import { EditCellField } from '../inputs/EditCellField'
 import { utilColumns } from '../utilColumns'
 import { getFunctionWithArgs } from '../utils/getFunctionWithArgs'
@@ -38,6 +40,7 @@ import { mergeSx } from '../utils/mergeSx'
 import { isEditingEnabled } from '../utils/isEditingEnabled'
 
 import { ExpandableColumnButton } from './ExpandableColumnButton'
+import { TableBodyCellEditValue } from './TableBodyCellEditValue'
 import { TableBodyCellValue } from './TableBodyCellValue'
 import { TableBodyCellUtility } from './TableBodyCellUtility'
 
@@ -47,6 +50,7 @@ interface Props {
 	measureElement?: (element: HTMLTableCellElement) => void
 	numRows: number
 	row: Table_Row<{}>
+	rowHovered?: boolean
 	rowIndex: number
 	rowNumber: number
 	rowRef: RefObject<HTMLTableRowElement>
@@ -56,9 +60,13 @@ interface Props {
 	isSummaryRowCell?: boolean
 	isGroupedCell?: boolean
 	groupBorders?: GroupBorders
+	fieldState?: ControllerFieldState
+	isEditable?: boolean
+	isEditing?: boolean
+	isEditingTable?: boolean
 }
 
-export const TableBodyCell = ({
+const TableBodyCellMain = ({
 	isGroupedCell,
 	cell,
 	enableHover,
@@ -72,7 +80,11 @@ export const TableBodyCell = ({
 	table,
 	virtualCell,
 	isSummaryRowCell,
+	isEditable,
+	isEditing,
+	isEditingTable,
 	groupBorders,
+	fieldState,
 }: Props) => {
 	const theme = useTheme()
 	const {
@@ -82,9 +94,7 @@ export const TableBodyCell = ({
 			detailedRowBackgroundColor,
 			detailPanelBorderColor,
 			editingMode,
-			enableClickToCopy,
 			enableColumnOrdering,
-			enableEditing,
 			enableGrouping,
 			enableRowNumbers,
 			enableRowDragging,
@@ -106,14 +116,7 @@ export const TableBodyCell = ({
 		setEditingCell,
 		setHoveredColumn,
 	} = table
-	const {
-		draggingColumn,
-		editingCell,
-		editingRow,
-		hoveredColumn,
-		isLoading,
-		showSkeletons,
-	} = getState()
+	const { draggingColumn, hoveredColumn, isLoading, showSkeletons } = getState()
 	const { column } = cell
 	const { columnDef } = column
 	const { columnDefType, cellAction, cellActionIcon } = columnDef
@@ -188,22 +191,6 @@ export const TableBodyCell = ({
 				: undefined,
 		[draggingBorder, numRows]
 	)
-
-	const isNewRow = table.getIsNewRow(row)
-
-	const isEditable =
-		columnDef.enableEditing !== undefined
-			? isEditingEnabled(columnDef.enableEditing, { table, row })
-			: isEditingEnabled(enableEditing, { table, row })
-
-	const isEditing =
-		isNewRow ||
-		(!isGroupedCell &&
-			// if editingCell state is provided, it should be higher priority, than any config
-			(editingCell?.id === cell.id ||
-				(isEditable &&
-					editingMode !== 'modal' &&
-					(editingMode === 'table' || editingRow?.id === row.id))))
 
 	const handleDoubleClick = (event: MouseEvent<HTMLTableCellElement>) => {
 		tableCellProps?.onDoubleClick?.(event)
@@ -366,9 +353,7 @@ export const TableBodyCell = ({
 				  }
 				: {}),
 			backgroundColor:
-				enableHover &&
-				isEditable &&
-				['table', 'cell'].includes(editingMode ?? '')
+				enableHover && isEditable && editingMode === 'cell'
 					? theme.palette.mode === 'dark'
 						? `${lighten(theme.palette.background.default, 0.2)} !important`
 						: `${getColorAlpha(Colors.Gray90, 0.05)} !important`
@@ -401,6 +386,7 @@ export const TableBodyCell = ({
 			theme,
 			tableCellProps,
 		}),
+		...(fieldState?.isDirty ? { backgroundColor: Colors.Yellow } : {}),
 		...draggingBorders,
 		...(isCurrentRowDetailOpened
 			? {
@@ -539,11 +525,8 @@ export const TableBodyCell = ({
 					/>
 				) : isEditing && !isMockCell ? (
 					<EditCellField cell={cell} table={table} />
-				) : (enableClickToCopy || columnDef.enableClickToCopy) &&
-				  columnDef.enableClickToCopy !== false ? (
-					<CopyButton cell={cell} table={table}>
-						<TableBodyCellValue cell={cell} table={table} row={row} />
-					</CopyButton>
+				) : isEditingTable ? (
+					<TableBodyCellEditValue cell={cell} table={table} />
 				) : (
 					<TableBodyCellValue cell={cell} table={table} row={row} />
 				)}
@@ -551,9 +534,75 @@ export const TableBodyCell = ({
 				{isExpandableColumn && isExpandButtonRTL && (
 					<ExpandableColumnButton row={row} table={table} position="right" />
 				)}
+				{fieldState?.error && !isEditing && (
+					<Box sx={{ ml: 'auto', mr: '-8px' }}>
+						<ErrorTooltipIconWithTable error={fieldState.error.message} />
+					</Box>
+				)}
 			</Box>
 		</MuiTableCell>
 	)
+}
+
+const TableBodyCellEditable = (props: Props) => {
+	const { table, row, cell, isGroupedCell } = props
+	const {
+		options: { editingMode },
+	} = table
+	const { isEditingTable, editingCell, editingRow } = table.getState()
+	const { getValues } = useFormContext()
+
+	const isNewRow = table.getIsNewRow(row)
+
+	const isEditing =
+		isNewRow ||
+		(!isGroupedCell &&
+			// if editingCell state is provided, it should be higher priority, than any config
+			(editingCell?.id === cell.id ||
+				(editingMode !== 'modal' && editingRow?.id === row.id)))
+
+	if ((!isEditing && !isEditingTable) || getValues(row.id) === undefined) {
+		return <TableBodyCellMain {...props} />
+	}
+
+	return (
+		<CellFormController
+			cell={props.cell}
+			table={props.table}
+			render={({ fieldState }) => (
+				<TableBodyCellMain
+					{...props}
+					fieldState={fieldState}
+					isEditing={isEditing}
+					isEditingTable={isEditingTable}
+				/>
+			)}
+		/>
+	)
+}
+
+export const TableBodyCell = (props: Props) => {
+	const { cell, table, row } = props
+	const { column } = cell
+	const { columnDef } = column
+	const { enableEditing: cEnableEditing } = columnDef
+	const {
+		options: { enableEditing },
+	} = table
+
+	const isEditable = useMemo(
+		() =>
+			cEnableEditing !== undefined
+				? isEditingEnabled(cEnableEditing, { table, row })
+				: isEditingEnabled(enableEditing, { table, row }),
+		[table, row, cEnableEditing, enableEditing]
+	)
+
+	if (isEditable) {
+		return <TableBodyCellEditable {...props} isEditable />
+	}
+
+	return <TableBodyCellMain {...props} />
 }
 
 export const Memo_TableBodyCell = memo(

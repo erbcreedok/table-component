@@ -10,6 +10,7 @@ import type { TableData, TableInstance } from '../index'
 import { DEFAULT_FONT_FAMILY, TextColor } from '../components/styles'
 
 import { ColumnsButton } from './components/buttons/ColumnsButton'
+import { EditButton } from './components/buttons/EditButton'
 import { FiltersButton } from './components/buttons/FiltersButton'
 import { GroupingButton } from './components/buttons/GroupingButton'
 import { PresetButton } from './components/buttons/PresetButton'
@@ -106,6 +107,7 @@ export const TableToolbar = <TData extends TableData = {}>(
 			enableGrouping: uEnableGrouping,
 			enableSorting: uEnableSorting,
 			enableFilters: uEnableFilters,
+			editingMode,
 		},
 	} = table
 	const { innerRef, outerRef, computedEnableCaptions } =
@@ -181,6 +183,10 @@ export const TableToolbar = <TData extends TableData = {}>(
 			)}
 			{enablePreset && (
 				<PresetButton enableCaption={computedEnableCaptions} table={table} />
+			)}
+			{editingMode === 'table' && dividerElement}
+			{editingMode === 'table' && (
+				<EditButton table={table} enableCaption={computedEnableCaptions} />
 			)}
 			{cEndAdornment && dividerElement}
 			{cEndAdornment}

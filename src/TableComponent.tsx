@@ -70,6 +70,8 @@ import {
 	TableInstanceWithCreateNewRow,
 	TableInstanceWithTableHierarchy,
 	TablePropsWithCreateNewRow,
+	TableInstanceWithForm,
+	TablePropsWithForm,
 } from './hooks'
 import { Table_Icons } from './icons'
 import { DayPickerInputProps } from './inputs/DayPickerInput'
@@ -99,7 +101,9 @@ import type { OnGroupCollapsedToggleAllProps } from './utils/onGroupCollapseTogg
  * Most of this file is just TypeScript types
  */
 
-type LiteralUnion<T extends U, U = string> = T | (U & Record<never, never>)
+export type LiteralUnion<T extends U, U = string> =
+	| T
+	| (U & Record<never, never>)
 
 export type TableData = Record<string, any>
 
@@ -162,7 +166,8 @@ export type TableInstance<TData extends TableData = TableData> = Omit<
 	| 'options'
 > &
 	TableInstanceWithCreateNewRow<TData> &
-	TableInstanceWithTableHierarchy<TData> & {
+	TableInstanceWithTableHierarchy<TData> &
+	TableInstanceWithForm<TData> & {
 		constants: {
 			expandableColumn: Table_Column<TData> | null
 		}
@@ -228,6 +233,7 @@ export type TableInstance<TData extends TableData = TableData> = Omit<
 		setOpenedDetailedPanels: Dispatch<
 			SetStateAction<Record<string, OpenedDetailPanel<TData>>>
 		>
+		setIsEditingTable: Dispatch<SetStateAction<boolean>>
 		setIsFullScreen: Dispatch<SetStateAction<boolean>>
 		setShowAlertBanner: Dispatch<SetStateAction<boolean>>
 		setShowFilters: Dispatch<SetStateAction<boolean>>
@@ -255,11 +261,11 @@ export type Table_TableState<TData extends TableData = TableData> =
 		editingRow: Table_Row<TData> | null
 		/** Show editor for custom column accessorKey */
 		customColumnEditor: string | undefined
-		isEditingRowError: boolean
 		globalFilterFn: Table_FilterOption
 		hoveredColumn: Table_Column<TData> | { id: string } | null
 		openedDetailedPanels: Record<string, OpenedDetailPanel<TData>> | null
 		hoveredRow: HoveredRowState<TData>
+		isEditingTable: boolean
 		isFullScreen: boolean
 		isLoading: boolean
 		newRow: NewRowState<TData>
@@ -610,6 +616,7 @@ export type Table_ColumnDef<TData extends TableData = TableData> = Omit<
 			isCurrentCellClicked?: boolean
 			isCurrentRowDetailOpened?: boolean
 			isEditing?: boolean
+			isEditValueChanged?: boolean
 			row: Table_Row<TData>
 			table: TableInstance<TData>
 		}) => TableCellProps['sx']
@@ -638,7 +645,6 @@ export type Table_ColumnDef<TData extends TableData = TableData> = Omit<
 		formatCellValue?: (value: unknown) => string
 		emptyHeader?: boolean
 		errorText?: string
-		enableClickToCopy?: boolean
 		enableColumnActions?: boolean
 		enableColumnDragging?: boolean
 		enableColumnFilterModes?: boolean
@@ -1128,7 +1134,8 @@ export type TableComponentProps<TData extends TableData = TableData> = Omit<
 	| 'state'
 > &
 	TablePropsWithCreateNewRow<TData> &
-	TableSortingConfigs<TData> & {
+	TableSortingConfigs<TData> &
+	TablePropsWithForm<TData> & {
 		columnFilterModeOptions?: Array<
 			LiteralUnion<string & Table_FilterOption>
 		> | null
@@ -1189,7 +1196,6 @@ export type TableComponentProps<TData extends TableData = TableData> = Omit<
 		enableBulkActionsCaptions?: boolean | 'auto'
 		enableBulkActionsSelect?: boolean
 		enableBottomToolbar?: boolean
-		enableClickToCopy?: boolean
 		enableColumnActions?: boolean
 		enableColumnDragging?: boolean
 		enableColumnFilterModes?: boolean
@@ -1226,6 +1232,7 @@ export type TableComponentProps<TData extends TableData = TableData> = Omit<
 					isCurrentCellClicked?: boolean
 					isCurrentRowDetailOpened?: boolean
 					isEditing?: boolean
+					isEditValueChanged?: boolean
 				}) => object | undefined
 			}
 		>
@@ -1267,7 +1274,7 @@ export type TableComponentProps<TData extends TableData = TableData> = Omit<
 		getRowId?: (
 			originalRow: TData,
 			index: number,
-			parentRow: Table_Row<TData>
+			parentRow?: Table_Row<TData> | undefined
 		) => string
 		/**
 		 * @deprecated Use `hierarchyTreeConfig.isHierarchyRow` instead
@@ -1434,37 +1441,6 @@ export type TableComponentProps<TData extends TableData = TableData> = Omit<
 		onDraggingColumnChange?: OnChangeFn<Table_Column<TData> | null>
 		onDraggingRowsChange?: OnChangeFn<Table_Row<TData>[]>
 		onEditingCellChange?: OnChangeFn<Table_Cell<TData> | null>
-		onEditingCellSave?: ({
-			exitEditingMode,
-			cell,
-			table,
-			value,
-			error,
-		}: {
-			exitEditingMode: () => void
-			cell: Table_Cell<TData>
-			table: TableInstance<TData>
-			value: any
-			error: string | null
-		}) => Promise<void> | void
-		onEditingRowCancel?: ({
-			row,
-			table,
-		}: {
-			row: Table_Row<TData>
-			table: TableInstance<TData>
-		}) => void
-		onEditingRowSave?: ({
-			exitEditingMode,
-			row,
-			table,
-			values,
-		}: {
-			exitEditingMode: () => void
-			row: Table_Row<TData>
-			table: TableInstance<TData>
-			values: Record<LiteralUnion<string & DeepKeys<TData>>, any> | {}
-		}) => Promise<void> | void
 		onEditingRowChange?: OnChangeFn<Table_Row<TData> | null>
 		onColumnFilterFnsChange?: OnChangeFn<{ [key: string]: Table_FilterOption }>
 		onGlobalFilterFnChange?: OnChangeFn<Table_FilterOption>
@@ -1475,6 +1451,7 @@ export type TableComponentProps<TData extends TableData = TableData> = Omit<
 		onGroupCollapsedToggleAll?: (
 			props: OnGroupCollapsedToggleAllProps<TData>
 		) => void
+		onIsEditingTableChange?: OnChangeFn<boolean>
 		onIsFullScreenChange?: OnChangeFn<boolean>
 		onShowAlertBannerChange?: OnChangeFn<boolean>
 		onShowFiltersChange?: OnChangeFn<boolean>

@@ -8,6 +8,7 @@ import { AnalyticsIcon } from '../../icons/AnalyticsIcon'
 import {
 	CellBase,
 	Flex,
+	getCellFieldId,
 	GroupedCellBase,
 	HeaderBase,
 	HeaderSearch,
@@ -31,7 +32,6 @@ import { Colors, performanceValues } from './constants'
 import { convertDate } from './convertDate'
 import { createGetColors } from './createGetColors'
 import { anyOfDateRange } from './customFilterFns'
-import { getCellFieldId } from './getCellFieldId'
 import { isTeamMember } from './getTeamMembers'
 import { getTeamsBorderColorSet } from './getTeamsBorderColorSet'
 import { getTeamsCellBackgroundSet } from './getTeamsCellBackgroundSet'
@@ -128,7 +128,7 @@ export const getTeamMembersColumns = () => {
 				if (column.getIsGrouped()) {
 					return row.getGroupingValue(column.id) ?? 'N/A'
 				}
-				const user = row.original.member
+				const user = cell.getValue<User | undefined>()
 				if (!user) return <div>No user</div>
 				return (
 					<Flex center="y" gap="0.75rem" sx={{ flexGrow: 1, maxWidth: '100%' }}>
@@ -239,6 +239,7 @@ export const getTeamMembersColumns = () => {
 								onInputChange={handleInputChange}
 								options={options}
 								{...field}
+								value={field.value ?? null}
 								onChange={(e, value) => {
 									field.onChange(value)
 								}}
