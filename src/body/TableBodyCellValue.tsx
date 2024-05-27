@@ -1,16 +1,20 @@
-import React, { FC } from 'react'
+import { getGroupingValue } from '../utils/getNestedProp'
+import { Table_Cell, Table_Row, TableData, TableInstance } from '..'
 
-import { Table_Cell, Table_Row, TableInstance } from '..'
-
-interface Props {
-	cell: Table_Cell
-	table: TableInstance
-	row: Table_Row
+interface Props<TData extends TableData = TableData> {
+	cell: Table_Cell<TData>
+	table: TableInstance<TData>
+	row: Table_Row<TData>
 }
 
-export const TableBodyCellValue: FC<Props> = ({ cell, table, row }) => {
+export const TableBodyCellValue = <TData extends TableData = TableData>({
+	cell,
+	table,
+	row,
+}: Props<TData>) => {
 	const { column } = cell
 	const { columnDef } = column
+	const { groupingKey } = columnDef
 
 	return (
 		<>
@@ -36,9 +40,12 @@ export const TableBodyCellValue: FC<Props> = ({ cell, table, row }) => {
 								column,
 								row,
 								table,
-								children: row.groupRows[
-									row.groupIds[column.id]
-								].getValue<string>(column.id),
+								children: ((row) =>
+									groupingKey
+										? getGroupingValue(row, groupingKey, table)
+										: row.getValue(column.id))(
+									row.groupRows[row.groupIds[column.id]]
+								),
 							}) ?? cell.renderValue(),
 				  })
 				: columnDef?.Cell?.({ cell, column, row, table }) ?? cell.renderValue()}

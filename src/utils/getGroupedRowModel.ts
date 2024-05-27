@@ -7,9 +7,12 @@ import {
 	Table_Row,
 	TableData,
 	TableInstance,
+	Table_ColumnDef,
+	GroupingKey,
 } from '../TableComponent'
 
 import { flattenRows } from './flattenRows'
+import { getGroupingValue } from './getNestedProp'
 
 declare module '@tanstack/table-core' {
 	interface Row<TData extends RowData = RowData> {
@@ -41,11 +44,18 @@ function createMockRow<TData extends RowData>(
 	return _row
 }
 
-function groupBy<TData extends RowData>(rows: Row<TData>[], columnId: string) {
+function groupBy<TData extends RowData>(
+	rows: Row<TData>[],
+	columnId: string,
+	table: TableInstance,
+	groupingKey?: GroupingKey
+) {
 	const groupMap = new Map<any, Row<TData>[]>()
 
 	return rows.reduce((map, row) => {
-		const resKey = row.getValue(columnId)
+		const resKey = groupingKey
+			? getGroupingValue(row, groupingKey, table)
+			: row.getValue(columnId)
 		const previous = map.get(resKey)
 		if (!previous) {
 			map.set(resKey, [row])
@@ -147,7 +157,14 @@ export function getGroupedRowModel<
 							getCanExpand: () => false,
 						}
 					})
-					const rowGroupsMap = groupBy(flattenGroupableRows, columnId)
+					const { groupingKey } = table.getColumn(columnId)
+						.columnDef as Table_ColumnDef
+					const rowGroupsMap = groupBy(
+						flattenGroupableRows,
+						columnId,
+						table as any as TableInstance,
+						groupingKey
+					)
 
 					// Perform aggregations for each group
 					const aggregatedGroupedRows = Array.from(rowGroupsMap.entries()).map(

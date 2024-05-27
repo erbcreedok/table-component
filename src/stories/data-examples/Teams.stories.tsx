@@ -32,7 +32,8 @@ import {
 	Colors,
 	muiColumnsMenuProps,
 	muiFiltersMenuProps,
-	muiGroupingMenuProps, muiSidebarProps,
+	muiGroupingMenuProps,
+	muiSidebarProps,
 	muiSortingMenuProps,
 	muiTableHeadCellFilterLabelProps,
 } from '../utils/constants'
@@ -65,10 +66,18 @@ import { UnitRow } from './components/UnitRow'
 const columns = getTeamMembersColumns()
 
 const columnsWithCustomAccessors: Table_ColumnDef<TeamMember>[] = [...columns]
+// team member
 columnsWithCustomAccessors[0] = {
 	...columnsWithCustomAccessors[0],
 	sortingKey: 'member.role',
 	filteringKey: 'member.role',
+	groupingKey: 'impact',
+	enableGrouping: true,
+}
+// impact
+columnsWithCustomAccessors[1] = {
+	...columnsWithCustomAccessors[1],
+	groupingKey: 'successionStatus',
 }
 
 const manyColumns: Table_ColumnDef<TeamMember>[] = [
@@ -608,6 +617,7 @@ export const TeamsWithCustomAccessors: Story<TeamsTableExample> = (args) => {
 	return (
 		<TeamsTable
 			columns={columnsWithCustomAccessors}
+			enableGrouping
 			{...args}
 			data={data}
 			setData={setData}

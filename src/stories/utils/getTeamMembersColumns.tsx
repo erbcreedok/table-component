@@ -2,20 +2,21 @@ import { Avatar, CircularProgress, TextField } from '@mui/material'
 import Box from '@mui/material/Box'
 import { TableCellProps } from '@mui/material/TableCell'
 import Typography from '@mui/material/Typography'
-import { isWeekend } from 'date-fns'
+import { addDays, isAfter } from 'date-fns'
 import React, { useCallback, useEffect, useState } from 'react'
+import { AnalyticsIcon } from '../../icons/AnalyticsIcon'
 import {
+	CellBase,
+	Flex,
+	GroupedCellBase,
 	HeaderBase,
 	HeaderSearch,
 	HeaderSearchOptionProps,
-	Flex,
 	Input,
+	ReactHookForm,
 	RowActionMenuButton,
 	Select,
 	TextEllipsis,
-	GroupedCellBase,
-	CellBase,
-	ReactHookForm,
 } from '../../index'
 import {
 	Table_Cell,
@@ -24,8 +25,7 @@ import {
 	Table_Row,
 	TableInstance,
 } from '../../TableComponent'
-import { AnalyticsIcon } from '../../icons/AnalyticsIcon'
-import { getNestedProp } from '../../utils/getNestedProp'
+import { getGroupingValue, getNestedProp } from '../../utils/getNestedProp'
 import { TeamMember, User } from '../types/TeamMember'
 import { Colors, performanceValues } from './constants'
 import { convertDate } from './convertDate'
@@ -115,15 +115,27 @@ export const getTeamMembersColumns = () => {
 	return [
 		{
 			header: 'Team member',
-			accessorFn: teamMemberAccessorFn('member.fullName'),
-			displayDataKey: 'member.fullName',
+			accessorFn: teamMemberAccessorFn('member'),
+			displayDataKey: 'member',
+			sortingKey: 'member.fullName',
+			filteringKey: 'member.fullName',
 			id: 'teamMember',
 			dataType: 'textual',
 			filterVariant: 'text',
 			filterFn: 'contains',
 			required: true,
-			Cell: ({ row, table }) => {
+			Cell: ({ row, column, cell, table }) => {
+				if (column.getIsGrouped()) {
+					const { columnDef } = column
+					const { groupingKey } = columnDef
+					return (
+						(groupingKey
+							? getGroupingValue(row, groupingKey, table)
+							: cell.getValue()) ?? 'N/A'
+					)
+				}
 				const user = row.original.member
+				if (!user) return <div>No user</div>
 				return (
 					<Flex center="y" gap="0.75rem" sx={{ flexGrow: 1, maxWidth: '100%' }}>
 						<Avatar
@@ -326,17 +338,6 @@ export const getTeamMembersColumns = () => {
 				...performanceValues,
 				{ label: 'N/A', value: undefined },
 			],
-			validator: ({ value, table, row }) => {
-				const { editingRow } = table.getState()
-				const successorValue =
-					editingRow?._valuesCache['successionStatus'] ??
-					row.getValue('successionStatus')
-				if (value === 'Often exceeds' && successorValue === 'No successors') {
-					return "Cannot be 'Often exceeds' if Succession status is 'No successors'"
-				}
-
-				return true
-			},
 			GroupedCell: ColoredGroupedCell,
 			headerEndAdornment: <AnalyticsIcon />,
 			muiTableBodyCellProps: coloredCellProps,
@@ -366,6 +367,7 @@ export const getTeamMembersColumns = () => {
 			editVariant: 'text',
 			sortUndefined: -1,
 			validator: ({ value }) => {
+				if (!value) return true
 				const validationResult = /^(?:Leaver|High|Medium|Low)*$/i.test(value)
 
 				if (validationResult === false) {
@@ -429,8 +431,9 @@ export const getTeamMembersColumns = () => {
 			filterFn: anyOfDateRange,
 			editVariant: 'date',
 			validator: ({ value }) => {
-				if (isWeekend(new Date(value))) {
-					return 'Weekend is not allowed'
+				if (!value) return true
+				if (isAfter(new Date(value), addDays(new Date(), 1))) {
+					return 'Date should be before today'
 				}
 
 				return true
@@ -450,6 +453,7 @@ export const getTeamMembersColumns = () => {
 			sortingType: 'numeric',
 			enableColumnActions: false,
 			validator: ({ value }) => {
+				if (!value) return true
 				if (Number(value) % 5 !== 0) {
 					return 'Only multiples of 5 are allowed'
 				}

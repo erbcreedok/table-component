@@ -32,6 +32,7 @@ import type {
 	HeaderGroup,
 	OnChangeFn,
 	Row,
+	RowData,
 	SortingFn,
 	Table,
 	TableOptions,
@@ -445,6 +446,13 @@ export type ColumnSortingConfigs<TData extends TableData = TableData> =
 		sortingKey?: string
 	}
 
+export type GroupingKey =
+	| string
+	| (<RData extends RowData, TData extends TableData>(
+			row: Row<RData> | Table_Row<TData>,
+			table: TableInstance<TData>
+	  ) => any)
+
 export type Table_ColumnDef<TData extends TableData = TableData> = Omit<
 	ColumnDef<TData, unknown>,
 	| 'accessorKey'
@@ -641,6 +649,11 @@ export type Table_ColumnDef<TData extends TableData = TableData> = Omit<
 		 * The key can contain paths, ex: "onbect.prop1.anotherProp" */
 		filteringKey?: string
 		filterSelectOptions?: (string | SelectOption)[]
+		/** This key has a higher precedence over accessor(Key/Fn) in grouping.
+		 * The key can contain:
+		 * - paths, ex: "onbect.prop1.anotherProp"
+		 * - function to extract the value used for grouping */
+		groupingKey?: GroupingKey
 		/**
 		 * footer must be a string. If you want custom JSX to render the footer, you can also specify a `Footer` option. (Capital F)
 		 */

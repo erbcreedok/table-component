@@ -19,6 +19,7 @@ export const getUser = (prefix = '') => ({
 	fullName: `${prefix}. ${faker.name.fullName()}`,
 	avatarUrl: faker.image.avatar(),
 	role: faker.name.jobTitle(),
+	// stage: faker.random.numeric(),
 })
 export const getUsers = (length = 200, prefix = '') =>
 	[...Array(length)].map((_, index) => getUser(`${prefix}${index + 1}`))
