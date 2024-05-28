@@ -1,15 +1,9 @@
 /* eslint-disable default-param-last */
-import {
-	createRow,
-	Table,
-	Row,
-	RowModel,
-	RowData,
-	memo,
-} from '@tanstack/table-core'
+import { Table, Row, RowModel, RowData, memo } from '@tanstack/table-core'
 
 import { TableInstance } from '../TableComponent'
 
+import { createRow } from './createRow'
 import { flattenRows } from './flattenRows'
 
 export function getCoreRowModel<TData extends RowData>(options?: {

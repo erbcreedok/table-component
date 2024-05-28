@@ -1,4 +1,3 @@
-import { getGroupingValue } from '../utils/getNestedProp'
 import { Table_Cell, Table_Row, TableData, TableInstance } from '..'
 
 interface Props<TData extends TableData = TableData> {
@@ -14,7 +13,6 @@ export const TableBodyCellValue = <TData extends TableData = TableData>({
 }: Props<TData>) => {
 	const { column } = cell
 	const { columnDef } = column
-	const { groupingKey } = columnDef
 
 	return (
 		<>
@@ -40,10 +38,7 @@ export const TableBodyCellValue = <TData extends TableData = TableData>({
 								column,
 								row,
 								table,
-								children: ((row) =>
-									groupingKey
-										? getGroupingValue(row, groupingKey, table)
-										: row.getValue(column.id))(
+								children: ((row) => row.getGroupingValue(column.id))(
 									row.groupRows[row.groupIds[column.id]]
 								),
 							}) ?? cell.renderValue(),

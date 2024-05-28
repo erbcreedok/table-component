@@ -1,4 +1,6 @@
-import { createRow, Row, RowModel, Table, RowData } from '@tanstack/table-core'
+import { Row, RowModel, Table, RowData } from '@tanstack/table-core'
+
+import { createRow } from './createRow'
 
 export function filterRows<TData extends RowData>(
 	rows: Row<TData>[],

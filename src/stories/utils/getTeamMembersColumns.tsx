@@ -25,7 +25,7 @@ import {
 	Table_Row,
 	TableInstance,
 } from '../../TableComponent'
-import { getGroupingValue, getNestedProp } from '../../utils/getNestedProp'
+import { getNestedProp } from '../../utils/getNestedProp'
 import { TeamMember, User } from '../types/TeamMember'
 import { Colors, performanceValues } from './constants'
 import { convertDate } from './convertDate'
@@ -126,13 +126,7 @@ export const getTeamMembersColumns = () => {
 			required: true,
 			Cell: ({ row, column, cell, table }) => {
 				if (column.getIsGrouped()) {
-					const { columnDef } = column
-					const { groupingKey } = columnDef
-					return (
-						(groupingKey
-							? getGroupingValue(row, groupingKey, table)
-							: cell.getValue()) ?? 'N/A'
-					)
+					return row.getGroupingValue(column.id) ?? 'N/A'
 				}
 				const user = row.original.member
 				if (!user) return <div>No user</div>

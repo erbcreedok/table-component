@@ -1,21 +1,14 @@
 import { Row, RowData } from '@tanstack/table-core'
 
-import {
-	GroupingKey,
-	TableData,
-	TableInstance,
-	Table_Row,
-} from '../TableComponent'
-
-export const getNestedProp = (object, keys) => {
+export const getNestedProp = <T = any>(object, keys) => {
 	const localKeys = Array.isArray(keys) ? keys : keys.split('.')
 	const localObject = object[localKeys[0]]
 
 	if (localObject && localKeys.length > 1) {
-		return getNestedProp(localObject, localKeys.slice(1))
+		return getNestedProp(localObject, localKeys.slice(1)) as T
 	}
 
-	return localObject ?? undefined
+	return (localObject ?? undefined) as T
 }
 
 const getNestedValueDescriptor: PropertyDescriptorMap = {
@@ -39,15 +32,3 @@ const getNestedValueDescriptor: PropertyDescriptorMap = {
 export const getNestedValueRow = <TData extends RowData>(row: Row<TData>) => {
 	return Object.create(row, getNestedValueDescriptor) as Row<TData>
 }
-
-export const getGroupingValue = <
-	RData extends RowData,
-	TData extends TableData
->(
-	row: Row<RData> | Table_Row<TData>,
-	groupingKey: GroupingKey,
-	table: TableInstance<TData>
-) =>
-	typeof groupingKey === 'function'
-		? groupingKey(row, table)
-		: getNestedProp(row.original, groupingKey)

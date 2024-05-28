@@ -1,24 +1,23 @@
 /* eslint-disable consistent-return,no-prototype-builtins,default-param-last */
 import { Row, Table } from '@tanstack/react-table'
-import { createRow, memo, RowData, RowModel } from '@tanstack/table-core'
+import { memo, RowData, RowModel } from '@tanstack/table-core'
 
 import {
 	GroupCollapsed,
 	Table_Row,
 	TableData,
 	TableInstance,
-	Table_ColumnDef,
-	GroupingKey,
 } from '../TableComponent'
 
+import { createRow } from './createRow'
 import { flattenRows } from './flattenRows'
-import { getGroupingValue } from './getNestedProp'
 
 declare module '@tanstack/table-core' {
 	interface Row<TData extends RowData = RowData> {
 		groupIds: Record<string, string>
 		groupRows: Record<string, Row<TData>>
 		getParent: () => Row<TData> | undefined
+		getGroupingValue: <T = any>(columnId: string) => T
 		isMock?: boolean
 	}
 }
@@ -44,18 +43,11 @@ function createMockRow<TData extends RowData>(
 	return _row
 }
 
-function groupBy<TData extends RowData>(
-	rows: Row<TData>[],
-	columnId: string,
-	table: TableInstance,
-	groupingKey?: GroupingKey
-) {
+function groupBy<TData extends RowData>(rows: Row<TData>[], columnId: string) {
 	const groupMap = new Map<any, Row<TData>[]>()
 
 	return rows.reduce((map, row) => {
-		const resKey = groupingKey
-			? getGroupingValue(row, groupingKey, table)
-			: row.getValue(columnId)
+		const resKey = row.getGroupingValue(columnId)
 		const previous = map.get(resKey)
 		if (!previous) {
 			map.set(resKey, [row])
@@ -157,14 +149,8 @@ export function getGroupedRowModel<
 							getCanExpand: () => false,
 						}
 					})
-					const { groupingKey } = table.getColumn(columnId)
-						.columnDef as Table_ColumnDef
-					const rowGroupsMap = groupBy(
-						flattenGroupableRows,
-						columnId,
-						table as any as TableInstance,
-						groupingKey
-					)
+
+					const rowGroupsMap = groupBy(flattenGroupableRows, columnId)
 
 					// Perform aggregations for each group
 					const aggregatedGroupedRows = Array.from(rowGroupsMap.entries()).map(

@@ -1,9 +1,10 @@
 import { Table } from '@tanstack/react-table'
-import { createRow } from '@tanstack/table-core'
 
 import { NewRowPlaceholderId } from '../constants'
 import { NewRowState } from '../hooks'
 import { Table_Row, TableData, TableInstance } from '../TableComponent'
+
+import { createRow } from './createRow'
 
 const findParent = <TData extends TableData = TableData>(
 	row: Table_Row<TData>,

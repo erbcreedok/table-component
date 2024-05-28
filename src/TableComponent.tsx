@@ -32,7 +32,6 @@ import type {
 	HeaderGroup,
 	OnChangeFn,
 	Row,
-	RowData,
 	SortingFn,
 	Table,
 	TableOptions,
@@ -124,7 +123,7 @@ export type DraggingMessage = {
 	type?: string | 'danger' | 'warning'
 }
 
-export interface Table_RowModel<TData extends Record<string, any> = {}> {
+export type Table_RowModel<TData extends Record<string, any> = {}> = {
 	flatRows: Table_Row<TData>[]
 	rows: Table_Row<TData>[]
 	rowsById: { [key: string]: Table_Row<TData> }
@@ -143,6 +142,7 @@ export type TableInstance<TData extends TableData = TableData> = Omit<
 	| 'getCenterLeafColumns'
 	| 'getCenterVisibleLeafColumns'
 	| 'getColumn'
+	| 'getCoreRowModel'
 	| 'getExpandedRowModel'
 	| 'getFlatHeaders'
 	| 'getHeaderGroups'
@@ -172,6 +172,7 @@ export type TableInstance<TData extends TableData = TableData> = Omit<
 		getCenterLeafColumns: () => Table_Column<TData>[]
 		getCenterVisibleLeafColumns: () => Table_Column<TData>[]
 		getColumn: (columnId: string) => Table_Column<TData>
+		getCoreRowModel: () => Table_RowModel<TData>
 		getExpandedRowModel: () => Table_RowModel<TData>
 		getFlatHeaders: () => Table_Header<TData>[]
 		getHeaderGroups: () => Table_HeaderGroup<TData>[]
@@ -448,10 +449,11 @@ export type ColumnSortingConfigs<TData extends TableData = TableData> =
 
 export type GroupingKey =
 	| string
-	| (<RData extends RowData, TData extends TableData>(
-			row: Row<RData> | Table_Row<TData>,
+	| (<T = any, TData extends TableData = {}>(args: {
+			row: Table_Row<TData>
 			table: TableInstance<TData>
-	  ) => any)
+			columnId: string
+	  }) => T)
 
 export type Table_ColumnDef<TData extends TableData = TableData> = Omit<
 	ColumnDef<TData, unknown>,

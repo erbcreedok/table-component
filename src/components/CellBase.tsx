@@ -12,7 +12,6 @@ import {
 	PercentColumn,
 } from '../TableComponent'
 import { mergeSx } from '../utils/mergeSx'
-import { getGroupingValue } from '../utils/getNestedProp'
 
 import { TooltipProps } from './Tooltip'
 import { TooltipOverflow } from './TooltipOverflow'
@@ -50,13 +49,11 @@ export const CellBase = <TData extends TableData = {}>({
 		formatCellValue = (value) => value,
 		enableCustomization,
 		dataType,
-		groupingKey,
 	} = columnDef
 	const isGrouped = column.getIsGrouped()
-	const value =
-		isGrouped && groupingKey
-			? getGroupingValue(row, groupingKey, table)
-			: cell.getValue()
+	const value = isGrouped
+		? row.getGroupingValue(cell.column.id)
+		: cell.getValue()
 
 	const text = useMemo(() => {
 		// Custom Column

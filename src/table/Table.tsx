@@ -1,5 +1,4 @@
-import { createCell, createRow } from '@tanstack/table-core'
-import type { Column, Table as TableType } from '@tanstack/react-table'
+import type { Table as TableType } from '@tanstack/react-table'
 import { FC, useCallback, useMemo } from 'react'
 import {
 	defaultRangeExtractor,
@@ -9,20 +8,14 @@ import {
 } from '@tanstack/react-virtual'
 import MuiTable from '@mui/material/Table'
 
-import { getColumnId } from '../column.utils'
 import { VirtualizerProvider } from '../context/VirtualizerProvider'
 import { TableHead } from '../head/TableHead'
 import { Memo_TableBody, TableBody } from '../body/TableBody'
 import { TableBodyRow } from '../body/TableBodyRow'
 import { TableFooter } from '../footer/TableFooter'
-import {
-	Table_ColumnDef,
-	Table_Row,
-	TableInstance,
-	getColumnsFilteredByDisplay,
-} from '..'
+import { Table_Row, TableInstance, getColumnsFilteredByDisplay } from '..'
 import { TableHeadInvisible } from '../head/TableHeadInvisible'
-import { isColumnDisplayed } from '../utils/getFilteredByDisplay'
+import { createRow } from '../utils/createRow'
 import { getNonCollapsedColumns } from '../utils/getNonCollapsedColumns'
 
 interface Props {
