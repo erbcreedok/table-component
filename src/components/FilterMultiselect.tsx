@@ -49,6 +49,8 @@ export type FilterMultiselectProps<TData extends TableData = TableData> = {
 	table?: TableInstance<TData>
 	onChange: (value: SelectOption[]) => void
 	value: string[]
+	inputValue?: string
+	onInputChange?: (value: string) => void
 	autoFocus?: boolean
 	options?: SelectOption[]
 	loading?: boolean
@@ -61,6 +63,8 @@ export const FilterMultiselect = <TData extends TableData>({
 	column,
 	table,
 	onChange,
+	onInputChange,
+	inputValue: inputValueExternal,
 	value = [],
 	autoFocus,
 	options: _options,
@@ -80,7 +84,11 @@ export const FilterMultiselect = <TData extends TableData>({
 		() => splitFilterOptions(options, value),
 		[options, value]
 	)
-	const [inputValue, setInputValue] = useState('')
+
+	const [_inputValue, _setInputValue] = useState('')
+	const inputValue = inputValueExternal ?? _inputValue
+	const setInputValue = onInputChange ?? _setInputValue
+
 	const filteredOptions = useRef(notSelectedOptions)
 
 	const handleChange = (event: any, newValue: SelectOption[]) => {
