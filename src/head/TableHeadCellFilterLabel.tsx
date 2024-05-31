@@ -8,6 +8,7 @@ import { Table_Header, TableData, TableInstance } from '..'
 import { Tooltip } from '../components/Tooltip'
 import { getValueOrFunctionHandler } from '../utils/getValueOrFunctionHandler'
 import { mergeSx } from '../utils/mergeSx'
+import { getFilterValueText } from '../utils/getFilterValueText'
 
 export type TableHeadCellFilterLabelProps<TData extends TableData = {}> = {
 	header: Table_Header<TData>
@@ -42,6 +43,11 @@ export const TableHeadCellFilterLabel = ({
 		)
 	const currentFilterOption = columnDef._filterFn
 
+	const filterFilterValueText = getFilterValueText(
+		column.getFilterValue(),
+		columnDef.filterSelectOptions
+	)
+
 	const filterTooltip =
 		tooltipProps?.title ??
 		localization.filteringByColumn
@@ -60,11 +66,11 @@ export const TableHeadCellFilterLabel = ({
 			.replace(
 				'{filterValue}',
 				`"${
-					Array.isArray(column.getFilterValue())
-						? (column.getFilterValue() as [string, string]).join(
+					Array.isArray(filterFilterValueText)
+						? (filterFilterValueText as [string, string]).join(
 								`" ${isRangeFilter ? localization.and : localization.or} "`
 						  )
-						: (column.getFilterValue() as string)
+						: filterFilterValueText
 				}"`
 			)
 			.replace('" "', '')

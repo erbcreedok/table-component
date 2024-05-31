@@ -472,3 +472,50 @@ export const ExternalSetFilterValue: Story<TableComponentProps> = () => (
 		)}
 	/>
 )
+
+export const CustomChipFilterText: Story<TableComponentProps> = () => (
+	<TableComponent
+		columns={[
+			{
+				header: 'First Name',
+				accessorKey: 'firstName',
+			},
+			{
+				header: 'Last Name',
+				accessorKey: 'lastName',
+				enableColumnFilter: true
+			},
+			{
+				header: 'Age',
+				accessorKey: 'age',
+			},
+			{
+				header: 'Gender',
+				accessorKey: 'gender',
+				enableColumnFilter: true,
+				filterSelectOptions: [{
+					value: 'male',
+					label: 'Male'
+				},
+				{
+					value: 'female',
+					label: 'Female'
+				}
+				]
+			},
+			{
+				header: 'Address',
+				accessorKey: 'address',
+				enableColumnFilter: true, 
+				filterChipText: () => 'Custom chip text',
+			},
+			{
+				header: 'State',
+				accessorKey: 'state',
+			},
+		]}
+		data={data}
+		enableStatusBar={true}
+		initialState={{ showColumnFilters: true }}
+	/>
+)

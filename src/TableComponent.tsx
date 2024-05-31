@@ -651,6 +651,10 @@ export type Table_ColumnDef<TData extends TableData = TableData> = Omit<
 		 * The key can contain paths, ex: "onbect.prop1.anotherProp" */
 		filteringKey?: string
 		filterSelectOptions?: (string | SelectOption)[]
+		filterChipText?: (
+			column: Table_Column<TData>,
+			table: TableInstance<TData>
+		) => string
 		/** This key has a higher precedence over accessor(Key/Fn) in grouping.
 		 * The key can contain:
 		 * - paths, ex: "onbect.prop1.anotherProp"
