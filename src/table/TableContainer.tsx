@@ -1,9 +1,17 @@
-import { FC, useEffect, useLayoutEffect, useState } from 'react'
+import {
+	FC,
+	MutableRefObject,
+	useEffect,
+	useLayoutEffect,
+	useState,
+} from 'react'
 import MuiTableContainer from '@mui/material/TableContainer'
 
 import type { TableInstance } from '..'
-import { DragScrollingContainer } from '../components/DragScrollingContainer'
-import { StickyHorizontalScrollbar } from '../components/StickyScrollbar'
+import {
+	DragScrollingContainer,
+	StickyHorizontalScrollbar,
+} from '../components'
 import { useStickyScrollbar } from '../hooks/useStickyScrollbar'
 import { getValueOrFunctionHandler } from '../utils/getValueOrFunctionHandler'
 
@@ -76,9 +84,13 @@ export const TableContainer: FC<Props> = ({ table }) => {
 					if (node) {
 						tableContainerRef.current = node
 						if (tableContainerProps?.ref) {
-							// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-							// @ts-ignore
-							tableContainerProps.ref.current = node
+							if (tableContainerProps.ref instanceof Function) {
+								tableContainerProps.ref(node)
+							} else {
+								const tableContainerPropsRef =
+									tableContainerProps.ref as MutableRefObject<HTMLDivElement>
+								tableContainerPropsRef.current = node
+							}
 						}
 					}
 					handleContainerRef(node)
