@@ -1,5 +1,5 @@
 import Box from '@mui/material/Box'
-import { useCallback } from 'react'
+import React, { useCallback } from 'react'
 
 import { Table_Column, TableData, TableInstance } from '../../TableComponent'
 
@@ -13,6 +13,7 @@ export const FilterChipDropdownContent = <TData extends TableData>({
 	column,
 	table,
 }: Props<TData>) => {
+	const { FilterChipField, FilterField } = column.columnDef
 	const value = column.getFilterValue()
 	const onChange = useCallback(
 		(value) => {
@@ -21,16 +22,25 @@ export const FilterChipDropdownContent = <TData extends TableData>({
 		[column]
 	)
 	const getContent = () => {
-		if (column.columnDef.FilterChipField) {
-			return column.columnDef.FilterChipField({
-				column,
-				table,
-				value,
-				onChange,
-			})
+		if (FilterChipField) {
+			return (
+				<FilterChipField
+					column={column}
+					table={table}
+					value={value}
+					onChange={onChange}
+				/>
+			)
 		}
-		if (column.columnDef.FilterField) {
-			return column.columnDef.FilterField({ column, table, value, onChange })
+		if (FilterField) {
+			return (
+				<FilterField
+					column={column}
+					table={table}
+					value={value}
+					onChange={onChange}
+				/>
+			)
 		}
 		if (column.columnDef.filterVariant === 'multi-select') {
 			return <FilterChipSelectField column={column} table={table} />
