@@ -186,3 +186,10 @@ export const muiColumnsMenuProps = muiMenuProps
 export const muiGroupingMenuProps = muiMenuProps
 export const muiFiltersMenuProps = muiMenuProps
 export const muiSortingMenuProps = muiMenuProps
+
+export const enableEditingHighlighting = {
+	control: 'boolean',
+	defaultValue: true,
+	description:
+		'Highlight cells that have been edited. This is useful for showing users which cells have been changed.',
+}

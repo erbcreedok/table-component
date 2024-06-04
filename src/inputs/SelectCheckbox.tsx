@@ -4,10 +4,10 @@ import { ChangeEvent, MouseEvent, ReactNode } from 'react'
 import Checkbox, { CheckboxProps } from '@mui/material/Checkbox'
 import Tooltip from '@mui/material/Tooltip'
 import Radio, { RadioProps } from '@mui/material/Radio'
-import type { Theme } from '@mui/material/styles'
 
 import type { Table_Row, TableData, TableInstance } from '..'
 import { getIsMockRow } from '../utils/getIsMockRow'
+import { mergeSx } from '../utils/mergeSx'
 import { withNativeEvent } from '../utils/withNativeEvent'
 
 type Props<TData extends TableData> = {
@@ -75,9 +75,10 @@ export const SelectCheckbox = <TData extends TableData>({
 				: table.getIsAllRowsSelected()
 			: row?.getIsSelected(),
 		disabled:
-			parentRow && parentRow.subRows
+			table.constants.disableActionButtons ||
+			(parentRow && parentRow.subRows
 				? [...parentRow.subRows].every((row) => !row.getCanSelect())
-				: (row && !row.getCanSelect()) || isLoading,
+				: (row && !row.getCanSelect()) || isLoading),
 		inputProps: {
 			'aria-label': selectAll ? localization.selectAll : localization.selectRow,
 		},
@@ -88,7 +89,7 @@ export const SelectCheckbox = <TData extends TableData>({
 						type: 'click',
 					},
 					table
-			  )((e) =>
+			  )(() =>
 					indeterminate
 						? parentRow.subRows?.forEach((row) => {
 								row.toggleSelected(false)
@@ -114,14 +115,14 @@ export const SelectCheckbox = <TData extends TableData>({
 			e.stopPropagation()
 			checkboxProps?.onClick?.(e)
 		},
-		sx: (theme: Theme) => ({
-			height: '2.5rem',
-			width: '2.5rem',
-			m: '-0.4rem',
-			...(checkboxProps?.sx instanceof Function
-				? checkboxProps.sx(theme)
-				: (checkboxProps?.sx as any)),
-		}),
+		sx: mergeSx(
+			{
+				height: '2.5rem',
+				width: '2.5rem',
+				m: '-0.4rem',
+			},
+			checkboxProps?.sx
+		),
 		title: undefined,
 	}
 

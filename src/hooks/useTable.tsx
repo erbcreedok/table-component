@@ -9,7 +9,6 @@ import {
 	VisibilityState,
 	SortingState,
 	ColumnOrderState,
-	noop,
 	ColumnPinningState,
 	Updater,
 	ColumnSizingState,
@@ -167,7 +166,7 @@ export const useTable = <TData extends TableData = TableData>(
 	const [sorting, setSorting] = useState<SortingState>(
 		initialState.sorting ?? []
 	)
-	const [searchData, setSearchData] = useState<TData[] | null>(null)
+	const [searchData, setSearchData] = useState<Table_Row<TData>[] | null>(null)
 	const [highlightHeadCellId, setHighlightHeadCellId] = useState<string | null>(
 		null
 	)
@@ -456,7 +455,7 @@ export const useTable = <TData extends TableData = TableData>(
 			getPaginationRowModel: getPaginationRowModel(),
 			getSortedRowModel: getSortedRowModel(),
 			getFacetedUniqueValues: getFacetedUniqueValues(),
-			getSubRows: searchData ? noop : defaultGetSubRows,
+			getSubRows: defaultGetSubRows,
 			onColumnFiltersChange: setColumnFilters,
 			onColumnOrderChange: setColumnOrder,
 			onColumnSizingChange: setColumnSizing,
@@ -542,6 +541,8 @@ export const useTable = <TData extends TableData = TableData>(
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 		[visibleLeafColumns, table, table.options.enableExpanding]
 	)
+	table.constants.disableActionButtons =
+		table.getState().isEditingTable && table.options.editingMode === 'table'
 
 	useCreateNewRow(table)
 	useTableHierarchy(table)

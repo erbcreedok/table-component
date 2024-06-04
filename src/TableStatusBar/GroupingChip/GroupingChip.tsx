@@ -1,21 +1,24 @@
 import { Box } from '@mui/material'
 import React, { FC, useEffect, useMemo, useState } from 'react'
 
-import { CommonChipWithPopoverAndContext } from '../CommonChipWithPopover/CommonChipWithPopover'
-import { DropdownContentHeader } from '../../components/DropdownContent/DropdownContentHeader'
-import { DropdownContentSearch } from '../../components/DropdownContent/DropdownContentSearch'
+import {
+	CommonChipWithPopoverAndContext,
+	CommonChipWithPopoverProps,
+} from '../CommonChipWithPopover/CommonChipWithPopover'
+import { DropdownContentHeader, DropdownContentSearch } from '../../components'
 import { useGroupingControls } from '../filter-bar-hooks/useGroupingControls'
 import { resetGroupingWithMultirow } from '../../utils/resetGroupingWithMultirow'
 
 import { SelectedGroupsList } from './GroupingChipList/SelectedGroupsList'
 import { GroupSearchResult } from './GroupingChipSearch/GroupSearchResult'
 
+// TODO: Didn't notice this before, we should remove any from here
 type GroupingChipProps = {
 	table: any
-}
+} & Partial<CommonChipWithPopoverProps>
 
 export const GroupingChip: FC<GroupingChipProps> = (props) => {
-	const { table } = props
+	const { table, ...rest } = props
 
 	const {
 		getState,
@@ -101,6 +104,7 @@ export const GroupingChip: FC<GroupingChipProps> = (props) => {
 			icon={<GroupingIcon />}
 			text={groupingChipText}
 			dropdownContent={DropdownContent}
+			{...rest}
 		/>
 	)
 }

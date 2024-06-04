@@ -49,18 +49,15 @@ export const useEditingProps = ([data, setData]) => {
 		({ exitEditingMode, methods, table, values }) => {
 			validateAllFields({ table, methods }).then((isValid) => {
 				if (!isValid) return
-				const rows = table.getRowModel().rows
+				const rows = table.getCoreRowModel().flatRows
+				const newData = [...data]
 				const traverse = (row) => {
-					const subRows = row.subRows ?? []
 					const value = values[row.id]
 					if (value) {
-						row = mapValuesToTeamMember(row.id, value)
+						Object.assign(row.original, mapValuesToTeamMember(row.id, value))
 					}
-					row.subRows = subRows.map((subRow) => traverse(subRow))
-
-					return row
 				}
-				const newData = rows.map((row) => traverse(row.original))
+				rows.forEach(traverse)
 				setData(newData)
 				exitEditingMode()
 			})

@@ -1,12 +1,11 @@
 import { MenuList, Popper } from '@mui/material'
 import Box from '@mui/material/Box'
 import ListItemIcon from '@mui/material/ListItemIcon'
-import MenuItem from '@mui/material/MenuItem'
+import MenuItem, { MenuItemProps } from '@mui/material/MenuItem'
 import zIndex from '@mui/material/styles/zIndex'
 import { FC, useRef } from 'react'
 
-import { ExpandMoreMenuChevron } from '../components/ExpandMoreMenuChevron'
-import { MenuPaper } from '../components/Menu'
+import { ExpandMoreMenuChevron, MenuPaper } from '../components'
 import { useHoverEffects } from '../hooks/useHoverEffects'
 import { Table_Column, TableInstance } from '../TableComponent'
 import { getPascalCase } from '../utils/getPascalCase'
@@ -20,11 +19,12 @@ type Props = {
 	column: Table_Column
 	table: TableInstance
 	setVisible: (visible: boolean) => void
-}
+} & Partial<MenuItemProps>
 export const QuickColumnPinningMenuItems: FC<Props> = ({
 	column,
 	table,
 	setVisible,
+	...rest
 }) => {
 	const anchorRef = useRef(null)
 	const { hovered, hoverProps } = useHoverEffects(300)
@@ -71,6 +71,7 @@ export const QuickColumnPinningMenuItems: FC<Props> = ({
 					table
 				)(hoverProps.onMouseEnter)}
 				{...getTestAttributes(e2eLabels, 'columnMenuFreeze')}
+				{...rest}
 			>
 				<Box sx={commonListItemStyles}>
 					<ListItemIcon>

@@ -1,8 +1,7 @@
 import IconButton, { IconButtonProps } from '@mui/material/IconButton'
 import React, { MouseEvent, useRef, useState } from 'react'
 
-import { Colors, IconsColor } from '../components/styles'
-import { Tooltip } from '../components/Tooltip'
+import { Colors, IconsColor, Tooltip } from '../components'
 import { RowActionMenu } from '../menus/RowActionMenu'
 import { Table_Row, TableInstance } from '../TableComponent'
 
@@ -50,6 +49,7 @@ export const RowActionMenuButton = <TData extends Record<string, any> = {}>({
 				placement="top"
 			>
 				<IconButton
+					disabled={table.constants.disableActionButtons}
 					ref={anchorRef}
 					aria-label={localization.rowActions}
 					onClick={handleOpenRowActionMenu}

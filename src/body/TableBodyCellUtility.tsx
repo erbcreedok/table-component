@@ -3,7 +3,7 @@ import Box from '@mui/material/Box'
 import Tooltip from '@mui/material/Tooltip'
 
 import { Table_Cell, TableInstance } from '..'
-import { TextColor } from '../components/styles'
+import { TextColor } from '../components'
 import { getIsMockRow } from '../utils/getIsMockRow'
 
 import { TableBodyRowGrabHandle } from './TableBodyRowGrabHandle'

@@ -1,20 +1,30 @@
 import Box from '@mui/material/Box'
 import ListItemIcon from '@mui/material/ListItemIcon'
-import MenuItem from '@mui/material/MenuItem'
+import MenuItem, { MenuItemProps } from '@mui/material/MenuItem'
 
 import { getTestAttributes } from '../utils/getTestAttributes'
-import { utilColumns } from '../'
+import { Table_Column, TableData, TableInstance, utilColumns } from '../'
 
 import { commonListItemStyles, commonMenuItemStyles } from './constants'
 
-export const QuickGroupingMenuItems = ({ column, table, setVisible }) => {
+type QuickGroupingMenuItemsProps<TData extends TableData = {}> = {
+	column: Table_Column<TData>
+	table: TableInstance<TData>
+	setVisible(visible: boolean): void
+} & Partial<MenuItemProps>
+export const QuickGroupingMenuItems = <TData extends TableData = {}>({
+	column,
+	table,
+	setVisible,
+	...rest
+}: QuickGroupingMenuItemsProps<TData>) => {
 	const {
 		setColumnOrder,
 		options: {
 			enableGrouping,
 			icons: { GroupingIcon },
 			localization,
-			test,
+			e2eLabels,
 		},
 	} = table
 
@@ -32,7 +42,8 @@ export const QuickGroupingMenuItems = ({ column, table, setVisible }) => {
 						key={0}
 						onClick={handleGroupByColumn}
 						sx={commonMenuItemStyles}
-						{...getTestAttributes(test, 'columnMenuGroup')}
+						{...getTestAttributes(e2eLabels, 'columnMenuGroup')}
+						{...rest}
 					>
 						<Box sx={commonListItemStyles}>
 							<ListItemIcon>

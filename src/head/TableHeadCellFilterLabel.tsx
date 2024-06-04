@@ -5,7 +5,7 @@ import IconButton, { IconButtonProps } from '@mui/material/IconButton'
 import React from 'react'
 
 import { Table_Header, TableData, TableInstance } from '..'
-import { Tooltip } from '../components/Tooltip'
+import { Tooltip } from '../components'
 import { getValueOrFunctionHandler } from '../utils/getValueOrFunctionHandler'
 import { mergeSx } from '../utils/mergeSx'
 import { getFilterValueText } from '../utils/getFilterValueText'

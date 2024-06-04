@@ -7,7 +7,7 @@ import React, { ComponentProps, ReactNode, useCallback, useMemo } from 'react'
 import { useComputedEnableCaptions } from '../hooks/useComputedEnableCaptions'
 import { useHoverEffects } from '../hooks/useHoverEffects'
 import type { TableData, TableInstance } from '../index'
-import { DEFAULT_FONT_FAMILY, TextColor } from '../components/styles'
+import { DEFAULT_FONT_FAMILY, TextColor } from '../components'
 
 import { ColumnsButton } from './components/buttons/ColumnsButton'
 import { EditButton } from './components/buttons/EditButton'
@@ -54,6 +54,7 @@ type Adornment<TData extends TableData> =
 				tableToolbarProps: TableToolbarProps<TData>
 				computedEnableCaptions: boolean
 				ToolbarDivider: typeof ToolbarDivider
+				disableButtons: boolean
 			} & ReturnType<typeof useHoverEffects>
 	  ) => ReactNode)
 export type TableToolbarProps<TData extends TableData> = {
@@ -87,10 +88,10 @@ export const TableToolbar = <TData extends TableData = {}>(
 		enableFiltering,
 		enableGrouping,
 		enablePreset = true,
-		disableFilteringButton = false,
-		disableSettingsButton = false,
-		disableGroupingButton = false,
-		disableSortingButton = false,
+		disableFilteringButton,
+		disableSettingsButton,
+		disableGroupingButton,
+		disableSortingButton,
 		enableCaptions = 'auto',
 		innerProps,
 		innerTable,
@@ -110,6 +111,7 @@ export const TableToolbar = <TData extends TableData = {}>(
 			editingMode,
 		},
 	} = table
+	const disableButtons = table.constants.disableActionButtons
 	const { innerRef, outerRef, computedEnableCaptions } =
 		useComputedEnableCaptions(enableCaptions)
 	const { hovered, hoverProps } = useHoverEffects()
@@ -125,6 +127,7 @@ export const TableToolbar = <TData extends TableData = {}>(
 				return adornment({
 					computedEnableCaptions,
 					dividerElement,
+					disableButtons,
 					hovered,
 					hoverProps,
 					table,
@@ -137,6 +140,7 @@ export const TableToolbar = <TData extends TableData = {}>(
 		},
 		[
 			computedEnableCaptions,
+			disableButtons,
 			dividerElement,
 			hoverProps,
 			hovered,
@@ -157,32 +161,36 @@ export const TableToolbar = <TData extends TableData = {}>(
 				<FiltersButton
 					enableCaption={computedEnableCaptions}
 					table={table}
-					disabled={disableFilteringButton}
+					disabled={disableFilteringButton ?? disableButtons}
 				/>
 			)}
 			{(enableGrouping || uEnableGrouping) && (
 				<GroupingButton
 					enableCaption={computedEnableCaptions}
 					table={table}
-					disabled={disableGroupingButton}
+					disabled={disableGroupingButton ?? disableButtons}
 				/>
 			)}
 			{(enableSorting || uEnableSorting) && (
 				<SortingButton
 					enableCaption={computedEnableCaptions}
 					table={table}
-					disabled={disableSortingButton}
+					disabled={disableSortingButton ?? disableButtons}
 				/>
 			)}
 			{enableSettings && (
 				<ColumnsButton
 					enableCaption={computedEnableCaptions}
 					table={table}
-					disabled={disableSettingsButton}
+					disabled={disableSettingsButton ?? disableButtons}
 				/>
 			)}
 			{enablePreset && (
-				<PresetButton enableCaption={computedEnableCaptions} table={table} />
+				<PresetButton
+					enableCaption={computedEnableCaptions}
+					table={table}
+					disabled={disableButtons}
+				/>
 			)}
 			{editingMode === 'table' && dividerElement}
 			{editingMode === 'table' && (

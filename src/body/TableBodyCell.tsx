@@ -25,10 +25,10 @@ import {
 	type Table_Row,
 	type TableInstance,
 	Colors,
+	CellFormController,
+	ErrorTooltipIconWithTable,
 } from '..'
 import { getCommonCellStyles, Table_DefaultColumn } from '../column.utils'
-import { CellFormController } from '../components/CellFormController'
-import { ErrorTooltipIconWithTable } from '../components/ErrorTooltipIcon'
 import { EditCellField } from '../inputs/EditCellField'
 import { utilColumns } from '../utilColumns'
 import { getFunctionWithArgs } from '../utils/getFunctionWithArgs'
@@ -96,6 +96,7 @@ const TableBodyCellMain = ({
 			editingMode,
 			enableColumnOrdering,
 			enableGrouping,
+			enableEditingHighlighting,
 			enableRowNumbers,
 			enableRowDragging,
 			expandableColumnButtonPosition = 'left',
@@ -386,7 +387,9 @@ const TableBodyCellMain = ({
 			theme,
 			tableCellProps,
 		}),
-		...(fieldState?.isDirty ? { backgroundColor: Colors.Yellow } : {}),
+		...(fieldState?.isDirty && enableEditingHighlighting
+			? { backgroundColor: Colors.Yellow }
+			: {}),
 		...draggingBorders,
 		...(isCurrentRowDetailOpened
 			? {
@@ -592,9 +595,10 @@ export const TableBodyCell = (props: Props) => {
 
 	const isEditable = useMemo(
 		() =>
-			cEnableEditing !== undefined
+			!row.isMock &&
+			(cEnableEditing !== undefined
 				? isEditingEnabled(cEnableEditing, { table, row })
-				: isEditingEnabled(enableEditing, { table, row }),
+				: isEditingEnabled(enableEditing, { table, row })),
 		[table, row, cEnableEditing, enableEditing]
 	)
 

@@ -1,17 +1,16 @@
 import { MenuList, Popper } from '@mui/material'
 import Box from '@mui/material/Box'
 import ListItemIcon from '@mui/material/ListItemIcon'
-import MenuItem from '@mui/material/MenuItem'
+import MenuItem, { MenuItemProps } from '@mui/material/MenuItem'
 import zIndex from '@mui/material/styles/zIndex'
 import { FC, MutableRefObject } from 'react'
 
-import { MenuPaper } from '../components/Menu'
+import { MenuPaper, ExpandMoreMenuChevron } from '../components'
 import { useHoverEffects } from '../hooks/useHoverEffects'
 import { Table_Column, TableInstance } from '../TableComponent'
 import { getPascalCase } from '../utils/getPascalCase'
 import { withNativeEvent } from '../utils/withNativeEvent'
 import { getTestAttributes } from '../utils/getTestAttributes'
-import { ExpandMoreMenuChevron } from '../components/ExpandMoreMenuChevron'
 
 import { QuickSortMenuItemOptions } from './QuickSortMenuItemOptions'
 import { commonListItemStyles, commonMenuItemStyles } from './constants'
@@ -21,18 +20,19 @@ type Props = {
 	table: TableInstance
 	setVisible: (visible: boolean) => void
 	menuRef?: MutableRefObject<HTMLElement | null>
-}
+} & Partial<MenuItemProps>
 export const QuickSortMenuItems: FC<Props> = ({
 	column,
 	table,
 	setVisible,
 	menuRef,
+	...rest
 }) => {
 	const { hovered, hoverProps } = useHoverEffects(300)
 	const {
 		options: {
 			enableSorting,
-			icons: { ClearIcon, ArrowsIcon, ExpandMoreIcon },
+			icons: { ClearIcon, ArrowsIcon },
 			localization,
 			e2eLabels,
 		},
@@ -66,6 +66,7 @@ export const QuickSortMenuItems: FC<Props> = ({
 					table
 				)(hoverProps.onMouseEnter)}
 				{...getTestAttributes(e2eLabels, 'columnMenuSort')}
+				{...rest}
 			>
 				<Box sx={commonListItemStyles}>
 					<ListItemIcon>

@@ -1,12 +1,13 @@
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
+import { ChipProps } from '@mui/material/Chip'
+import { noop } from '@tanstack/react-table'
 import React, { cloneElement, useMemo, useState, MouseEvent } from 'react'
 import { Box, Chip, Popover, Typography } from '@mui/material'
 
-import { TextColor } from '../../components/styles'
-import { Tooltip } from '../../components/Tooltip'
+import { TextColor, Tooltip } from '../../components'
 import { useTableContext } from '../../context/useTableContext'
 
-type CommonChipWithPopoverProps = {
+export type CommonChipWithPopoverProps = {
 	text: string
 	textAlignSelf?: string
 	icon?: JSX.Element
@@ -15,6 +16,8 @@ type CommonChipWithPopoverProps = {
 	setIsOpen?: (isOpen: boolean) => void
 	onClick?: (event: MouseEvent) => void
 	renderExpandMoreIcon?: (isOpen: boolean) => JSX.Element
+	chipProps?: Partial<ChipProps>
+	disabled?: boolean
 }
 
 const defaultRenderExpandMoreIcon =
@@ -40,6 +43,8 @@ export const CommonChipWithPopover = (props: CommonChipWithPopoverProps) => {
 		setIsOpen,
 		onClick,
 		renderExpandMoreIcon = defaultRenderExpandMoreIcon(),
+		disabled,
+		chipProps,
 	} = props
 
 	const [open, setOpen] = useState(false)
@@ -83,6 +88,7 @@ export const CommonChipWithPopover = (props: CommonChipWithPopoverProps) => {
 				borderColor: open ? '#303240' : '#EBEDF5',
 				height: 24,
 			}}
+			disabled={disabled}
 			clickable
 			label={
 				<Box
@@ -122,12 +128,13 @@ export const CommonChipWithPopover = (props: CommonChipWithPopoverProps) => {
 					{dropdownContent && renderExpandMoreIcon?.(open)}
 				</Box>
 			}
+			{...chipProps}
 		/>
 	)
 
 	return (
 		<div>
-			<Box onClick={handleChipClick}>
+			<Box onClick={disabled ? noop : handleChipClick}>
 				{text.length > 20 ? (
 					<Tooltip title={text} placement="top">
 						{ChipContent}

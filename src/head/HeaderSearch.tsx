@@ -18,7 +18,6 @@ import {
 	Typography,
 } from '@mui/material'
 
-import { Flex } from '../components/Flex'
 import {
 	Table_Column,
 	Table_Header,
@@ -29,11 +28,11 @@ import {
 import {
 	Colors,
 	DEFAULT_FONT_FAMILY,
+	Flex,
 	IconsColor,
 	TextColor,
-} from '../components/styles'
+} from '../components'
 import { useDelay } from '../hooks/useDelay'
-import { fillRowsWithParents } from '../utils/fillRowsWithParents'
 import { getValueFromObj } from '../utils/getValueFromObj'
 import { getPascalCase } from '../utils/getPascalCase'
 import { withNativeEvent } from '../utils/withNativeEvent'
@@ -70,6 +69,11 @@ const SearchInput = styled(TextField)`
 		padding-left: 12px;
 		padding-right: 12px;
 		background: ${Colors.White};
+	}
+	& .${outlinedInputClasses.disabled} {
+		padding-left: 12px;
+		padding-right: 12px;
+		background: ${Colors.LightestGray};
 	}
 	& .${outlinedInputClasses.notchedOutline} {
 		border-radius: 6px;
@@ -146,7 +150,6 @@ export const HeaderSearch = <T extends TableData>({
 	const {
 		options: {
 			data,
-			enableFlatSearch,
 			icons: { SearchIcon, CloseIcon },
 		},
 	} = table
@@ -200,15 +203,7 @@ export const HeaderSearch = <T extends TableData>({
 	const handleEnterKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
 		if (event.key === 'Enter' && input.length > 0) {
 			event.stopPropagation()
-			table.setSearchData(
-				enableFlatSearch
-					? filtered.map((row) => ({
-							...row,
-							subRows: [],
-							getCanExpand: () => false,
-					  }))
-					: fillRowsWithParents(filtered)
-			)
+			table.setSearchData(filtered)
 			setShowPopper(false)
 		} else {
 			event.stopPropagation()
@@ -241,8 +236,15 @@ export const HeaderSearch = <T extends TableData>({
 					<SearchInput
 						placeholder={placeholder}
 						classes={{ root: 'search-input' }}
+						disabled={table.constants.disableActionButtons}
 						InputProps={{
-							onBlur: () => searchValue.length === 0 && clearSearch(),
+							onBlur: () => {
+								if (searchValue.length === 0) {
+									clearSearch()
+								} else {
+									setShowPopper(false)
+								}
+							},
 							onFocus: () => searchValue.length > 0 && setShowPopper(true),
 							startAdornment: (
 								<InputAdornment
@@ -255,6 +257,7 @@ export const HeaderSearch = <T extends TableData>({
 							endAdornment: searchValue.length > 0 && (
 								<InputAdornment position="end">
 									<IconButton
+										disabled={table.constants.disableActionButtons}
 										onClick={withNativeEvent(
 											{
 												el: `ColumnHeader_${getPascalCase(
@@ -333,6 +336,7 @@ export const HeaderSearch = <T extends TableData>({
 
 			{!isSearch && (
 				<IconButton
+					disabled={table.constants.disableActionButtons}
 					disableRipple
 					size="small"
 					onClick={toggleSearch}

@@ -3,22 +3,24 @@ import { Box } from '@mui/material'
 
 import { TableInstance } from 'src'
 
-import { CommonChipWithPopoverAndContext } from '../CommonChipWithPopover/CommonChipWithPopover'
-import { DropdownContentHeader } from '../../components/DropdownContent/DropdownContentHeader'
-import { DropdownContentSearch } from '../../components/DropdownContent/DropdownContentSearch'
+import {
+	CommonChipWithPopoverAndContext,
+	CommonChipWithPopoverProps,
+} from '../CommonChipWithPopover/CommonChipWithPopover'
+import { DropdownContentHeader, DropdownContentSearch } from '../../components'
 import { useSortingControls } from '../filter-bar-hooks/useSortingControls'
 
 import { SelectedSortsList } from './SortingChipList/SelectedSortsList'
 import { SortingSearchResult } from './SortingChipSearch/SortingSearchResult'
 
-interface SortingChipProps<TData extends Record<string, any> = {}> {
+type SortingChipProps<TData extends Record<string, any> = {}> = {
 	table: TableInstance<TData>
-}
+} & Partial<CommonChipWithPopoverProps>
 
 export const SortingChip = <TData extends Record<string, any> = {}>(
 	props: SortingChipProps<TData>
 ) => {
-	const { table } = props
+	const { table, ...rest } = props
 	const {
 		getAllColumns,
 		getState,
@@ -139,6 +141,7 @@ export const SortingChip = <TData extends Record<string, any> = {}>(
 				)
 			}
 			dropdownContent={dropdownContent}
+			{...rest}
 		/>
 	)
 }

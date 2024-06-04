@@ -8,7 +8,7 @@ import React, {
 } from 'react'
 import Box from '@mui/material/Box'
 
-import { Colors } from '../components/styles'
+import { Colors, TextColor } from '../components'
 import type { TableInstance } from '../index'
 import { mergeMuiProps } from '../utils/mergeMuiProps'
 import { withNativeEvent } from '../utils/withNativeEvent'
@@ -21,7 +21,8 @@ import { FilterChip } from './FilterChip/FilterChip'
 
 const clearButtonClassName = 'clear-button'
 const ClearAllButton = styled(ButtonBase)`
-	color: ${Colors.LightBlue};
+	color: ${({ disabled }) =>
+		disabled ? TextColor.Disabled : Colors.LightBlue};
 	font-size: 12px;
 	margin-left: 9px;
 	font-weight: 600;
@@ -40,7 +41,7 @@ const Wrapper = styled(Box)`
 	.${clearButtonClassName} {
 		visibility: hidden;
 	}
-	&:hover .${clearButtonClassName} {
+	&:hover .${clearButtonClassName}:not(:disabled) {
 		visibility: visible;
 	}
 `
@@ -73,7 +74,7 @@ export const TableStatusBar = <TData extends Record<string, any> = {}>({
 			muiTableStatusClearAllButtonProps,
 		},
 	} = table
-
+	const disableChips = table.constants.disableActionButtons
 	const { grouping, sorting, columnFilters } = getState()
 
 	const barRef = useRef<HTMLDivElement>(null)
@@ -105,7 +106,14 @@ export const TableStatusBar = <TData extends Record<string, any> = {}>({
 		isGroupingExists || isSortingExists || isFiltersExists
 
 	const filterChips = columnFilters.map((filter) => {
-		return <FilterChip key={filter.id} filterId={filter.id} table={table} />
+		return (
+			<FilterChip
+				key={filter.id}
+				filterId={filter.id}
+				table={table}
+				disabled={disableChips}
+			/>
+		)
 	})
 
 	const getAdornment = useCallback(
@@ -122,9 +130,9 @@ export const TableStatusBar = <TData extends Record<string, any> = {}>({
 
 	return (
 		<Wrapper ref={barRef} {...props}>
-			<SortingChip table={table} />
+			<SortingChip table={table} disabled={disableChips} />
 
-			<GroupingChip table={table} />
+			<GroupingChip table={table} disabled={disableChips} />
 
 			{(isGroupingExists || isSortingExists) && filterChips.length > 0 && (
 				<Line {...lineProps} />
@@ -135,6 +143,7 @@ export const TableStatusBar = <TData extends Record<string, any> = {}>({
 
 				{cAdornment}
 				<ClearAllButton
+					disabled={disableChips}
 					{...clearAllButtonProps}
 					className={[clearButtonClassName, clearAllButtonProps?.className]
 						.filter(Boolean)

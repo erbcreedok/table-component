@@ -2,14 +2,13 @@ import { FC, useCallback, useRef } from 'react'
 import { MenuList, Popper } from '@mui/material'
 import Box from '@mui/material/Box'
 import ListItemIcon from '@mui/material/ListItemIcon'
-import MenuItem from '@mui/material/MenuItem'
+import MenuItem, { MenuItemProps } from '@mui/material/MenuItem'
 import zIndex from '@mui/material/styles/zIndex'
 
-import { MenuPaper } from '../components/Menu'
+import { MenuPaper, ExpandMoreMenuChevron } from '../components'
 import { useHoverEffects } from '../hooks/useHoverEffects'
 import { Table_Column, TableData, SetColumns } from '../TableComponent'
 import { useTableContext } from '../context/useTableContext'
-import { ExpandMoreMenuChevron } from '../components/ExpandMoreMenuChevron'
 import { withNativeEvent } from '../utils/withNativeEvent'
 import { getPascalCase } from '../utils/getPascalCase'
 import { getTestAttributes } from '../utils/getTestAttributes'
@@ -21,12 +20,19 @@ type Props<TData extends TableData = TableData> = {
 	column: Table_Column
 	setVisible: (visible: boolean) => void
 	setColumns: SetColumns<TData>
-}
+	createMenuItemProps?: Partial<MenuItemProps>
+	editMenuItemProps?: Partial<MenuItemProps>
+	deleteMenuItemProps?: Partial<MenuItemProps>
+} & Partial<MenuItemProps>
 
 export const CustomColumnMenuItems: FC<Props> = ({
 	column,
 	setVisible,
 	setColumns,
+	createMenuItemProps,
+	editMenuItemProps,
+	deleteMenuItemProps,
+	...rest
 }) => {
 	const anchorRef = useRef(null)
 	const { hovered, hoverProps } = useHoverEffects(300)
@@ -75,6 +81,8 @@ export const CustomColumnMenuItems: FC<Props> = ({
 					table
 				)(hoverProps.onMouseEnter)}
 				{...getTestAttributes(e2eLabels, 'columnMenuInsert')}
+				{...rest}
+				{...createMenuItemProps}
 			>
 				<Box sx={commonListItemStyles}>
 					<ListItemIcon>
@@ -128,6 +136,8 @@ export const CustomColumnMenuItems: FC<Props> = ({
 							table.setCustomColumnEditor(column.columnDef.accessorKey)
 						})}
 						{...getTestAttributes(e2eLabels, 'columnMenuEdit')}
+						{...rest}
+						{...editMenuItemProps}
 					>
 						<Box sx={commonListItemStyles}>
 							<ListItemIcon>
@@ -148,6 +158,8 @@ export const CustomColumnMenuItems: FC<Props> = ({
 							table
 						)(handleDeleteColumn)}
 						{...getTestAttributes(e2eLabels, 'columnMenuDelete')}
+						{...rest}
+						{...deleteMenuItemProps}
 					>
 						<Box sx={{ ...commonListItemStyles, color: '#FA4B4B' }}>
 							<ListItemIcon>

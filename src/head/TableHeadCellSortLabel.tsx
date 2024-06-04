@@ -3,7 +3,7 @@ import TableSortLabel from '@mui/material/TableSortLabel'
 import type { TableCellProps } from '@mui/material/TableCell'
 
 import { Table_Header, TableInstance } from '..'
-import { Tooltip } from '../components/Tooltip'
+import { Tooltip } from '../components'
 import { getSortingIconConstructor } from '../utils/getSortingInfo'
 
 interface Props {
@@ -40,6 +40,7 @@ export const TableHeadCellSortLabel: FC<Props> = ({ header, table }) => {
 			<TableSortLabel
 				aria-label={sortTooltip}
 				active={!!isSorted}
+				disabled={table.constants.disableActionButtons}
 				onClick={toggleSorting}
 				direction="desc"
 				sx={{

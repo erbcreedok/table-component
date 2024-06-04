@@ -53,13 +53,13 @@ import React, {
 import { Table_Localization_EN } from './_locales/en'
 import { Table_AggregationFns } from './aggregationFns'
 import { TableBodyRowProps } from './body/TableBodyRow'
-import { NotificationBoxProps } from './components/NotificationBox'
-import type { RowTooltipProps } from './components/RowTooltip'
-import { SidebarProps } from './components/Sidebar'
 import {
+	NotificationBoxProps,
+	type RowTooltipProps,
+	type SidebarProps,
 	BulkActionButtonProps,
 	TableBulkActionsProps,
-} from './components/TableBulkActions'
+} from './components'
 import { TableProvider } from './context/TableProvider'
 import { Table_FilterFns } from './filterFns'
 import { multirowActions } from './head/constants'
@@ -170,6 +170,7 @@ export type TableInstance<TData extends TableData = TableData> = Omit<
 	TableInstanceWithForm<TData> & {
 		constants: {
 			expandableColumn: Table_Column<TData> | null
+			disableActionButtons: boolean
 		}
 		getAllColumns: () => Table_Column<TData>[]
 		getAllFlatColumns: () => Table_Column<TData>[]
@@ -246,45 +247,40 @@ export type TableInstance<TData extends TableData = TableData> = Omit<
 		CustomRow?: FC<TableBodyRowProps>
 	}
 
-export type FieldError = string | null
+export type SearchData<TData extends TableData = {}> = Table_Row<TData>[] | null
 
-export type SearchData<TData extends TableData = TableData> =
-	| Table_Row<TData>[]
-	| null
-
-export type Table_TableState<TData extends TableData = TableData> =
-	TableState & {
-		columnFilterFns: Record<string, Table_FilterOption>
-		draggingColumn: Table_Column<TData> | null
-		draggingRows: Table_Row<TData>[]
-		editingCell: Table_Cell<TData> | null
-		editingRow: Table_Row<TData> | null
-		/** Show editor for custom column accessorKey */
-		customColumnEditor: string | undefined
-		globalFilterFn: Table_FilterOption
-		hoveredColumn: Table_Column<TData> | { id: string } | null
-		openedDetailedPanels: Record<string, OpenedDetailPanel<TData>> | null
-		hoveredRow: HoveredRowState<TData>
-		isEditingTable: boolean
-		isFullScreen: boolean
-		isLoading: boolean
-		newRow: NewRowState<TData>
-		searchData: SearchData<TData>
-		showAlertBanner: boolean
-		showColumnFilters: boolean
-		showGlobalFilter: boolean
-		showProgressBars: boolean
-		showSkeletons: boolean
-		showToolbarDropZone: boolean
-		highlightHeadCellId: string | null
-		groupCollapsed: GroupCollapsed
-		stickyHorizontalScrollbarHeight: number
-		collapsedMultirow: {
-			id: string
-			colIds: string[]
-			originalColIds: string[]
-		}[]
-	}
+export type Table_TableState<TData extends TableData = {}> = TableState & {
+	columnFilterFns: Record<string, Table_FilterOption>
+	draggingColumn: Table_Column<TData> | null
+	draggingRows: Table_Row<TData>[]
+	editingCell: Table_Cell<TData> | null
+	editingRow: Table_Row<TData> | null
+	/** Show editor for custom column accessorKey */
+	customColumnEditor: string | undefined
+	globalFilterFn: Table_FilterOption
+	hoveredColumn: Table_Column<TData> | { id: string } | null
+	openedDetailedPanels: Record<string, OpenedDetailPanel<TData>> | null
+	hoveredRow: HoveredRowState<TData>
+	isEditingTable: boolean
+	isFullScreen: boolean
+	isLoading: boolean
+	newRow: NewRowState<TData>
+	searchData: SearchData<TData>
+	showAlertBanner: boolean
+	showColumnFilters: boolean
+	showGlobalFilter: boolean
+	showProgressBars: boolean
+	showSkeletons: boolean
+	showToolbarDropZone: boolean
+	highlightHeadCellId: string | null
+	groupCollapsed: GroupCollapsed
+	stickyHorizontalScrollbarHeight: number
+	collapsedMultirow: {
+		id: string
+		colIds: string[]
+		originalColIds: string[]
+	}[]
+}
 
 export type SelectOption = {
 	label: string
@@ -1205,6 +1201,7 @@ export type TableComponentProps<TData extends TableData = TableData> = Omit<
 		enableDetailedPanel?: boolean
 		enableDragScrolling?: boolean | 'horizontal' | 'vertical'
 		enableEditing?: EnableEditingOption<TData>
+		enableEditingHighlighting?: boolean
 		enableExpandAll?: boolean
 		enableFlatSearch?: boolean
 		enableGroupCount?: boolean

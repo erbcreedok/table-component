@@ -30,6 +30,7 @@ import {
 import { TeamMember, UnitTreeItem } from '../types/TeamMember'
 import {
 	Colors,
+	enableEditingHighlighting,
 	muiColumnsMenuProps,
 	muiFiltersMenuProps,
 	muiGroupingMenuProps,
@@ -847,7 +848,7 @@ const meta: Meta = {
 		},
 		enableGrouping: {
 			control: 'boolean',
-			defaultValue: undefined,
+			defaultValue: true,
 		},
 		enableGroupCount: {
 			control: 'boolean',
@@ -862,8 +863,14 @@ const meta: Meta = {
 			defaultValue: false,
 		},
 		enablePagination: {
-			control: 'boolean',
-			defaultValue: false,
+			options: ['true', 'false', 'pages', 'scroll'],
+			mapping: {
+				true: true,
+				false: false,
+			},
+			control: { type: 'select' },
+			defaultValue: 'false',
+			description: 'Warning: "scroll" pagination is not configured in Teams Table',
 		},
 		enableColumnResizing: {
 			control: 'boolean',
@@ -900,6 +907,7 @@ const meta: Meta = {
 			control: 'boolean',
 			defaultValue: true,
 		},
+		enableEditingHighlighting,
 		enableFlatSearch: {
 			control: 'boolean',
 			defaultValue: false,

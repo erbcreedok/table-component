@@ -1,6 +1,6 @@
 import Box from '@mui/material/Box'
 import ListItemIcon from '@mui/material/ListItemIcon'
-import MenuItem from '@mui/material/MenuItem'
+import MenuItem, { MenuItemProps } from '@mui/material/MenuItem'
 
 import { getPascalCase } from '../utils/getPascalCase'
 import { withNativeEvent } from '../utils/withNativeEvent'
@@ -13,11 +13,12 @@ export const QuickFilterMenuItems = ({
 	table,
 	toggleSubMenu,
 	column,
+	...rest
 }: {
 	column: Table_Column
 	table: TableInstance
 	toggleSubMenu(): void
-}) => {
+} & Partial<MenuItemProps>) => {
 	const {
 		options: {
 			enableColumnFilters,
@@ -50,6 +51,7 @@ export const QuickFilterMenuItems = ({
 			)(handleClick)}
 			sx={commonMenuItemStyles}
 			{...getTestAttributes(e2eLabels, 'columnMenuFilter')}
+			{...rest}
 		>
 			<Box sx={commonListItemStyles}>
 				<ListItemIcon>

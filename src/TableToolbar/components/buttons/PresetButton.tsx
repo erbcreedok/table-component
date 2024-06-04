@@ -8,11 +8,13 @@ import {
 	VisibilityState,
 } from '@tanstack/react-table'
 
-import { ToolbarIconButton } from '../../../components/ToolbarIconButton'
-import { Tooltip } from '../../../components/Tooltip'
+import {
+	ToolbarIconButton,
+	Tooltip,
+	NotificationDot,
+} from '../../../components'
 import { createTheme } from '../../../index'
 import type { TableInstance } from '../../../index'
-import { NotificationDot } from '../../../components/NotificationDot'
 import { getValidColumnOrder } from '../../../utils/getValidColumnOrder'
 import { PresetMenu } from '../menus/PresetMenu/PresetMenu'
 import { PresetNotification } from '../menus/PresetMenu/components/PresetNotification'
@@ -25,6 +27,7 @@ import { PRESET_THEME } from './presetContants'
 interface PresetButtonProps<TData extends Record<string, any> = {}> {
 	table: TableInstance<TData>
 	enableCaption?: boolean
+	disabled?: boolean
 }
 
 export interface PresetState {
@@ -47,6 +50,7 @@ const theme = createTheme(PRESET_THEME)
 export const PresetButton = <TData extends Record<string, any> = {}>({
 	table,
 	enableCaption = true,
+	disabled,
 }: PresetButtonProps<TData>) => {
 	const {
 		getPresets,
@@ -158,6 +162,7 @@ export const PresetButton = <TData extends Record<string, any> = {}>({
 					ref={toolbarRef}
 					toggled={open}
 					enableCaption={enableCaption}
+					disabled={disabled}
 				>
 					<PresetIcon />
 					{enableCaption && (

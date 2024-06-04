@@ -1,25 +1,28 @@
 /* eslint-disable default-param-last */
 import { Table, Row, RowModel, RowData, memo } from '@tanstack/table-core'
 
-import { TableInstance } from '../TableComponent'
+import { Table_Row, TableInstance } from '../TableComponent'
 
 import { createRow } from './createRow'
+import { fillRowsWithParents } from './fillRowsWithParents'
 import { flattenRows } from './flattenRows'
 
-export function getCoreRowModel<TData extends RowData>(options?: {
-	getIsMock?: (data: TData) => boolean
-}): (table: Table<TData>) => () => RowModel<TData> {
+export function getCoreRowModel<TData extends RowData>(): (
+	table: Table<TData>
+) => () => RowModel<TData> {
 	return (table) =>
 		memo(
 			() => [
 				table.options.data,
-				(table as TableInstance).getState().searchData as unknown as
+				(table as unknown as TableInstance).getState().searchData as unknown as
 					| Row<TData>[]
 					| null,
+				(table as unknown as TableInstance).options.enableFlatSearch,
 			],
 			(
 				data,
-				searchData
+				searchData,
+				enableFlatSearch
 			): {
 				rows: Row<TData>[]
 				flatRows: Row<TData>[]
@@ -31,19 +34,6 @@ export function getCoreRowModel<TData extends RowData>(options?: {
 					rowsById: {},
 				}
 
-				if (searchData) {
-					const flatRows = flattenRows<TData>(searchData)
-					rowModel.rows = searchData
-					rowModel.flatRows = flatRows
-					rowModel.rowsById = flatRows.reduce((acc, row) => {
-						acc[row.id] = row
-
-						return acc
-					}, rowModel.rowsById)
-
-					return rowModel
-				}
-
 				const accessRows = (
 					originalRows: TData[],
 					depth = 0,
@@ -52,13 +42,6 @@ export function getCoreRowModel<TData extends RowData>(options?: {
 					const rows = [] as Row<TData>[]
 
 					for (let i = 0; i < originalRows.length; i++) {
-						// This could be an expensive check at scale, so we should move it somewhere else, but where?
-						// if (!id) {
-						//   if (process.env.NODE_ENV !== 'production') {
-						//     throw new Error(`getRowId expected an ID, but got ${id}`)
-						//   }
-						// }
-
 						// Make the row
 						const row = createRow(
 							table,
@@ -94,6 +77,10 @@ export function getCoreRowModel<TData extends RowData>(options?: {
 
 				rowModel.rows = accessRows(data)
 
+				if (searchData) {
+					return getSearchRowModel(searchData, rowModel, enableFlatSearch)
+				}
+
 				return rowModel
 			},
 			{
@@ -104,4 +91,39 @@ export function getCoreRowModel<TData extends RowData>(options?: {
 				},
 			}
 		)
+}
+
+const getSearchRowModel = <TData extends RowData>(
+	searchData: Row<TData>[],
+	rowModel: RowModel<TData>,
+	enableFlatSearch?: boolean
+) => {
+	// If we have search data, we need to flatten it and then rebuild the row model
+	const searchRowModel: RowModel<TData> = {
+		rows: searchData.map((row) => rowModel.rowsById[row.id] ?? row),
+		flatRows: [],
+		rowsById: {},
+	}
+	// If we are in flat mode, we should return rows without subrows
+	if (enableFlatSearch) {
+		searchRowModel.rows = searchRowModel.rows.map((row) => ({
+			...row,
+			depth: 0,
+			subRows: [],
+			getCanExpand: () => false,
+		}))
+		searchRowModel.flatRows = searchRowModel.rows
+	} else {
+		// If we aren't in flat mode, we add mock parents to the rows
+		searchRowModel.rows = fillRowsWithParents(
+			searchRowModel.rows as Table_Row[]
+		) as Row<TData>[]
+		searchRowModel.flatRows = flattenRows(searchRowModel.rows)
+	}
+	// Then we rebuild the rowsById
+	searchRowModel.flatRows.forEach((row) => {
+		searchRowModel.rowsById[row.id] = row
+	})
+
+	return searchRowModel
 }

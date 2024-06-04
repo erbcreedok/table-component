@@ -1,7 +1,7 @@
 import { FC, useRef, useState } from 'react'
 
 import type { Table_Header, TableInstance } from '..'
-import { Menu } from '../components/Menu'
+import { Menu } from '../components'
 import { getTestAttributes } from '../utils/getTestAttributes'
 
 import { QuickColumnPinningMenuItems } from './QuickColumnPinningMenuItems'
@@ -31,6 +31,7 @@ export const ColumnActionMenu: FC<Props> = ({
 	} = table
 	const { column } = header
 	const { columnDef } = column
+	const disableMenu = table.constants.disableActionButtons
 
 	const [isSubMenuOpen, setIsSubMenuOpen] = useState(false)
 
@@ -87,24 +88,28 @@ export const ColumnActionMenu: FC<Props> = ({
 						column={column}
 						setVisible={setVisible}
 						menuRef={menuRef}
+						disabled={disableMenu}
 					/>,
 					<QuickFilterMenuItems
 						key="filter"
 						column={column}
 						toggleSubMenu={toggleSubMenu}
 						table={table}
+						disabled={disableMenu}
 					/>,
 					<QuickGroupingMenuItems
 						key="grouping"
 						table={table}
 						column={column}
 						setVisible={setVisible}
+						disabled={disableMenu}
 					/>,
 					<QuickColumnPinningMenuItems
 						key="freezing"
 						column={column}
 						table={table}
 						setVisible={setVisible}
+						disabled={disableMenu}
 					/>,
 					<QuickHidingMenuItems
 						key="hiding"
@@ -118,6 +123,8 @@ export const ColumnActionMenu: FC<Props> = ({
 							column={column}
 							setVisible={setVisible}
 							setColumns={setColumns}
+							editMenuItemProps={{ disabled: disableMenu }}
+							deleteMenuItemProps={{ disabled: disableMenu }}
 						/>
 					),
 				]}
