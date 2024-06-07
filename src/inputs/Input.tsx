@@ -116,6 +116,9 @@ export const Input = ({
 				inputRef.current,
 				Number(props.value || inputRef.current.value) + step
 			)
+			queueMicrotask(() => {
+				inputRef.current?.focus()
+			})
 		}
 	}
 

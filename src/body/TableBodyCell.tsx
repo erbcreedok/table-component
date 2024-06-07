@@ -571,7 +571,6 @@ const TableBodyCellEditable = (props: Props) => {
 	return (
 		<CellFormController
 			cell={props.cell}
-			table={props.table}
 			render={({ fieldState }) => (
 				<TableBodyCellMain
 					{...props}

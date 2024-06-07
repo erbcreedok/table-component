@@ -118,7 +118,7 @@ export const HeaderSearchOptionDefault = <TData extends TableData>({
 	</Typography>
 )
 
-const getFlatFilteredData = <T extends TableData>({
+export const getFlatFilteredData = <T extends TableData>({
 	flatRows,
 	value,
 	path,
@@ -126,7 +126,7 @@ const getFlatFilteredData = <T extends TableData>({
 	return flatRows.filter((item) =>
 		getValueFromObj(item.original, path, '')
 			?.toLowerCase()
-			.includes(value.trim())
+			?.includes(value.trim())
 	)
 }
 
@@ -152,7 +152,9 @@ export const HeaderSearch = <T extends TableData>({
 			data,
 			icons: { SearchIcon, CloseIcon },
 		},
+		refs: { headerSearchValueRef },
 	} = table
+	headerSearchValueRef.current = input
 
 	const searchIcon = (
 		<SearchIcon

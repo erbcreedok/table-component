@@ -85,7 +85,7 @@ export const EditSelectField = <TData extends TableData>({
 			},
 			label: showLabel ? column.columnDef.header : undefined,
 			name: column.id,
-			hideErrorOnFocus: true,
+			hideErrorOnFocus: table.constants.hideInputErrorOnFocus,
 			...muiSelectProps.inputProps,
 		},
 	}

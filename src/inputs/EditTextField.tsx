@@ -115,7 +115,7 @@ export const EditTextField = <TData extends TableData>({
 		},
 		value: field.value,
 		error,
-		hideErrorOnFocus: true,
+		hideErrorOnFocus: table.constants.hideInputErrorOnFocus,
 		onBlur: handleBlur,
 		onChange: handleChange,
 		onKeyDown: handleEnterKeyDown,

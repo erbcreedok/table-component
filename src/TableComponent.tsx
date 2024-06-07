@@ -49,6 +49,7 @@ import React, {
 	RefObject,
 	SetStateAction,
 } from 'react'
+import { UseFormProps } from 'react-hook-form'
 
 import { Table_Localization_EN } from './_locales/en'
 import { Table_AggregationFns } from './aggregationFns'
@@ -67,6 +68,7 @@ import { TableHeadCellFilterLabelProps } from './head/TableHeadCellFilterLabel'
 import {
 	HierarchyTreeConfig,
 	NewRowState,
+	TableFormValues,
 	TableInstanceWithCreateNewRow,
 	TableInstanceWithForm,
 	TableInstanceWithTableHierarchy,
@@ -176,6 +178,7 @@ export type TableInstance<TData extends TableData = TableData> = Omit<
 		constants: {
 			expandableColumn: Table_Column<TData> | null
 			disableActionButtons: boolean
+			hideInputErrorOnFocus: boolean
 		}
 		_getOrderColumnsFn: () => (
 			columns: Table_Column<TData>[]
@@ -220,6 +223,7 @@ export type TableInstance<TData extends TableData = TableData> = Omit<
 			editInputRefs: MutableRefObject<Record<string, HTMLInputElement>>
 			expandRowTimeoutRef: MutableRefObject<NodeJS.Timeout>
 			filterInputRefs: MutableRefObject<Record<string, HTMLInputElement>>
+			headerSearchValueRef: MutableRefObject<string>
 			searchInputRef: MutableRefObject<HTMLInputElement>
 			rowDragEnterTimeoutRef: MutableRefObject<NodeJS.Timeout>
 			tableContainerRef: MutableRefObject<HTMLDivElement>
@@ -461,9 +465,9 @@ export type ColumnSortingConfigs<TData extends TableData = TableData> =
 		sortingKey?: string
 	}
 
-export type GroupingKey =
+export type GroupingKey<TData extends TableData = {}> =
 	| string
-	| (<T = any, TData extends TableData = {}>(args: {
+	| (<T = any>(args: {
 			row: Table_Row<TData>
 			table: TableInstance<TData>
 			columnId: string
@@ -673,7 +677,7 @@ export type Table_ColumnDef<TData extends TableData = {}> = Omit<
 		 * The key can contain:
 		 * - paths, ex: "onbect.prop1.anotherProp"
 		 * - function to extract the value used for grouping */
-		groupingKey?: GroupingKey
+		groupingKey?: GroupingKey<TData>
 		/**
 		 * footer must be a string. If you want custom JSX to render the footer, you can also specify a `Footer` option. (Capital F)
 		 */
@@ -1278,6 +1282,7 @@ export type TableComponentProps<TData extends TableData = TableData> = Omit<
 		enableToolbarInternalActions?: boolean
 		enableTopToolbar?: boolean
 		expandRowsFn?: (dataRow: TData) => TData[]
+		formOptions?: Partial<UseFormProps<TableFormValues>>
 		getExpandableColumn?:
 			| string
 			| ((
@@ -1595,6 +1600,7 @@ export type TableComponentProps<TData extends TableData = TableData> = Omit<
 		selectAllMode?: 'all' | 'page'
 		setSubRows?: (row: TData, subRows: TData[]) => TData
 		showBottomProggressBar?: boolean
+		showRowInTable?(row: Table_Row<TData>, table: TableInstance<TData>): void
 		state?: Partial<Table_TableState<TData>>
 		summaryRowCell?: (args: {
 			table: TableInstance<TData>

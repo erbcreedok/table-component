@@ -2,7 +2,7 @@ import { UseFormReturn } from 'react-hook-form'
 
 import { TableData, TableInstance } from '../TableComponent'
 
-export const focusOnErrorFields = async <TData extends TableData = {}>(props: {
+export const focusOnErrorFields = <TData extends TableData = {}>(props: {
 	table: TableInstance<TData>
 	methods: UseFormReturn<any>
 }) => {
@@ -16,6 +16,7 @@ export const focusOnErrorFields = async <TData extends TableData = {}>(props: {
 		if (!rowId || !row || !columnId) {
 			return false
 		}
+		row.showInTable()
 		const fieldId = `${rowId}.${columnId}`
 
 		table.setEditingRow(row)
@@ -23,9 +24,6 @@ export const focusOnErrorFields = async <TData extends TableData = {}>(props: {
 			const field = table.refs.editInputRefs.current[fieldId]
 			if (field) {
 				field.focus()
-				queueMicrotask(() => {
-					field.blur()
-				})
 			}
 		})
 

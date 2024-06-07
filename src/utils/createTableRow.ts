@@ -1,18 +1,14 @@
 import { Row, Table } from '@tanstack/react-table'
 import { createRow as _createRow } from '@tanstack/table-core'
 
-import {
-	Table_ColumnDef,
-	Table_Row,
-	TableData,
-	TableInstance,
-} from '../TableComponent'
+import { Table_Row, TableData, TableInstance } from '../TableComponent'
 
 import { getNestedProp } from './getNestedProp'
 import { getVisibleCells } from './getVisibleCells'
+import { showRowInTable } from './showRowInTable'
 import { getNonCollapsedCells } from './withCollapsedMultirow'
 
-export const createTableRow = <TData extends TableData>(
+export const createTableRow = <TData extends TableData = {}>(
 	table: TableInstance<TData>,
 	id: string,
 	original: TData,
@@ -27,11 +23,10 @@ export const createTableRow = <TData extends TableData>(
 		rowIndex,
 		depth,
 		subRows as Row<TData>[]
-	) as Table_Row
+	) as Table_Row<TData>
 
 	row.getGroupingValue = <T = any>(columnId: string) => {
-		const { groupingKey } = table.getColumn(columnId)
-			.columnDef as Table_ColumnDef
+		const { groupingKey } = table.getColumn(columnId).columnDef
 		if (!groupingKey) {
 			return row.getValue<T>(columnId)
 		}
@@ -39,13 +34,14 @@ export const createTableRow = <TData extends TableData>(
 		return typeof groupingKey === 'function'
 			? groupingKey<T>({
 					row,
-					table: table as TableInstance,
+					table,
 					columnId,
 			  })
 			: getNestedProp<T>(row.original, groupingKey)
 	}
 	row.getVisibleCells = getVisibleCells(row)
-	row.getNonCollapsedCells = getNonCollapsedCells(row, table as TableInstance)
+	row.getNonCollapsedCells = getNonCollapsedCells(row, table)
+	row.showInTable = showRowInTable(row, table)
 
 	return row as Table_Row<TData>
 }

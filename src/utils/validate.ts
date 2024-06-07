@@ -16,8 +16,6 @@ export const validateValue = <TData extends TableData>({
 		options: { localization },
 	},
 }: Parameters<Validator<TData>>[0]): ReturnType<Validator<TData>> => {
-	// console.log('VALIDATE', value, typeof value)
-
 	if (value === undefined || value === '') return true
 
 	const { dataType, minValue, maxValue } = columnDef

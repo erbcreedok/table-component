@@ -69,6 +69,9 @@ export const useTable = <TData extends TableData = TableData>(
 	const bulkActionsRef = useRef<HTMLDivElement>(null)
 	const rowDragEnterTimeoutRef = useRef<NodeJS.Timeout>()
 	const expandRowTimeoutRef = useRef<NodeJS.Timeout>()
+	// required to get search value in different places
+	// hopefully, we need to redo current HeaderSearch behavior, and pass filtering logic into getFilteredRowModel
+	const headerSearchValueRef = useRef('')
 
 	const initialState: Partial<Table_TableState<TData>> = useMemo(() => {
 		const initState = config.initialState ?? {}
@@ -459,6 +462,7 @@ export const useTable = <TData extends TableData = TableData>(
 				editInputRefs,
 				expandRowTimeoutRef,
 				filterInputRefs,
+				headerSearchValueRef,
 				searchInputRef,
 				rowDragEnterTimeoutRef,
 				tableContainerRef,
@@ -514,6 +518,7 @@ export const useTable = <TData extends TableData = TableData>(
 	)
 	table.constants.disableActionButtons =
 		table.getState().isEditingTable && table.options.editingMode === 'table'
+	table.constants.hideInputErrorOnFocus = table.options.editingMode !== 'table'
 
 	useTableColumns(table)
 	useCreateNewRow(table)

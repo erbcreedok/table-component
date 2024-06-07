@@ -29,16 +29,18 @@ export const EditButton = <TData extends TableData = TableData>({
 	const handleEditCancel = useCallback(() => {
 		setIsEditingTable(false)
 	}, [setIsEditingTable])
-	const handleEditSave = useCallback(
-		() =>
+	const handleEditSave = useCallback(async () => {
+		// needed, to prevent form from ignoring of validation of last edited field
+		table.setEditingRow(null)
+		queueMicrotask(() => {
 			onEditingTableSave?.({
 				table,
 				exitEditingMode: () => setIsEditingTable(false),
 				values: getValues(),
 				methods,
-			}),
-		[getValues, methods, onEditingTableSave, setIsEditingTable, table]
-	)
+			})
+		})
+	}, [getValues, methods, onEditingTableSave, setIsEditingTable, table])
 
 	const editButton = (
 		<ToolbarButton

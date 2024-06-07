@@ -72,7 +72,7 @@ export const EditDateField = <TData extends TableData>({
 			error,
 			placeholder: columnDef.header,
 			label: showLabel ? column.columnDef.header : undefined,
-			hideErrorOnFocus: true,
+			hideErrorOnFocus: table.constants.hideInputErrorOnFocus,
 			...muiDayPickerInputProps.inputProps,
 			inputRef: (inputRef) => {
 				if (inputRef) {

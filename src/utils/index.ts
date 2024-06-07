@@ -1,6 +1,7 @@
 export * from './buildTableHeaderGroups'
 export * from './createTableRow'
 export * from './findRelativeParent'
+export * from './focusOnErrorFields'
 export * from './getCellFieldId'
 export * from './getDirtyFields'
 export * from './validate'

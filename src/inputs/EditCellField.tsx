@@ -88,7 +88,5 @@ export const EditCellField = <TData extends TableData = TableData>(
 		return <EditTextField {...editProps} />
 	}
 
-	return (
-		<CellFormController cell={cell} table={table} render={getRenderValue} />
-	)
+	return <CellFormController cell={cell} render={getRenderValue} />
 }

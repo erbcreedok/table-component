@@ -47,7 +47,7 @@ export function expandRows<TData extends RowData>(rowModel: RowModel<TData>) {
 
 	return {
 		rows: expandedRows,
-		flatRows: rowModel.flatRows,
+		flatRows: expandedRows,
 		rowsById: rowModel.rowsById,
 	}
 }
