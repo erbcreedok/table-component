@@ -142,7 +142,7 @@ export const TableBody: FC<Props> = ({
 
 	const Virtualizer = useMemo(() => {
 		return getTableRowVirtualizer(enableRowVirtualization, windowVirtualizer)
-	}, [windowVirtualizer])
+	}, [windowVirtualizer, enableRowVirtualization])
 
 	const getNoResultsSlot = (message: string) => (
 		<Typography
