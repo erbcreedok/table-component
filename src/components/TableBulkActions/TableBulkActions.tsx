@@ -66,7 +66,7 @@ export const TableBulkActions = ({
 					)
 					?.replace(
 						'{rowCount}',
-						getPrePaginationRowModel().rows.length.toString()
+						getPrePaginationRowModel().flatRows.length.toString()
 					)
 			: null
 

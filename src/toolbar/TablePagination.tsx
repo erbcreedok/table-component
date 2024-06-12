@@ -31,7 +31,7 @@ export const TablePagination = <TData extends Record<string, any> = object>({
 		showGlobalFilter,
 	} = getState()
 
-	const totalRowCount = rowCount ?? getPrePaginationRowModel().rows.length
+	const totalRowCount = rowCount ?? getPrePaginationRowModel().flatRows.length
 	const showFirstLastPageButtons = totalRowCount / pageSize > 2
 
 	const tablePaginationProps =
