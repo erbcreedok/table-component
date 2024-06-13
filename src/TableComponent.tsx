@@ -85,14 +85,12 @@ import {
 	TableStatusBarAdornment,
 	TableStatusBarWrapperProps,
 } from './TableStatusBar'
-import {
-	Preset,
-	PresetState,
-} from './TableToolbar/components/buttons/PresetButton'
+import { TableInstanceWithPresets, TablePropsWithPresets } from './features'
 import { ColumnsMenuProps } from './TableToolbar/components/menus/ColumnsMenu/ColumnsMenu'
 import { FiltersMenuProps } from './TableToolbar/components/menus/FiltersMenu/FiltersMenu'
 import { GroupingMenuProps } from './TableToolbar/components/menus/GroupingMenu/GroupingMenu'
 import type { TableToolbarProps } from './TableToolbar/TableToolbar'
+import type { FunctionProps, LiteralUnion } from './types'
 import type { GetIsColumnAllGroupsCollapsedProps } from './utils/getIsColumnAllGroupsCollapsed'
 import type { GetIsGroupCollapsedProps } from './utils/getIsGroupCollapsed'
 import {
@@ -106,15 +104,7 @@ import type { OnGroupCollapsedToggleAllProps } from './utils/onGroupCollapseTogg
  * Most of this file is just TypeScript types
  */
 
-export type LiteralUnion<T extends U, U = string> =
-	| T
-	| (U & Record<never, never>)
-
 export type TableData = Record<string, any>
-
-export type FunctionProps<ReturnType, Arguments> =
-	| ReturnType
-	| ((arg: Arguments) => ReturnType)
 
 export type GroupCollapsed = Record<string, boolean | undefined>
 export type {
@@ -174,7 +164,8 @@ export type TableInstance<TData extends TableData = TableData> = Omit<
 > &
 	TableInstanceWithCreateNewRow<TData> &
 	TableInstanceWithTableHierarchy<TData> &
-	TableInstanceWithForm<TData> & {
+	TableInstanceWithForm<TData> &
+	TableInstanceWithPresets & {
 		constants: {
 			expandableColumn: Table_Column<TData> | null
 			disableActionButtons: boolean
@@ -211,9 +202,6 @@ export type TableInstance<TData extends TableData = TableData> = Omit<
 		getSelectedRowModel: () => Table_RowModel<TData>
 		getState: () => Table_TableState<TData>
 		getVisibleLeafColumns: () => Table_Column<TData>[]
-		getPresets: () => Preset[]
-		savePresets: (presets: Preset[]) => void
-		getDefaultPresets: () => Preset[]
 		isHierarchyItem?: HierarchyTreeConfig<TData>['isHierarchyItem']
 		setSearchData: (data: SearchData<TData>) => void
 		setHighlightHeadCellId: (colId: string | null) => void
@@ -1157,7 +1145,8 @@ export type TableComponentProps<TData extends TableData = TableData> = Omit<
 > &
 	TablePropsWithCreateNewRow<TData> &
 	TableSortingConfigs<TData> &
-	TablePropsWithForm<TData> & {
+	TablePropsWithForm<TData> &
+	TablePropsWithPresets<TData> & {
 		columnFilterModeOptions?: Array<
 			LiteralUnion<string & Table_FilterOption>
 		> | null
@@ -1481,9 +1470,6 @@ export type TableComponentProps<TData extends TableData = TableData> = Omit<
 		onShowFiltersChange?: OnChangeFn<boolean>
 		onShowGlobalFilterChange?: OnChangeFn<boolean>
 		onShowToolbarDropZoneChange?: OnChangeFn<boolean>
-		onGetPresets?: () => Preset[]
-		onSavePresets?: (presets: Preset[]) => void
-		onGetDefaultPresets?: (state?: PresetState) => Preset[]
 		onNativeEvent?: ({
 			el,
 			type,

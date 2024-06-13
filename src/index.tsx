@@ -56,8 +56,10 @@ export * from './TableComponent'
 export * from './utilColumns'
 export * from './components'
 export * from './context'
+export * from './features'
 export * from './hooks'
 export * from './utils'
+export * from './types'
 export type {
 	Table_Icons,
 	TableBodyRowProps,

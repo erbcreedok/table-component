@@ -29,6 +29,7 @@ export const Default_Table_Props = {
 	enableMultiRowSelection: true,
 	enableMultiSort: true,
 	enablePinning: false,
+	enablePresets: true,
 	enableRowNumbers: true,
 	enableSelectAll: true,
 	enableSorting: true,

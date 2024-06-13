@@ -38,7 +38,7 @@ import {
 	TableData,
 	TableInstance,
 } from '../TableComponent'
-import { getDefaultPreset } from '../TableToolbar/components/buttons/presetContants'
+import { usePresets } from '../features'
 import { getUtilColumn, utilColumns } from '../utilColumns'
 import { defaultGetSubRows } from '../utils/defaultGetSubRows'
 import { flatHierarchyTree } from '../utils/flatHierarchyTree'
@@ -303,23 +303,6 @@ export const useTable = <TData extends TableData = TableData>(
 		isHierarchyItem,
 	])
 
-	const getPresets = useCallback(
-		() => JSON.parse(localStorage.getItem('tablePresets') as string),
-		[]
-	)
-
-	const savePresets = useCallback((presets) => {
-		localStorage.setItem('tablePresets', JSON.stringify(presets))
-	}, [])
-
-	const getDefaultPresets = useCallback(() => {
-		if (config.onGetDefaultPresets) {
-			return config.onGetDefaultPresets(initialState)
-		}
-
-		return [getDefaultPreset(initialState)]
-	}, [])
-
 	const highlightCellId = (id: string | null) => {
 		setHighlightHeadCellId(id)
 	}
@@ -493,9 +476,6 @@ export const useTable = <TData extends TableData = TableData>(
 			setShowToolbarDropZone:
 				config.onShowToolbarDropZoneChange ?? setShowToolbarDropZone,
 			expandableColumn: null,
-			getPresets: config.onGetPresets ?? getPresets,
-			savePresets: config.onSavePresets ?? savePresets,
-			getDefaultPresets,
 			setSearchData,
 			setHighlightHeadCellId: highlightCellId,
 			CustomRow: config.CustomRow,
@@ -525,6 +505,7 @@ export const useTable = <TData extends TableData = TableData>(
 	useTableColumns(table)
 	useCreateNewRow(table)
 	useTableHierarchy(table)
+	usePresets(table, initialState)
 
 	return { state, table, config }
 }

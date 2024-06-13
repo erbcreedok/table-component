@@ -1,12 +1,8 @@
 import { OnChangeFn } from '@tanstack/react-table'
 import { ReactNode, useCallback } from 'react'
 
-import {
-	FunctionProps,
-	Table_Row,
-	TableData,
-	TableInstance,
-} from '../TableComponent'
+import { Table_Row, TableData, TableInstance } from '../TableComponent'
+import { FunctionProps } from '../types'
 import { getNewRow } from '../utils/getNewRow'
 
 export const useCreateNewRow = <TData extends TableData = TableData>(

@@ -46,7 +46,7 @@ export const useEditingProps = ([data, setData]) => {
 		},
 		[addRow]
 	)
-	const handleEditTable: OnEditingTableSaveProp = useCallback(
+	const handleEditTable: OnEditingTableSaveProp<TeamMember> = useCallback(
 		async ({ exitEditingMode, methods, table, values }) => {
 			const isValid = await validateAllFields({ table, methods })
 			if (!isValid) return

@@ -1,10 +1,6 @@
-import {
-	Colors,
-	IconsColor,
-	DEFAULT_FONT_FAMILY,
-} from '../../../components/styles'
+import { Colors, DEFAULT_FONT_FAMILY, IconsColor } from '../../'
 
-import { PresetState } from './PresetButton'
+import { PresetState } from './presetTypes'
 
 export const EMPTY_STATE: PresetState = {
 	columnOrder: [],

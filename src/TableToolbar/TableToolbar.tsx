@@ -4,10 +4,10 @@ import Divider from '@mui/material/Divider'
 import Typography from '@mui/material/Typography'
 import React, { ComponentProps, ReactNode, useCallback, useMemo } from 'react'
 
+import { DEFAULT_FONT_FAMILY, TextColor } from '../components'
 import { useComputedEnableCaptions } from '../hooks/useComputedEnableCaptions'
 import { useHoverEffects } from '../hooks/useHoverEffects'
 import type { TableData, TableInstance } from '../index'
-import { DEFAULT_FONT_FAMILY, TextColor } from '../components'
 
 import { ColumnsButton } from './components/buttons/ColumnsButton'
 import { EditButton } from './components/buttons/EditButton'
@@ -87,7 +87,7 @@ export const TableToolbar = <TData extends TableData = {}>(
 		enableSorting,
 		enableFiltering,
 		enableGrouping,
-		enablePreset = true,
+		enablePreset,
 		disableFilteringButton,
 		disableSettingsButton,
 		disableGroupingButton,
@@ -108,6 +108,7 @@ export const TableToolbar = <TData extends TableData = {}>(
 			enableGrouping: uEnableGrouping,
 			enableSorting: uEnableSorting,
 			enableFilters: uEnableFilters,
+			enablePresets: uEnablePresets,
 			editingMode,
 		},
 	} = table
@@ -185,7 +186,7 @@ export const TableToolbar = <TData extends TableData = {}>(
 					disabled={disableSettingsButton ?? disableButtons}
 				/>
 			)}
-			{enablePreset && (
+			{(enablePreset || uEnablePresets) && (
 				<PresetButton
 					enableCaption={computedEnableCaptions}
 					table={table}

@@ -193,3 +193,18 @@ export const enableEditingHighlighting = {
 	description:
 		'Highlight cells that have been edited. This is useful for showing users which cells have been changed.',
 }
+export const muiTableStatusClearAllButtonProps = {
+	control: { type: 'select' },
+	defaultValue: 'None',
+	options: ['None', 'Reset to Default Preset'],
+	mapping: {
+		None: undefined,
+		'Reset to Default Preset': ({ table }) => ({
+			onClick: () => {
+				const defaultPreset = table.getPresets()[0]
+				table.setCurrentPreset(defaultPreset.id)
+			},
+		}),
+	},
+	description: 'Props for the "Clear All" button in Table Status Bar',
+}

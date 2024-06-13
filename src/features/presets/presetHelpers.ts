@@ -1,11 +1,12 @@
-import { TableData, TableInstance } from '../../../../TableComponent'
-import { getValidColumnOrder } from '../../../../utils/getValidColumnOrder'
-import { PresetState } from '../PresetButton'
+import { EMPTY_STATE, TableData, TableInstance } from '../../'
+import { getValidColumnOrder } from '../../utils/getValidColumnOrder'
 
-const getIsArrayTheSame = (firstState, secondState) =>
+import { PresetState } from './presetTypes'
+
+const getIsArraySame = (firstState, secondState) =>
 	JSON.stringify(firstState) === JSON.stringify(secondState)
 
-const getIsSortingTheSame = (presetSorting, tableSorting) => {
+const getIsSortingSame = (presetSorting, tableSorting) => {
 	if (presetSorting.length === tableSorting.length) {
 		if (presetSorting.length === 0) {
 			return true
@@ -21,7 +22,7 @@ const getIsSortingTheSame = (presetSorting, tableSorting) => {
 	return false
 }
 
-const getIsFiltersTheSame = (presetFilters, tableFilters) => {
+const getIsFiltersSame = (presetFilters, tableFilters) => {
 	if (presetFilters.length === tableFilters.length) {
 		if (presetFilters.length === 0) {
 			return true
@@ -35,7 +36,7 @@ const getIsFiltersTheSame = (presetFilters, tableFilters) => {
 
 			if (
 				!foundedFilter ||
-				!getIsArrayTheSame(presetFilter.value, foundedFilter.value)
+				!getIsArraySame(presetFilter.value, foundedFilter.value)
 			) {
 				isFiltersTheSame = false
 			}
@@ -52,17 +53,17 @@ const getHiddenColumns = (visibility) =>
 		.filter((key) => !visibility[key])
 		.sort()
 
-const getIsVisibilityTheSame = (presetVisibility, tableVisibility) => {
+const getIsVisibilitySame = (presetVisibility, tableVisibility) => {
 	const hiddenPresetColumns = getHiddenColumns(presetVisibility)
 	const hiddenTableColumns = getHiddenColumns(tableVisibility)
 
-	return getIsArrayTheSame(hiddenPresetColumns, hiddenTableColumns)
+	return getIsArraySame(hiddenPresetColumns, hiddenTableColumns)
 }
 
-export const getIsStateTheSame = <TData extends TableData = TableData>(
-	presetState: PresetState,
+export const getIsPresetStateSame = <TData extends TableData = TableData>(
+	table: TableInstance<TData>,
 	tableState: PresetState,
-	table: TableInstance<TData>
+	presetState: PresetState = EMPTY_STATE
 ) => {
 	const {
 		columnOrder: presetColumnOrder,
@@ -80,25 +81,25 @@ export const getIsStateTheSame = <TData extends TableData = TableData>(
 		columnVisibility: tableColumnVisibility,
 	} = tableState
 
-	const isOrderTheSame = getIsArrayTheSame(
+	const isOrderTheSame = getIsArraySame(
 		getValidColumnOrder(table.options, presetColumnOrder),
 		getValidColumnOrder(table.options, tableColumnOrder)
 	)
 	// grouping is working not properly, because after ungroup -> group by,
 	// new column("mrt-row-expand") is pushed to the beggining of the columnOrder array
-	const isGroupingTheSame = getIsArrayTheSame(
+	const isGroupingTheSame = getIsArraySame(
 		presetGrouping ?? [],
 		tableGrouping ?? []
 	)
-	const isSortingTheSame = getIsSortingTheSame(
+	const isSortingTheSame = getIsSortingSame(
 		presetSorting ?? [],
 		tableSorting ?? []
 	)
-	const isFiltersTheSame = getIsFiltersTheSame(
+	const isFiltersTheSame = getIsFiltersSame(
 		presetColumnFilters ?? [],
 		tableColumnFilters ?? []
 	)
-	const isVisibilityTheSame = getIsVisibilityTheSame(
+	const isVisibilityTheSame = getIsVisibilitySame(
 		presetColumnVisibility ?? {},
 		tableColumnVisibility ?? {}
 	)

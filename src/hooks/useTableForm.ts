@@ -7,8 +7,8 @@ import {
 	Table_Row,
 	TableData,
 	TableInstance,
-	LiteralUnion,
 } from '../TableComponent'
+import { LiteralUnion } from '../types'
 import { validateValue } from '../utils'
 
 import { NewRow } from './useCreateNewRow'

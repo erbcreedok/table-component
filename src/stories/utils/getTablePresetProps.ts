@@ -1,5 +1,4 @@
-import { Preset, PresetState } from '../../TableToolbar/components/buttons/PresetButton'
-import { DEFAULT_PRESETS } from '../../TableToolbar/components/buttons/presetContants'
+import { DEFAULT_PRESETS, Preset, PresetState } from '../../'
 
 const getDefaultPreset = (state: Partial<PresetState>, defaultPreset?: Preset[]) => {
 	if (defaultPreset) {

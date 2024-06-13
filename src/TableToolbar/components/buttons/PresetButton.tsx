@@ -1,77 +1,47 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { capitalize, ThemeProvider, Typography } from '@mui/material'
-import {
-	ColumnFiltersState,
-	ColumnOrderState,
-	GroupingState,
-	SortingState,
-	VisibilityState,
-} from '@tanstack/react-table'
+import React, { useCallback, useMemo, useRef, useState } from 'react'
 
 import {
+	createTheme,
+	NotificationDot,
+	PRESET_THEME,
+	TableData,
+	type TableInstance,
 	ToolbarIconButton,
 	Tooltip,
-	NotificationDot,
-} from '../../../components'
-import { createTheme } from '../../../index'
-import type { TableInstance } from '../../../index'
-import { getValidColumnOrder } from '../../../utils/getValidColumnOrder'
-import { PresetMenu } from '../menus/PresetMenu/PresetMenu'
-import { PresetNotification } from '../menus/PresetMenu/components/PresetNotification'
-import { useTableContext } from '../../../context/useTableContext'
+} from '../../../'
+import { getValueOrFunctionHandler } from '../../../utils/getValueOrFunctionHandler'
 import { withNativeEvent } from '../../../utils/withNativeEvent'
+import { PresetNotification } from '../menus/PresetMenu/components/PresetNotification'
+import { PresetMenu } from '../menus/PresetMenu/PresetMenu'
 
-import { getIsStateTheSame, isPresetStateEmpty } from './helpers/presetHelpers'
-import { PRESET_THEME } from './presetContants'
+const theme = createTheme(PRESET_THEME)
 
-interface PresetButtonProps<TData extends Record<string, any> = {}> {
+interface PresetButtonProps<TData extends TableData = {}> {
 	table: TableInstance<TData>
 	enableCaption?: boolean
 	disabled?: boolean
 }
 
-export interface PresetState {
-	columnOrder?: ColumnOrderState
-	grouping?: GroupingState
-	sorting?: SortingState
-	columnFilters?: ColumnFiltersState
-	columnVisibility?: VisibilityState
-}
-export interface Preset {
-	id: number
-	name: string
-	checked: boolean
-	suggested: boolean
-	state: PresetState
-}
-
-const theme = createTheme(PRESET_THEME)
-
-export const PresetButton = <TData extends Record<string, any> = {}>({
+export const PresetButton = <TData extends TableData = {}>({
 	table,
 	enableCaption = true,
 	disabled,
 }: PresetButtonProps<TData>) => {
 	const {
-		getPresets,
-		getDefaultPresets,
-		setColumnOrder,
-		setGrouping,
-		setSorting,
-		setColumnFilters,
-		setColumnVisibility,
 		options: {
+			showPresetChangedDot,
+			showPresetNotification,
 			localization,
 			icons: { PresetIcon },
 		},
 	} = table
 
-	const { state: tableState } = useTableContext()
-	const [isStateTheSame, setIsStateTheSame] = useState<boolean>(true)
+	const isPresetStateSame = table.getIsPresetStateSame()
+	const isCurrentPresetEmpty = table.getIsCurrentPresetEmpty()
 	const [isNotificationShowedOnce, setIsNotificationShowedOnce] =
 		useState<boolean>(!!localStorage.getItem('presetNotificationShowed'))
-	const [presets, setPresets] = useState<Preset[]>(getDefaultPresets() ?? [])
-	const [checkedPreset, setCheckedPreset] = useState<Preset | undefined>()
+	const currentPreset = table.getCurrentPreset()
 	const toolbarRef = useRef<HTMLButtonElement>(null)
 
 	const [open, setOpen] = useState(false)
@@ -84,67 +54,63 @@ export const PresetButton = <TData extends Record<string, any> = {}>({
 		setOpen(false)
 	}, [])
 
-	const handleApplyPresetState = ({
-		columnOrder,
-		grouping,
-		sorting,
-		columnFilters,
-		columnVisibility,
-	}: PresetState) => {
-		setColumnOrder(getValidColumnOrder(table.options, columnOrder))
-		setGrouping(() => grouping ?? [])
-		setSorting(sorting ?? [])
-		setColumnFilters(columnFilters ?? [])
-		setColumnVisibility(columnVisibility ?? {})
-	}
-
-	useEffect(() => {
-		const loadedPresets = getPresets()
-
-		const currentPresets = (loadedPresets || presets).sort(
-			({ id: firstId }, { id: secondId }) => firstId - secondId
-		)
-
-		const currentCheckedPreset = currentPresets.find(({ checked }) => checked)
-
-		setPresets(currentPresets)
-
-		if (currentCheckedPreset) {
-			setCheckedPreset(currentCheckedPreset)
-			handleApplyPresetState(currentCheckedPreset.state)
-		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [])
-
-	const isEmptyPreset = useMemo(
-		() => (checkedPreset ? isPresetStateEmpty(checkedPreset?.state) : true),
-		[checkedPreset]
-	)
-
-	useEffect(() => {
-		if (checkedPreset) {
-			setIsStateTheSame(
-				getIsStateTheSame(checkedPreset?.state, tableState, table)
-			)
-		}
-	}, [checkedPreset, tableState, presets])
-
 	const tooltipTitle = useMemo(() => {
 		if (
-			checkedPreset?.name
+			currentPreset?.name
 				?.toLowerCase()
 				?.includes(localization.showPreset.toLowerCase())
 		) {
-			return checkedPreset?.name
+			return currentPreset?.name
 		}
 
-		return `${checkedPreset?.name} ${localization.showPreset}`
-	}, [checkedPreset?.name, localization.showPreset])
+		return `${currentPreset?.name} ${localization.showPreset}`
+	}, [currentPreset?.name, localization.showPreset])
 
 	const handleNotificationShowedOnce = () => {
 		localStorage.setItem('presetNotificationShowed', JSON.stringify(true))
 		setIsNotificationShowedOnce(true)
 	}
+
+	const showNotificationDot = useMemo(() => {
+		if (showPresetChangedDot) {
+			getValueOrFunctionHandler(showPresetChangedDot)({
+				table,
+				isPresetStateSame,
+				isCurrentPresetEmpty,
+				isPresetMenuOpen: open,
+			})
+		}
+
+		return !isPresetStateSame && !open
+	}, [
+		showPresetChangedDot,
+		isPresetStateSame,
+		open,
+		table,
+		isCurrentPresetEmpty,
+	])
+
+	const showNotification = useMemo(() => {
+		if (showPresetNotification) {
+			getValueOrFunctionHandler(showPresetNotification)({
+				table,
+				isPresetStateSame,
+				isCurrentPresetEmpty,
+				isPresetMenuOpen: open,
+			})
+		}
+
+		return (
+			!isCurrentPresetEmpty && !isPresetStateSame && !isNotificationShowedOnce
+		)
+	}, [
+		showPresetNotification,
+		isPresetStateSame,
+		isNotificationShowedOnce,
+		table,
+		isCurrentPresetEmpty,
+		open,
+	])
 
 	return (
 		<ThemeProvider theme={theme}>
@@ -173,33 +139,24 @@ export const PresetButton = <TData extends Record<string, any> = {}>({
 								whiteSpace: 'nowrap',
 							}}
 						>
-							{checkedPreset?.name}
+							{currentPreset?.name}
 						</Typography>
 					)}
-					{!isStateTheSame && !open && <NotificationDot />}
+					{showNotificationDot && <NotificationDot />}
 				</ToolbarIconButton>
 			</Tooltip>
-			{!isEmptyPreset &&
-				!!toolbarRef.current &&
-				!isStateTheSame &&
-				!isNotificationShowedOnce && (
-					<PresetNotification
-						anchorEl={toolbarRef.current}
-						setIsNotificationShowedOnce={handleNotificationShowedOnce}
-					/>
-				)}
+			{!!toolbarRef.current && showNotification && (
+				<PresetNotification
+					anchorEl={toolbarRef.current}
+					setIsNotificationShowedOnce={handleNotificationShowedOnce}
+				/>
+			)}
 			{toolbarRef.current && (
 				<PresetMenu
 					table={table}
 					anchorEl={toolbarRef.current}
-					presets={presets}
-					checkedPreset={checkedPreset}
-					isStateTheSame={isStateTheSame}
 					open={open}
-					setCheckedPreset={setCheckedPreset}
-					setPresets={setPresets}
 					handleClose={handleClose}
-					handleApplyPresetState={handleApplyPresetState}
 				/>
 			)}
 		</ThemeProvider>

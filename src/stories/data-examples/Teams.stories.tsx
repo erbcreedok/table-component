@@ -37,6 +37,7 @@ import {
 	muiSidebarProps,
 	muiSortingMenuProps,
 	muiTableHeadCellFilterLabelProps,
+	muiTableStatusClearAllButtonProps,
 } from '../utils/constants'
 import { getDndTargetGroupingUpdateValues } from '../utils/getDndTargetGroupingUpdateValues'
 import { getIndexedExpandableColumn } from '../utils/getIndexedExpandableColumn'
@@ -457,10 +458,8 @@ const TeamsTable: Story<TeamsTableConfigs> = (args) => {
 	const [innerData, setInnerData] = useState(
 		getExpandingTeamMembers(3, '', 3, 2)
 	)
-	const { handleAddRow, handleEditRow, handleEditTable, updateRow } = useEditingProps([
-		data,
-		setData,
-	])
+	const { handleAddRow, handleEditRow, handleEditTable, updateRow } =
+		useEditingProps([data, setData])
 	const { handleAddRow: handleAddInnerRow } = useEditingProps([
 		innerData,
 		setInnerData,
@@ -596,7 +595,6 @@ const TeamsTable: Story<TeamsTableConfigs> = (args) => {
 				statusBarAdornment={
 					enableTestStatusBarAdornment ? <TestStatusBarAdornment /> : undefined
 				}
-				{...getTablePresetProps('teamsDefaultTable')}
 				{...rest}
 			/>
 
@@ -687,10 +685,7 @@ export const HierarchyWithCustomRowExample: Story = (args) => {
 		muiTableBodyRowDragHandleProps,
 		getRowDragValuesChangeMessage,
 	} = useHierarchyProps()
-	const { handleAddRow, handleEditRow } = useEditingProps([
-		data,
-		setData,
-	])
+	const { handleAddRow, handleEditRow } = useEditingProps([data, setData])
 
 	return (
 		<>
@@ -728,10 +723,7 @@ export const HierarchyWithConfigExample: Story = (args) => {
 		getRowDragValuesChangeMessage,
 	} = useHierarchyProps()
 	const [isHierarchyEnabled, setHierarchyEnabled] = useState(true)
-	const { handleAddRow, handleEditRow } = useEditingProps([
-		data,
-		setData,
-	])
+	const { handleAddRow, handleEditRow } = useEditingProps([data, setData])
 
 	return (
 		<>
@@ -870,7 +862,8 @@ const meta: Meta = {
 			},
 			control: { type: 'select' },
 			defaultValue: 'false',
-			description: 'Warning: "scroll" pagination is not configured in Teams Table',
+			description:
+				'Warning: "scroll" pagination is not configured in Teams Table',
 		},
 		enableColumnResizing: {
 			control: 'boolean',
@@ -928,6 +921,11 @@ const meta: Meta = {
 			control: 'boolean',
 			defaultValue: true,
 			description: 'Pin columns to left or right side of the table',
+		},
+		enablePresets: {
+			control: 'boolean',
+			defaultValue: true,
+			description: 'Enable presets feature',
 		},
 		enableRowActions: {
 			control: 'boolean',
@@ -1162,6 +1160,7 @@ const meta: Meta = {
 			control: { type: 'object' },
 			description: 'Redefine default translation phrases.',
 		},
+		muiTableStatusClearAllButtonProps,
 		muiColumnsMenuProps,
 		muiGroupingMenuProps,
 		muiSortingMenuProps,
@@ -1276,6 +1275,12 @@ const meta: Meta = {
 			defaultValue: false,
 			description:
 				'***THIS IS NOT A PROP***\n' + 'Add test status bar adornment',
+		},
+		tablePresetsStorageId: {
+			control: { type: 'text' },
+			defaultValue: 'teamsDefaultTable',
+			description:
+				'This property defines key for presets saved in local storage',
 		},
 	},
 }

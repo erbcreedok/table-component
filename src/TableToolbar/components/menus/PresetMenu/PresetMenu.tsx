@@ -1,61 +1,42 @@
 import { Divider, MenuList, Typography } from '@mui/material'
 import Box from '@mui/material/Box'
 
-import { Menu } from '../../../../components/Menu'
-import type { TableInstance } from '../../../../index'
-import { Colors, TextColor } from '../../../../components/styles'
-import { Preset, PresetState } from '../../buttons/PresetButton'
+import { Colors, Menu, type TableInstance, TextColor } from '../../../../'
 
 import { CustomPreset } from './components/CustomPreset'
 import { PresetInput } from './components/PresetInput'
-import { SuggestedPreset } from './components/SuggestedPreset'
 import { PresetsFooter } from './components/PresetsFooter'
+import { SuggestedPreset } from './components/SuggestedPreset'
 import { usePresetMenu } from './usePresetMenu'
 
 interface PresetMenuProps<TData extends Record<string, any> = {}> {
 	table: TableInstance<TData>
 	anchorEl: HTMLElement
-	presets: Preset[]
-	checkedPreset?: Preset
-	isStateTheSame: boolean
 	open: boolean
-	setCheckedPreset(preset: Preset): void
-	setPresets(value: Preset[]): void
 	handleClose(): void
-	handleApplyPresetState(state: PresetState): void
 }
 
 export const PresetMenu = <TData extends Record<string, any> = {}>({
 	table,
 	anchorEl,
-	presets,
-	checkedPreset,
-	isStateTheSame,
 	open,
-	setCheckedPreset,
-	setPresets,
 	handleClose,
-	handleApplyPresetState,
 }: PresetMenuProps<TData>) => {
 	const {
 		editingPresetId,
 		setEditingPresetId,
-		suggestedPresets,
-		customPresets,
 		handleSelectPreset,
 		handleDeletePreset,
 		handleSavePresetWithNewName,
 		handleCreateNewPreset,
 		handleUpdateCurrent,
 	} = usePresetMenu({
-		checkedPreset,
-		presets,
 		table,
-		onApplyPresetState: handleApplyPresetState,
 		onClose: handleClose,
-		setCheckedPreset,
-		setPresets,
 	})
+
+	const currentPreset = table.getCurrentPreset()
+	const isStateTheSame = table.getIsPresetStateSame()
 
 	return (
 		<Menu
@@ -89,18 +70,18 @@ export const PresetMenu = <TData extends Record<string, any> = {}>({
 					Suggested View
 				</Typography>
 				<MenuList dense sx={{ p: 0 }}>
-					{suggestedPresets.map(({ id, name }) => (
+					{table.getSuggestedPresets().map(({ id, name }) => (
 						<SuggestedPreset
 							key={id}
 							id={id}
 							name={name}
-							checkedPresetId={checkedPreset?.id}
+							checkedPresetId={currentPreset?.id}
 							onSelectPreset={handleSelectPreset}
 						/>
 					))}
 				</MenuList>
 			</Box>
-			{(!!customPresets.length || editingPresetId === 'new') && [
+			{(!!table.getCustomPresets().length || editingPresetId === 'new') && [
 				<Divider key="divider" sx={{ borderColor: `${Colors.Gray20}` }} />,
 				<Box key="box" sx={{ py: '6px' }}>
 					<Typography
@@ -115,12 +96,12 @@ export const PresetMenu = <TData extends Record<string, any> = {}>({
 						My presets
 					</Typography>
 					<MenuList dense sx={{ p: 0 }}>
-						{customPresets.map(({ id, name }) => (
+						{table.getCustomPresets().map(({ id, name }) => (
 							<CustomPreset
 								key={id}
 								id={id}
 								name={name}
-								checkedPresetId={checkedPreset?.id}
+								checkedPresetId={currentPreset?.id}
 								onDeletePreset={handleDeletePreset}
 								onSelectPreset={handleSelectPreset}
 								onSaveWithNewName={handleSavePresetWithNewName}
@@ -145,7 +126,9 @@ export const PresetMenu = <TData extends Record<string, any> = {}>({
 				isUpdateCurrentEnabled={
 					!editingPresetId &&
 					!isStateTheSame &&
-					customPresets?.some((preset) => preset.id === checkedPreset?.id)
+					table
+						.getCustomPresets()
+						?.some((preset) => preset.id === currentPreset?.id)
 				}
 				table={table}
 			/>

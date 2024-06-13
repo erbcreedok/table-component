@@ -2,8 +2,8 @@ import React from 'react';
 import { Meta, Story } from '@storybook/react';
 import TableComponent, {
   TableComponentProps,
+  DEFAULT_PRESETS
 } from '../';
-import { DEFAULT_PRESETS } from '../TableToolbar/components/buttons/presetContants'
 
 import { Initiative } from './types/Initiative'
 import { generateInitiatives } from './utils/generateInitiatives'
