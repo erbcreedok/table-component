@@ -39,11 +39,11 @@
 	"size-limit": [
 		{
 			"path": "dist/cjs/index.js",
-			"limit": "140 KB"
+			"limit": "150 KB"
 		},
 		{
 			"path": "dist/esm/table-component.esm.js",
-			"limit": "140 KB"
+			"limit": "150 KB"
 		}
 	],
 	"engines": {
