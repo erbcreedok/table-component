@@ -520,6 +520,8 @@ export const useTable = <TData extends TableData = TableData>(
 		table.getState().isEditingTable && table.options.editingMode === 'table'
 	table.constants.hideInputErrorOnFocus = table.options.editingMode !== 'table'
 
+	table.constants.totalRowCount = table.getFilteredRowModel().flatRows.length
+
 	useTableColumns(table)
 	useCreateNewRow(table)
 	useTableHierarchy(table)

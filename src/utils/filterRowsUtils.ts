@@ -49,7 +49,7 @@ export function filterRowModelFromLeafs<TData extends RowData>(
 				if (filterRow(row) && !newRow.subRows.length) {
 					rows.push(row)
 					newFilteredRowsById[row.id] = row
-					newFilteredRowsById[i] = row
+					newFilteredFlatRows.push(row)
 					// eslint-disable-next-line no-continue
 					continue
 				}
@@ -57,7 +57,7 @@ export function filterRowModelFromLeafs<TData extends RowData>(
 				if (filterRow(row) || newRow.subRows.length) {
 					rows.push(row)
 					newFilteredRowsById[row.id] = row
-					newFilteredRowsById[i] = row
+					newFilteredFlatRows.push(row)
 					// eslint-disable-next-line no-continue
 					continue
 				}
@@ -66,7 +66,7 @@ export function filterRowModelFromLeafs<TData extends RowData>(
 				if (filterRow(row)) {
 					rows.push(row)
 					newFilteredRowsById[row.id] = row
-					newFilteredRowsById[i] = row
+					newFilteredFlatRows.push(row)
 				}
 			}
 		}

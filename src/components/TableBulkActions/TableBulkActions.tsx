@@ -38,7 +38,6 @@ export const TableBulkActions = ({
 	const {
 		getState,
 		getSelectedRowModel,
-		getPrePaginationRowModel,
 		resetRowSelection,
 		options: {
 			enableBulkActionsCaptions: enableCaptions,
@@ -49,6 +48,7 @@ export const TableBulkActions = ({
 			e2eLabels,
 		},
 		refs: { bulkActionsRef },
+		constants: { totalRowCount },
 	} = table
 
 	const bulkActions = getValueOrFunctionHandler(_bulkActions)({ table })
@@ -64,10 +64,7 @@ export const TableBulkActions = ({
 						'{selectedCount}',
 						getSelectedRowModel().flatRows.length.toString()
 					)
-					?.replace(
-						'{rowCount}',
-						getPrePaginationRowModel().flatRows.length.toString()
-					)
+					?.replace('{rowCount}', totalRowCount.toString())
 			: null
 
 	const visible = !!getSelectedRowModel().flatRows.length

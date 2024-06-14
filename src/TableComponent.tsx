@@ -179,6 +179,7 @@ export type TableInstance<TData extends TableData = TableData> = Omit<
 			expandableColumn: Table_Column<TData> | null
 			disableActionButtons: boolean
 			hideInputErrorOnFocus: boolean
+			totalRowCount: number
 		}
 		_getOrderColumnsFn: () => (
 			columns: Table_Column<TData>[]
