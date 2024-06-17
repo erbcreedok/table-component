@@ -1,5 +1,9 @@
 import { ReactElement, useCallback, useEffect, useState } from 'react'
-import { useFormContext } from 'react-hook-form'
+import {
+	Controller,
+	ControllerFieldState,
+	useFormContext,
+} from 'react-hook-form'
 
 import { Table_Row, TableData, TableInstance } from '../TableComponent'
 import { scrollToElement } from '../utils/scrollToElement'
@@ -14,12 +18,14 @@ type EditingRowActionButtonsProps<TData extends TableData> = {
 	}) => ReactElement
 	table: TableInstance<TData>
 	row: Table_Row<TData>
+	fieldState?: ControllerFieldState
 }
-export const EditingRowActionButtons = <TData extends TableData>({
+export const EditingRowActionButtonsMain = <TData extends TableData>({
 	open,
 	children,
 	table,
 	row,
+	fieldState,
 }: EditingRowActionButtonsProps<TData>) => {
 	const {
 		getState,
@@ -116,6 +122,8 @@ export const EditingRowActionButtons = <TData extends TableData>({
 		setRowError(undefined)
 	}, [])
 
+	const anyError = fieldState?.error?.message ?? rowError
+
 	return (
 		<FloatingActionButtons
 			table={table}
@@ -123,10 +131,10 @@ export const EditingRowActionButtons = <TData extends TableData>({
 			onSubmit={handleSave}
 			onCancel={handleCancel}
 			adornment={
-				rowError ? (
+				anyError ? (
 					<NotificationBox
 						size="small"
-						text={rowError}
+						text={anyError}
 						type="danger"
 						sx={{ width: 'auto' }}
 						closeAutomatically
@@ -137,5 +145,31 @@ export const EditingRowActionButtons = <TData extends TableData>({
 		>
 			{children}
 		</FloatingActionButtons>
+	)
+}
+
+export const EditingRowActionButtons = <TData extends TableData = {}>({
+	children,
+	...props
+}: EditingRowActionButtonsProps<TData>) => {
+	const methods = useFormContext()
+	if (!props.table.getState().isEditingTable) {
+		return (
+			<EditingRowActionButtonsMain {...props}>
+				{children}
+			</EditingRowActionButtonsMain>
+		)
+	}
+
+	return (
+		<Controller
+			name={props.row.id}
+			control={methods.control}
+			render={({ fieldState }) => (
+				<EditingRowActionButtonsMain {...props} fieldState={fieldState}>
+					{children}
+				</EditingRowActionButtonsMain>
+			)}
+		/>
 	)
 }

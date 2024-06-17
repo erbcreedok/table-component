@@ -10,6 +10,7 @@ export type ValidateAllFieldsProps<TData extends TableData = {}> = {
 	table: TableInstance<TData>
 	methods: UseFormReturn<any>
 	focusOnErrorFields?: boolean
+	allowHiddenRequiredColumns?: boolean
 	fieldsToValidate?: string[]
 }
 const getErrorMessage = (error?: boolean | string) => {
@@ -29,11 +30,12 @@ export const validateAllFields = async <TData extends TableData = {}>(
 		table,
 		methods,
 		focusOnErrorFields: _focusOnErrorFields = true,
+		allowHiddenRequiredColumns = false,
 		fieldsToValidate,
 	} = props
 	const {
 		options: {
-			localization: { fieldNameIsRequired },
+			localization: { fieldNameIsRequired, requiredFieldIsHidden },
 		},
 	} = table
 	let isValid = true
@@ -55,6 +57,13 @@ export const validateAllFields = async <TData extends TableData = {}>(
 					type: 'required',
 					message: requiredError,
 				})
+				if (!allowHiddenRequiredColumns && !column.getIsVisible()) {
+					table.setEditingRow(row)
+					methods.setError(row.id, {
+						type: 'required',
+						message: requiredFieldIsHidden,
+					})
+				}
 
 				return
 			}

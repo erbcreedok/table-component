@@ -183,7 +183,7 @@ export const TableToolbar = <TData extends TableData = {}>(
 				<ColumnsButton
 					enableCaption={computedEnableCaptions}
 					table={table}
-					disabled={disableSettingsButton ?? disableButtons}
+					disabled={disableSettingsButton}
 				/>
 			)}
 			{(enablePreset || uEnablePresets) && (

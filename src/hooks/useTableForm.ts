@@ -58,7 +58,8 @@ export const useTableForm = <TData extends TableData = TableData>(
 		options: { editingMode, formOptions },
 		setIsEditingTable,
 	} = table
-	const { isEditingTable, editingRow, editingCell, newRow } = getState()
+	const { isEditingTable, editingRow, editingCell, newRow, columnVisibility } =
+		getState()
 	const methods = useForm<TableFormValues>({
 		mode: 'onBlur',
 		values: {},
@@ -142,6 +143,13 @@ export const useTableForm = <TData extends TableData = TableData>(
 		// no need to catch isEditingTable change
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [flatRows, methods, table])
+
+	// Remove row errors, if column visibility changed
+	useEffect(() => {
+		flatRows.forEach((row) => {
+			methods.clearErrors(row.id)
+		})
+	}, [flatRows, columnVisibility, methods])
 
 	return methods
 }
@@ -260,11 +268,20 @@ export const registerTable = <TData extends TableData = {}>(
 	table: TableInstance<TData>,
 	methods: UseFormReturn
 ) => {
-	const destructors = table
-		.getPreExpandedRowModel()
-		.flatRows.map((row) => registerRow(row, table, methods))
+	const defaultValues = {}
+	const destructors = table.getPreExpandedRowModel().flatRows.map((row) => {
+		const rowValues = {}
+		row.getAllCells().forEach((cell) => {
+			rowValues[cell.column.id] = getCellEditValue(cell)
+		})
+		defaultValues[row.id] = rowValues
+
+		return registerRow(row, table, methods)
+	})
+	methods.reset(defaultValues)
 
 	return () => {
+		methods.reset({})
 		destructors.forEach((destructor) => destructor())
 	}
 }

@@ -61,7 +61,7 @@ export const FloatingActionButtons = <TData extends TableData>({
 	return (
 		<>
 			{children({ ref: reference })}
-			{open && (
+			{(open || adornment) && (
 				<FloatingPortal
 					root={tableContainerRef.current ?? defaultContainerRef.current}
 				>
@@ -80,18 +80,22 @@ export const FloatingActionButtons = <TData extends TableData>({
 						}}
 					>
 						{adornment}
-						<IconButtonStyled
-							style={{ background: Colors.Red }}
-							onClick={onCancel}
-						>
-							<CloseIcon style={{ width: '21px', height: '21px' }} />
-						</IconButtonStyled>
-						<IconButtonStyled
-							style={{ background: Colors.LightBlue }}
-							onClick={onSubmit}
-						>
-							<CheckIcon style={{ width: '21px', height: '21px' }} />
-						</IconButtonStyled>
+						{open && (
+							<>
+								<IconButtonStyled
+									style={{ background: Colors.Red }}
+									onClick={onCancel}
+								>
+									<CloseIcon style={{ width: '21px', height: '21px' }} />
+								</IconButtonStyled>
+								<IconButtonStyled
+									style={{ background: Colors.LightBlue }}
+									onClick={onSubmit}
+								>
+									<CheckIcon style={{ width: '21px', height: '21px' }} />
+								</IconButtonStyled>
+							</>
+						)}
 					</Box>
 				</FloatingPortal>
 			)}
