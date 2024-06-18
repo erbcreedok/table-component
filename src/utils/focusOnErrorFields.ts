@@ -23,6 +23,7 @@ export const focusOnErrorFields = <TData extends TableData = {}>(props: {
 		queueMicrotask(() => {
 			const field = table.refs.editInputRefs.current[fieldId]
 			if (field) {
+				field.scrollIntoView({ block: 'center' })
 				field.focus()
 			}
 		})

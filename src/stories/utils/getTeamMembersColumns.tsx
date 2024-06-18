@@ -253,6 +253,13 @@ export const getTeamMembersColumns = () => {
 										error={fieldState.error?.message}
 										InputProps={{
 											...params.InputProps,
+											inputRef: (node) => {
+												if (node) {
+													props.table.refs.editInputRefs.current[
+														getCellFieldId(props.cell)
+													] = node
+												}
+											},
 											startAdornment: (
 												<Avatar
 													sx={{ width: 24, height: 24 }}
