@@ -4,7 +4,6 @@ import { TableBodyRow, type TableBodyRowProps } from './body/TableBodyRow'
 import { ExpandButton } from './buttons/ExpandButton'
 import { FullScreenToggleButton } from './buttons/FullScreenToggleButton'
 import { RowActionMenuButton } from './buttons/RowActionMenuButton'
-import { ShowHideColumnsButton } from './buttons/ShowHideColumnsButton'
 import { ToggleGlobalFilterButton } from './buttons/ToggleGlobalFilterButton'
 import { ToggleRowActionMenuButton } from './buttons/ToggleRowActionMenuButton'
 import { TableProvider } from './context/TableProvider'
@@ -87,7 +86,6 @@ export {
 	RowActionMenuButton,
 	Select,
 	SelectCheckbox,
-	ShowHideColumnsButton,
 	TableBodyRow,
 	TableHeadRow,
 	TableHeadMultiRow,

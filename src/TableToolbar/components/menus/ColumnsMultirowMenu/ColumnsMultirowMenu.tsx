@@ -192,13 +192,11 @@ export const ColumnsMultirowMenu = <TData extends TableData = {}>({
 	}
 
 	const handleHideAllClick = () => {
-		allColumns
-			.filter((col) => col.columnDef.enableHiding !== false)
-			.forEach((col) => col.toggleVisibility(false))
+		table.toggleAllColumnsVisible(false)
 	}
 
 	const handleShowAllClick = () => {
-		allColumns.forEach((col) => col.toggleVisibility(true))
+		table.toggleAllColumnsVisible(true)
 	}
 
 	const onColumnOrderChange = useCallback(
