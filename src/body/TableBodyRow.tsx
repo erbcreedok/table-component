@@ -269,7 +269,7 @@ export const TableBodyRow: FC<TableBodyRowProps> = (props) => {
 	// handle row's detail panel collapse when corresponding column is being hidden
 	useEffect(() => {
 		const isRowCellHidden = () => {
-			const expandedCell = openedDetailedPanels?.[row.id].cell.column.id
+			const expandedCell = openedDetailedPanels?.[row.id]?.cell?.column?.id
 
 			return expandedCell && columnVisibility[expandedCell] === false
 		}
