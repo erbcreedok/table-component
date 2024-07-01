@@ -69,6 +69,7 @@ export const useTable = <TData extends TableData = TableData>(
 	const bulkActionsRef = useRef<HTMLDivElement>(null)
 	const rowDragEnterTimeoutRef = useRef<NodeJS.Timeout>()
 	const expandRowTimeoutRef = useRef<NodeJS.Timeout>()
+	const returnToRow = useRef<string>()
 	// required to get search value in different places
 	// hopefully, we need to redo current HeaderSearch behavior, and pass filtering logic into getFilteredRowModel
 	const headerSearchValueRef = useRef('')
@@ -452,6 +453,7 @@ export const useTable = <TData extends TableData = TableData>(
 				tableHeadCellRefs,
 				tablePaperRef,
 				topToolbarRef,
+				returnToRow,
 			},
 			constants: {},
 			isHierarchyItem,

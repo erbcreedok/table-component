@@ -220,6 +220,8 @@ export type TableInstance<TData extends TableData = TableData> = Omit<
 			tablePaperRef: MutableRefObject<HTMLDivElement>
 			topToolbarRef: MutableRefObject<HTMLDivElement>
 			tableToolbarRef: MutableRefObject<HTMLDivElement>
+			/** Signals to pagination to return to specified row id  */
+			returnToRow: MutableRefObject<string | undefined>
 		}
 		resetRowSelection: (defaultState?: boolean) => void
 		setColumnFilterFns: Dispatch<

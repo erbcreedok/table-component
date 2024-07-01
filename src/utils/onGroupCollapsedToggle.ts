@@ -19,12 +19,14 @@ export const onGroupCollapsedToggleDefault = <TData extends TableData = {}>({
 	table,
 	groupId,
 	collapsed,
+	row,
 }: OnGroupCollapsedToggleProps<TData>) => {
 	const { setGroupCollapsed } = table
+
 	setGroupCollapsed((prev) => {
-		return {
-			...prev,
-			[groupId]: collapsed ?? !prev[groupId],
-		}
+		const mainGroupedRowId = row.groupRows[groupId].original.id
+		table.refs.returnToRow.current = mainGroupedRowId
+
+		return { ...prev, [groupId]: collapsed ?? !prev[groupId] }
 	})
 }

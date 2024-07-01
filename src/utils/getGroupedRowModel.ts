@@ -234,10 +234,36 @@ export function getGroupedRowModel<
 			{
 				key: process.env.NODE_ENV === 'development' && 'getGroupedRowModel',
 				debug: () => table.options.debugAll ?? table.options.debugTable,
-				onChange: () => {
+				onChange: (result) => {
 					table._queue(() => {
 						table._autoResetExpanded()
-						table._autoResetPageIndex()
+
+						const {
+							refs: {
+								returnToRow: { current: returnToRow },
+							},
+							getState,
+						} = table as unknown as TableInstance
+
+						// when collapsing/expanding group, return to page where the group first row would be
+
+						if (returnToRow === undefined) {
+							table._autoResetPageIndex()
+
+							return
+						}
+
+						const { pagination } = getState()
+						const returnToRowIndex = result.rows.findIndex(
+							(row) => row.id === returnToRow
+						)
+
+						;(table as unknown as TableInstance).refs.returnToRow.current =
+							undefined
+
+						table.setPageIndex(
+							Math.floor(returnToRowIndex / pagination.pageSize)
+						)
 					})
 				},
 			}
