@@ -1,6 +1,6 @@
 import TableRow, { TableRowProps } from '@mui/material/TableRow'
 import type { VirtualItem } from '@tanstack/react-virtual'
-import React, { useEffect, useMemo, useRef } from 'react'
+import { Fragment, useEffect, useMemo, useRef } from 'react'
 
 import type { MultirowHeader, Table_Row, TableInstance } from '..'
 import { ColumnVirtualizerWrapper, Colors, TextColor } from '..'
@@ -226,9 +226,8 @@ export const TableHeadMultiRow = ({
 		<>
 			{predefinedMultirowHeader.map((row, i) => {
 				return (
-					<>
+					<Fragment key={row.depth}>
 						<TableRow
-							key={row.depth}
 							ref={(ref: HTMLTableRowElement) => {
 								if (row.pin) {
 									rowsRef.current[i * 2] = ref
@@ -284,7 +283,6 @@ export const TableHeadMultiRow = ({
 						</TableRow>
 						{row.additionalRowContent ? (
 							<TableRow
-								key={`${row.depth}-sub`}
 								ref={(ref: HTMLTableRowElement) => {
 									if (row.pin) {
 										rowsRef.current[i * 2 + 1] = ref
@@ -300,7 +298,7 @@ export const TableHeadMultiRow = ({
 								</ColumnVirtualizerWrapper>
 							</TableRow>
 						) : null}
-					</>
+					</Fragment>
 				)
 			})}
 		</>

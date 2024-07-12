@@ -316,6 +316,7 @@ export type MultirowColumn = {
 	id: string
 	text: string
 	shorthandText?: string
+	renderText?: () => ReactNode
 	colSpan: number
 	isGrouped: boolean
 	isPinned: false | 'left' | 'right'
@@ -327,6 +328,16 @@ export type MultirowColumn = {
 	originalColIds: string[]
 }
 
+export type MultirowHeaderColumn = {
+	text: string
+	shorthandText?: string
+	/** render node manually instead of using default `shorthandText` or `text` */
+	renderText?: () => ReactNode
+	columnIds: string[]
+	columnActions?: MultirowColumnAction[]
+	collapsed?: boolean
+}
+
 export type MultirowHeaderRow = {
 	additionalRowContent?: (
 		table: TableInstance<{}>,
@@ -334,13 +345,7 @@ export type MultirowHeaderRow = {
 	) => React.ReactNode
 	pin?: boolean
 	depth: number
-	columns: {
-		text: string
-		shorthandText?: string
-		columnIds: string[]
-		columnActions?: MultirowColumnAction[]
-		collapsed?: boolean
-	}[]
+	columns: MultirowHeaderColumn[]
 }
 
 export type MultirowHeader = MultirowHeaderRow[]

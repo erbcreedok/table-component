@@ -5,6 +5,7 @@ import {
 	TableInstance,
 	Table_Column,
 	TableData,
+	MultirowHeaderColumn,
 } from '..'
 import { getColumnId, getTotalRight } from '../column.utils'
 
@@ -15,23 +16,22 @@ export const makeMultirowColumns = <TData extends TableData = {}>(
 	multiHeaderRow: MultirowHeaderRow,
 	table: TableInstance
 ) => {
-	const columnIdsText = multiHeaderRow.columns.reduce((result, current) => {
-		const obj = result
-		current.columnIds.forEach((id) => {
-			obj[id] = current.shorthandText ?? current.text
-		})
+	const multirowColumnByColumnId = multiHeaderRow.columns.reduce<
+		Record<string, MultirowHeaderColumn>
+	>((result, current) => {
+		for (const id of current.columnIds) {
+			result[id] = current
+		}
 
-		return obj
+		return result
 	}, {})
 
 	const multirowColumnActions: Record<string, MultirowColumnAction[]> =
 		multiHeaderRow.columns.reduce((result, current) => {
-			const obj = result
-
-			obj[current.shorthandText ?? current.text] =
+			result[current.shorthandText ?? current.text] =
 				current?.columnActions ?? null
 
-			return obj
+			return result
 		}, {})
 
 	const multirowColumns = columns
@@ -54,7 +54,14 @@ export const makeMultirowColumns = <TData extends TableData = {}>(
 		.reduce((result, column) => {
 			const isGrouped = column.getIsGrouped()
 			const isPinned = column.getIsPinned()
-			const text = columnIdsText[getColumnId(column)]
+			const multirowColumn = multirowColumnByColumnId[getColumnId(column)] as
+				| MultirowHeaderColumn
+				| undefined
+
+			// if (!multirowColumn) return result // todo
+
+			const text = multirowColumn?.shorthandText ?? multirowColumn?.text ?? ''
+
 			let id = text ?? 'none'
 			let leftPinnedPosition: number | undefined
 			let rightPinnedPosition: number | undefined
@@ -77,6 +84,7 @@ export const makeMultirowColumns = <TData extends TableData = {}>(
 			const current = {
 				id,
 				text,
+				renderText: multirowColumn?.renderText,
 				isGrouped,
 				isPinned,
 				leftPinnedPosition,
@@ -93,6 +101,7 @@ export const makeMultirowColumns = <TData extends TableData = {}>(
 
 				return result
 			}
+
 			const prev = result[result.length - 1]
 
 			if (id === prev.id) {

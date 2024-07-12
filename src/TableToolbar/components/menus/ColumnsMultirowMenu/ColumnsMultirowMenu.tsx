@@ -1,6 +1,6 @@
 import { Typography } from '@mui/material'
 import Box from '@mui/material/Box'
-import React, { useCallback, useMemo, useState } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 
 import { MultirowHeader, MultirowHeaderRow } from '../../../../TableComponent'
 import { reorderColumn, reorderColumnSet } from '../../../../column.utils'
@@ -51,8 +51,8 @@ export const ColumnsMultirowMenu = <TData extends TableData = {}>({
 	const {
 		getAllLeafColumns,
 		setColumnOrder,
+		setColumnPinning,
 		setGrouping,
-		getState,
 		options: {
 			localization,
 			innerTable,
@@ -62,7 +62,6 @@ export const ColumnsMultirowMenu = <TData extends TableData = {}>({
 			e2eLabels,
 		},
 	} = table
-	const { columnOrder } = getState()
 	const [multirowColumnIds, multirowHeader, isLeafDepth] = useMemo(() => {
 		if (!multirowHeaderDef) return [[], [], false]
 		const lastRow = multirowHeaderDef[multirowHeaderDef?.length - 1]
@@ -88,17 +87,12 @@ export const ColumnsMultirowMenu = <TData extends TableData = {}>({
 			(multirowColumnsDisplayDepth ?? 0) > lastRow.depth,
 		]
 	}, [getAllLeafColumns, multirowColumnsDisplayDepth, multirowHeaderDef])
+
 	const [isSearchActive, setIsSearchActive] = useState<boolean>(false)
 	const [searchList, setsearchList] = useState<
 		Table_Column<TData>[] | MultirowColumnsGroup[]
 	>([])
 	const allColumns = organizeColumnsMenu(getAllLeafColumns(), table)
-	if (!isLeafDepth) {
-		allColumns.sort(
-			(a, b) => columnOrder.indexOf(a.id) - columnOrder.indexOf(b.id)
-		)
-	}
-
 	const [visibleColumns, hiddenColumns] = splitArrayItems(allColumns, (col) =>
 		col.getIsVisible()
 	)
@@ -201,10 +195,20 @@ export const ColumnsMultirowMenu = <TData extends TableData = {}>({
 
 	const onColumnOrderChange = useCallback(
 		(draggedColumn: Table_Column<TData>, targetColumn: Table_Column<TData>) => {
+			const pinPosition = targetColumn.getIsPinned()
 			if (targetColumn.getIsGrouped()) {
 				setGrouping((grouping) =>
 					reorderColumn(draggedColumn, targetColumn, grouping)
 				)
+			} else if (pinPosition) {
+				setColumnPinning((columnPinning) => ({
+					...columnPinning,
+					[pinPosition]: reorderColumn(
+						draggedColumn,
+						targetColumn,
+						columnPinning[pinPosition] ?? []
+					),
+				}))
 			} else {
 				setColumnOrder((columnOrder) =>
 					reorderColumn(
@@ -215,7 +219,7 @@ export const ColumnsMultirowMenu = <TData extends TableData = {}>({
 				)
 			}
 		},
-		[setColumnOrder, setGrouping, table.options]
+		[setColumnOrder, setColumnPinning, setGrouping, table.options]
 	)
 
 	const onColumnGroupOrderChange = useCallback(

@@ -1,7 +1,7 @@
 import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
 import MenuItem from '@mui/material/MenuItem'
-import React from 'react'
+import { Fragment } from 'react'
 
 import { Colors, TextColor } from '../../../../components/styles'
 import { TableData } from '../../../../TableComponent'
@@ -119,7 +119,7 @@ export const MultiRowTreeItem = <TData extends TableData = TableData>({
 				}
 
 				return (
-					<>
+					<Fragment key={group.id}>
 						{group.columns && (
 							<ColumnsMultirowMenuGroupItem
 								depth={depth}
@@ -131,7 +131,7 @@ export const MultiRowTreeItem = <TData extends TableData = TableData>({
 								drawAngle={depth > 1 && index + 1 === groups.length}
 							/>
 						)}
-					</>
+					</Fragment>
 				)
 			})}
 		</>

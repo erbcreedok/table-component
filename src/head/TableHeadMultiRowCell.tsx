@@ -112,17 +112,19 @@ export const TableHeadMultiRowCell: FC<Props> = ({
 							isCollapsed={isCollapsed}
 						/>
 					) : (
-						<Typography
-							sx={{
-								fontSize: '12px',
-								fontWeight: '600',
-								lineHeight: '18px',
-								letterSpacing: '0.01em',
-								textAlign: 'center',
-							}}
-						>
-							{cell.text}
-						</Typography>
+						cell.renderText?.() || (
+							<Typography
+								sx={{
+									fontSize: '12px',
+									fontWeight: '600',
+									lineHeight: '18px',
+									letterSpacing: '0.01em',
+									textAlign: 'center',
+								}}
+							>
+								{cell.text}
+							</Typography>
+						)
 					)}
 				</TableCell>
 			)}
