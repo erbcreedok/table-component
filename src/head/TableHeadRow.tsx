@@ -65,10 +65,10 @@ export const TableHeadRow = ({
 	} = table
 
 	useEffect(() => {
-		if (ref.current) {
+		if (stickyHeader && ref.current) {
 			registerSticky(ref.current, 'headRow', 'last')
 		}
-	}, [ref, registerSticky])
+	}, [ref, registerSticky, stickyHeader])
 
 	const tableRowProps =
 		muiTableHeadRowProps instanceof Function

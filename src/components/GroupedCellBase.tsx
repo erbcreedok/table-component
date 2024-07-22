@@ -26,6 +26,8 @@ import {
 } from './styles'
 import { Tooltip } from './Tooltip'
 
+const padding = '1rem'
+
 const Wrapper = styled(
 	Box,
 	getShouldForwardProps('borderColor', 'innerTable')
@@ -40,13 +42,13 @@ const Wrapper = styled(
 	left: 0.75rem;
 	right: 0.75rem;
 	margin: -1rem -0.75rem;
-	padding: 1rem 0.75rem;
+	padding: ${padding} 0.75rem;
 	border-left: ${({ borderColor, innerTable }) =>
 		innerTable ? 'none' : `2px solid ${borderColor ?? '#E1E3EB'}`};
 	border-top: ${({ innerTable }) =>
 		innerTable ? '1px solid #E1E3EB' : 'none'};
 	font-weight: bold;
-	overflow: hidden;
+	overflow: clip;
 	text-overflow: ellipsis;
 	line-clamp: 2;
 `
@@ -89,9 +91,16 @@ export const GroupedCellBase = <TData extends TableData = {}>({
 			enableGroupCollapsing,
 			enableGroupSelection,
 		},
+		getState,
 	} = table
 	const columnId = getColumnId(column)
-	const { grouping, hoveredRow, isLoading, showSkeletons } = table.getState()
+	const {
+		grouping,
+		hoveredRow,
+		isLoading,
+		showSkeletons,
+		stickyHeadersHeight,
+	} = getState()
 	const isLastGroupedColumn =
 		grouping.length > 0 && grouping[grouping.length - 1] === columnId
 	const groupId = row.groupIds ? row.groupIds[columnId] : undefined
@@ -169,6 +178,8 @@ export const GroupedCellBase = <TData extends TableData = {}>({
 							flexDirection: !isShort && isLandscape ? 'row' : 'column',
 							gap: isShort ? '2px' : '8px',
 							mt: isShort ? '-0.25rem' : 0,
+							position: 'sticky',
+							top: `calc(${padding} + ${stickyHeadersHeight}px)`,
 						}}
 					>
 						{enableGroupCollapsing && (

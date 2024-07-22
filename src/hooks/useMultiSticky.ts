@@ -1,4 +1,6 @@
-import { useState, useEffect } from 'react'
+import { useState, useCallback, useEffect } from 'react'
+
+import { useTableContext } from '../context/useTableContext'
 
 export type StickyType = {
 	id: number | string
@@ -10,7 +12,15 @@ export type StickyElement = StickyType & {
 	top: number
 }
 
+/**
+ * @deprecated
+ * Refactor HeaderRows into separate component and create it one time for the whole table
+ * Maybe in hierarchy these rows could be cloned (cloneNode) each time they appear.
+ */
 export const useMultiSticky = () => {
+	const { table } = useTableContext()
+	const { setStickyHeadersHeight } = table
+
 	const [originalSticky, setOriginalSticky] = useState<StickyType[]>([])
 	const [stickyElements, setStickyElements] = useState<StickyElement[]>([])
 
@@ -19,6 +29,8 @@ export const useMultiSticky = () => {
 	}
 
 	const calculateTop = () => {
+		let stickyHeadersHeight = 0
+
 		const sortedStickyByNumberFirst = [...originalSticky].sort((a, b) => {
 			if (b.order === 'last') {
 				return -1
@@ -41,23 +53,25 @@ export const useMultiSticky = () => {
 							: getTop(res?.[index - 1]?.element, res?.[index - 1]?.top),
 				}
 
+				stickyHeadersHeight += current.element.clientHeight
+
 				return [...res, stickyWithTop]
 			},
 			[]
 		)
 
 		setStickyElements(result)
+		setStickyHeadersHeight(stickyHeadersHeight)
 	}
 
-	const registerSticky = (
-		el: HTMLTableRowElement,
-		id: number | string,
-		order: number | string
-	) => {
-		if (el && !originalSticky.find((sticky) => sticky.id === id)) {
-			setOriginalSticky([...originalSticky, { id, order, element: el }])
-		}
-	}
+	const registerSticky = useCallback(
+		(el: HTMLTableRowElement, id: number | string, order: number | string) => {
+			if (el && !originalSticky.find((sticky) => sticky.id === id)) {
+				setOriginalSticky([...originalSticky, { id, order, element: el }])
+			}
+		},
+		[originalSticky]
+	)
 
 	useEffect(() => {
 		calculateTop()

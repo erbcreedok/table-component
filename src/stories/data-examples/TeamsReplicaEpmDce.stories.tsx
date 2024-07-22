@@ -1,10 +1,6 @@
 import React from 'react'
 import { Meta, Story } from '@storybook/react'
-import TableComponent, {
-	MultirowHeader,
-	TableComponentProps,
-	Table_ColumnDef,
-} from '../..'
+import TableComponent, { TableComponentProps, Table_ColumnDef } from '../..'
 
 const meta: Meta = {
 	title: 'Data Examples/Teams',

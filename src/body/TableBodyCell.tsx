@@ -330,7 +330,7 @@ const TableBodyCellMain = ({
 		cursor: isEditable && editingMode === 'cell' ? 'pointer' : 'inherit',
 		height: '47px',
 		boxSizing: 'content-box',
-		overflow: 'hidden',
+		overflow: isGroupedCell ? 'unset' : 'hidden',
 		verticalAlign: 'middle',
 		position: 'relative',
 		...(isMockCell ? mockRowStyles : {}),

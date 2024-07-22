@@ -252,6 +252,7 @@ export type TableInstance<TData extends TableData = TableData> = Omit<
 			SetStateAction<{ id: string; colIds: string[] }[]>
 		>
 		CustomRow?: FC<TableBodyRowProps>
+		setStickyHeadersHeight: Dispatch<SetStateAction<number>>
 	}
 
 export type SearchData<TData extends TableData = {}> = Table_Row<TData>[] | null
@@ -287,6 +288,7 @@ export type Table_TableState<TData extends TableData = {}> = TableState & {
 		colIds: string[]
 		originalColIds: string[]
 	}[]
+	stickyHeadersHeight: number
 }
 
 export type SelectOption = {

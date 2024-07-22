@@ -1,4 +1,4 @@
-import React, { FC } from 'react'
+import { FC } from 'react'
 import MuiTableHead from '@mui/material/TableHead'
 import type { VirtualItem } from '@tanstack/react-virtual'
 

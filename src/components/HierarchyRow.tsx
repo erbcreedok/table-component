@@ -147,28 +147,28 @@ export const HierarchyRow = (props: TableBodyRowProps) => {
 			<>
 				{multirowHeader && (
 					<TableHeadMultiRow
-						isScrolled
-						multirowHeader={multirowHeader}
 						table={table}
+						multirowHeader={multirowHeader}
+						isScrolled
+						virtualColumns={virtualColumns}
 						registerSticky={registerSticky}
 						stickyElements={stickyElements}
-						virtualColumns={virtualColumns}
 					/>
 				)}
 				{getHeaderGroups().map((headerGroup) => (
 					<>
 						<TableHeadRow
-							data-index={virtualRow?.index}
-							parentRow={row}
-							stickyElements={stickyElements}
-							registerSticky={registerSticky}
 							headerGroup={headerGroup}
 							key={headerGroup.id}
 							table={table}
 							virtualColumns={virtualColumns}
+							stickyHeader={!!isFullScreen || !!enableStickyHeader}
+							registerSticky={registerSticky}
+							stickyElements={stickyElements}
+							data-index={virtualRow?.index}
+							parentRow={row}
 							cellBackgroundColor={Colors.Gray20}
 							cellBackgroundColorHover={Colors.LightestGray}
-							stickyHeader={!!isFullScreen || !!enableStickyHeader}
 							sx={{ zIndex: 2 }}
 						/>
 					</>

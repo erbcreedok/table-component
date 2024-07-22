@@ -178,6 +178,7 @@ export const useTable = <TData extends TableData = TableData>(
 	const [collapsedMultirow, setCollapsedMultirow] = useState(
 		config.defaultCollapsedMultiRow ?? []
 	)
+	const [stickyHeadersHeight, setStickyHeadersHeight] = useState<number>(0)
 
 	const hideHierarchyTree =
 		config.hierarchyTreeConfig &&
@@ -339,6 +340,7 @@ export const useTable = <TData extends TableData = TableData>(
 		highlightHeadCellId,
 		stickyHorizontalScrollbarHeight,
 		collapsedMultirow,
+		stickyHeadersHeight,
 		...config.state,
 	} as Table_TableState<TData>
 
@@ -483,6 +485,7 @@ export const useTable = <TData extends TableData = TableData>(
 			CustomRow: config.CustomRow,
 			setStickyHorizontalScrollbarHeight,
 			setCollapsedMultirow,
+			setStickyHeadersHeight,
 		}
 	) as TableInstance<TData>
 
