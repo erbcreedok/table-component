@@ -1,10 +1,11 @@
-import { FC } from 'react'
+import { FC, useMemo } from 'react'
 import MuiTableHead from '@mui/material/TableHead'
 import type { VirtualItem } from '@tanstack/react-virtual'
 
 import type { TableInstance } from '..'
 import { useIntersectionObserver } from '../hooks/useIntersectionObserver'
 import { useMultiSticky } from '../hooks/useMultiSticky'
+import { mergeRowSpanHeaderGroups } from '../utils/mergeRowSpanHeaderGroups'
 
 import { TableHeadRow } from './TableHeadRow'
 import { TableHeadMultiRow } from './TableHeadMultiRow'
@@ -28,6 +29,7 @@ export const TableHead: FC<Props> = ({
 			layoutMode,
 			muiTableHeadProps,
 			multirowHeader,
+			enableHeaderGroupRowSpan,
 		},
 	} = table
 	const { isFullScreen } = getState()
@@ -42,6 +44,12 @@ export const TableHead: FC<Props> = ({
 		muiTableHeadProps instanceof Function
 			? muiTableHeadProps({ table })
 			: muiTableHeadProps
+
+	const headeGroups = useMemo(() => {
+		if (!enableHeaderGroupRowSpan) return getHeaderGroups()
+
+		return mergeRowSpanHeaderGroups(getHeaderGroups())
+	}, [enableHeaderGroupRowSpan, getHeaderGroups])
 
 	return (
 		<MuiTableHead
@@ -69,7 +77,7 @@ export const TableHead: FC<Props> = ({
 				/>
 			)}
 			{!emptyTableHead ? (
-				getHeaderGroups().map((headerGroup) => (
+				headeGroups.map((headerGroup) => (
 					<TableHeadRow
 						headerGroup={headerGroup}
 						key={headerGroup.id}

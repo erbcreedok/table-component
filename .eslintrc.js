@@ -45,6 +45,7 @@ module.exports = {
 		'no-plusplus': 'off',
 		// Don't see the practical point of this rule
 		'no-shadow': 'off',
+		'no-continue': 'off',
 		'no-lonely-if': 'off',
 		'default-case': 'off',
 		'@typescript-eslint/no-non-null-assertion': 'off',

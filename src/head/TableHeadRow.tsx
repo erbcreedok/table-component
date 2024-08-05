@@ -1,6 +1,6 @@
 import TableRow, { TableRowProps } from '@mui/material/TableRow'
 import type { VirtualItem } from '@tanstack/react-virtual'
-import React, { useCallback, useEffect, useMemo, useRef } from 'react'
+import { useCallback, useEffect, useMemo, useRef } from 'react'
 
 import {
 	Colors,

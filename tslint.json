@@ -17,6 +17,7 @@
 		"no-string-literal": false,
 		"interface-name": false,
 		"no-console": false,
+		"no-continue": false,
 		"variable-name": [
 			//            true,
 			false,

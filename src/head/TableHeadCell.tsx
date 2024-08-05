@@ -77,6 +77,7 @@ export const TableHeadCell: FC<TableHeadCellProps> = ({
 			uppercaseHeader,
 			enableRowNumbers,
 			innerTable,
+			enableHeaderGroupRowSpan,
 			icons: { ExpandIcon, CollapseIcon },
 		},
 		refs: { tableHeadCellRefs },
@@ -246,6 +247,7 @@ export const TableHeadCell: FC<TableHeadCellProps> = ({
 					<TableCell
 						align={columnDefType === 'group' ? 'center' : 'left'}
 						colSpan={header.colSpan}
+						rowSpan={enableHeaderGroupRowSpan ? header.rowSpan : undefined}
 						{...(!draggingColumn ? hoverProps : {})}
 						onDragEnter={handleDragEnter}
 						onClick={onClick}

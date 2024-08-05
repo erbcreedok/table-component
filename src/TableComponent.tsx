@@ -1231,6 +1231,8 @@ export type TableComponentProps<TData extends TableData = TableData> = Omit<
 		enableGroupCount?: boolean
 		enableGroupCollapsing?: boolean
 		enableGroupSelection?: boolean
+		/** @default false */
+		enableHeaderGroupRowSpan?: boolean
 		expandByClick?: ExpandByClick
 		expandPaddingSize?: number
 		expandableColumnButtonPosition?: 'left' | 'right'
