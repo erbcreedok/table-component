@@ -38,7 +38,7 @@ const data = [...Array(21)].map(() => ({
 }));
 
 export const PaginationEnabledDefault: Story<TableComponentProps> = () => (
-  <TableComponent columns={columns} data={data} />
+  <TableComponent columns={columns} data={data} enablePagination={true}/>
 );
 
 export const PaginationDisabledOrOverriden: Story<

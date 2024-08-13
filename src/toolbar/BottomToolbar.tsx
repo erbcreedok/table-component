@@ -15,10 +15,8 @@ export const commonToolbarStyles = ({ theme }: { theme: Theme }) => ({
 	alignItems: 'flex-start',
 	backgroundColor: lighten(theme.palette.background.default, 0.04),
 	backgroundImage: 'none',
-	display: 'grid',
 	flexWrap: 'wrap-reverse',
 	minHeight: '3.5rem',
-	overflow: 'hidden',
 	p: '0 !important',
 	transition: 'all 150ms ease-in-out',
 	zIndex: 1,
@@ -95,7 +93,6 @@ export const BottomToolbar = <TData extends Record<string, any> = {}>({
 					alignItems: 'center',
 					boxSizing: 'border-box',
 					display: 'flex',
-					justifyContent: 'space-between',
 					p: '0.5rem',
 					width: '100%',
 				}}
@@ -108,10 +105,7 @@ export const BottomToolbar = <TData extends Record<string, any> = {}>({
 				<Box
 					sx={{
 						display: 'flex',
-						justifyContent: 'flex-end',
-						position: stackAlertBanner ? 'relative' : 'absolute',
-						right: 0,
-						top: 0,
+						width: '100%',
 					}}
 				>
 					{enablePagination === 'pages' &&

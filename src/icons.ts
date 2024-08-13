@@ -75,6 +75,7 @@ import { DeleteIcon } from './icons/DeleteIcon'
 import { TextTypeIcon } from './icons/TextTypeIcon'
 import { NumericTypeIcon } from './icons/NumericTypeIcon'
 import { PercentTypeIcon } from './icons/PercentTypeIcon'
+import { ArrowRightLongIcon } from './icons/ArrowRightLongIcon'
 
 export interface Table_Icons {
 	AnalyticsIcon: any
@@ -82,6 +83,7 @@ export interface Table_Icons {
 	ArrowDownIcon: any
 	ArrowDownwardIcon: any
 	ArrowRightIcon: any
+	ArrowRightLongIcon: any
 	AscIcon: any
 	DescIcon: any
 	CancelIcon: any
@@ -161,6 +163,7 @@ export const Default_Icons: Table_Icons = {
 	ArrowDownIcon,
 	ArrowDownwardIcon,
 	ArrowRightIcon,
+	ArrowRightLongIcon,
 	AscIcon,
 	DescIcon,
 	CancelIcon,
