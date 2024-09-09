@@ -45,11 +45,12 @@ export const TableHead: FC<Props> = ({
 			? muiTableHeadProps({ table })
 			: muiTableHeadProps
 
-	const headeGroups = useMemo(() => {
-		if (!enableHeaderGroupRowSpan) return getHeaderGroups()
+	const _headerGroups = getHeaderGroups()
+	const headerGroups = useMemo(() => {
+		if (!enableHeaderGroupRowSpan) return _headerGroups
 
-		return mergeRowSpanHeaderGroups(getHeaderGroups())
-	}, [enableHeaderGroupRowSpan, getHeaderGroups])
+		return mergeRowSpanHeaderGroups(_headerGroups)
+	}, [enableHeaderGroupRowSpan, _headerGroups])
 
 	return (
 		<MuiTableHead
@@ -77,7 +78,7 @@ export const TableHead: FC<Props> = ({
 				/>
 			)}
 			{!emptyTableHead ? (
-				headeGroups.map((headerGroup) => (
+				headerGroups.map((headerGroup) => (
 					<TableHeadRow
 						headerGroup={headerGroup}
 						key={headerGroup.id}
