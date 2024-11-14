@@ -110,6 +110,7 @@ export const EnableRowVirtualizationWithWindowVirtualizer: Story<TableComponentP
 		data={longData}
 		enablePagination={false}
 		enableRowNumbers
+		enableStickyHeader
 		enableRowVirtualization
 		enableBottomToolbar={false}
 		windowVirtualizer={true}

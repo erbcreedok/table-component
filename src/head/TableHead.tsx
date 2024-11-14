@@ -5,6 +5,7 @@ import { FC, useMemo } from 'react'
 import type { TableInstance } from '..'
 import { useIntersectionObserver } from '../hooks/useIntersectionObserver'
 import { useMultiSticky } from '../hooks/useMultiSticky'
+import { getValueOrFunctionHandler } from '../utils/getValueOrFunctionHandler'
 import { mergeRowSpanHeaderGroups } from '../utils/mergeRowSpanHeaderGroups'
 
 import { TableHeadMultiRow } from './TableHeadMultiRow'
@@ -28,6 +29,7 @@ export const TableHead: FC<Props> = ({
 			enableStickyHeader,
 			layoutMode,
 			muiTableHeadProps,
+			tableHeadRowProps,
 			multirowHeader,
 			enableHeaderGroupRowSpan,
 		},
@@ -40,10 +42,7 @@ export const TableHead: FC<Props> = ({
 		})
 	const { registerSticky, stickyElements } = useMultiSticky()
 
-	const tableHeadProps =
-		muiTableHeadProps instanceof Function
-			? muiTableHeadProps({ table })
-			: muiTableHeadProps
+	const tableHeadProps = getValueOrFunctionHandler(muiTableHeadProps)({ table })
 
 	const _headerGroups = getHeaderGroups()
 	const headerGroups = useMemo(() => {
@@ -88,6 +87,10 @@ export const TableHead: FC<Props> = ({
 						isScrolled={!isIntersecting}
 						registerSticky={registerSticky}
 						stickyElements={stickyElements}
+						{...getValueOrFunctionHandler(tableHeadRowProps)({
+							table,
+							headerGroup,
+						})}
 					/>
 				))
 			) : (

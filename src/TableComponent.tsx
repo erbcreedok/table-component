@@ -66,6 +66,7 @@ import { TableInstanceWithPresets, TablePropsWithPresets } from './features'
 import { Table_FilterFns } from './filterFns'
 import { multirowActions } from './head/constants'
 import { TableHeadCellFilterLabelProps } from './head/TableHeadCellFilterLabel'
+import { TableHeadRowProps } from './head/TableHeadRow'
 import {
 	HierarchyTreeConfig,
 	NewRowState,
@@ -1638,6 +1639,13 @@ export type TableComponentProps<TData = TableData> = Omit<
 		theme?: Theme
 		e2eLabels?: E2ELabelsOption
 		defaultCollapsedMultiRow?: { id: string; colIds: string[] }[]
+		tableHeadRowProps?: FunctionProps<
+			TableHeadRowProps,
+			{
+				table: TableInstance<TData>
+				headerGroup: Table_HeaderGroup<TData>
+			}
+		>
 	}
 
 export type TableComponentPropsDefined<TData = TableData> =

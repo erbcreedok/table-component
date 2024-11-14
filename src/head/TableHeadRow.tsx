@@ -8,6 +8,7 @@ import {
 	Table_Column,
 	Table_HeaderGroup,
 	Table_Row,
+	TableData,
 	TableInstance,
 } from '..'
 import type { StickyElement } from '../hooks/useMultiSticky'
@@ -21,12 +22,12 @@ import { mapVirtualItems } from '../utils/virtual'
 import { TableHeadCell } from './TableHeadCell'
 import { TableHeadCellEmpty } from './TableHeadCellEmpty'
 
-type Props = {
+export type TableHeadRowProps<TData = TableData> = {
 	stickyHeader?: boolean
-	headerGroup: Table_HeaderGroup
-	table: TableInstance
+	headerGroup: Table_HeaderGroup<TData>
+	table: TableInstance<TData>
 	virtualColumns?: VirtualItem[]
-	parentRow?: Table_Row
+	parentRow?: Table_Row<TData>
 	cellBackgroundColor?: string
 	cellBackgroundColorHover?: string
 	isScrolled?: boolean
@@ -51,7 +52,7 @@ export const TableHeadRow = ({
 	registerSticky,
 	stickyElements,
 	...rest
-}: Props) => {
+}: TableHeadRowProps) => {
 	const ref = useRef<HTMLTableRowElement | null>(null)
 	const {
 		options: {

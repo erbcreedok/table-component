@@ -22,11 +22,7 @@ const Subtitle = styled(Box)`
 	overflow: hidden;
 	text-overflow: ellipsis;
 `
-export const HeaderBase = <TData,>({
-	column,
-	tooltipDisabled,
-	boxProps,
-}: Props<TData>) => {
+export const HeaderBase = ({ column, tooltipDisabled, boxProps }: Props) => {
 	return (
 		<>
 			<TooltipOverflow
