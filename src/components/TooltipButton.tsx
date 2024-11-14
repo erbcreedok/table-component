@@ -1,10 +1,10 @@
-import React, { ReactNode, MouseEvent } from 'react'
-import type { IconButtonProps } from '@mui/material/IconButton'
 import { Typography } from '@mui/material'
+import type { IconButtonProps } from '@mui/material/IconButton'
+import React, { MouseEvent, ReactNode } from 'react'
 
-import { Tooltip } from './Tooltip'
-import { ToolbarIconButton } from './ToolbarIconButton'
 import { IconsColor } from './styles'
+import { ToolbarIconButton } from './ToolbarIconButton'
+import { Tooltip } from './Tooltip'
 
 type Props = IconButtonProps & {
 	title: string

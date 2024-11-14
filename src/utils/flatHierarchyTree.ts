@@ -1,8 +1,6 @@
-import { TableData } from '../TableComponent'
-
 import { defaultGetSubRows, defaultSetSubRows } from './defaultGetSubRows'
 
-export const flatHierarchyTree = <TData extends TableData = TableData>(
+export const flatHierarchyTree = <TData>(
 	data: TData[],
 	isHierarchyItem: (item: TData) => boolean,
 	getSubRows: (

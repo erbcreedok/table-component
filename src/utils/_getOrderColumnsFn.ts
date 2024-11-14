@@ -1,12 +1,11 @@
+import { Table } from '@tanstack/react-table'
 import { memo } from '@tanstack/table-core'
 
-import { Table_Column, TableData, TableInstance } from '../TableComponent'
+import { Table_Column } from '../TableComponent'
 
 import { sortColumns } from './sortColumns'
 
-export const _getOrderColumnsFn = <TData extends TableData = TableData>(
-	table: TableInstance<TData>
-) =>
+export const _getOrderColumnsFn = <TData>(table: Table<TData>) =>
 	memo(
 		() => [
 			table.getState().columnOrder,

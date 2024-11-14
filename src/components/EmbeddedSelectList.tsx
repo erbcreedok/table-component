@@ -1,13 +1,13 @@
+import { Box, Typography } from '@mui/material'
 import React, { ReactNode } from 'react'
-import { Typography, Box } from '@mui/material'
 
-import { ItemBoxSearchedSortingStyled } from '../TableStatusBar/SortingChip/SortingChip.styled'
-import { PlusIcon } from '../icons/PlusIcon'
 import { CloseIcon } from '../icons/CloseIcon'
+import { PlusIcon } from '../icons/PlusIcon'
+import { ItemBoxSearchedSortingStyled } from '../TableStatusBar/SortingChip/SortingChip.styled'
 
 import { ButtonLink } from './ButtonLink'
-import { IconsColor, TextColor } from './styles'
 import type { EmbeddedSelectOptionType } from './EmbeddedSelect'
+import { IconsColor, TextColor } from './styles'
 
 type Props = {
 	options: EmbeddedSelectOptionType[]

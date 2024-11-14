@@ -1,7 +1,7 @@
-import type { ColumnOrderState, Row } from '@tanstack/react-table'
+import type { Theme } from '@mui/material/styles'
 import { alpha, lighten } from '@mui/material/styles'
 import type { TableCellProps } from '@mui/material/TableCell'
-import type { Theme } from '@mui/material/styles'
+import type { ColumnOrderState, Row } from '@tanstack/react-table'
 
 import { Table_AggregationFns } from './aggregationFns'
 import { Table_FilterFns } from './filterFns'
@@ -11,34 +11,34 @@ import { showRowActionsColumn } from './utils/showRowActionsColumn'
 import { showUtilityColumn } from './utils/showUtilityColumn'
 
 import {
-	TableComponentProps,
+	CellBase,
+	Colors,
+	GroupedCellBase,
 	Table_Column,
 	Table_ColumnDef,
 	Table_DefinedColumnDef,
 	Table_DisplayColumnIds,
 	Table_FilterOption,
 	Table_Header,
+	TableComponentProps,
 	TableInstance,
-	TableData,
-	Colors,
-	GroupedCellBase,
-	CellBase,
 } from '.'
 
-const getColumnIdHelper = <TData extends TableData = {}>(
-	columnDef: Table_ColumnDef<TData> | Table_DefinedColumnDef<TData>
+const getColumnIdHelper = (
+	columnDef: Table_ColumnDef | Table_DefinedColumnDef
 ): string =>
-	columnDef.id ?? columnDef.accessorKey?.toString?.() ?? columnDef.header
+	columnDef.id ??
+	(columnDef.accessorKey as unknown as string)?.toString?.() ??
+	columnDef.header
 
-export const getColumnId = <TData extends TableData = {}>(
-	column: Table_Column<TData> | Table_ColumnDef<TData>
-) => getColumnIdHelper('columnDef' in column ? column.columnDef : column)
+export const getColumnId = (column: Table_Column | Table_ColumnDef) =>
+	getColumnIdHelper('columnDef' in column ? column.columnDef : column)
 
-export const getAllLeafColumnDefs = <TData extends TableData = {}>(
-	columns: Table_ColumnDef<TData>[]
-): Table_ColumnDef<TData>[] => {
-	const allLeafColumnDefs: Table_ColumnDef<TData>[] = []
-	const getLeafColumns = (cols: Table_ColumnDef<TData>[]) => {
+export const getAllLeafColumnDefs = (
+	columns: Table_ColumnDef[]
+): Table_ColumnDef[] => {
+	const allLeafColumnDefs: Table_ColumnDef[] = []
+	const getLeafColumns = (cols: Table_ColumnDef[]) => {
 		cols.forEach((col) => {
 			if (col.columns) {
 				getLeafColumns(col.columns)
@@ -52,7 +52,7 @@ export const getAllLeafColumnDefs = <TData extends TableData = {}>(
 	return allLeafColumnDefs
 }
 
-export const prepareColumns = <TData extends TableData = {}>({
+export const prepareColumns = ({
 	aggregationFns,
 	columnDefs,
 	columnFilterFns,
@@ -61,13 +61,13 @@ export const prepareColumns = <TData extends TableData = {}>({
 	sortingFns,
 }: {
 	aggregationFns: typeof Table_AggregationFns &
-		TableComponentProps<TData>['aggregationFns']
-	columnDefs: Table_ColumnDef<TData>[]
+		TableComponentProps['aggregationFns']
+	columnDefs: Table_ColumnDef[]
 	columnFilterFns: { [key: string]: Table_FilterOption }
-	defaultDisplayColumn: Partial<Table_ColumnDef<TData>>
-	filterFns: typeof Table_FilterFns & TableComponentProps<TData>['filterFns']
-	sortingFns: typeof Table_SortingFns & TableComponentProps<TData>['sortingFns']
-}): Table_DefinedColumnDef<TData>[] =>
+	defaultDisplayColumn: Partial<Table_ColumnDef>
+	filterFns: typeof Table_FilterFns & TableComponentProps['filterFns']
+	sortingFns: typeof Table_SortingFns & TableComponentProps['sortingFns']
+}): Table_DefinedColumnDef[] =>
 	columnDefs.map((columnDef) => {
 		// assign columnId
 		if (!columnDef.id) columnDef.id = getColumnId(columnDef)
@@ -89,15 +89,15 @@ export const prepareColumns = <TData extends TableData = {}>({
 				defaultDisplayColumn,
 				filterFns,
 				sortingFns,
-			}) as Table_ColumnDef<TData>[] // todo in EPMDCEMLST-4146
+			}) as Table_ColumnDef[] // todo in EPMDCEMLST-4146
 		} else if (columnDef.columnDefType === 'data') {
 			// assign aggregationFns if multiple aggregationFns are provided
 			if (Array.isArray(columnDef.aggregationFn)) {
 				const aggFns = columnDef.aggregationFn as string[]
 				columnDef.aggregationFn = (
 					columnId: string,
-					leafRows: Row<TData>[],
-					childRows: Row<TData>[]
+					leafRows: Row<{}>[],
+					childRows: Row<{}>[]
 				) =>
 					aggFns.map((fn) =>
 						aggregationFns[fn]?.(columnId, leafRows, childRows)
@@ -144,7 +144,7 @@ export const prepareColumns = <TData extends TableData = {}>({
 			}
 		} else if (columnDef.columnDefType === 'display') {
 			return {
-				...(defaultDisplayColumn as Table_ColumnDef<TData>),
+				...(defaultDisplayColumn as Table_ColumnDef),
 				...columnDef,
 			}
 		}
@@ -155,11 +155,11 @@ export const prepareColumns = <TData extends TableData = {}>({
 		}
 
 		return columnDef
-	}) as Table_DefinedColumnDef<TData>[]
+	}) as Table_DefinedColumnDef[]
 
-export const reorderColumn = <TData extends TableData = {}>(
-	draggedColumn: Table_Column<TData>,
-	targetColumn: Table_Column<TData>,
+export const reorderColumn = (
+	draggedColumn: Table_Column,
+	targetColumn: Table_Column,
 	columnOrder: ColumnOrderState
 ): ColumnOrderState => {
 	const newColumnOrder = [...columnOrder]
@@ -172,9 +172,9 @@ export const reorderColumn = <TData extends TableData = {}>(
 	return newColumnOrder
 }
 
-export const reorderColumnSet = <TData extends TableData>(
-	draggedColumns: Table_Column<TData>[],
-	targetColumns: Table_Column<TData>[],
+export const reorderColumnSet = (
+	draggedColumns: Table_Column[],
+	targetColumns: Table_Column[],
 	columnOrder: ColumnOrderState
 ): ColumnOrderState => {
 	const newColumnOrder = [...columnOrder]
@@ -191,13 +191,10 @@ export const reorderColumnSet = <TData extends TableData>(
 	return newColumnOrder
 }
 
-export const showExpandColumn = <TData extends TableData = {}>(
-	props: TableComponentProps<TData>
-) => props.renderDetailPanel && !props.hideExpandColumn
+export const showExpandColumn = (props: TableComponentProps) =>
+	props.renderDetailPanel && !props.hideExpandColumn
 
-export const getLeadingDisplayColumnIds = <TData extends TableData = {}>(
-	props: TableComponentProps<TData>
-) =>
+export const getLeadingDisplayColumnIds = (props: TableComponentProps) =>
 	[
 		showUtilityColumn(props) && utilColumns.column,
 		props.positionActionsColumn === 'first' &&
@@ -208,18 +205,14 @@ export const getLeadingDisplayColumnIds = <TData extends TableData = {}>(
 			utilColumns.expand,
 	].filter(Boolean) as Table_DisplayColumnIds[]
 
-export const getTrailingDisplayColumnIds = <TData extends TableData = {}>(
-	props: TableComponentProps<TData>
-) => [
+export const getTrailingDisplayColumnIds = (props: TableComponentProps) => [
 	props.positionActionsColumn === 'last' &&
 		showRowActionsColumn(props) &&
 		utilColumns.actions,
 	showExpandColumn(props) && utilColumns.expand,
 ]
 
-export const getDefaultColumnOrderIds = <TData extends TableData = {}>(
-	props: TableComponentProps<TData>
-) =>
+export const getDefaultColumnOrderIds = (props: TableComponentProps) =>
 	[
 		...getLeadingDisplayColumnIds(props),
 		...getAllLeafColumnDefs(props.columns).map((columnDef) =>
@@ -228,8 +221,8 @@ export const getDefaultColumnOrderIds = <TData extends TableData = {}>(
 		...getTrailingDisplayColumnIds(props),
 	].filter(Boolean) as string[]
 
-export const getDefaultColumnFilterFn = <TData extends TableData = {}>(
-	columnDef: Table_ColumnDef<TData>
+export const getDefaultColumnFilterFn = (
+	columnDef: Table_ColumnDef
 ): Table_FilterOption => {
 	if (columnDef.filterVariant === 'multi-select') return 'arrIncludesSome'
 	if (columnDef.filterVariant === 'range') return 'betweenInclusive'
@@ -257,10 +250,7 @@ export const getIsFirstRightPinnedColumn = (column: Table_Column) => {
 	return column.getIsPinned() === 'right' && column.getPinnedIndex() === 0
 }
 
-export const getTotalRight = <TData extends TableData = {}>(
-	table: TableInstance,
-	column: Table_Column<TData>
-) => {
+export const getTotalRight = (table: TableInstance, column: Table_Column) => {
 	return table.getRightTotalSize() - column.getSize() - column.getStart('right')
 }
 

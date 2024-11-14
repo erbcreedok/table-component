@@ -8,6 +8,7 @@ import { TableHeadMultiRow } from '../../../head/TableHeadMultiRow'
 import { TableHeadRow } from '../../../head/TableHeadRow'
 import { useComputedMeasureElement } from '../../../hooks/useComputedMeasureElement'
 import { useMultiSticky } from '../../../hooks/useMultiSticky'
+import { TableData } from '../../../TableComponent'
 import { handleTableHeadDragEnter } from '../../../utils/handleTableHeadDragEnter'
 import { isUnitTreeItem } from '../../utils/getTeamMembers'
 
@@ -25,10 +26,10 @@ const Wrapper = styled(Box)`
 	width: fit-content;
 `
 
-type Props<TData extends Record<string, any> = {}> = TableBodyRowProps
+type Props<TData = TableData> = TableBodyRowProps<TData>
 
-export const UnitRow = <TData extends Record<string, any> = {}>(
-	props: Props<TData>
+export const UnitRow = (
+	props: Props
 ) => {
 	const { domIndex, row, table, virtualColumns, virtualRow, measureElement } =
 		props

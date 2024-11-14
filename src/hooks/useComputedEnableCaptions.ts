@@ -1,4 +1,4 @@
-import { useRef, useState, useEffect, useCallback } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { useResizeDetector } from 'react-resize-detector'
 
 export const useComputedEnableCaptions = (

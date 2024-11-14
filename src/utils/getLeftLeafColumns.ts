@@ -1,10 +1,6 @@
-import { memo } from '@tanstack/table-core'
+import { memo, Table } from '@tanstack/table-core'
 
-import { TableData, TableInstance } from '../TableComponent'
-
-export const getLeftLeafColumns = <TData extends TableData = {}>(
-	table: TableInstance<TData>
-) =>
+export const getLeftLeafColumns = <TData>(table: Table<TData>) =>
 	memo(
 		() => [
 			table.getAllLeafColumns(),

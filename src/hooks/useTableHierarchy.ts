@@ -5,9 +5,7 @@ import { Table_Row, TableData, TableInstance } from '../TableComponent'
 
 import { NewRow } from './useCreateNewRow'
 
-export const useTableHierarchy = <TData extends TableData = TableData>(
-	table: TableInstance<TData>
-) => {
+export const useTableHierarchy = <TData>(table: TableInstance<TData>) => {
 	const { getPreExpandedRowModel, getIsNewRow, isHierarchyItem } = table
 
 	const data = getPreExpandedRowModel().rows
@@ -70,13 +68,11 @@ export const useTableHierarchy = <TData extends TableData = TableData>(
 }
 
 // TYPES
-export type IsHierarchyItemConfig<TData extends TableData = TableData> = (
-	row: TData
-) => boolean
-export type ShowTableHeaderHierarchyConfig<
-	TData extends TableData = TableData
-> = boolean | ((row: Table_Row<TData>, table: TableInstance<TData>) => boolean)
-export type HierarchyTreeConfig<TData extends TableData = TableData> = {
+export type IsHierarchyItemConfig<TData = TableData> = (row: TData) => boolean
+export type ShowTableHeaderHierarchyConfig<TData = TableData> =
+	| boolean
+	| ((row: Table_Row<TData>, table: TableInstance<TData>) => boolean)
+export type HierarchyTreeConfig<TData = TableData> = {
 	isHierarchyItem: IsHierarchyItemConfig<TData>
 	getValue?: (row: TData) => string
 	showTableHeader?: ShowTableHeaderHierarchyConfig<TData>
@@ -84,15 +80,13 @@ export type HierarchyTreeConfig<TData extends TableData = TableData> = {
 	HierarchyRow?: FC<TableBodyRowProps<TData>>
 	HierarchyComponent?: FC<TableBodyRowProps<TData>>
 }
-export type GetRelativeDepthMethod<TData extends TableData = TableData> = (
+export type GetRelativeDepthMethod<TData = TableData> = (
 	row: Table_Row<TData>
 ) => number
-export type GetHierarchyParentsCountMethod<
-	TData extends TableData = TableData
-> = (row: Table_Row<TData>) => number | undefined
-export type TableInstanceWithTableHierarchy<
-	TData extends TableData = TableData
-> = {
+export type GetHierarchyParentsCountMethod<TData = TableData> = (
+	row: Table_Row<TData>
+) => number | undefined
+export type TableInstanceWithTableHierarchy<TData = TableData> = {
 	getRelativeDepth: GetRelativeDepthMethod<TData>
 	getHierarchyParentsCount: GetHierarchyParentsCountMethod<TData>
 }

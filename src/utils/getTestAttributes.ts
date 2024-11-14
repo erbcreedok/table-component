@@ -1,4 +1,4 @@
-import { TestIds, E2ELabelsOption } from '../TableComponent'
+import { E2ELabelsOption, TestIds } from '../TableComponent'
 
 import { getE2EAttributes } from './getE2EAttributes'
 

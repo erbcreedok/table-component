@@ -5,14 +5,11 @@ import { Table_Column, TableData, TableInstance } from '../../TableComponent'
 
 import { FilterChipSelectField } from './FilterChipSelectField'
 
-type Props<TData extends TableData> = {
+type Props<TData = TableData> = {
 	column: Table_Column<TData>
 	table: TableInstance<TData>
 }
-export const FilterChipDropdownContent = <TData extends TableData>({
-	column,
-	table,
-}: Props<TData>) => {
+export const FilterChipDropdownContent = ({ column, table }: Props) => {
 	const { FilterChipField, FilterField } = column.columnDef
 	const value = column.getFilterValue()
 	const onChange = useCallback(

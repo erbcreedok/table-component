@@ -6,10 +6,10 @@ import { mergeSx } from '../utils/mergeSx'
 
 import { Colors } from './styles'
 
-export type SelectedChevronProps<TData extends TableData = TableData> = {
+export type SelectedChevronProps<TData = TableData> = {
 	table: TableInstance<TData>
 } & BoxProps
-export const SelectedChevron = <TData extends TableData = TableData>({
+export const SelectedChevron = <TData,>({
 	table,
 	sx,
 	...rest

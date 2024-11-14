@@ -11,7 +11,7 @@ import { getTeamMembersColumns } from '../utils/getTeamMembersColumns'
 
 const meta: Meta = {
 	title: 'Features/Provider Example',
-};
+}
 
 export default meta;
 

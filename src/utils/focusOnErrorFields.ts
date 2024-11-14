@@ -1,9 +1,9 @@
 import { UseFormReturn } from 'react-hook-form'
 
-import { TableData, TableInstance } from '../TableComponent'
+import { TableInstance } from '../TableComponent'
 
-export const focusOnErrorFields = <TData extends TableData = {}>(props: {
-	table: TableInstance<TData>
+export const focusOnErrorFields = (props: {
+	table: TableInstance
 	methods: UseFormReturn<any>
 }) => {
 	const { table, methods } = props

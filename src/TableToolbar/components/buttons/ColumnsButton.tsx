@@ -1,29 +1,29 @@
-import { MouseEvent, useState } from 'react'
-import type { IconButtonProps } from '@mui/material/IconButton'
 import { Typography } from '@mui/material'
+import type { IconButtonProps } from '@mui/material/IconButton'
+import { MouseEvent, useState } from 'react'
 
 import {
-	TableInstance,
-	Tooltip,
-	ToolbarIconButton,
 	IconsColor,
+	TableData,
+	TableInstance,
+	ToolbarIconButton,
+	Tooltip,
 } from '../../../'
+import { withNativeEvent } from '../../../utils/withNativeEvent'
 import { ColumnsMenuWithMuiProps } from '../menus/ColumnsMenu/ColumnsMenu'
 import { ColumnsMultirowMenuWithMuiProps } from '../menus/ColumnsMultirowMenu/ColumnsMultirowMenu'
-import { withNativeEvent } from '../../../utils/withNativeEvent'
 
-interface Props<TData extends Record<string, any> = {}>
-	extends IconButtonProps {
+interface Props<TData = TableData> extends IconButtonProps {
 	table: TableInstance<TData>
 	enableCaption: boolean
 }
 
-export const ColumnsButton = <TData extends Record<string, any> = {}>({
+export const ColumnsButton = ({
 	table,
 	enableCaption,
 	disabled,
 	...rest
-}: Props<TData>) => {
+}: Props) => {
 	const {
 		options: {
 			icons: { ColumnsIcon },
@@ -75,13 +75,13 @@ export const ColumnsButton = <TData extends Record<string, any> = {}>({
 						<ColumnsMultirowMenuWithMuiProps
 							anchorEl={anchorEl}
 							setAnchorEl={setAnchorEl}
-							table={table as TableInstance}
+							table={table}
 						/>
 					) : (
 						<ColumnsMenuWithMuiProps
 							anchorEl={anchorEl}
 							setAnchorEl={setAnchorEl}
-							table={table as TableInstance}
+							table={table}
 						/>
 					)}
 				</>

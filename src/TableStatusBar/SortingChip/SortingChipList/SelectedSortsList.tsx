@@ -1,13 +1,13 @@
 import { ColumnSort } from '@tanstack/react-table'
 import React, { useState } from 'react'
 
-import { Table_Column, TableInstance } from '../../../'
+import { Table_Column, TableData, TableInstance } from '../../../'
 import { reorderColumn } from '../../../column.utils'
-import { NoOptions } from '../../../components/NoOptions'
+import { NoOptions } from '../../../components'
 
 import { ListItemSort } from './ListItemSort'
 
-interface SelectedSortsListProps<TData extends Record<string, any> = {}> {
+interface SelectedSortsListProps<TData = TableData> {
 	sortedList?: (Table_Column<TData> | undefined)[]
 	resetSorting(): void
 	allColumns: Table_Column<TData>[]
@@ -15,16 +15,14 @@ interface SelectedSortsListProps<TData extends Record<string, any> = {}> {
 	table: TableInstance<TData>
 }
 
-export const SelectedSortsList = <TData extends Record<string, any> = {}>(
-	props: SelectedSortsListProps<TData>
-) => {
+export const SelectedSortsList = (props: SelectedSortsListProps) => {
 	const { resetSorting, sortedList, allColumns, sorting, table } = props
 
 	const [hoveredColumn, setHoveredColumn] = useState<any>(null)
 
 	const onColumnOrderChanged = (
-		column: Table_Column<TData>,
-		hovered: Table_Column<TData>
+		column: Table_Column,
+		hovered: Table_Column
 	) => {
 		const currentOrder = sorting?.map((col) => col.id)
 		const newOrder = reorderColumn(column, hovered, currentOrder)
@@ -32,9 +30,7 @@ export const SelectedSortsList = <TData extends Record<string, any> = {}>(
 		resetSorting()
 
 		newOrder.forEach((id) => {
-			const target = allColumns.find(
-				(col) => col.id === id
-			) as Table_Column<TData>
+			const target = allColumns.find((col) => col.id === id) as Table_Column
 			const targetDirection = sorting?.find((item) => item.id === target.id)
 			target.toggleSorting(targetDirection?.desc, true)
 		})

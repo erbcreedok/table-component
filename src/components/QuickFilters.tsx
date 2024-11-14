@@ -1,5 +1,5 @@
-import { useCallback, useMemo, useState } from 'react'
 import Box from '@mui/material/Box'
+import { useCallback, useMemo, useState } from 'react'
 
 import {
 	SelectOption,
@@ -14,7 +14,7 @@ import { DropdownContentSearch } from './DropdownContent/DropdownContentSearch'
 import { ListFilterItem, ListFilterLoadingItem } from './ListFilterItem'
 import { NoOptions } from './NoOptions'
 
-export type QuickFiltersProps<Value, TData extends TableData> = {
+export type QuickFiltersProps<Value = any, TData = TableData> = {
 	column: Table_Column<TData>
 	table: TableInstance<TData>
 	value: Value[]
@@ -24,7 +24,7 @@ export type QuickFiltersProps<Value, TData extends TableData> = {
 	loadingText?: string
 }
 
-export const QuickFilters = <Value, TData extends TableData>({
+export const QuickFilters = ({
 	column,
 	table,
 	value: selectedFilters = [],
@@ -32,7 +32,7 @@ export const QuickFilters = <Value, TData extends TableData>({
 	options: _options,
 	loading,
 	loadingText,
-}: QuickFiltersProps<Value, TData>) => {
+}: QuickFiltersProps) => {
 	const {
 		options: { localization },
 	} = table
@@ -45,7 +45,7 @@ export const QuickFilters = <Value, TData extends TableData>({
 	)
 
 	const onCheckFilter = useCallback(
-		(value: Value) => {
+		(value: any) => {
 			if (selectedFilters.includes(value)) {
 				const updatedFilters = selectedFilters.filter(
 					(filter) => filter !== value

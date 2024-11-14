@@ -1,5 +1,5 @@
-import React, { FC } from 'react'
 import TableCell from '@mui/material/TableCell'
+import React, { FC } from 'react'
 
 import type { MultirowColumn } from '..'
 

@@ -1,11 +1,11 @@
-import { TableInstance, Table_Column } from '../TableComponent'
+import { Table_Column, TableInstance } from '../TableComponent'
 
 import { getColumnFilterDefaultOptions } from './getColumnFilterDefaultOptions'
 import { normalizeSelectOptions } from './normalizeSelectOptions'
 
-export const getColumnFilterOptions = <TData extends Record<string, any>>(
-	column: Table_Column<TData>,
-	table: TableInstance<TData>
+export const getColumnFilterOptions = (
+	column: Table_Column,
+	table: TableInstance
 ) => {
 	return column.columnDef.filterSelectOptions
 		? normalizeSelectOptions(column.columnDef.filterSelectOptions)

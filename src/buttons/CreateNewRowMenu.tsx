@@ -2,7 +2,7 @@ import { Menu } from '../components/Menu'
 import { CreateNewRowMethod, CreateNewRowRenderMenuConfig } from '../hooks'
 import type { Table_Row, TableData, TableInstance } from '../TableComponent'
 
-export type CreateNewRowMenuProps<TData extends TableData = TableData> = {
+export type CreateNewRowMenuProps<TData = TableData> = {
 	anchorEl: HTMLElement | null
 	row: Table_Row<TData>
 	depth: number
@@ -12,7 +12,7 @@ export type CreateNewRowMenuProps<TData extends TableData = TableData> = {
 	renderMenu: CreateNewRowRenderMenuConfig<TData>
 	createNewRow: CreateNewRowMethod<TData>
 }
-export const CreateNewRowMenu = <TData extends TableData = TableData>(
+export const CreateNewRowMenu = <TData = {},>(
 	props: CreateNewRowMenuProps<TData>
 ) => {
 	const { anchorEl, createNewRow, open, row, depth, setOpen, renderMenu } =

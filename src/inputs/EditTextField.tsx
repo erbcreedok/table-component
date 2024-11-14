@@ -1,16 +1,16 @@
 import { useRef } from 'react'
 import { useFormContext } from 'react-hook-form'
 
-import { isNumeric, roundDecimalPlaces } from '../utils/numeric'
+import { getCellFieldId, NumericColumn } from '../'
 import { useOnClickOutside } from '../hooks/useOnClickOutside'
-import { getCellFieldId, NumericColumn, TableData } from '../'
 import { getValueOrFunctionHandler } from '../utils/getValueOrFunctionHandler'
 import { isEditInputDisabled } from '../utils/isEditingEnabled'
+import { isNumeric, roundDecimalPlaces } from '../utils/numeric'
 
 import { EditCellControllerProps, EditCellFieldProps } from './EditCellField'
 import { Input, InputProps } from './Input'
 
-export const EditTextField = <TData extends TableData>({
+export const EditTextField = ({
 	table,
 	cell,
 	showLabel,
@@ -18,7 +18,7 @@ export const EditTextField = <TData extends TableData>({
 	fieldState,
 	onCellSave,
 	onCellCancel,
-}: EditCellFieldProps<TData> & EditCellControllerProps) => {
+}: EditCellFieldProps & EditCellControllerProps) => {
 	const { row, column } = cell
 	const cellDataProps = {
 		cell,

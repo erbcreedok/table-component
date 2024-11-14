@@ -1,15 +1,15 @@
 import React, { useRef } from 'react'
 import { useFormContext } from 'react-hook-form'
 
+import { getCellFieldId, SimpleEvent } from '../'
 import { useOnClickOutside } from '../hooks/useOnClickOutside'
-import { getCellFieldId, SimpleEvent, TableData } from '../'
 import { getValueOrFunctionHandler } from '../utils/getValueOrFunctionHandler'
 import { isEditInputDisabled } from '../utils/isEditingEnabled'
 
 import { DayPickerInput } from './DayPickerInput'
 import { EditCellControllerProps, EditCellFieldProps } from './EditCellField'
 
-export const EditDateField = <TData extends TableData>({
+export const EditDateField = <TData,>({
 	table,
 	cell,
 	showLabel,

@@ -6,7 +6,7 @@ import { focusOnErrorFields } from './focusOnErrorFields'
 import { getCellFieldId } from './getCellFieldId'
 import { getDirtyFieldsIds } from './getDirtyFields'
 
-export type ValidateAllFieldsProps<TData extends TableData = {}> = {
+export type ValidateAllFieldsProps<TData = TableData> = {
 	table: TableInstance<TData>
 	methods: UseFormReturn<any>
 	focusOnErrorFields?: boolean
@@ -23,9 +23,7 @@ const getErrorMessage = (error?: boolean | string) => {
 // we can't use default use-hook-form trigger method,
 // because it doesn't validate unmounted rows and cells.
 // So we need to validate all fields manually.
-export const validateAllFields = async <TData extends TableData = {}>(
-	props: ValidateAllFieldsProps<TData>
-) => {
+export const validateAllFields = async (props: ValidateAllFieldsProps) => {
 	const {
 		table,
 		methods,
@@ -93,9 +91,7 @@ export const validateAllFields = async <TData extends TableData = {}>(
 	return isValid
 }
 
-export const validateDirtyFields = async <TData extends TableData = {}>(
-	props: ValidateAllFieldsProps<TData>
-) => {
+export const validateDirtyFields = async (props: ValidateAllFieldsProps) => {
 	return validateAllFields({
 		...props,
 		fieldsToValidate: getDirtyFieldsIds(props.methods),

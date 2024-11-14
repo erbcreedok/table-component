@@ -1,28 +1,28 @@
 import { useMemo } from 'react'
 
-import { Default_Table_Props } from '../constants'
-import {
-	TableComponentProps,
-	Table_Localization,
-	Table_ColumnDef,
-	TableComponentPropsDefined,
-} from '../TableComponent'
-import { Default_Icons } from '../icons'
 import { Table_Localization_EN } from '../_locales/en'
 import { Table_AggregationFns } from '../aggregationFns'
-import { Table_FilterFns } from '../filterFns'
-import { Table_SortingFns } from '../sortingFns'
 import {
 	Table_DefaultColumn,
 	Table_DefaultDisplayColumn,
 } from '../column.utils'
+import { Default_Table_Props } from '../constants'
+import { Table_FilterFns } from '../filterFns'
+import { Default_Icons } from '../icons'
+import { Table_SortingFns } from '../sortingFns'
+import {
+	Table_ColumnDef,
+	Table_Localization,
+	TableComponentProps,
+	TableComponentPropsDefined,
+} from '../TableComponent'
 import { createTheme } from '../theme/createTheme'
 import { defaultSetSubRows } from '../utils/defaultGetSubRows'
 
 import { HierarchyTreeConfig } from './useTableHierarchy'
 
 const defaultTheme = createTheme({})
-export const useTableInitialization = <TData extends Record<string, any>>(
+export const useTableInitialization = <TData>(
 	initialProps: TableComponentProps<TData>
 ): TableComponentPropsDefined<TData> => {
 	const props = { ...Default_Table_Props, ...initialProps }

@@ -2,18 +2,18 @@ import { Divider, IconButton, Typography } from '@mui/material'
 import Box from '@mui/material/Box'
 import { useCallback, useMemo, useState } from 'react'
 
-import { getColumnId, reorderColumn } from '../../../../column.utils'
 import {
 	ButtonLink,
 	ListTitle,
 	SidebarPropsWithOnCloseEnd,
+	SidebarSearch,
 	SidebarWithMuiProps,
 	Table_Column,
-	TableInstance,
-	SidebarSearch,
 	TableData,
+	TableInstance,
 	useTableContext,
 } from '../../../../'
+import { getColumnId, reorderColumn } from '../../../../column.utils'
 import { DeleteIcon } from '../../../../icons/DeleteIcon'
 import { createComponentWithMuiProps } from '../../../../utils/createComponentWithMuiProps'
 import { getE2EAttributes } from '../../../../utils/getE2EAttributes'
@@ -34,24 +34,24 @@ import {
 
 import { SortingButtons } from './SortingButtons'
 
-export interface SortingMenuProps<TData extends Record<string, any> = {}> {
+export interface SortingMenuProps {
 	anchorEl: HTMLElement | null
 	isSubMenu?: boolean
 	setAnchorEl(anchorEl: HTMLElement | null): void
-	table: TableInstance<TData>
+	table: TableInstance
 	sidebarProps?: Partial<SidebarPropsWithOnCloseEnd>
 }
 
-export const defaultOrganizeSortingMenu = <TData extends TableData = {}>(
-	allColumns: readonly Table_Column<TData>[]
+export const defaultOrganizeSortingMenu = (
+	allColumns: readonly Table_Column[]
 ) => allColumns.filter((col) => col.getIsVisible() && col.getCanSort())
 
-export const SortingMenu = <TData extends Record<string, any> = {}>({
+export const SortingMenu = ({
 	anchorEl,
 	setAnchorEl,
 	table,
 	sidebarProps,
-}: SortingMenuProps<TData>) => {
+}: SortingMenuProps) => {
 	const [searchValue, setSearchValue] = useState('')
 	const {
 		getAllLeafColumns,
@@ -65,8 +65,7 @@ export const SortingMenu = <TData extends Record<string, any> = {}>({
 			e2eLabels,
 		},
 	} = table
-	const [hoveredColumn, setHoveredColumn] =
-		useState<Table_Column<TData> | null>(null)
+	const [hoveredColumn, setHoveredColumn] = useState<Table_Column | null>(null)
 
 	const onCloseEnd = sidebarProps?.onCloseEnd
 	const handleCloseClick = useCallback(() => {
@@ -89,7 +88,7 @@ export const SortingMenu = <TData extends Record<string, any> = {}>({
 				(col) => sortingIds.includes(getColumnId(col))
 			)
 
-			let result: Table_Column<TData>[]
+			let result: Table_Column[]
 			let areSuggestedShown = false
 
 			if (searchValue)
@@ -121,8 +120,8 @@ export const SortingMenu = <TData extends Record<string, any> = {}>({
 		])
 
 	const onColumnOrderChanged = (
-		column: Table_Column<TData>,
-		hovered: Table_Column<TData>
+		column: Table_Column,
+		hovered: Table_Column
 	) => {
 		const currentOrder = sorting?.map((col) => col.id)
 		const newOrder = reorderColumn(column, hovered, currentOrder)
@@ -132,7 +131,7 @@ export const SortingMenu = <TData extends Record<string, any> = {}>({
 		newOrder.forEach((id) => {
 			const target = allColumns.find(
 				(col) => getColumnId(col) === id
-			) as Table_Column<TData>
+			) as Table_Column
 			const targetDirection = sorting?.find((item) => item.id === target.id)
 			target.toggleSorting(targetDirection?.desc, true)
 		})
@@ -144,7 +143,7 @@ export const SortingMenu = <TData extends Record<string, any> = {}>({
 
 	return (
 		<SidebarWithMuiProps
-			table={table as TableInstance}
+			table={table}
 			open={!!anchorEl}
 			onClose={handleCloseClick}
 			withHeader
@@ -256,12 +255,11 @@ export const SortingMenu = <TData extends Record<string, any> = {}>({
 	)
 }
 
-interface MenuItemProps<TData extends Record<string, any> = {}>
-	extends SimpleMenuItemProps<TData> {
+interface MenuItemProps<TData = TableData> extends SimpleMenuItemProps<TData> {
 	setSearchValue?: React.Dispatch<React.SetStateAction<string>>
 }
 
-const MenuItem = <TData extends Record<string, any> = {}>({
+const MenuItem = <TData,>({
 	column,
 	setSearchValue,
 	isCompact,

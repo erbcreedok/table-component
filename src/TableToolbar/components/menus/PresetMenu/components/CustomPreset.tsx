@@ -1,7 +1,7 @@
+import { Box, MenuItem, Modal, ThemeProvider, Typography } from '@mui/material'
 import Button from '@mui/material/Button'
 import IconButton from '@mui/material/IconButton'
 import React, { MouseEventHandler, useCallback, useState } from 'react'
-import { Box, MenuItem, Modal, ThemeProvider, Typography } from '@mui/material'
 
 import { ModalPaper } from '../../../../../components/Modal'
 import { Colors, IconsColor } from '../../../../../components/styles'

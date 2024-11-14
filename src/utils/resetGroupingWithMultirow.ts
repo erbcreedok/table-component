@@ -1,6 +1,6 @@
-import { TableInstance, TableData } from '..'
+import { TableInstance } from '..'
 
-export const resetGroupingWithMultirow = <TData extends TableData = {}>(
+export const resetGroupingWithMultirow = <TData>(
 	table: TableInstance<TData>
 ) => {
 	const { getState, resetGrouping, setCollapsedMultirow } = table

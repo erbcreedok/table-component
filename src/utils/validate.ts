@@ -1,13 +1,13 @@
-import { NumericColumn, TableData, Table_ColumnDef } from '../TableComponent'
+import { NumericColumn, Table_ColumnDef, TableData } from '../TableComponent'
 
 import { isNumeric } from './numeric'
 
-type Validator<TData extends TableData> = Exclude<
+type Validator<TData = TableData> = Exclude<
 	Table_ColumnDef<TData>['validator'],
 	undefined
 >
 
-export const validateValue = <TData extends TableData>({
+export const validateValue = ({
 	value,
 	cell: {
 		column: { columnDef },
@@ -15,7 +15,7 @@ export const validateValue = <TData extends TableData>({
 	table: {
 		options: { localization },
 	},
-}: Parameters<Validator<TData>>[0]): ReturnType<Validator<TData>> => {
+}: Parameters<Validator>[0]): ReturnType<Validator> => {
 	if (value === undefined || value === '') return true
 
 	const { dataType, minValue, maxValue } = columnDef

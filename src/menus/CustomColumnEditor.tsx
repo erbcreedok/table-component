@@ -1,38 +1,38 @@
-import { FC, useCallback, useRef } from 'react'
 import {
+	Box,
 	Button,
+	FormControlLabel,
 	ListItemIcon,
 	Menu,
+	MenuItem,
 	MenuList,
 	Paper,
 	Popper,
 	Select,
-	MenuItem,
-	Box,
-	TextField,
 	styled,
 	Switch,
-	FormControlLabel,
+	TextField,
 } from '@mui/material'
 import zIndex from '@mui/material/styles/zIndex'
+import { FC, useCallback, useRef } from 'react'
+import { Controller, SubmitHandler, useForm } from 'react-hook-form'
 import { useBoolean, useOnClickOutside } from 'usehooks-ts'
-import { useForm, SubmitHandler, Controller } from 'react-hook-form'
 
+import { useTableContext } from '../context/useTableContext'
+import { Input } from '../inputs/Input'
 import {
 	NumericColumn,
 	PercentColumn,
 	SetColumns,
-	TableData,
 	Table_ColumnDef,
 	Table_DefinedColumnDef,
+	TableData,
 } from '../TableComponent'
-import { useTableContext } from '../context/useTableContext'
 import { handleStopPropagation } from '../utils/withStopPropagation'
-import { Input } from '../inputs/Input'
 
 import { commonListItemStyles } from './constants'
 
-type Inputs<TData extends TableData = TableData> = Required<
+type Inputs<TData = TableData> = Required<
 	Pick<
 		Table_ColumnDef<TData>,
 		'header' | 'dataType' | 'shortHeader' | 'subtitle'
@@ -44,7 +44,7 @@ type Inputs<TData extends TableData = TableData> = Required<
 	enableFormat: boolean
 }
 
-type Props<TData extends TableData = TableData> = {
+type Props<TData = TableData> = {
 	columnDef: Table_DefinedColumnDef<TData>
 	setColumns: SetColumns<TData>
 	anchorEl: HTMLElement | null

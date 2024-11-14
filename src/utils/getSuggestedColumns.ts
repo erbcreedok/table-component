@@ -1,10 +1,10 @@
 import { getColumnId } from '../column.utils'
-import { Table_Column, TableData } from '../TableComponent'
+import { Table_Column } from '../TableComponent'
 
-export const getSuggestedColumns = <TData extends TableData = TableData>(
-	columns: Table_Column<TData>[],
+export const getSuggestedColumns = (
+	columns: Table_Column[],
 	suggested?: readonly string[]
-): [Table_Column<TData>[], boolean] => {
+): [Table_Column[], boolean] => {
 	if (suggested) {
 		const result = columns.filter((col) => suggested.includes(getColumnId(col)))
 

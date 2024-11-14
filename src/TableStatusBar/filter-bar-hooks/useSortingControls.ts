@@ -2,9 +2,7 @@ import { useMemo } from 'react'
 
 import { TableInstance } from '../../TableComponent'
 
-export const useSortingControls = <TData extends Record<string, any> = {}>(
-	table: TableInstance<TData>
-) => {
+export const useSortingControls = <TData>(table: TableInstance<TData>) => {
 	const { getAllColumns, getState } = table
 
 	const { sorting, columnOrder, columnPinning, columnVisibility, grouping } =

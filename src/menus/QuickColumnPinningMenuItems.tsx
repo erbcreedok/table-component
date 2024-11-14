@@ -9,11 +9,11 @@ import { ExpandMoreMenuChevron, MenuPaper } from '../components'
 import { useHoverEffects } from '../hooks/useHoverEffects'
 import { Table_Column, TableInstance } from '../TableComponent'
 import { getPascalCase } from '../utils/getPascalCase'
-import { withNativeEvent } from '../utils/withNativeEvent'
 import { getTestAttributes } from '../utils/getTestAttributes'
+import { withNativeEvent } from '../utils/withNativeEvent'
 
-import { QuickColumnPinningMenuItemOptions } from './QuickColumnPinningMenuItemOptions'
 import { commonListItemStyles, commonMenuItemStyles } from './constants'
+import { QuickColumnPinningMenuItemOptions } from './QuickColumnPinningMenuItemOptions'
 
 type Props = {
 	column: Table_Column

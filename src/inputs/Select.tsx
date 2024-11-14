@@ -5,9 +5,9 @@ import {
 	outlinedInputClasses,
 } from '@mui/material'
 import Autocomplete from '@mui/material/Autocomplete'
-import Typography from '@mui/material/Typography'
 import { AutocompleteRenderGetTagProps } from '@mui/material/Autocomplete/Autocomplete'
 import { ChipTypeMap } from '@mui/material/Chip'
+import Typography from '@mui/material/Typography'
 import { PartialKeys } from '@tanstack/table-core'
 import React, { RefObject } from 'react'
 

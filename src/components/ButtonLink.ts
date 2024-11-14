@@ -1,6 +1,6 @@
 import { styled } from '@mui/material'
 
-import { DEFAULT_FONT_FAMILY, Colors } from './styles'
+import { Colors, DEFAULT_FONT_FAMILY } from './styles'
 
 export const ButtonLink = styled('span')`
 	font-family: ${DEFAULT_FONT_FAMILY};

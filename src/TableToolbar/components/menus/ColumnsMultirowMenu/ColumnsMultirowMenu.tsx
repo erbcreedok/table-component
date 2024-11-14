@@ -2,28 +2,28 @@ import { Typography } from '@mui/material'
 import Box from '@mui/material/Box'
 import { useCallback, useMemo, useState } from 'react'
 
-import { MultirowHeader, MultirowHeaderRow } from '../../../../TableComponent'
-import { reorderColumn, reorderColumnSet } from '../../../../column.utils'
 import {
 	ButtonLink,
-	ContentTitle,
-	SidebarPropsWithOnCloseEnd,
-	SidebarWithMuiProps,
 	Colors,
-	TextColor,
+	ContentTitle,
 	MultirowColumn,
 	MultirowColumnsGroup,
+	SidebarPropsWithOnCloseEnd,
+	SidebarWithMuiProps,
 	Table_Column,
 	TableData,
 	TableInstance,
+	TextColor,
 } from '../../../../'
+import { reorderColumn, reorderColumnSet } from '../../../../column.utils'
+import { MultirowHeader, MultirowHeaderRow } from '../../../../TableComponent'
 import { arrayHasAll } from '../../../../utils/arrayHasAll'
 import { createComponentWithMuiProps } from '../../../../utils/createComponentWithMuiProps'
-import { isColumnDisplayed } from '../../../../utils/isColumnDisplayed'
 import { getMultirowHeaderGroupLeafColumnIds } from '../../../../utils/getMultirowHeaderGroupLeafColumnIds'
 import { getTestAttributes } from '../../../../utils/getTestAttributes'
 import { getValidColumnOrder } from '../../../../utils/getValidColumnOrder'
 import { getValueOrFunctionHandler } from '../../../../utils/getValueOrFunctionHandler'
+import { isColumnDisplayed } from '../../../../utils/isColumnDisplayed'
 import { makeMultirowColumns } from '../../../../utils/makeMultirowColumns'
 import { mergeMuiProps } from '../../../../utils/mergeMuiProps'
 import { splitArrayItems } from '../../../../utils/splitArrayItems'
@@ -35,19 +35,19 @@ import { ColumnsMultirowMenuGroupItem } from './ColumnsMultirowMenuGroupItem'
 import { MultirowColumnDef, MultirowColumnParent } from './multirowMenu.types'
 import { MultiRowTree } from './MultiRowTree'
 
-export interface ColumnsMultirowMenuProps<TData extends TableData = {}> {
+export interface ColumnsMultirowMenuProps<TData = TableData> {
 	anchorEl: HTMLElement | null
 	setAnchorEl(anchorEl: HTMLElement | null): void
 	table: TableInstance<TData>
 	sidebarProps?: SidebarPropsWithOnCloseEnd
 }
 
-export const ColumnsMultirowMenu = <TData extends TableData = {}>({
+export const ColumnsMultirowMenu = ({
 	anchorEl,
 	setAnchorEl,
 	table,
 	sidebarProps,
-}: ColumnsMultirowMenuProps<TData>) => {
+}: ColumnsMultirowMenuProps) => {
 	const {
 		getAllLeafColumns,
 		setColumnOrder,
@@ -90,7 +90,7 @@ export const ColumnsMultirowMenu = <TData extends TableData = {}>({
 
 	const [isSearchActive, setIsSearchActive] = useState<boolean>(false)
 	const [searchList, setsearchList] = useState<
-		Table_Column<TData>[] | MultirowColumnsGroup[]
+		Table_Column[] | MultirowColumnsGroup[]
 	>([])
 	const allColumns = organizeColumnsMenu(getAllLeafColumns(), table)
 	const [visibleColumns, hiddenColumns] = splitArrayItems(allColumns, (col) =>
@@ -117,19 +117,20 @@ export const ColumnsMultirowMenu = <TData extends TableData = {}>({
 
 					return acc
 				},
-				[[], [], []] as Table_Column<TData>[][]
+				[[], [], []] as Table_Column[][]
 			),
 		[isLeafDepth, multirowColumnIds, visibleColumns]
 	)
 
-	const [hoveredColumn, setHoveredColumn] =
-		useState<Table_Column<TData> | null>(null)
-	const [draggingColumn, setDraggingColumn] =
-		useState<Table_Column<TData> | null>(null)
-	const [hoveredGroup, setHoveredGroup] =
-		useState<MultirowColumnParent<TData> | null>(null)
+	const [hoveredColumn, setHoveredColumn] = useState<Table_Column | null>(null)
+	const [draggingColumn, setDraggingColumn] = useState<Table_Column | null>(
+		null
+	)
+	const [hoveredGroup, setHoveredGroup] = useState<MultirowColumnParent | null>(
+		null
+	)
 	const [draggingGroup, setDraggingGroup] =
-		useState<MultirowColumnParent<TData> | null>(null)
+		useState<MultirowColumnParent | null>(null)
 
 	const visibleColumnsCount = visibleColumns.length
 	const hiddenColumnsCount = hiddenColumns.length
@@ -194,7 +195,7 @@ export const ColumnsMultirowMenu = <TData extends TableData = {}>({
 	}
 
 	const onColumnOrderChange = useCallback(
-		(draggedColumn: Table_Column<TData>, targetColumn: Table_Column<TData>) => {
+		(draggedColumn: Table_Column, targetColumn: Table_Column) => {
 			const pinPosition = targetColumn.getIsPinned()
 			if (targetColumn.getIsGrouped()) {
 				setGrouping((grouping) =>
@@ -223,10 +224,7 @@ export const ColumnsMultirowMenu = <TData extends TableData = {}>({
 	)
 
 	const onColumnGroupOrderChange = useCallback(
-		(
-			draggedGroup: MultirowColumnParent<TData>,
-			targetGroup: MultirowColumnParent<TData>
-		) => {
+		(draggedGroup: MultirowColumnParent, targetGroup: MultirowColumnParent) => {
 			const draggedColumns = draggedGroup.columns
 			const targetColumns = targetGroup.columns
 			if (!draggedColumns || !targetColumns) return
@@ -274,7 +272,7 @@ export const ColumnsMultirowMenu = <TData extends TableData = {}>({
 			targetColumn: MultirowColumnDef,
 			multirowHeader: MultirowHeader,
 			multirowColumnsDisplayDepth: number
-		): MultirowColumnParent<TData> => {
+		): MultirowColumnParent => {
 			const parentRow =
 				multirowHeader.find(
 					(multiRow: { depth: number }) =>
@@ -286,7 +284,7 @@ export const ColumnsMultirowMenu = <TData extends TableData = {}>({
 					arrayHasAll(column.columnIds, targetColumn.colIds)
 			)[0]
 
-			const result: MultirowColumnParent<TData> = {
+			const result: MultirowColumnParent = {
 				text: parentColumn.shorthandText ?? parentColumn.text,
 				id: parentColumn.shorthandText ?? parentColumn.text,
 				colIds: parentColumn.columnIds,
@@ -308,7 +306,7 @@ export const ColumnsMultirowMenu = <TData extends TableData = {}>({
 			multirowHeader: MultirowHeader,
 			multirowColumns: MultirowColumn[],
 			multirowColumnsDisplayDepth: number
-		): (MultirowColumn | MultirowColumnParent<TData>)[] => {
+		): (MultirowColumn | MultirowColumnParent)[] => {
 			if (multirowColumnsDisplayDepth > 1) {
 				return multirowColumns.map((col: MultirowColumn) => {
 					if (!col.text) {
@@ -362,12 +360,10 @@ export const ColumnsMultirowMenu = <TData extends TableData = {}>({
 					multirowColumnsDisplayDepth
 				)
 
-				return multirowColumnsWithParents.map(
-					(col: MultirowColumnParent<TData>) => ({
-						...col,
-						columns: replaceColIds(col.colIds, columns),
-					})
-				)
+				return multirowColumnsWithParents.map((col: MultirowColumnParent) => ({
+					...col,
+					columns: replaceColIds(col.colIds, columns),
+				}))
 			}
 
 			return null

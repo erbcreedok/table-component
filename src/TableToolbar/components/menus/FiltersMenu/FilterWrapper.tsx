@@ -13,13 +13,13 @@ import {
 } from '../../../../TableComponent'
 import { getFilterTypeLabel } from '../../../../utils/getFilterTypeLabel'
 
-export type FilterWrapperProps<TData extends TableData> = BoxProps & {
+export type FilterWrapperProps<TData = TableData> = BoxProps & {
 	isFirst?: boolean
 	column: Table_Column<TData>
 	table: TableInstance<TData>
 	onDelete: MouseEventHandler<HTMLButtonElement>
 }
-export const FilterWrapper = <TData extends Record<string, any>>({
+export const FilterWrapper = <TData,>({
 	children,
 	isFirst,
 	column,

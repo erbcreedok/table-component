@@ -1,18 +1,18 @@
-import React from 'react';
-import { Meta, Story } from '@storybook/react';
+import { faker } from '@faker-js/faker'
+import AddBoxIcon from '@mui/icons-material/AddBox'
+import DeleteIcon from '@mui/icons-material/Delete'
+import { Box, Button, IconButton, Tooltip, Typography } from '@mui/material'
+import { Meta, Story } from '@storybook/react'
+import React from 'react'
 import TableComponent, {
-  TableComponentProps,
-  Table_ColumnDef,
-  FullScreenToggleButton,
-} from '../../';
-import { faker } from '@faker-js/faker';
-import { Box, Button, IconButton, Tooltip, Typography } from '@mui/material';
-import AddBoxIcon from '@mui/icons-material/AddBox';
-import DeleteIcon from '@mui/icons-material/Delete';
+	FullScreenToggleButton,
+	Table_ColumnDef,
+	TableComponentProps,
+} from '../../'
 
 const meta: Meta = {
-  title: 'Features/Toolbar Examples',
-};
+	title: 'Features/Toolbar Examples',
+}
 
 export default meta;
 

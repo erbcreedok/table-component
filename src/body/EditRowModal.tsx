@@ -1,25 +1,21 @@
-import React from 'react'
 import Dialog from '@mui/material/Dialog'
 import DialogActions from '@mui/material/DialogActions'
 import DialogContent from '@mui/material/DialogContent'
 import DialogTitle from '@mui/material/DialogTitle'
 import Stack from '@mui/material/Stack'
+import React from 'react'
 
+import type { Table_Row, TableData, TableInstance } from '..'
 import { EditActionButtons } from '../buttons/EditActionButtons'
 import { EditCellField } from '../inputs/EditCellField'
-import type { Table_Row, TableInstance } from '..'
 
-interface Props<TData extends Record<string, any> = {}> {
+interface Props<TData = TableData> {
 	open: boolean
 	row: Table_Row<TData>
 	table: TableInstance<TData>
 }
 
-export const EditRowModal = <TData extends Record<string, any> = {}>({
-	open,
-	row,
-	table,
-}: Props<TData>) => {
+export const EditRowModal = ({ open, row, table }: Props) => {
 	const {
 		options: { localization },
 	} = table

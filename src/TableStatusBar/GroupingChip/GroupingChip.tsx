@@ -1,13 +1,13 @@
 import { Box } from '@mui/material'
 import React, { FC, useEffect, useMemo, useState } from 'react'
 
+import { DropdownContentHeader, DropdownContentSearch } from '../../components'
+import { resetGroupingWithMultirow } from '../../utils/resetGroupingWithMultirow'
 import {
 	CommonChipWithPopoverAndContext,
 	CommonChipWithPopoverProps,
 } from '../CommonChipWithPopover/CommonChipWithPopover'
-import { DropdownContentHeader, DropdownContentSearch } from '../../components'
 import { useGroupingControls } from '../filter-bar-hooks/useGroupingControls'
-import { resetGroupingWithMultirow } from '../../utils/resetGroupingWithMultirow'
 
 import { SelectedGroupsList } from './GroupingChipList/SelectedGroupsList'
 import { GroupSearchResult } from './GroupingChipSearch/GroupSearchResult'

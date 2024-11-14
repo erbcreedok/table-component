@@ -25,7 +25,7 @@ const IconButtonStyled = styled(IconButton)`
 	border-radius: 4px;
 `
 
-type EditFloatingActionButtonsProps<TData extends TableData> = {
+type EditFloatingActionButtonsProps<TData = TableData> = {
 	adornment?: ReactNode
 	open?: boolean
 	children: (args: {
@@ -35,7 +35,7 @@ type EditFloatingActionButtonsProps<TData extends TableData> = {
 	onSubmit?: MouseEventHandler
 	onCancel?: MouseEventHandler
 }
-export const FloatingActionButtons = <TData extends TableData>({
+export const FloatingActionButtons = <TData,>({
 	adornment,
 	open,
 	children,

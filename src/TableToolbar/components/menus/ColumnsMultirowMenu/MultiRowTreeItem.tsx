@@ -1,6 +1,6 @@
 import Box from '@mui/material/Box'
-import Typography from '@mui/material/Typography'
 import MenuItem from '@mui/material/MenuItem'
+import Typography from '@mui/material/Typography'
 import { Fragment } from 'react'
 
 import { Colors, TextColor } from '../../../../components/styles'
@@ -12,7 +12,7 @@ import {
 } from './ColumnsMultirowMenuGroupItem'
 import { MultirowColumnParent } from './multirowMenu.types'
 
-export type MultiRowTreeItemProps<TData extends TableData = TableData> = Omit<
+export type MultiRowTreeItemProps<TData = TableData> = Omit<
 	ColumnsMultirowMenuGroupItemProps<TData>,
 	'group'
 > & {
@@ -20,7 +20,7 @@ export type MultiRowTreeItemProps<TData extends TableData = TableData> = Omit<
 	depth?: number
 	multirowColumnsDisplayDepth: number
 }
-export const MultiRowTreeItem = <TData extends TableData = TableData>({
+export const MultiRowTreeItem = <TData,>({
 	groups,
 	depth = 1,
 	multirowColumnsDisplayDepth,

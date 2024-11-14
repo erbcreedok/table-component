@@ -1,5 +1,5 @@
-import React, { FC } from 'react'
 import { BoxProps, CircularProgress, Typography } from '@mui/material'
+import React, { FC } from 'react'
 
 import { useTableContext } from '../context/useTableContext'
 import { FilterItemBoxStyled } from '../TableStatusBar/FilterChip/FilterChip.styles'

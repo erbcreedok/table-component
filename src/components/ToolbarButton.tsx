@@ -8,7 +8,7 @@ import { withNativeEvent } from '../utils/withNativeEvent'
 import { ToolbarIconButton } from './ToolbarIconButton'
 import { Tooltip } from './Tooltip'
 
-export type ToolbarButtonProps<TData extends TableData = TableData> = {
+export type ToolbarButtonProps<TData = TableData> = {
 	icon?: ReactNode
 	title?: string
 	toggled?: boolean
@@ -16,7 +16,7 @@ export type ToolbarButtonProps<TData extends TableData = TableData> = {
 	nativeEventTitle?: string
 	table: TableInstance<TData>
 } & IconButtonProps
-export const ToolbarButton = <TData extends TableData = TableData>({
+export const ToolbarButton = <TData,>({
 	enableCaption,
 	icon,
 	title,

@@ -1,12 +1,12 @@
 import { BoxProps } from '@mui/material'
 import Box from '@mui/material/Box'
 
-import { SelectOption } from '../../TableComponent'
-import { NoOptions } from '../../components/NoOptions'
 import { ListFilterItem } from '../../components/ListFilterItem'
-import { withNativeEvent } from '../../utils/withNativeEvent'
-import { getPascalCase } from '../../utils/getPascalCase'
+import { NoOptions } from '../../components/NoOptions'
 import { useTableContext } from '../../context/useTableContext'
+import { SelectOption } from '../../TableComponent'
+import { getPascalCase } from '../../utils/getPascalCase'
+import { withNativeEvent } from '../../utils/withNativeEvent'
 
 type FilterChipListProps = {
 	chipTitle: string

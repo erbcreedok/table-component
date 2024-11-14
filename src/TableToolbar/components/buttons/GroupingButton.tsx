@@ -3,25 +3,25 @@ import type { IconButtonProps } from '@mui/material/IconButton'
 import React, { MouseEvent, useState } from 'react'
 
 import {
-	TableInstance,
 	IconsColor,
+	TableData,
+	TableInstance,
 	ToolbarIconButton,
 	Tooltip,
 } from '../../../'
 import { GroupingMenuWithMuiProps } from '../menus/GroupingMenu/GroupingMenu'
 
-interface Props<TData extends Record<string, any> = {}>
-	extends IconButtonProps {
+interface Props<TData = TableData> extends IconButtonProps {
 	table: TableInstance<TData>
 	enableCaption: boolean
 }
 
-export const GroupingButton = <TData extends Record<string, any> = {}>({
+export const GroupingButton = ({
 	table,
 	enableCaption,
 	disabled,
 	...rest
-}: Props<TData>) => {
+}: Props) => {
 	const {
 		options: {
 			icons: { GroupingIcon },
@@ -66,7 +66,7 @@ export const GroupingButton = <TData extends Record<string, any> = {}>({
 				<GroupingMenuWithMuiProps
 					anchorEl={anchorEl}
 					setAnchorEl={setAnchorEl}
-					table={table as TableInstance}
+					table={table}
 				/>
 			)}
 		</>

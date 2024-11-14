@@ -1,10 +1,10 @@
 import {
+	memo,
 	ResolvedColumnFilter,
-	Table,
-	RowModel,
 	Row,
 	RowData,
-	memo,
+	RowModel,
+	Table,
 } from '@tanstack/table-core'
 
 import { Table_ColumnDef } from '..'
@@ -51,6 +51,8 @@ export function getFilteredRowModel<TData extends RowData>(): (
 								`Table: Could not find a column to filter with columnId: ${d.id}`
 							)
 						}
+
+						return
 					}
 
 					const { columnDef } = column

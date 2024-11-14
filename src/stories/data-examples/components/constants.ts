@@ -1,9 +1,12 @@
-import { getExpandingTeamMembers, getTeamMembers } from "../../utils/getTeamMembers";
+import {
+	getExpandingTeamMembers,
+	getTeamMembers,
+} from '../../utils/getTeamMembers'
 
 export const CUSTOM_FIRST_ROW_MEMBERS = {
-  'none': [],
-  'only team member': getTeamMembers(1, '0'),
-  'team member with only child': getExpandingTeamMembers(1, '0', 1, 1)
+	none: [],
+	'only team member': getTeamMembers(1, '0'),
+	'team member with only child': getExpandingTeamMembers(1, '0', 1, 1),
 }
 export const CUSTOM_FIRST_ROW_MEMBERS_CONFIG = {
   control: { type: 'select' },

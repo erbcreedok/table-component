@@ -15,11 +15,9 @@ const getOption = (
 		value,
 	}
 }
-export const getColumnFilterDefaultOptions = <
-	TData extends Record<string, any>
->(
-	column: Table_Column<TData>,
-	table: TableInstance<TData>
+export const getColumnFilterDefaultOptions = (
+	column: Table_Column,
+	table: TableInstance
 ) => {
 	const { columnFilters } = table.getState()
 	const { formatCellValue } = column.columnDef

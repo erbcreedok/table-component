@@ -1,22 +1,18 @@
-import React from 'react'
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
 import IconButton from '@mui/material/IconButton'
 import Tooltip from '@mui/material/Tooltip'
+import React from 'react'
 
-import type { Table_Row, TableInstance } from '..'
+import type { Table_Row, TableData, TableInstance } from '..'
 
-interface Props<TData extends Record<string, any> = {}> {
+interface Props<TData = TableData> {
 	row: Table_Row<TData>
 	table: TableInstance<TData>
 	variant?: 'icon' | 'text'
 }
 
-export const EditActionButtons = <TData extends Record<string, any> = {}>({
-	row,
-	table,
-	variant = 'icon',
-}: Props<TData>) => {
+export const EditActionButtons = ({ row, table, variant = 'icon' }: Props) => {
 	const {
 		getState,
 		options: {

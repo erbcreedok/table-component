@@ -1,11 +1,11 @@
-import React, { FC } from 'react'
 import Paper from '@mui/material/Paper'
+import React, { FC } from 'react'
 
-import { TableBulkActions } from '../components/TableBulkActions'
-import { BottomToolbar } from '../toolbar/BottomToolbar'
 import type { TableInstance } from '..'
-import { TableToolbar } from '../TableToolbar'
+import { TableBulkActions } from '../components/TableBulkActions'
 import { TableStatusBar } from '../TableStatusBar'
+import { TableToolbar } from '../TableToolbar'
+import { BottomToolbar } from '../toolbar/BottomToolbar'
 
 import { TableContainer } from './TableContainer'
 

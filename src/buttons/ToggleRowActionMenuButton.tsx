@@ -1,6 +1,6 @@
-import React, { MouseEvent } from 'react'
 import IconButton from '@mui/material/IconButton'
 import Tooltip from '@mui/material/Tooltip'
+import React, { MouseEvent } from 'react'
 
 import type { Table_Cell, Table_Row, TableData, TableInstance } from '..'
 import { isEditingEnabled } from '../utils/isEditingEnabled'
@@ -19,13 +19,13 @@ const commonIconButtonStyles = {
 	},
 }
 
-interface Props<TData extends TableData = TableData> {
+interface Props<TData = TableData> {
 	cell: Table_Cell<TData>
 	row: Table_Row<TData>
 	table: TableInstance<TData>
 }
 
-export const ToggleRowActionMenuButton = <TData extends TableData = TableData>({
+export const ToggleRowActionMenuButton = <TData,>({
 	cell,
 	row,
 	table,

@@ -2,17 +2,17 @@ import { Divider, IconButton, Typography } from '@mui/material'
 import Box from '@mui/material/Box'
 import { useCallback, useMemo, useState } from 'react'
 
-import { getColumnId, reorderColumn } from '../../../../column.utils'
 import {
 	ButtonLink,
 	ListTitle,
 	SidebarPropsWithOnCloseEnd,
-	SidebarWithMuiProps,
 	SidebarSearch,
+	SidebarWithMuiProps,
 	Table_Column,
 	TableData,
 	TableInstance,
 } from '../../../../'
+import { getColumnId, reorderColumn } from '../../../../column.utils'
 import { DeleteIcon } from '../../../../icons/DeleteIcon'
 import { createComponentWithMuiProps } from '../../../../utils/createComponentWithMuiProps'
 import { getE2EAttributes } from '../../../../utils/getE2EAttributes'
@@ -29,7 +29,7 @@ import {
 	SimpleMenuItemProps,
 } from '../components/SimpleMenuItem'
 
-export interface GroupingMenuProps<TData extends Record<string, any> = {}> {
+export interface GroupingMenuProps<TData = TableData> {
 	anchorEl: HTMLElement | null
 	isSubMenu?: boolean
 	setAnchorEl(anchorEl: HTMLElement | null): void
@@ -37,16 +37,16 @@ export interface GroupingMenuProps<TData extends Record<string, any> = {}> {
 	sidebarProps?: SidebarPropsWithOnCloseEnd
 }
 
-export const defaultOrganizeGroupingMenu = <TData extends TableData = {}>(
-	allColumns: readonly Table_Column<TData>[]
+export const defaultOrganizeGroupingMenu = (
+	allColumns: readonly Table_Column[]
 ) => allColumns.filter((col) => col.getIsVisible() && col.getCanGroup())
 
-export const GroupingMenu = <TData extends Record<string, any> = {}>({
+export const GroupingMenu = ({
 	anchorEl,
 	setAnchorEl,
 	table,
 	sidebarProps,
-}: GroupingMenuProps<TData>) => {
+}: GroupingMenuProps) => {
 	const {
 		getState,
 		getAllColumns,
@@ -59,8 +59,7 @@ export const GroupingMenu = <TData extends Record<string, any> = {}>({
 		},
 	} = table
 	const [searchValue, setSearchValue] = useState('')
-	const [hoveredColumn, setHoveredColumn] =
-		useState<Table_Column<TData> | null>(null)
+	const [hoveredColumn, setHoveredColumn] = useState<Table_Column | null>(null)
 
 	const { grouping } = getState() // this updates memo below
 	const { groupedColumns, ungroupedColumns, areSuggestedShown } =
@@ -76,7 +75,7 @@ export const GroupingMenu = <TData extends Record<string, any> = {}>({
 				(col) => grouping.includes(getColumnId(col))
 			)
 
-			let result: Table_Column<TData>[]
+			let result: Table_Column[]
 			let areSuggestedShown = false
 
 			if (searchValue)
@@ -117,15 +116,15 @@ export const GroupingMenu = <TData extends Record<string, any> = {}>({
 	}
 
 	const onColumnOrderChanged = (
-		column: Table_Column<TData>,
-		hovered: Table_Column<TData>
+		column: Table_Column,
+		hovered: Table_Column
 	) => {
 		setGrouping((old) => reorderColumn(column, hovered, old))
 	}
 
 	return (
 		<SidebarWithMuiProps
-			table={table as TableInstance}
+			table={table}
 			open={!!anchorEl}
 			onClose={handleCloseClick}
 			withHeader
@@ -242,7 +241,7 @@ export const GroupingMenu = <TData extends Record<string, any> = {}>({
 	)
 }
 
-const MenuItem = <TData extends Record<string, any> = {}>({
+const MenuItem = <TData,>({
 	column,
 	isCompact,
 	onClick,

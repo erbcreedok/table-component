@@ -2,25 +2,20 @@
 import { Row, Table } from '@tanstack/react-table'
 import { memo, RowData, RowModel } from '@tanstack/table-core'
 
-import {
-	GroupCollapsed,
-	Table_Row,
-	TableData,
-	TableInstance,
-} from '../TableComponent'
+import { GroupCollapsed, Table_Row, TableData, TableInstance } from '../TableComponent'
 
 import { createTableRow } from './createTableRow'
 import { flattenRows } from './flattenRows'
 
-function createMockRow<TData extends RowData>(
+function createMockRow<TData = TableData>(
 	row: Row<TData>,
 	groupId: string,
 	table: Table<TData>
 ) {
 	const _row = createTableRow(
-		table as unknown as TableInstance,
+		table as unknown as TableInstance<TData>,
 		`mock-${groupId}-${row.id}`,
-		row.original as TableData,
+		row.original as TData,
 		row.index,
 		row.depth,
 		[]
@@ -49,10 +44,7 @@ function groupBy<TData extends RowData>(rows: Row<TData>[], columnId: string) {
 	}, groupMap)
 }
 
-export function getGroupedRowModel<
-	TData extends RowData,
-	TDData extends TableData
->(opt?: {
+export function getGroupedRowModel<TData extends RowData, TDData = {}>(opt?: {
 	isGroupableRow?: (row: Table_Row<TDData>) => boolean
 }): (table: Table<TData>) => () => RowModel<TData> {
 	return (table) =>
@@ -153,9 +145,9 @@ export function getGroupedRowModel<
 							const existingRows = new Map<string, Row<TData>>()
 							const groupedTree: Row<TData>[] = []
 							const groupRow = createTableRow(
-								table as unknown as TableInstance,
+								table as unknown as TableInstance<TData>,
 								id,
-								groupedRows[0].original as TableData,
+								groupedRows[0].original as TData,
 								index,
 								depth
 							) as Row<TData>
@@ -191,7 +183,7 @@ export function getGroupedRowModel<
 											parent,
 											id,
 											table
-										) as Row<TData>
+										) as unknown as Row<TData>
 										groupedRowsById[mockParent.id] = mockParent
 										mockParent.groupIds = groupValues.groupIds
 										mockParent.groupRows = groupValues.groupRows

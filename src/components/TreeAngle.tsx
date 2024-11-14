@@ -1,5 +1,5 @@
-import React from 'react'
 import Box, { BoxProps } from '@mui/material/Box'
+import React from 'react'
 
 import { mergeSx } from '../utils/mergeSx'
 

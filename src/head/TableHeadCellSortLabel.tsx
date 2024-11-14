@@ -1,6 +1,6 @@
-import React, { FC, useCallback } from 'react'
-import TableSortLabel from '@mui/material/TableSortLabel'
 import type { TableCellProps } from '@mui/material/TableCell'
+import TableSortLabel from '@mui/material/TableSortLabel'
+import React, { FC, useCallback } from 'react'
 
 import { Table_Header, TableInstance } from '..'
 import { Tooltip } from '../components'

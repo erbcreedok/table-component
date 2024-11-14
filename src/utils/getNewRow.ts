@@ -4,7 +4,7 @@ import { Table_Row, TableData, TableInstance } from '../TableComponent'
 
 import { createTableRow } from './createTableRow'
 
-const findParent = <TData extends TableData = TableData>(
+const findParent = <TData>(
 	row: Table_Row<TData>,
 	depth: number
 ): Table_Row<TData> | undefined => {
@@ -16,10 +16,7 @@ const findParent = <TData extends TableData = TableData>(
 
 	return undefined
 }
-const findPreviousRow = <TData extends TableData = TableData>(
-	row: Table_Row<TData>,
-	depth: number
-) => {
+const findPreviousRow = <TData>(row: Table_Row<TData>, depth: number) => {
 	if (row.depth === depth) {
 		row.toggleExpanded(false)
 
@@ -40,12 +37,10 @@ const findPreviousRow = <TData extends TableData = TableData>(
 	return parent ?? row
 }
 
-const getInitialValues = <TData extends TableData = {}>(props: {
-	row: Table_Row<TData>
-	initialValues?: Record<string, any>
-}) => {
-	const { row, initialValues = {} } = props
-
+const getInitialValues = <TData>(
+	row: Table_Row<TData>,
+	initialValues: TableData = {}
+): TableData => {
 	return row.getVisibleCells().reduce(
 		(acc, { column, getValue }) =>
 			column.getIsGrouped()
@@ -58,7 +53,7 @@ const getInitialValues = <TData extends TableData = {}>(props: {
 	)
 }
 
-export const getNewRow = <TData extends TableData = {}>(props: {
+export const getNewRow = <TData>(props: {
 	row: Table_Row<TData>
 	table: TableInstance<TData>
 	depth: number
@@ -68,9 +63,9 @@ export const getNewRow = <TData extends TableData = {}>(props: {
 	const previousRow = findPreviousRow(row, depth) ?? row
 	const newRow: NewRowState<TData> = {
 		...(createTableRow(
-			table as TableInstance,
+			table,
 			NewRowPlaceholderId,
-			getInitialValues({ row, initialValues }),
+			getInitialValues(row, initialValues) as TData,
 			row.index,
 			depth,
 			[]

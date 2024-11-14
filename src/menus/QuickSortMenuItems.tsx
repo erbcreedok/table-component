@@ -5,15 +5,15 @@ import MenuItem, { MenuItemProps } from '@mui/material/MenuItem'
 import zIndex from '@mui/material/styles/zIndex'
 import { FC, MutableRefObject } from 'react'
 
-import { MenuPaper, ExpandMoreMenuChevron } from '../components'
+import { ExpandMoreMenuChevron, MenuPaper } from '../components'
 import { useHoverEffects } from '../hooks/useHoverEffects'
 import { Table_Column, TableInstance } from '../TableComponent'
 import { getPascalCase } from '../utils/getPascalCase'
-import { withNativeEvent } from '../utils/withNativeEvent'
 import { getTestAttributes } from '../utils/getTestAttributes'
+import { withNativeEvent } from '../utils/withNativeEvent'
 
-import { QuickSortMenuItemOptions } from './QuickSortMenuItemOptions'
 import { commonListItemStyles, commonMenuItemStyles } from './constants'
+import { QuickSortMenuItemOptions } from './QuickSortMenuItemOptions'
 
 type Props = {
 	column: Table_Column

@@ -1,8 +1,8 @@
 import { css, styled, TableCell } from '@mui/material'
 import { useMemo, useState } from 'react'
 
-import { TableBodyRow, TableBodyRowProps } from '../body/TableBodyRow'
 import { Colors } from '..'
+import { TableBodyRow, TableBodyRowProps } from '../body/TableBodyRow'
 import { useTableContext } from '../context/useTableContext'
 import { getShouldForwardProps } from '../utils/getShouldForwardProps'
 import { getValueOrFunctionHandler } from '../utils/getValueOrFunctionHandler'

@@ -6,14 +6,14 @@ import {
 	TableInstance,
 } from '../TableComponent'
 
-export type GetIsGroupCollapsedProps<TData extends TableData = {}> = {
+export type GetIsGroupCollapsedProps<TData = TableData> = {
 	cell: Table_Cell<TData>
 	column: Table_Column<TData>
 	row: Table_Row<TData>
 	table: TableInstance<TData>
 	groupId: string
 }
-export const getIsGroupCollapsedDefault = <TData extends TableData = {}>({
+export const getIsGroupCollapsedDefault = <TData>({
 	table,
 	groupId,
 }: GetIsGroupCollapsedProps<TData>) => {

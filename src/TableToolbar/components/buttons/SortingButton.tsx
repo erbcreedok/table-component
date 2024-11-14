@@ -3,26 +3,26 @@ import type { IconButtonProps } from '@mui/material/IconButton'
 import React, { MouseEvent, useState } from 'react'
 
 import {
+	IconsColor,
 	TableData,
 	TableInstance,
-	IconsColor,
 	ToolbarIconButton,
 	Tooltip,
 } from '../../../'
 import { withNativeEvent } from '../../../utils/withNativeEvent'
 import { SortingMenuWithMuiProps } from '../menus/SortingMenu/SortingMenu'
 
-type Props<TData extends TableData> = IconButtonProps & {
+type Props<TData = TableData> = IconButtonProps & {
 	table: TableInstance<TData>
 	enableCaption: boolean
 }
 
-export const SortingButton = <TData extends TableData = {}>({
+export const SortingButton = ({
 	table,
 	enableCaption,
 	disabled,
 	...rest
-}: Props<TData>) => {
+}: Props) => {
 	const {
 		options: {
 			icons: { SortIcon },
@@ -73,7 +73,7 @@ export const SortingButton = <TData extends TableData = {}>({
 				<SortingMenuWithMuiProps
 					anchorEl={anchorEl}
 					setAnchorEl={setAnchorEl}
-					table={table as TableInstance}
+					table={table}
 				/>
 			)}
 		</>

@@ -7,19 +7,19 @@ import {
 
 import { getColumnGroupIds } from './getColumnGroupIds'
 
-export type OnGroupCollapsedToggleAllProps<TData extends TableData = {}> = {
+export type OnGroupCollapsedToggleAllProps<TData = TableData> = {
 	column: Table_Column<TData>
 	table: TableInstance<TData>
 	collapsed?: boolean
 }
 
-export const onGroupCollapsedToggleAllDefault = <TData extends TableData = {}>({
+export const onGroupCollapsedToggleAllDefault = ({
 	column,
 	table,
 	collapsed = false,
-}: OnGroupCollapsedToggleAllProps<TData>) => {
+}: OnGroupCollapsedToggleAllProps) => {
 	const { setGroupCollapsed, getGroupedRowModel } = table
-	const groupedRows = getGroupedRowModel().flatRows as Table_Row<TData>[]
+	const groupedRows = getGroupedRowModel().flatRows as Table_Row[]
 	const columnId = column.id
 	const columnGroupIds = getColumnGroupIds(groupedRows, columnId)
 	const newGroupCollapsed: Record<string, boolean> = {}

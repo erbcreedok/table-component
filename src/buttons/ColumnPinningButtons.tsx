@@ -1,16 +1,16 @@
-import React from 'react'
 import Box from '@mui/material/Box'
 import IconButton from '@mui/material/IconButton'
 import Tooltip from '@mui/material/Tooltip'
+import React from 'react'
 
-import type { Table_Column, TableInstance } from '..'
+import type { Table_Column, TableData, TableInstance } from '..'
 
-interface Props<TData extends Record<string, any> = {}> {
+interface Props<TData = TableData> {
 	column: Table_Column<TData>
 	table: TableInstance<TData>
 }
 
-export const ColumnPinningButtons = <TData extends Record<string, any> = {}>({
+export const ColumnPinningButtons = <TData,>({
 	column,
 	table,
 }: Props<TData>) => {

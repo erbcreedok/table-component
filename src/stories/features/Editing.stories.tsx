@@ -1,8 +1,8 @@
-import React, { useState } from 'react'
-import { Meta, Story } from '@storybook/react'
-import TableComponent, { TableComponentProps } from '../../'
 import { faker } from '@faker-js/faker'
 import { MenuItem } from '@mui/material'
+import { Meta, Story } from '@storybook/react'
+import React, { useState } from 'react'
+import TableComponent, { TableComponentProps } from '../../'
 
 const meta: Meta = {
 	title: 'Features/Editing Examples',
@@ -141,7 +141,7 @@ export const EditingEnabledEditModeCell: Story<TableComponentProps> = () => {
 			enableEditing
 			muiEditInputProps={({ cell }) => ({
 				onBlur: (event) => {
-					handleSaveCell(cell, event.target.value)
+					handleSaveCell(cell, (event.target as any).value)
 				},
 			})}
 		/>
@@ -210,7 +210,7 @@ export const EditingEnabledEditModeTable: Story<TableComponentProps> = () => {
 			}}
 			muiEditInputProps={({ cell }) => ({
 				onBlur: (event) => {
-					handleSaveCell(cell, event.target.value)
+					handleSaveCell(cell, (event.target as any).value)
 				},
 			})}
 		/>

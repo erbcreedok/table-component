@@ -1,21 +1,21 @@
 import { BoxProps } from '@mui/material'
-import { rankings, rankItem } from '@tanstack/match-sorter-utils'
-import React, { useState, useMemo, FC, useRef } from 'react'
 import Autocomplete from '@mui/material/Autocomplete'
-import TextField from '@mui/material/TextField'
 import Box from '@mui/material/Box'
-import Paper from '@mui/material/Paper'
-import Typography from '@mui/material/Typography'
 import ClickAwayListener from '@mui/material/ClickAwayListener'
 import Divider from '@mui/material/Divider'
+import Paper from '@mui/material/Paper'
+import TextField from '@mui/material/TextField'
+import Typography from '@mui/material/Typography'
+import { rankings, rankItem } from '@tanstack/match-sorter-utils'
+import React, { FC, useMemo, useRef, useState } from 'react'
 
+import { ConditionalBox } from '../components/ConditionalBox'
 import {
 	SelectOption,
 	Table_Column,
 	TableData,
 	TableInstance,
 } from '../TableComponent'
-import { ConditionalBox } from '../components/ConditionalBox'
 import { getColumnFilterOptions } from '../utils/getColumnFilterOptions'
 import { splitFilterOptions } from '../utils/splitFilterOptions'
 
@@ -44,7 +44,7 @@ const Option: FC<BoxProps> = ({ children, sx, ...rest }) => (
 	</Box>
 )
 
-export type FilterMultiselectProps<TData extends TableData = TableData> = {
+export type FilterMultiselectProps<TData = TableData> = {
 	column?: Table_Column<TData>
 	table?: TableInstance<TData>
 	onChange: (value: SelectOption[]) => void
@@ -59,7 +59,7 @@ export type FilterMultiselectProps<TData extends TableData = TableData> = {
 	selectAllText?: string
 }
 
-export const FilterMultiselect = <TData extends TableData>({
+export const FilterMultiselect = ({
 	column,
 	table,
 	onChange,
@@ -71,7 +71,7 @@ export const FilterMultiselect = <TData extends TableData>({
 	noOptionsText = 'No options',
 	selectAllText = 'Select all',
 	...rest
-}: FilterMultiselectProps<TData>) => {
+}: FilterMultiselectProps) => {
 	const [isOpen, setIsOpen] = useState(autoFocus)
 	const options = useMemo(
 		() =>

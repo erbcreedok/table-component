@@ -1,12 +1,11 @@
 import {
-	TableInstance,
-	Table_SortingFn,
-	Table_Column,
 	SortingType,
-	TableData,
+	Table_Column,
+	Table_SortingFn,
+	TableInstance,
 } from '../TableComponent'
 
-const getSortingFnName = <TData extends Record<string, any> = {}>(
+const getSortingFnName = <TData = {},>(
 	sortingFn: Table_SortingFn<TData> | Table_SortingFn,
 	sortingFns: Record<string, Table_SortingFn<TData> | Table_SortingFn>
 ) => {
@@ -25,7 +24,7 @@ export const isNumericSorting = (sortingFnName: string) =>
 export const isTextSorting = (sortingFnName: string) =>
 	['text', 'textCaseSensitive'].includes(sortingFnName)
 
-export const getColumnSortingType = <TData extends TableData = TableData>(
+export const getColumnSortingType = <TData = {},>(
 	column: Table_Column | Table_Column<TData>,
 	sortingFns: Record<string, Table_SortingFn<any>>
 ): SortingType => {
@@ -38,9 +37,7 @@ export const getColumnSortingType = <TData extends TableData = TableData>(
 	return 'custom'
 }
 
-export const getSortingIconConstructor = <
-	TData extends Record<string, any> = {}
->({
+export const getSortingIconConstructor = <TData,>({
 	column: _column,
 	isAsc,
 	table: _table,
@@ -91,7 +88,7 @@ export const getSortingIconConstructor = <
 	return isAsc ? AscIcon : DescIcon
 }
 
-export const getSortingIcon = <TData extends Record<string, any> = {}>({
+export const getSortingIcon = <TData,>({
 	column: _column,
 	isAsc,
 	table: _table,
@@ -120,7 +117,7 @@ export const getSortingIcon = <TData extends Record<string, any> = {}>({
 	return <SortingIcon {...sortingIconProps} />
 }
 
-export const getSortingText = <TData extends Record<string, any> = {}>({
+export const getSortingText = <TData,>({
 	column: _column,
 	table: _table,
 	isAsc,

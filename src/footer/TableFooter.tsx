@@ -1,6 +1,6 @@
-import React, { FC } from 'react'
 import MuiTableFooter from '@mui/material/TableFooter'
 import type { VirtualItem } from '@tanstack/react-virtual'
+import React, { FC } from 'react'
 
 import type { TableInstance } from '..'
 

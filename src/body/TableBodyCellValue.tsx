@@ -1,12 +1,12 @@
 import { Table_Cell, Table_Row, TableData, TableInstance } from '..'
 
-interface Props<TData extends TableData = TableData> {
+interface Props<TData = TableData> {
 	cell: Table_Cell<TData>
 	table: TableInstance<TData>
 	row: Table_Row<TData>
 }
 
-export const TableBodyCellValue = <TData extends TableData = TableData>({
+export const TableBodyCellValue = <TData,>({
 	cell,
 	table,
 	row,

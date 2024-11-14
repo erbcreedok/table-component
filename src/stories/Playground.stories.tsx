@@ -1,21 +1,18 @@
-import React from 'react';
-import { Meta, Story } from '@storybook/react';
-import TableComponent, {
-  TableComponentProps,
-  DEFAULT_PRESETS
-} from '../';
+import { Meta, Story } from '@storybook/react'
+import React from 'react'
+import TableComponent, { DEFAULT_PRESETS, TableComponentProps } from '../'
 
 import { Initiative } from './types/Initiative'
 import { generateInitiatives } from './utils/generateInitiatives'
 import { getInitiativeTableColumns } from './utils/getInititativeTableColumns'
 
 const meta: Meta = {
-  title: 'Prop Playground',
-  component: TableComponent,
-  args: {
-    onGetDefaultPresets: () => DEFAULT_PRESETS,
-  },
-};
+	title: 'Prop Playground',
+	component: TableComponent,
+	args: {
+		onGetDefaultPresets: () => DEFAULT_PRESETS,
+	},
+}
 
 export default meta;
 

@@ -1,14 +1,14 @@
-import { FC, useMemo } from 'react'
 import MuiTableHead from '@mui/material/TableHead'
 import type { VirtualItem } from '@tanstack/react-virtual'
+import { FC, useMemo } from 'react'
 
 import type { TableInstance } from '..'
 import { useIntersectionObserver } from '../hooks/useIntersectionObserver'
 import { useMultiSticky } from '../hooks/useMultiSticky'
 import { mergeRowSpanHeaderGroups } from '../utils/mergeRowSpanHeaderGroups'
 
-import { TableHeadRow } from './TableHeadRow'
 import { TableHeadMultiRow } from './TableHeadMultiRow'
+import { TableHeadRow } from './TableHeadRow'
 
 interface Props {
 	table: TableInstance

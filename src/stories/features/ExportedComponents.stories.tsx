@@ -1,20 +1,20 @@
-import React, { useState } from 'react';
+import { keyframes } from '@emotion/react'
 import { Box, Typography } from '@mui/material'
-import { Meta } from '@storybook/react';
-import { keyframes } from '@emotion/react';
+import { Meta } from '@storybook/react'
+import React, { useState } from 'react'
+import { EyeCrossedIcon } from '../../icons/EyeCrossedIcon'
+import { PencilIcon } from '../../icons/PencilIcon'
 
 import { TrashIcon } from '../../icons/TrashIcon'
-import { PencilIcon } from '../../icons/PencilIcon'
-import { EyeCrossedIcon } from '../../icons/EyeCrossedIcon'
 import {
-	TooltipButton,
+	CommonChipWithPopover,
 	EmbeddedSelect,
 	EmbeddedSelectOptionType,
 	FilterMultiselect,
-	CommonChipWithPopover,
 	Menu,
 	MenuItemBase,
 	SidebarTemplate,
+	TooltipButton,
 } from '../../index'
 
 const rainbow = keyframes`

@@ -1,12 +1,12 @@
-import { TextFieldProps } from '@mui/material/TextField'
-import React, { FC, MouseEventHandler } from 'react'
 import {
 	Divider,
 	IconButton,
 	InputAdornment,
-	TextField,
 	styled,
+	TextField,
 } from '@mui/material'
+import { TextFieldProps } from '@mui/material/TextField'
+import React, { FC, MouseEventHandler } from 'react'
 
 import { CloseIcon } from '../../icons/CloseIcon'
 import { SearchIcon } from '../../icons/SearchIcon'

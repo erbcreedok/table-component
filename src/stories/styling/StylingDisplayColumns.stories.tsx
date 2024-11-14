@@ -1,15 +1,16 @@
-import React from 'react';
-import { Meta, Story } from '@storybook/react';
+import { faker } from '@faker-js/faker'
+import { Button } from '@mui/material'
+import { Meta, Story } from '@storybook/react'
+import React from 'react'
 import TableComponent, {
-  TableComponentProps,
-  Table_ColumnDef, utilColumns,
+	Table_ColumnDef,
+	TableComponentProps,
+	utilColumns,
 } from '../../'
-import { faker } from '@faker-js/faker';
-import { Button } from '@mui/material';
 
 const meta: Meta = {
-  title: 'Styling/Styling Display Columns',
-};
+	title: 'Styling/Styling Display Columns',
+}
 
 export default meta;
 

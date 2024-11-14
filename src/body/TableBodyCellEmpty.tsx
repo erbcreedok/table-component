@@ -1,5 +1,5 @@
-import React from 'react'
 import MuiTableCell from '@mui/material/TableCell'
+import React from 'react'
 
 import { Colors } from '../components/styles'
 import { getColorAlpha } from '../utils/getColorAlpha'

@@ -1,6 +1,6 @@
-import React, { FC, useCallback } from 'react'
 import Box from '@mui/material/Box'
 import Divider from '@mui/material/Divider'
+import React, { FC, useCallback } from 'react'
 
 import { Table_Header, TableInstance } from '..'
 import { Colors, IconsColor } from '../components/styles'

@@ -7,7 +7,7 @@ import { TableData, TableInstance } from '../TableComponent'
 import { Colors } from './styles'
 import { Tooltip, TooltipProps } from './Tooltip'
 
-export type ErrorTooltipIconProps<TData extends TableData = {}> = {
+export type ErrorTooltipIconProps<TData = TableData> = {
 	error?: string | null | boolean
 	table?: TableInstance<TData>
 	icon?: any
@@ -31,7 +31,7 @@ export const ErrorTooltipIcon = (props: ErrorTooltipIconProps) => {
 	)
 }
 
-export const ErrorTooltipIconWithTable = <TData extends TableData = {}>(
+export const ErrorTooltipIconWithTable = <TData = {},>(
 	props: ErrorTooltipIconProps<TData>
 ) => {
 	const { table } = useTableContext()

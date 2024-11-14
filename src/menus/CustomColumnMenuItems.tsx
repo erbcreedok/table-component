@@ -1,22 +1,22 @@
-import { FC, useCallback, useRef } from 'react'
 import { MenuList, Popper } from '@mui/material'
 import Box from '@mui/material/Box'
 import ListItemIcon from '@mui/material/ListItemIcon'
 import MenuItem, { MenuItemProps } from '@mui/material/MenuItem'
 import zIndex from '@mui/material/styles/zIndex'
+import { FC, useCallback, useRef } from 'react'
 
-import { MenuPaper, ExpandMoreMenuChevron } from '../components'
-import { useHoverEffects } from '../hooks/useHoverEffects'
-import { Table_Column, TableData, SetColumns } from '../TableComponent'
+import { ExpandMoreMenuChevron, MenuPaper } from '../components'
 import { useTableContext } from '../context/useTableContext'
-import { withNativeEvent } from '../utils/withNativeEvent'
+import { useHoverEffects } from '../hooks/useHoverEffects'
+import { SetColumns, Table_Column, TableData } from '../TableComponent'
 import { getPascalCase } from '../utils/getPascalCase'
 import { getTestAttributes } from '../utils/getTestAttributes'
+import { withNativeEvent } from '../utils/withNativeEvent'
 
 import { commonListItemStyles, commonMenuItemStyles } from './constants'
 import { CustomColumnInsertMenu } from './CustomColumnInsertMenu'
 
-type Props<TData extends TableData = TableData> = {
+type Props<TData = TableData> = {
 	column: Table_Column
 	setVisible: (visible: boolean) => void
 	setColumns: SetColumns<TData>

@@ -1,7 +1,7 @@
-import React, { FC } from 'react'
 import Box from '@mui/material/Box'
-import Typography from '@mui/material/Typography'
 import IconButton from '@mui/material/IconButton'
+import Typography from '@mui/material/Typography'
+import React, { FC } from 'react'
 
 import type { MultirowColumn, TableInstance } from '..'
 import { TextColor } from '../components/styles'

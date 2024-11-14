@@ -1,8 +1,8 @@
 import { ColumnPinningState, GroupingState } from '@tanstack/react-table'
 
-import { Table_Column, TableData } from '../TableComponent'
+import { Table_Column } from '../TableComponent'
 
-export const sortColumns = <TData extends TableData>(
+export const sortColumns = <TData>(
 	columns: Table_Column<TData>[],
 	columnPinning: ColumnPinningState,
 	grouping: GroupingState

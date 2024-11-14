@@ -1,25 +1,28 @@
+import { Avatar } from '@mui/material'
+import Box from '@mui/material/Box'
 import { Meta, Story } from '@storybook/react'
 import React from 'react'
-import { Avatar } from '@mui/material';
+import { Flex } from '../../components/Flex'
+import { GroupedCellBase } from '../../components/GroupedCellBase'
+import { TextEllipsis } from '../../components/TextEllipsis'
+import { HeaderBase } from '../../head/HeaderBase'
 import TableComponent from '../../index'
-import { TableComponentProps, Table_ColumnDef, Table_Cell, } from '../../TableComponent'
-import { GroupedCellBase } from '../../components/GroupedCellBase';
+import {
+	Table_Cell,
+	Table_ColumnDef,
+	TableComponentProps,
+} from '../../TableComponent'
+import { TeamMember } from '../types/TeamMember'
+import { Colors, performanceValues } from '../utils/constants'
+import { createGetColors } from '../utils/createGetColors'
 import { getSeparatedTeamMembers } from '../utils/getTeamMembers'
+import { getTeamsBorderColorSet } from '../utils/getTeamsBorderColorSet'
 import { sortByArrayOrder } from '../utils/sortByArrayOrder'
 import { TopToolbar } from './components/TopToolbar'
-import Box from '@mui/material/Box'
-import { Flex } from '../../components/Flex';
-import { TextEllipsis } from '../../components/TextEllipsis';
-import { HeaderBase } from '../../head/HeaderBase';
-import { Colors, performanceValues } from '../utils/constants'
-import { TeamMember } from '../types/TeamMember';
-import { getTeamsBorderColorSet } from '../utils/getTeamsBorderColorSet'
-import { createGetColors } from '../utils/createGetColors'
-
 
 const meta: Meta = {
 	title: 'Data Examples/DEMO',
-};
+}
 
 export default meta;
 

@@ -1,5 +1,3 @@
-import IconButton from '@mui/material/IconButton'
-import { useState, KeyboardEvent } from 'react'
 import {
 	Box,
 	ClickAwayListener,
@@ -8,6 +6,8 @@ import {
 	OutlinedInput,
 	outlinedInputClasses,
 } from '@mui/material'
+import IconButton from '@mui/material/IconButton'
+import { KeyboardEvent, useState } from 'react'
 
 import { Colors } from '../../../../../components/styles'
 import { useTableContext } from '../../../../../context/useTableContext'

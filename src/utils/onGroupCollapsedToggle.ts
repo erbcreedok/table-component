@@ -6,7 +6,7 @@ import {
 	TableInstance,
 } from '../TableComponent'
 
-export type OnGroupCollapsedToggleProps<TData extends TableData = {}> = {
+export type OnGroupCollapsedToggleProps<TData> = {
 	cell: Table_Cell<TData>
 	column: Table_Column<TData>
 	row: Table_Row<TData>
@@ -15,7 +15,7 @@ export type OnGroupCollapsedToggleProps<TData extends TableData = {}> = {
 	collapsed?: boolean
 }
 
-export const onGroupCollapsedToggleDefault = <TData extends TableData = {}>({
+export const onGroupCollapsedToggleDefault = <TData = TableData>({
 	table,
 	groupId,
 	collapsed,

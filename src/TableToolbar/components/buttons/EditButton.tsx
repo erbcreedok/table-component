@@ -3,11 +3,11 @@ import { useFormContext } from 'react-hook-form'
 
 import { Colors, TableData, TableInstance, ToolbarButton } from '../../../'
 
-export type EditButtonProps<TData extends TableData> = {
+export type EditButtonProps<TData = TableData> = {
 	table: TableInstance<TData>
 	enableCaption?: boolean
 }
-export const EditButton = <TData extends TableData = TableData>({
+export const EditButton = <TData,>({
 	table,
 	enableCaption = true,
 }: EditButtonProps<TData>) => {

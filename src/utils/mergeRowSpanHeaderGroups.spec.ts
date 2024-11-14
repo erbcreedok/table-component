@@ -1,4 +1,4 @@
-import { MRSHeader, mergeRowSpan } from './mergeRowSpanHeaderGroups'
+import { mergeRowSpan, MRSHeader } from './mergeRowSpanHeaderGroups'
 
 // ! DO NOT REMOVE, use it to get "provided" data
 // console.log(

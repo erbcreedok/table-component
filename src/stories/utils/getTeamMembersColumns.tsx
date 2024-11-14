@@ -61,7 +61,7 @@ export const GroupedCellCollapsedContentExample = ({ table, row, cell }) => {
 }
 
 export const coloredCellProps = <
-	TData extends Record<string, any> = {}
+	TData = {}
 >(props: {
 	cell: Table_Cell<TData>
 	column: Table_Column<TData>

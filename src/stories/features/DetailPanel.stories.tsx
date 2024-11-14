@@ -1,13 +1,11 @@
-import React from 'react';
-import { Meta, Story } from '@storybook/react';
-import TableComponent, {
-  TableComponentProps, utilColumns,
-} from '../../'
-import { faker } from '@faker-js/faker';
+import { faker } from '@faker-js/faker'
+import { Meta, Story } from '@storybook/react'
+import React from 'react'
+import TableComponent, { TableComponentProps, utilColumns } from '../../'
 
 const meta: Meta = {
-  title: 'Features/Detail Panel Examples',
-};
+	title: 'Features/Detail Panel Examples',
+}
 
 export default meta;
 

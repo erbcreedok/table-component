@@ -1,22 +1,22 @@
-import { styled, ButtonBase } from '@mui/material'
+import { ButtonBase, styled } from '@mui/material'
+import Box from '@mui/material/Box'
 import React, {
 	ComponentProps,
 	ReactNode,
-	useRef,
 	useCallback,
 	useMemo,
+	useRef,
 } from 'react'
-import Box from '@mui/material/Box'
 
-import { Colors, TextColor, TableData, TableInstance } from '../'
-import { mergeMuiProps } from '../utils/mergeMuiProps'
-import { withNativeEvent } from '../utils/withNativeEvent'
+import { Colors, TableData, TableInstance, TextColor } from '../'
 import { getValueOrFunctionHandler } from '../utils/getValueOrFunctionHandler'
+import { mergeMuiProps } from '../utils/mergeMuiProps'
 import { resetGroupingWithMultirow } from '../utils/resetGroupingWithMultirow'
+import { withNativeEvent } from '../utils/withNativeEvent'
 
+import { FilterChip } from './FilterChip/FilterChip'
 import { GroupingChip } from './GroupingChip/GroupingChip'
 import { SortingChip } from './SortingChip/SortingChip'
-import { FilterChip } from './FilterChip/FilterChip'
 
 const clearButtonClassName = 'clear-button'
 const ClearAllButton = styled(ButtonBase)`
@@ -45,7 +45,7 @@ const Wrapper = styled(Box)`
 	}
 `
 
-export type Adornment<TData extends TableData = {}> =
+export type Adornment<TData = TableData> =
 	| ReactNode
 	| ((config: { table: TableInstance<TData> }) => ReactNode)
 
@@ -53,17 +53,17 @@ export type TableStatusBarWrapperProps = {
 	lineProps?: ComponentProps<typeof Line>
 } & ComponentProps<typeof Wrapper>
 
-export type TableStatusBarProps<TData extends Record<string, any> = {}> = {
+export type TableStatusBarProps<TData = TableData> = {
 	table: TableInstance<TData>
 	statusBarAdornment?: Adornment<TData>
 } & TableStatusBarWrapperProps
 
-export const TableStatusBar = <TData extends Record<string, any> = {}>({
+export const TableStatusBar = ({
 	table,
 	statusBarAdornment,
 	lineProps: rLineProps,
 	...rest
-}: TableStatusBarProps<TData>) => {
+}: TableStatusBarProps) => {
 	const {
 		getState,
 		resetSorting,
@@ -116,8 +116,7 @@ export const TableStatusBar = <TData extends Record<string, any> = {}>({
 	})
 
 	const getAdornment = useCallback(
-		(adornment: Adornment<TData>) =>
-			getValueOrFunctionHandler(adornment)({ table }),
+		(adornment: Adornment) => getValueOrFunctionHandler(adornment)({ table }),
 		[table]
 	)
 

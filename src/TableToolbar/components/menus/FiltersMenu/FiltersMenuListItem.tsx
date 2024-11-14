@@ -1,18 +1,18 @@
-import React, { useRef } from 'react'
 import Box from '@mui/material/Box'
 import MenuItem, { MenuItemProps } from '@mui/material/MenuItem'
 import Typography from '@mui/material/Typography'
+import React, { useRef } from 'react'
 
-import type { Table_Column } from '../../../..'
+import type { Table_Column, TableData } from '../../../..'
 import { getE2EAttributes } from '../../../../utils/getE2EAttributes'
 import { mergeSx } from '../../../../utils/mergeSx'
 
-type Props<TData extends Record<string, any> = {}> = {
+type Props<TData = TableData> = {
 	column: Table_Column<TData>
 	onAddFilter(column: Table_Column<TData>): void
 } & MenuItemProps
 
-export const FiltersMenuListItem = <TData extends Record<string, any> = {}>({
+export const FiltersMenuListItem = <TData,>({
 	column,
 	onAddFilter,
 	...rest

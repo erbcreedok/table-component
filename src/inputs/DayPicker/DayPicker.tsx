@@ -1,4 +1,3 @@
-import { styled } from '@mui/material'
 import {
 	autoUpdate,
 	flip,
@@ -8,6 +7,7 @@ import {
 	useFloating,
 	useInteractions,
 } from '@floating-ui/react'
+import { styled } from '@mui/material'
 import Box from '@mui/material/Box'
 import { isDate } from 'date-fns'
 import {
@@ -26,8 +26,8 @@ import { createPortal } from 'react-dom'
 
 import { SimpleEvent } from '../../TableComponent'
 
-import { getRenderCustomHeader } from './getRenderCustomHeader'
 import { dayPickerStyles } from './DayPicker.styles'
+import { getRenderCustomHeader } from './getRenderCustomHeader'
 
 const DEFAULT_POSITION = 'bottom'
 

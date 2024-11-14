@@ -1,14 +1,14 @@
-import { Table_Column, TableData, TableInstance } from '../TableComponent'
+import { Table_Column, TableInstance } from '../TableComponent'
 import { utilColumnsList } from '../utilColumns'
 
-export const defaultGetExpandableColumn = <TData extends TableData = TableData>(
+export const defaultGetExpandableColumn = <TData>(
 	columns: Table_Column<TData>[]
 ) =>
 	columns.find(
 		(col) => !col.getIsGrouped() && !utilColumnsList.includes(col.id)
 	) ?? null
 
-export const getExpandableColumn = <TData extends TableData = TableData>(
+export const getExpandableColumn = <TData>(
 	columns: Table_Column<TData>[],
 	table: TableInstance<TData>
 ) => {

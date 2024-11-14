@@ -1,7 +1,7 @@
-import { User } from "../types/TeamMember";
-import { getUsers } from "./getTeamMembers";
+import { User } from '../types/TeamMember'
+import { getUsers } from './getTeamMembers'
 
-const savedUsers = getUsers(500);
+const savedUsers = getUsers(500)
 export const searchUsers = (search: string): PromiseLike<User[]> => {
   return new Promise((res) => {
     setTimeout(() => {

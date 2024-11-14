@@ -1,7 +1,7 @@
 /* eslint-disable default-param-last */
-import { Table, Row, RowModel, RowData, memo } from '@tanstack/table-core'
+import { memo, Row, RowData, RowModel, Table } from '@tanstack/table-core'
 
-import { Table_Row, TableData, TableInstance } from '../TableComponent'
+import { Table_Row, TableInstance } from '../TableComponent'
 
 import { createTableRow } from './createTableRow'
 import { fillRowsWithParents } from './fillRowsWithParents'
@@ -44,9 +44,9 @@ export function getCoreRowModel<TData extends RowData>(): (
 					for (let i = 0; i < originalRows.length; i++) {
 						// Make the row
 						const row = createTableRow(
-							table as unknown as TableInstance,
+							table as unknown as TableInstance<TData>,
 							table._getRowId(originalRows[i], i, parent),
-							originalRows[i] as TableData,
+							originalRows[i] as TData,
 							i,
 							depth
 						) as Row<TData>
@@ -116,7 +116,7 @@ const getSearchRowModel = <TData extends RowData>(
 	} else {
 		// If we aren't in flat mode, we add mock parents to the rows
 		searchRowModel.rows = fillRowsWithParents(
-			searchRowModel.rows as Table_Row[]
+			searchRowModel.rows as Table_Row<TData>[]
 		) as Row<TData>[]
 		searchRowModel.flatRows = flattenRows(searchRowModel.rows)
 	}

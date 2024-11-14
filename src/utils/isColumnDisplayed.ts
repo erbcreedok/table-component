@@ -1,5 +1,4 @@
-import type { Table_Column, TableData } from '../TableComponent'
+import type { Table_Column } from '../TableComponent'
 
-export const isColumnDisplayed = <TData extends TableData = TableData>(
-	column: Table_Column | Table_Column<TData>
-): boolean => !column.columnDef.notDisplayed
+export const isColumnDisplayed = (column: Table_Column): boolean =>
+	!column.columnDef.notDisplayed

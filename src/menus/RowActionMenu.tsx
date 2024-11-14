@@ -1,12 +1,12 @@
 import { MouseEvent } from 'react'
 
-import type { Table_Row, TableInstance } from '..'
+import type { Table_Row, TableData, TableInstance } from '..'
 import { Menu, MenuItemBase } from '../components/Menu'
+import { getTestAttributes } from '../utils/getTestAttributes'
 import { isEditingEnabled } from '../utils/isEditingEnabled'
 import { isEditRowActionVisible } from '../utils/showRowActionsColumn'
-import { getTestAttributes } from '../utils/getTestAttributes'
 
-interface Props<TData extends Record<string, any> = {}> {
+interface Props<TData = TableData> {
 	anchorEl: HTMLElement | null
 	handleEdit: (event: MouseEvent) => void
 	row: Table_Row<TData>
@@ -15,7 +15,7 @@ interface Props<TData extends Record<string, any> = {}> {
 	table: TableInstance<TData>
 }
 
-export const RowActionMenu = <TData extends Record<string, any> = {}>({
+export const RowActionMenu = <TData,>({
 	anchorEl,
 	handleEdit,
 	row,

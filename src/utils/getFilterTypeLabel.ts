@@ -1,6 +1,6 @@
-import { Table_Column, TableData, TableInstance } from '../TableComponent'
+import { Table_Column, TableInstance } from '../TableComponent'
 
-export const getFilterTypeLabel = <TData extends TableData>(
+export const getFilterTypeLabel = <TData>(
 	table: TableInstance<TData>,
 	column: Table_Column<TData>
 ): string => {

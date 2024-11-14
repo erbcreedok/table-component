@@ -1,10 +1,8 @@
-import { memo } from '@tanstack/table-core'
+import { memo, Table } from '@tanstack/table-core'
 
-import { Table_Header, TableData, TableInstance } from '../TableComponent'
+import { Table_Header } from '../TableComponent'
 
-export const getLeafHeaders = <TData extends TableData = TableData>(
-	table: TableInstance<TData>
-) =>
+export const getLeafHeaders = <TData>(table: Table<TData>) =>
 	memo(
 		() => [table.getHeaderGroups()],
 		(headerGroups) => {

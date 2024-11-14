@@ -1,12 +1,12 @@
+import { faker } from '@faker-js/faker'
+import { Avatar, Typography } from '@mui/material'
 import React from 'react'
+import { HeaderBase, RowActionMenuButton, SelectCheckbox } from '../../'
 
 import { Flex } from '../../components/Flex'
-import { Avatar, Typography } from '@mui/material'
-import { faker } from '@faker-js/faker'
-import { SelectCheckbox, RowActionMenuButton, HeaderBase } from '../../'
-import { getRandomFromArray } from './getRandomFromArray'
 import { TextEllipsis } from '../../components/TextEllipsis'
 import { performanceValues } from './constants'
+import { getRandomFromArray } from './getRandomFromArray'
 
 const ClickableCell = ({ row, accessorKey }) => {
 	const title = row.original[accessorKey]
@@ -14,14 +14,12 @@ const ClickableCell = ({ row, accessorKey }) => {
 	let cellContent = <></>
 
 	if (accessorKey === 'lastTalk') {
-		const convertDate = (date) =>{
+		const convertDate = (date) => {
 			const options: any = { year: 'numeric', month: 'short', day: 'numeric' }
 			return new Intl.DateTimeFormat('en-US', options).format(date)
 		}
 		cellContent = (
-			<Typography variant={'body2'}>
-				{convertDate(new Date(title))}
-			</Typography>
+			<Typography variant={'body2'}>{convertDate(new Date(title))}</Typography>
 		)
 	}
 

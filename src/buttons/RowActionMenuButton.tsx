@@ -3,15 +3,15 @@ import React, { MouseEvent, useRef, useState } from 'react'
 
 import { Colors, IconsColor, Tooltip } from '../components'
 import { RowActionMenu } from '../menus/RowActionMenu'
-import { Table_Row, TableInstance } from '../TableComponent'
+import { Table_Row, TableData, TableInstance } from '../TableComponent'
 
-type Props<TData extends Record<string, any> = {}> = {
+type Props<TData = TableData> = {
 	table: TableInstance<TData>
 	row: Table_Row<TData>
 	sx?: IconButtonProps['sx']
 }
 
-export const RowActionMenuButton = <TData extends Record<string, any> = {}>({
+export const RowActionMenuButton = <TData,>({
 	table,
 	row,
 	sx,

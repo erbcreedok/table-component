@@ -1,7 +1,7 @@
-import React, { useRef } from 'react'
-import { Meta, Story } from '@storybook/react'
-import TableComponent, { TableComponentProps, Table_ColumnDef } from '../../'
 import { faker } from '@faker-js/faker'
+import { Meta, Story } from '@storybook/react'
+import React from 'react'
+import TableComponent, { Table_ColumnDef, TableComponentProps } from '../../'
 
 const meta: Meta = {
 	title: 'Styling/Table Dimensions Examples',

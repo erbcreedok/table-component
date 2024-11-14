@@ -1,6 +1,6 @@
-import { Table_Row, TableData, TableInstance } from '../TableComponent'
+import { Table_Row, TableInstance } from '../TableComponent'
 
-export const showRowInTable = <TData extends TableData = {}>(
+export const showRowInTable = <TData>(
 	_row: Table_Row<TData>,
 	table: TableInstance<TData>
 ) =>

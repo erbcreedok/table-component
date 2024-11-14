@@ -5,11 +5,11 @@ import { getCellFieldId, Table_Cell, TableData, TableInstance } from '../'
 
 import { TableBodyCellValue } from './TableBodyCellValue'
 
-export type TableBodyCellEditValueProps<TData extends TableData = {}> = {
+export type TableBodyCellEditValueProps<TData = TableData> = {
 	cell: Table_Cell<TData>
 	table: TableInstance<TData>
 }
-export const TableBodyCellEditValue = <TData extends TableData = {}>(
+export const TableBodyCellEditValue = <TData = {},>(
 	props: TableBodyCellEditValueProps<TData>
 ) => {
 	const { cell, table } = props

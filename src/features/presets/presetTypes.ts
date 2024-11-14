@@ -24,14 +24,14 @@ export interface Preset {
 	state: PresetState
 }
 
-type NotificationArgs<TData extends TableData = {}> = {
+type NotificationArgs<TData = TableData> = {
 	isCurrentPresetEmpty: boolean
 	isPresetMenuOpen: boolean
 	isPresetStateSame: boolean
 	table: TableInstance<TData>
 }
 
-export type TablePropsWithPresets<TData extends TableData = {}> = {
+export type TablePropsWithPresets<TData = TableData> = {
 	enablePresets?: boolean
 	onGetDefaultPresets?: (state?: PresetState) => Preset[]
 	onGetPresets?: () => Preset[]

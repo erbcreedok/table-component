@@ -1,9 +1,7 @@
 import { TableInstance } from '../../'
 import { splitArrayItems } from '../../utils/splitArrayItems'
 
-export const useGroupingControls = <TData extends Record<string, any> = {}>(
-	table: TableInstance<TData>
-) => {
+export const useGroupingControls = <TData>(table: TableInstance<TData>) => {
 	const { getVisibleLeafColumns } = table
 
 	const allColumns = getVisibleLeafColumns().filter((col) => col.getCanGroup())

@@ -1,29 +1,29 @@
-import { FC, useCallback, useRef, MouseEvent } from 'react'
-import { MenuList, Popper, capitalize } from '@mui/material'
+import { capitalize, MenuList, Popper } from '@mui/material'
 import Box from '@mui/material/Box'
 import ListItemIcon from '@mui/material/ListItemIcon'
 import MenuItem from '@mui/material/MenuItem'
 import zIndex from '@mui/material/styles/zIndex'
+import { FC, MouseEvent, useCallback, useRef } from 'react'
 
+import { ExpandMoreMenuChevron } from '../components/ExpandMoreMenuChevron'
 import { MenuPaper } from '../components/Menu'
+import { useTableContext } from '../context/useTableContext'
 import { useHoverEffects } from '../hooks/useHoverEffects'
 import {
-	Table_Column,
-	TableData,
 	SetColumns,
+	Table_Column,
 	Table_ColumnDef,
+	TableData,
 } from '../TableComponent'
-import { useTableContext } from '../context/useTableContext'
-import { ExpandMoreMenuChevron } from '../components/ExpandMoreMenuChevron'
-import { withNativeEvent } from '../utils/withNativeEvent'
 import { getPascalCase } from '../utils/getPascalCase'
 import { getTestAttributes } from '../utils/getTestAttributes'
+import { withNativeEvent } from '../utils/withNativeEvent'
 
 import { commonListItemStyles, commonMenuItemStyles } from './constants'
 
 const customColumnPrefix = 'customColumn'
 
-type CustomDefault = Partial<Table_ColumnDef<TableData>>
+type CustomDefault = Partial<Table_ColumnDef>
 
 const customDefaultText: CustomDefault = {
 	dataType: 'textual',
@@ -47,7 +47,7 @@ const customDefaultPercent: CustomDefault = {
 }
 const customDefaultPercentJson = JSON.stringify(customDefaultPercent)
 
-type Props<TData extends TableData = TableData> = {
+type Props<TData = TableData> = {
 	column: Table_Column
 	setColumns: SetColumns<TData>
 	insertPosition: 'left' | 'right'
@@ -91,9 +91,11 @@ export const CustomColumnInsertMenu: FC<Props> = ({
 					null,
 					originalColumns
 						.filter((c) => c.enableCustomization !== undefined)
-						.map((c) =>
-							Number(c.accessorKey?.split(customColumnPrefix)[1] ?? 0)
-						)
+						.map((c) => {
+							const key = c.accessorKey ?? ''
+
+							return Number(key.split(customColumnPrefix)[1] ?? 0)
+						})
 				) + 1
 
 			if (columnNumber < 1) columnNumber = 1
@@ -102,7 +104,7 @@ export const CustomColumnInsertMenu: FC<Props> = ({
 			const { dataType, ...config } = JSON.parse(
 				event.currentTarget.dataset.json!
 			)
-			const newColumn: Table_ColumnDef<TableData> = {
+			const newColumn: Table_ColumnDef = {
 				header: `Column ${columnNumber}`,
 				accessorKey,
 				enableCustomization: true,

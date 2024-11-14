@@ -1,6 +1,6 @@
-import React, { FC, useRef, useMemo } from 'react'
 import TableCell from '@mui/material/TableCell'
 import Typography from '@mui/material/Typography'
+import React, { FC, useMemo, useRef } from 'react'
 
 import type { MultirowColumn, TableInstance } from '..'
 import { arrayHasAll } from '../utils/arrayHasAll'

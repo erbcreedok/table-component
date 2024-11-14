@@ -2,17 +2,17 @@ import Box from '@mui/material/Box'
 import ListItemIcon from '@mui/material/ListItemIcon'
 import MenuItem, { MenuItemProps } from '@mui/material/MenuItem'
 
-import { getTestAttributes } from '../utils/getTestAttributes'
 import { Table_Column, TableData, TableInstance, utilColumns } from '../'
+import { getTestAttributes } from '../utils/getTestAttributes'
 
 import { commonListItemStyles, commonMenuItemStyles } from './constants'
 
-type QuickGroupingMenuItemsProps<TData extends TableData = {}> = {
+type QuickGroupingMenuItemsProps<TData = TableData> = {
 	column: Table_Column<TData>
 	table: TableInstance<TData>
 	setVisible(visible: boolean): void
 } & Partial<MenuItemProps>
-export const QuickGroupingMenuItems = <TData extends TableData = {}>({
+export const QuickGroupingMenuItems = <TData,>({
 	column,
 	table,
 	setVisible,

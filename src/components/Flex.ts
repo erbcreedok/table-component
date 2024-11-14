@@ -1,4 +1,4 @@
-import { styled, css, Box } from '@mui/material'
+import { Box, css, styled } from '@mui/material'
 
 import { getShouldForwardProps } from '../utils/getShouldForwardProps'
 

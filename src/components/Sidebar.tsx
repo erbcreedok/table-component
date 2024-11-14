@@ -4,9 +4,9 @@ import {
 	DrawerProps,
 	paperClasses,
 } from '@mui/material'
-import { ReactElement, ReactNode, MouseEvent } from 'react'
 import Box from '@mui/material/Box'
 import Drawer from '@mui/material/Drawer'
+import { MouseEvent, ReactElement, ReactNode } from 'react'
 
 import { TableInstance } from '../TableComponent'
 import { createComponentWithMuiProps } from '../utils/createComponentWithMuiProps'

@@ -1,34 +1,34 @@
 import { tableRowClasses } from '@mui/material'
+import { lighten } from '@mui/material/styles'
+import MuiTableRow from '@mui/material/TableRow'
 import { noop } from '@tanstack/react-table'
+import type { VirtualItem, Virtualizer } from '@tanstack/react-virtual'
 import {
 	FC,
 	memo,
 	SyntheticEvent,
 	useCallback,
+	useEffect,
 	useMemo,
 	useRef,
-	useEffect,
 } from 'react'
-import MuiTableRow from '@mui/material/TableRow'
-import { lighten } from '@mui/material/styles'
-import type { VirtualItem, Virtualizer } from '@tanstack/react-virtual'
 import { useResizeDetector } from 'react-resize-detector'
 
 import {
-	RowTooltip,
+	Colors,
 	ColumnVirtualizerWrapper,
 	EditingRowActionButtons,
 	EmptyCell,
-	Colors,
+	RowTooltip,
 	Table_Cell,
 	Table_Row,
 	TableData,
 	TableInstance,
 } from '../'
 import { CreateNewRow } from '../buttons/CreateNewRow'
+import { getColumnId } from '../column.utils'
 import { useComputedMeasureElement } from '../hooks/useComputedMeasureElement'
 import { getCellGroupBorders } from '../utils/getGroupBorders'
-import { getColumnId } from '../column.utils'
 import { getIsMockRow } from '../utils/getIsMockRow'
 import { getSubRowIndex } from '../utils/getSubRowIndex'
 import { setHoveredRow } from '../utils/setHoveredRow'
@@ -38,7 +38,7 @@ import { Memo_TableBodyCell, TableBodyCell } from './TableBodyCell'
 import { TableBodyCellEmpty } from './TableBodyCellEmpty'
 import { TableDetailPanel } from './TableDetailPanel'
 
-export interface TableBodyRowProps<TData extends TableData = TableData> {
+export interface TableBodyRowProps<TData = TableData> {
 	columnVirtualizer?: Virtualizer<HTMLDivElement, HTMLTableCellElement>
 	domIndex: number
 	measureElement?: (element: HTMLTableRowElement) => void

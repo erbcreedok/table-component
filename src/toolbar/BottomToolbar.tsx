@@ -1,15 +1,15 @@
-import React from 'react'
 import Box from '@mui/material/Box'
+import { alpha, lighten, type Theme } from '@mui/material/styles'
 import Toolbar from '@mui/material/Toolbar'
 import useMediaQuery from '@mui/material/useMediaQuery'
-import { alpha, lighten, type Theme } from '@mui/material/styles'
+import React from 'react'
 
-import type { TableInstance } from '..'
+import type { TableData, TableInstance } from '..'
 
+import { LinearProgressBar } from './LinearProgressBar'
 import { TablePagination } from './TablePagination'
 import { ToolbarAlertBanner } from './ToolbarAlertBanner'
 import { ToolbarDropZone } from './ToolbarDropZone'
-import { LinearProgressBar } from './LinearProgressBar'
 
 export const commonToolbarStyles = ({ theme }: { theme: Theme }) => ({
 	alignItems: 'flex-start',
@@ -22,13 +22,11 @@ export const commonToolbarStyles = ({ theme }: { theme: Theme }) => ({
 	zIndex: 1,
 })
 
-interface Props<TData extends Record<string, any> = {}> {
+interface Props<TData = TableData> {
 	table: TableInstance<TData>
 }
 
-export const BottomToolbar = <TData extends Record<string, any> = {}>({
-	table,
-}: Props<TData>) => {
+export const BottomToolbar = <TData,>({ table }: Props<TData>) => {
 	const {
 		getState,
 		options: {

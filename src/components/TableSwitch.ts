@@ -1,6 +1,6 @@
 import { styled, Switch, switchClasses } from '@mui/material'
 
-import { TextColor, Colors } from './styles'
+import { Colors, TextColor } from './styles'
 
 export const TableSwitch = styled(Switch)`
 	padding: 5px;

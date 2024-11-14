@@ -1,6 +1,6 @@
-import { Table_Row, TableData } from '../TableComponent'
+import { Table_Row } from '../TableComponent'
 
-export const fillRowsWithParents = <TData extends TableData = TableData>(
+export const fillRowsWithParents = <TData>(
 	_rows: Table_Row<TData>[]
 ): Table_Row<TData>[] => {
 	const existingRows = new Map<string, Table_Row<TData>>()

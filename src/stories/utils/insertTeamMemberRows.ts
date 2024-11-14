@@ -2,11 +2,9 @@ import { TeamMember } from '../types/TeamMember'
 
 function isChildOf(child: TeamMember, parent: TeamMember) {
 	return !!(parent.subRows ?? []).find((row) => {
-			if (row.id === child.id) return true
-			return isChildOf(child, row)
+		if (row.id === child.id) return true
+		return isChildOf(child, row)
 	})
-
-
 }
 function removeItem(item: TeamMember, items: TeamMember[], targetItem: TeamMember) {
 	items.forEach((_item, index) => {

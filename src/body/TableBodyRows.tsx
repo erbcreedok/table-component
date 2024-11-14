@@ -1,10 +1,10 @@
 /* eslint-disable react/jsx-pascal-case */
+import { VirtualItem, Virtualizer } from '@tanstack/react-virtual'
 import React, { FC, useMemo } from 'react'
-import { Virtualizer, VirtualItem } from '@tanstack/react-virtual'
 
+import type { Table_Row, TableBodyRowProps, TableInstance } from '..'
 import { HierarchyRow, Memo_HierarchyRow } from '../components/HierarchyRow'
 import { RowVirtualizerWrapper } from '../components/RowVirtualizerWrapper'
-import type { Table_Row, TableBodyRowProps, TableData, TableInstance } from '..'
 
 import { Memo_TableBodyRow, TableBodyRow } from './TableBodyRow'
 
@@ -13,7 +13,7 @@ interface Props {
 	columnVirtualizer?: Virtualizer<HTMLDivElement, HTMLTableCellElement>
 	table: TableInstance
 	virtualColumns?: VirtualItem[]
-	rows: Table_Row<TableData>[]
+	rows: Table_Row[]
 	columnsCount: number
 }
 

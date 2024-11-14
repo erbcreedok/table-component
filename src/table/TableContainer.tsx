@@ -1,3 +1,4 @@
+import MuiTableContainer from '@mui/material/TableContainer'
 import {
 	FC,
 	MutableRefObject,
@@ -5,7 +6,6 @@ import {
 	useLayoutEffect,
 	useState,
 } from 'react'
-import MuiTableContainer from '@mui/material/TableContainer'
 
 import type { TableInstance } from '..'
 import {

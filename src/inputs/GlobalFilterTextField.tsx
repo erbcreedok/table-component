@@ -1,3 +1,9 @@
+import Collapse from '@mui/material/Collapse'
+import IconButton from '@mui/material/IconButton'
+import InputAdornment from '@mui/material/InputAdornment'
+import TextField from '@mui/material/TextField'
+import Tooltip from '@mui/material/Tooltip'
+import { debounce } from '@mui/material/utils'
 import React, {
 	ChangeEvent,
 	MouseEvent,
@@ -5,23 +11,15 @@ import React, {
 	useEffect,
 	useState,
 } from 'react'
-import Collapse from '@mui/material/Collapse'
-import IconButton from '@mui/material/IconButton'
-import InputAdornment from '@mui/material/InputAdornment'
-import TextField from '@mui/material/TextField'
-import Tooltip from '@mui/material/Tooltip'
-import { debounce } from '@mui/material/utils'
 
+import type { TableData, TableInstance } from '..'
 import { FilterOptionMenu } from '../menus/FilterOptionMenu'
-import type { TableInstance } from '..'
 
-interface Props<TData extends Record<string, any> = {}> {
+interface Props<TData = TableData> {
 	table: TableInstance<TData>
 }
 
-export const GlobalFilterTextField = <TData extends Record<string, any> = {}>({
-	table,
-}: Props<TData>) => {
+export const GlobalFilterTextField = <TData,>({ table }: Props<TData>) => {
 	const {
 		getState,
 		setGlobalFilter,

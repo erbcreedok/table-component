@@ -3,8 +3,8 @@ import { ReactElement, useState } from 'react'
 import { Table_Column } from 'src'
 
 import { reorderColumn } from '../../../column.utils'
-import { useGroupingControls } from '../../filter-bar-hooks/useGroupingControls'
 import { NoOptions } from '../../../components/NoOptions'
+import { useGroupingControls } from '../../filter-bar-hooks/useGroupingControls'
 
 import { ListGroupItem } from './ListGroupItem'
 
@@ -26,8 +26,8 @@ export const SelectedGroupsList = (
 	const { groupedList } = useGroupingControls(table)
 
 	const onColumnOrderChanged = (
-		column: Table_Column<any>,
-		hovered: Table_Column<any>
+		column: Table_Column,
+		hovered: Table_Column
 	) => {
 		setGrouping((old) => reorderColumn(column, hovered, old))
 	}

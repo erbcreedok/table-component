@@ -7,9 +7,9 @@ import React, {
 	useEffect,
 } from 'react'
 
+import type { Table_Column, TableInstance } from '..'
 import { GrabHandleButton } from '../buttons/GrabHandleButton'
 import { reorderColumn } from '../column.utils'
-import type { Table_Column, TableInstance } from '..'
 import { Colors } from '../components/styles'
 import { useHoverEffects } from '../hooks/useHoverEffects'
 import { getValidColumnOrder } from '../utils/getValidColumnOrder'

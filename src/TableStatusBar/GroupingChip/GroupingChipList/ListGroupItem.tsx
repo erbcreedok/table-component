@@ -1,9 +1,9 @@
-import React, { FC, DragEvent, useRef, useState } from 'react'
 import { MenuItem, Typography } from '@mui/material'
+import React, { DragEvent, FC, useRef, useState } from 'react'
 
 import { GrabHandleButton } from '../../../buttons/GrabHandleButton'
-import { ItemBoxGroupingStyled } from '../GroupingChip.styled'
 import { IconsColor } from '../../../components/styles'
+import { ItemBoxGroupingStyled } from '../GroupingChip.styled'
 
 export const ListGroupItem: FC<any> = ({
 	title,

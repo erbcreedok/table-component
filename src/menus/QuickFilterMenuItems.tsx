@@ -2,10 +2,10 @@ import Box from '@mui/material/Box'
 import ListItemIcon from '@mui/material/ListItemIcon'
 import MenuItem, { MenuItemProps } from '@mui/material/MenuItem'
 
-import { getPascalCase } from '../utils/getPascalCase'
-import { withNativeEvent } from '../utils/withNativeEvent'
 import { Table_Column, TableInstance } from '../TableComponent'
+import { getPascalCase } from '../utils/getPascalCase'
 import { getTestAttributes } from '../utils/getTestAttributes'
+import { withNativeEvent } from '../utils/withNativeEvent'
 
 import { commonListItemStyles, commonMenuItemStyles } from './constants'
 

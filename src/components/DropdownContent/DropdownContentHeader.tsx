@@ -1,18 +1,18 @@
 import { Box, Typography } from '@mui/material'
 import React from 'react'
 
+import { TableData, TableInstance } from '../../TableComponent'
 import { getE2EAttributes } from '../../utils/getE2EAttributes'
 import { withNativeEvent } from '../../utils/withNativeEvent'
-import { TableData, TableInstance } from '../../TableComponent'
 
-type DropdownContentHeaderProps<TData extends TableData> = {
+type DropdownContentHeaderProps<TData = TableData> = {
 	headerTitle: string
 	onClearAll: () => void
 	analyticsElementName?: string
 	table?: TableInstance<TData>
 }
 
-export const DropdownContentHeader = <TData extends TableData>({
+export const DropdownContentHeader = <TData,>({
 	table,
 	headerTitle,
 	onClearAll,

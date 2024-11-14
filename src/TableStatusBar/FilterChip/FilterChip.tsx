@@ -1,25 +1,21 @@
 import { useMemo } from 'react'
 
 import { TableData, TableInstance } from '../../TableComponent'
+import { getFilterValueText } from '../../utils/getFilterValueText'
 import {
 	CommonChipWithPopoverAndContext,
 	CommonChipWithPopoverProps,
 } from '../CommonChipWithPopover/CommonChipWithPopover'
-import { getFilterValueText } from '../../utils/getFilterValueText'
 
 import { FilterChipDropdownContent } from './FilterChipDropdownContent'
 import { getFilterChipText } from './getFilterChipText'
 
-type FilterChipProps<TData extends TableData> = {
+type FilterChipProps<TData = TableData> = {
 	table: TableInstance<TData>
 	filterId: string
 } & Partial<CommonChipWithPopoverProps>
 
-export const FilterChip = <TData extends TableData>({
-	table,
-	filterId,
-	...rest
-}: FilterChipProps<TData>) => {
+export const FilterChip = ({ table, filterId, ...rest }: FilterChipProps) => {
 	const column = useMemo(() => table.getColumn(filterId), [table, filterId])
 
 	const filterValue = column.getFilterValue() as string[]

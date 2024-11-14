@@ -1,14 +1,14 @@
-import React, { DragEvent, FC, useRef, useState } from 'react'
 import { Box, MenuItem, Typography } from '@mui/material'
+import React, { DragEvent, FC, useRef, useState } from 'react'
 
 import { GrabHandleButton } from '../../../buttons/GrabHandleButton'
-import { getE2EAttributes } from '../../../utils/getE2EAttributes'
-import { SortingItemBoxStyled } from '../SortingChip.styled'
-import { SortingButtons } from '../../../TableToolbar/components/menus/SortingMenu/SortingButtons'
 import { IconsColor } from '../../../components/styles'
 import { useHoverEffects } from '../../../hooks/useHoverEffects'
-import { withNativeEvent } from '../../../utils/withNativeEvent'
+import { SortingButtons } from '../../../TableToolbar/components/menus/SortingMenu/SortingButtons'
+import { getE2EAttributes } from '../../../utils/getE2EAttributes'
 import { getPascalCase } from '../../../utils/getPascalCase'
+import { withNativeEvent } from '../../../utils/withNativeEvent'
+import { SortingItemBoxStyled } from '../SortingChip.styled'
 
 interface ListItemSortProps {
 	column: any

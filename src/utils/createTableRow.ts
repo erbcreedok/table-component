@@ -1,14 +1,13 @@
 import { Row, Table } from '@tanstack/react-table'
 import { createRow as _createRow } from '@tanstack/table-core'
 
-import { Table_Row, TableData, TableInstance } from '../TableComponent'
+import { Table_Row, TableInstance } from '../TableComponent'
 
 import { getNestedProp } from './getNestedProp'
 import { getVisibleCells } from './getVisibleCells'
 import { showRowInTable } from './showRowInTable'
-import { getNonCollapsedCells } from './withCollapsedMultirow'
 
-export const createTableRow = <TData extends TableData = {}>(
+export const createTableRow = <TData>(
 	table: TableInstance<TData>,
 	id: string,
 	original: TData,
@@ -19,7 +18,7 @@ export const createTableRow = <TData extends TableData = {}>(
 	const row = _createRow(
 		table as unknown as Table<TData>,
 		id,
-		original,
+		original as TData,
 		rowIndex,
 		depth,
 		subRows as Row<TData>[]
@@ -40,7 +39,6 @@ export const createTableRow = <TData extends TableData = {}>(
 			: getNestedProp<T>(row.original, groupingKey)
 	}
 	row.getVisibleCells = getVisibleCells(row)
-	row.getNonCollapsedCells = getNonCollapsedCells(row, table)
 	row.showInTable = showRowInTable(row, table)
 
 	return row as Table_Row<TData>

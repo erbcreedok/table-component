@@ -1,6 +1,6 @@
-import { TableData, TableInstance } from '../TableComponent'
+import { TableInstance } from '../TableComponent'
 
-export const getColumnUnfilteredFacetedValues = <TData extends TableData>(
+export const getColumnUnfilteredFacetedValues = <TData>(
 	columnId: string,
 	table: TableInstance<TData>
 ) => {

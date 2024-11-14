@@ -1,4 +1,4 @@
-import { Table, Row, RowModel, RowData, memo } from '@tanstack/table-core'
+import { memo, Row, RowData, RowModel, Table } from '@tanstack/table-core'
 
 export function getExpandedRowModel<TData extends RowData>(): (
 	table: Table<TData>

@@ -1,13 +1,13 @@
-import { DragEventHandler, DragEvent } from 'react'
-import IconButton from '@mui/material/IconButton'
 import type { IconButtonProps } from '@mui/material/IconButton'
+import IconButton from '@mui/material/IconButton'
+import { DragEvent, DragEventHandler } from 'react'
 
-import { handleStopPropagation } from '../utils/withStopPropagation'
-import { withNativeEvent } from '../utils/withNativeEvent'
+import type { TableData, TableInstance } from '..'
 import { Tooltip } from '../components/Tooltip'
-import type { TableInstance } from '..'
+import { withNativeEvent } from '../utils/withNativeEvent'
+import { handleStopPropagation } from '../utils/withStopPropagation'
 
-interface Props<TData extends Record<string, any> = {}> {
+interface Props<TData = TableData> {
 	iconButtonProps?: IconButtonProps
 	onDrag?: DragEventHandler<HTMLButtonElement>
 	onDragStart: DragEventHandler<HTMLButtonElement>
@@ -17,7 +17,7 @@ interface Props<TData extends Record<string, any> = {}> {
 	analyticsElementName?: string
 }
 
-export const GrabHandleButton = <TData extends Record<string, any> = {}>({
+export const GrabHandleButton = <TData,>({
 	iconButtonProps,
 	onDrag,
 	onDragEnd,

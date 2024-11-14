@@ -1,16 +1,13 @@
-import React from 'react';
-import { Meta, Story } from '@storybook/react';
-import TableComponent, {
-  TableComponentProps,
-  Table_ColumnDef,
-} from '../../';
-import { faker } from '@faker-js/faker';
-import { Box, Stack } from '@mui/material';
-import { aggregationFns } from '@tanstack/react-table';
+import { faker } from '@faker-js/faker'
+import { Box, Stack } from '@mui/material'
+import { Meta, Story } from '@storybook/react'
+import { aggregationFns } from '@tanstack/react-table'
+import React from 'react'
+import TableComponent, { Table_ColumnDef, TableComponentProps } from '../../'
 
 const meta: Meta = {
-  title: 'Features/Aggregation Examples',
-};
+	title: 'Features/Aggregation Examples',
+}
 
 export default meta;
 

@@ -1,4 +1,4 @@
-import { Avatar, ButtonBase, SxProps, styled, css } from '@mui/material'
+import { Avatar, ButtonBase, css, styled, SxProps } from '@mui/material'
 import { forwardRef, MouseEventHandler, ReactNode, useMemo } from 'react'
 
 import { CloseIcon } from '../icons/CloseIcon'

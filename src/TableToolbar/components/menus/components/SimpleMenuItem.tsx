@@ -1,3 +1,6 @@
+import Box from '@mui/material/Box'
+import MenuItem from '@mui/material/MenuItem'
+import Typography from '@mui/material/Typography'
 import React, {
 	Dispatch,
 	DragEvent,
@@ -5,15 +8,12 @@ import React, {
 	useRef,
 	useState,
 } from 'react'
-import Box from '@mui/material/Box'
-import MenuItem from '@mui/material/MenuItem'
-import Typography from '@mui/material/Typography'
 
-import type { Table_Column } from '../../../../'
+import type { Table_Column, TableData } from '../../../../'
 import { Colors, TextColor } from '../../../../components/styles'
 import { GrabHandleButton } from '../../buttons/GrabHandleButton'
 
-export interface SimpleMenuItemProps<TData extends Record<string, any> = {}> {
+export interface SimpleMenuItemProps<TData = TableData> {
 	column: Table_Column<TData>
 	isSorting?: boolean
 	isCompact?: boolean
@@ -29,7 +29,7 @@ export interface SimpleMenuItemProps<TData extends Record<string, any> = {}> {
 	onClick?: React.MouseEventHandler<HTMLElement>
 }
 
-export const SimpleMenuItem = <TData extends Record<string, any> = {}>({
+export const SimpleMenuItem = <TData,>({
 	isSorting = false,
 	isCompact = false,
 	enableDrag = false,

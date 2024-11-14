@@ -1,16 +1,16 @@
-import React from 'react'
 import Collapse from '@mui/material/Collapse'
 import LinearProgress from '@mui/material/LinearProgress'
+import React from 'react'
 
-import type { TableInstance } from '..'
+import type { TableData, TableInstance } from '..'
 
-interface Props<TData extends Record<string, any> = object> {
+interface Props<TData = TableData> {
 	isTopToolbar: boolean
 	isShown?: boolean
 	table: TableInstance<TData>
 }
 
-export const LinearProgressBar = <TData extends Record<string, any> = object>({
+export const LinearProgressBar = <TData,>({
 	isTopToolbar,
 	isShown,
 	table,

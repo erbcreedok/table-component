@@ -1,25 +1,23 @@
-import React, { useEffect, useMemo, useState } from 'react'
 import { Box } from '@mui/material'
+import React, { useEffect, useMemo, useState } from 'react'
 
-import { TableInstance } from 'src'
+import { TableData, TableInstance } from 'src'
 
+import { DropdownContentHeader, DropdownContentSearch } from '../../components'
 import {
 	CommonChipWithPopoverAndContext,
 	CommonChipWithPopoverProps,
 } from '../CommonChipWithPopover/CommonChipWithPopover'
-import { DropdownContentHeader, DropdownContentSearch } from '../../components'
 import { useSortingControls } from '../filter-bar-hooks/useSortingControls'
 
 import { SelectedSortsList } from './SortingChipList/SelectedSortsList'
 import { SortingSearchResult } from './SortingChipSearch/SortingSearchResult'
 
-type SortingChipProps<TData extends Record<string, any> = {}> = {
+type SortingChipProps<TData = TableData> = {
 	table: TableInstance<TData>
 } & Partial<CommonChipWithPopoverProps>
 
-export const SortingChip = <TData extends Record<string, any> = {}>(
-	props: SortingChipProps<TData>
-) => {
+export const SortingChip = (props: SortingChipProps) => {
 	const { table, ...rest } = props
 	const {
 		getAllColumns,

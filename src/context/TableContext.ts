@@ -7,7 +7,7 @@ import {
 	TableInstance,
 } from '../TableComponent'
 
-export type TableContextType<TData extends TableData = TableData> = {
+export type TableContextType<TData = TableData> = {
 	table: TableInstance<TData>
 	state: Table_TableState<TData>
 	config: TableComponentPropsDefined<TData>

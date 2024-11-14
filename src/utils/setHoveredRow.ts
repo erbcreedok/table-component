@@ -1,7 +1,7 @@
-import { HoveredRowState, TableData, TableInstance } from '../TableComponent'
+import { HoveredRowState, TableInstance } from '../TableComponent'
 
 export const setHoveredRow =
-	<TData extends TableData = TableData>(table: TableInstance<TData>) =>
+	<TData>(table: TableInstance<TData>) =>
 	(hoveredRow: HoveredRowState<TData> | null) => {
 		const { setHoveredRow, setGroupCollapsed } = table
 		const { groupCollapsed } = table.getState()

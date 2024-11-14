@@ -3,19 +3,19 @@ import Box from '@mui/material/Box'
 import React, {
 	cloneElement,
 	ComponentProps,
-	ReactElement,
 	MouseEvent,
+	ReactElement,
 	useCallback,
 } from 'react'
 
 import { useTableContext } from '../../context/useTableContext'
-import { Table_Row, TableInstance } from '../../TableComponent'
-import { Colors } from '../styles'
-import { Tooltip } from '../Tooltip'
+import { Table_Row, TableData, TableInstance } from '../../TableComponent'
 import { getPascalCase } from '../../utils/getPascalCase'
 import { withNativeEvent } from '../../utils/withNativeEvent'
+import { Colors } from '../styles'
+import { Tooltip } from '../Tooltip'
 
-export type BulkActionButtonProps<TData extends Record<string, any> = {}> = {
+export type BulkActionButtonProps<TData = TableData> = {
 	text: string
 	icon?: React.ReactNode
 	enableCaption?: boolean

@@ -1,31 +1,31 @@
 import { FormGroup } from '@mui/material'
-import FormControlLabel from '@mui/material/FormControlLabel'
-import { ChangeEvent, MouseEvent, ReactNode } from 'react'
 import Checkbox, { CheckboxProps } from '@mui/material/Checkbox'
-import Tooltip from '@mui/material/Tooltip'
+import FormControlLabel from '@mui/material/FormControlLabel'
 import Radio, { RadioProps } from '@mui/material/Radio'
+import Tooltip from '@mui/material/Tooltip'
+import { ChangeEvent, MouseEvent, ReactNode } from 'react'
 
-import type { Table_Row, TableData, TableInstance } from '..'
+import type { Table_Row, TableInstance } from '..'
 import { getIsMockRow } from '../utils/getIsMockRow'
 import { mergeSx } from '../utils/mergeSx'
 import { withNativeEvent } from '../utils/withNativeEvent'
 
-type Props<TData extends TableData> = {
-	row?: Table_Row | Table_Row<TData>
+type Props = {
+	row?: Table_Row
 	selectAll?: boolean
-	table: TableInstance | TableInstance<TData>
-	parentRow?: Table_Row | Table_Row<TData>
+	table: TableInstance
+	parentRow?: Table_Row
 	label?: ReactNode | ((props: CheckboxProps) => ReactNode)
 } & (CheckboxProps | RadioProps)
 
-export const SelectCheckbox = <TData extends TableData>({
+export const SelectCheckbox = ({
 	row,
 	selectAll,
 	table,
 	parentRow,
 	label,
 	...rest
-}: Props<TData>) => {
+}: Props) => {
 	const {
 		getState,
 		options: {
@@ -83,7 +83,7 @@ export const SelectCheckbox = <TData extends TableData>({
 			'aria-label': selectAll ? localization.selectAll : localization.selectRow,
 		},
 		onChange: parentRow
-			? withNativeEvent<ChangeEvent<HTMLInputElement>, TData>(
+			? withNativeEvent<ChangeEvent<HTMLInputElement>>(
 					{
 						el: 'Table_SelectRow',
 						type: 'click',
@@ -99,7 +99,7 @@ export const SelectCheckbox = <TData extends TableData>({
 						  )
 			  )
 			: row
-			? withNativeEvent<ChangeEvent<HTMLInputElement>, TData>(
+			? withNativeEvent<ChangeEvent<HTMLInputElement>>(
 					{
 						el: 'Table_SelectRow',
 						type: 'click',

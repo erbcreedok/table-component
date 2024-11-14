@@ -1,6 +1,6 @@
-import { Table_Row, TableData } from '../TableComponent'
+import { Table_Row } from '../TableComponent'
 
-export const getColumnGroupIds = <TData extends TableData = {}>(
+export const getColumnGroupIds = <TData>(
 	rows: Table_Row<TData>[],
 	columnId: string
 ) => {

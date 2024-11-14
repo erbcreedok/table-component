@@ -1,4 +1,4 @@
-import { styled, Box } from '@mui/material'
+import { Box, styled } from '@mui/material'
 
 export const FilterItemBoxStyled = styled(Box)`
 	display: flex;

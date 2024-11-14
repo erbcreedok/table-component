@@ -1,11 +1,11 @@
-import React, { MouseEvent } from 'react'
 import IconButton, { IconButtonProps } from '@mui/material/IconButton'
 import Tooltip from '@mui/material/Tooltip'
+import React, { MouseEvent } from 'react'
 
 import type { Table_Row, TableData, TableInstance } from '..'
 import { IconsColor } from '../components/styles'
 
-type Props<TData extends TableData = TableData> = {
+type Props<TData = TableData> = {
 	row: Table_Row<TData>
 	table: TableInstance<TData>
 	filled?:
@@ -16,13 +16,13 @@ type Props<TData extends TableData = TableData> = {
 		  }
 } & IconButtonProps
 
-export const ExpandButton = <TData extends TableData = TableData>({
+export const ExpandButton = ({
 	row,
 	table,
 	sx,
 	filled = false,
 	...rest
-}: Props<TData>) => {
+}: Props) => {
 	const {
 		options: {
 			icons: { ExpandFilledIcon, ExpandIcon, CollapseFilledIcon, CollapseIcon },

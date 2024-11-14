@@ -1,6 +1,6 @@
-import React, { useState } from 'react'
 import { Meta, Story } from '@storybook/react'
-import TableComponent, { TableComponentProps, Table_ColumnDef } from '../..'
+import React, { useState } from 'react'
+import TableComponent, { Table_ColumnDef, TableComponentProps } from '../..'
 
 const meta: Meta = {
 	title: 'Data Examples/Custom Column',

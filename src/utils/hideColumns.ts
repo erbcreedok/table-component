@@ -1,6 +1,6 @@
-import { TableInstance, TableData } from '../TableComponent'
+import { TableInstance } from '../TableComponent'
 
-export const hideColumns = <TData extends TableData = TableData>(
+export const hideColumns = <TData>(
 	colIds: string[],
 	table: TableInstance<TData>
 ) => {

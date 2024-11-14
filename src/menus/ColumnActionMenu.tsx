@@ -4,13 +4,13 @@ import type { Table_Header, TableInstance } from '..'
 import { Menu } from '../components'
 import { getTestAttributes } from '../utils/getTestAttributes'
 
+import { CustomColumnMenuItems } from './CustomColumnMenuItems'
 import { QuickColumnPinningMenuItems } from './QuickColumnPinningMenuItems'
 import { QuickFilterMenuItems } from './QuickFilterMenuItems'
 import { QuickFiltersMenu } from './QuickFiltersMenu'
 import { QuickGroupingMenuItems } from './QuickGroupingMenuItems'
 import { QuickHidingMenuItems } from './QuickHidingMenuItems'
 import { QuickSortMenuItems } from './QuickSortMenuItems'
-import { CustomColumnMenuItems } from './CustomColumnMenuItems'
 
 interface Props {
 	anchorEl: HTMLElement | null

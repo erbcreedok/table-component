@@ -19,43 +19,44 @@ import React, {
 import { ControllerFieldState, useFormContext } from 'react-hook-form'
 
 import {
+	CellFormController,
+	Colors,
 	DEFAULT_EXPAND_PADDING,
+	ErrorTooltipIconWithTable,
 	ExpandByClick,
 	type Table_Cell,
 	type Table_Row,
+	TableData,
 	type TableInstance,
-	Colors,
-	CellFormController,
-	ErrorTooltipIconWithTable,
 } from '..'
 import { getCommonCellStyles, Table_DefaultColumn } from '../column.utils'
 import { EditCellField } from '../inputs/EditCellField'
 import { utilColumns } from '../utilColumns'
-import { getFunctionWithArgs } from '../utils/getFunctionWithArgs'
 import { getColorAlpha } from '../utils/getColorAlpha'
+import { getFunctionWithArgs } from '../utils/getFunctionWithArgs'
 import { GroupBorders } from '../utils/getGroupBorders'
 import { getIsMockRow } from '../utils/getIsMockRow'
 import { getValueOrFunctionHandler } from '../utils/getValueOrFunctionHandler'
-import { mergeSx } from '../utils/mergeSx'
 import { isEditingEnabled } from '../utils/isEditingEnabled'
+import { mergeSx } from '../utils/mergeSx'
 
 import { ExpandableColumnButton } from './ExpandableColumnButton'
 import { TableBodyCellEditValue } from './TableBodyCellEditValue'
-import { TableBodyCellValue } from './TableBodyCellValue'
 import { TableBodyCellUtility } from './TableBodyCellUtility'
+import { TableBodyCellValue } from './TableBodyCellValue'
 
-interface Props {
-	cell: Table_Cell
+interface Props<TData = TableData> {
+	cell: Table_Cell<TData>
 	enableHover?: boolean
 	measureElement?: (element: HTMLTableCellElement) => void
 	numRows: number
-	row: Table_Row<{}>
+	row: Table_Row<TData>
 	rowHovered?: boolean
 	rowIndex: number
 	rowNumber: number
 	rowRef: RefObject<HTMLTableRowElement>
 	rowSpan?: HTMLProps<HTMLTableCellElement>['rowSpan']
-	table: TableInstance
+	table: TableInstance<TData>
 	virtualCell?: VirtualItem
 	isSummaryRowCell?: boolean
 	isGroupedCell?: boolean

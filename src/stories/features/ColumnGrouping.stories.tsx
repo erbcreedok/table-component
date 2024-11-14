@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from 'react'
 import { Meta, Story } from '@storybook/react'
+import React, { useEffect, useState } from 'react'
 import TableComponent, {
-	TableComponentProps,
 	Table_Column,
 	Table_ColumnDef,
+	TableComponentProps,
 } from '../../'
 import { Initiative } from '../types/Initiative'
 import { generateInitiatives } from '../utils/generateInitiatives'

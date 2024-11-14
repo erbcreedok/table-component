@@ -1,8 +1,8 @@
-import React, { FC } from 'react'
 import TableCell from '@mui/material/TableCell'
+import React, { FC } from 'react'
 
-import { getCommonCellStyles } from '../column.utils'
 import type { Table_Header, TableInstance } from '..'
+import { getCommonCellStyles } from '../column.utils'
 
 interface Props {
 	footer: Table_Header

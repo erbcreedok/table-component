@@ -1,8 +1,8 @@
 import { memo } from '@tanstack/table-core'
 
-import { TableData, TableInstance } from '../TableComponent'
+import { TableInstance } from '../TableComponent'
 
-export const getAllColumns = <TData extends TableData = {}>(
+export const getAllColumns = <TData>(
 	table: TableInstance<TData>,
 	_getAllColumns: typeof table._getAllColumns
 ) =>

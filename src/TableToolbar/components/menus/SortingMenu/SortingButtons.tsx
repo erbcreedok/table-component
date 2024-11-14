@@ -1,20 +1,20 @@
-import React from 'react'
-import Box from '@mui/material/Box'
 import { IconButton, SxProps } from '@mui/material'
+import Box from '@mui/material/Box'
+import React from 'react'
 
+import { ConditionalBox } from '../../../../components/ConditionalBox'
+import { Colors, TextColor } from '../../../../components/styles'
+import { useTableContext } from '../../../../context/useTableContext'
+import { Table_Column, TableData } from '../../../../TableComponent'
 import { getE2EAttributes } from '../../../../utils/getE2EAttributes'
+import { getPascalCase } from '../../../../utils/getPascalCase'
 import {
 	getSortingIcon,
 	getSortingText,
 } from '../../../../utils/getSortingInfo'
-import { getPascalCase } from '../../../../utils/getPascalCase'
 import { withNativeEvent } from '../../../../utils/withNativeEvent'
-import { useTableContext } from '../../../../context/useTableContext'
-import { Table_Column } from '../../../../TableComponent'
-import { Colors, TextColor } from '../../../../components/styles'
-import { ConditionalBox } from '../../../../components/ConditionalBox'
 
-interface Props<TData extends Record<string, any> = {}> {
+interface Props<TData = TableData> {
 	column: Table_Column<TData>
 	sx?: SxProps | undefined
 	hideUnselected?: boolean
@@ -22,9 +22,7 @@ interface Props<TData extends Record<string, any> = {}> {
 	isInChip?: boolean
 	e2ePrefix?: string
 }
-export const SortingButtons = <TData extends Record<string, any> = {}>(
-	props: Props<TData>
-) => {
+export const SortingButtons = <TData = {},>(props: Props<TData>) => {
 	const { table } = useTableContext()
 	const { column, e2ePrefix, hideUnselected } = props
 	const sorting = column?.getIsSorted()

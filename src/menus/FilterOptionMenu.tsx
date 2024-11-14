@@ -1,13 +1,14 @@
-import React, { useMemo } from 'react'
 import Box from '@mui/material/Box'
 import Menu from '@mui/material/Menu'
 import MenuItem from '@mui/material/MenuItem'
+import React, { useMemo } from 'react'
 
 import type {
 	Table_FilterOption,
 	Table_Header,
 	Table_InternalFilterOption,
 	Table_Localization,
+	TableData,
 	TableInstance,
 } from '..'
 
@@ -100,7 +101,7 @@ export const filterOptions = (
 	},
 ]
 
-interface Props<TData extends Record<string, any> = {}> {
+interface Props<TData = TableData> {
 	anchorEl: HTMLElement | null
 	header?: Table_Header<TData>
 	onSelect?: () => void
@@ -109,7 +110,7 @@ interface Props<TData extends Record<string, any> = {}> {
 	table: TableInstance<TData>
 }
 
-export const FilterOptionMenu = <TData extends Record<string, any> = {}>({
+export const FilterOptionMenu = <TData,>({
 	anchorEl,
 	header,
 	onSelect,

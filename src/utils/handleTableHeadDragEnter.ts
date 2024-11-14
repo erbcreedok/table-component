@@ -1,10 +1,10 @@
 import { RefObject } from 'react'
 
-import { Table_Row, TableData, TableInstance } from '../TableComponent'
+import { Table_Row, TableInstance } from '../TableComponent'
 
 import { setHoveredRow } from './setHoveredRow'
 
-export const handleTableHeadDragEnter = <TData extends TableData = TableData>(
+export const handleTableHeadDragEnter = <TData>(
 	table: TableInstance<TData>,
 	rowRef: RefObject<HTMLTableRowElement>,
 	parentRow?: Table_Row<TData>,

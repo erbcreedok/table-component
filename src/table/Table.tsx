@@ -112,7 +112,7 @@ export const Table: FC<Props> = ({ table }) => {
 
 						return Array.from(
 							new Set([
-								...groupedIndexes.filter((index) => rangeList.includes(index)),
+								...groupedIndexes,
 								...leftPinnedIndexes,
 								...rangeList,
 								...rightPinnedIndexes,
@@ -137,13 +137,13 @@ export const Table: FC<Props> = ({ table }) => {
 	let virtualPaddingRight = 0
 
 	if (columnVirtualizer && virtualColumns?.length) {
-		virtualPaddingLeft = virtualColumns[leftPinnedIndexes.length]?.start ?? 0
+		const lastLeftPinnedIndex = leftPinnedIndexes.length + groupedIndexes.length
+		virtualPaddingLeft = virtualColumns[lastLeftPinnedIndex]?.start ?? 0
 		virtualPaddingRight =
 			columnVirtualizer.getTotalSize() -
 			(virtualColumns[virtualColumns.length - 1 - rightPinnedIndexes.length]
 				?.end ?? 0)
-		const pinnedColumnsLeft =
-			virtualColumns[leftPinnedIndexes.length - 1]?.end ?? 0
+		const pinnedColumnsLeft = virtualColumns[lastLeftPinnedIndex - 1]?.end ?? 0
 		const pinnedColumnsRight = rightPinnedIndexes.length
 			? virtualColumns
 					.slice(-rightPinnedIndexes.length)

@@ -1,18 +1,16 @@
-import React, { useEffect } from 'react'
-import { alpha } from '@mui/material/styles'
 import Box from '@mui/material/Box'
 import Fade from '@mui/material/Fade'
+import { alpha } from '@mui/material/styles'
 import Typography from '@mui/material/Typography'
+import React, { useEffect } from 'react'
 
-import type { TableInstance } from '..'
+import type { TableData, TableInstance } from '..'
 
-interface Props<TData extends Record<string, any> = object> {
+interface Props<TData = TableData> {
 	table: TableInstance<TData>
 }
 
-export const ToolbarDropZone = <TData extends Record<string, any> = object>({
-	table,
-}: Props<TData>) => {
+export const ToolbarDropZone = <TData,>({ table }: Props<TData>) => {
 	const {
 		getState,
 		options: { enableGrouping, localization },

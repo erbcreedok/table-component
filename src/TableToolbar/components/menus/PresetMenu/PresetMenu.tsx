@@ -1,7 +1,13 @@
 import { Divider, MenuList, Typography } from '@mui/material'
 import Box from '@mui/material/Box'
 
-import { Colors, Menu, type TableInstance, TextColor } from '../../../../'
+import {
+	Colors,
+	Menu,
+	TableData,
+	type TableInstance,
+	TextColor,
+} from '../../../../'
 
 import { CustomPreset } from './components/CustomPreset'
 import { PresetInput } from './components/PresetInput'
@@ -9,14 +15,14 @@ import { PresetsFooter } from './components/PresetsFooter'
 import { SuggestedPreset } from './components/SuggestedPreset'
 import { usePresetMenu } from './usePresetMenu'
 
-interface PresetMenuProps<TData extends Record<string, any> = {}> {
+interface PresetMenuProps<TData = TableData> {
 	table: TableInstance<TData>
 	anchorEl: HTMLElement
 	open: boolean
 	handleClose(): void
 }
 
-export const PresetMenu = <TData extends Record<string, any> = {}>({
+export const PresetMenu = <TData,>({
 	table,
 	anchorEl,
 	open,

@@ -1,21 +1,18 @@
-import React from 'react';
-import { Meta, Story } from '@storybook/react';
-import TableComponent, {
-  TableComponentProps,
-  Table_ColumnDef,
-} from '../../';
-import { faker } from '@faker-js/faker';
-import { Button, MenuItem as MuiMenuItem, styled } from '@mui/material';
-import AccountCircleIcon from '@mui/icons-material/AccountCircle';
-import DeleteIcon from '@mui/icons-material/Delete';
-import ShareIcon from '@mui/icons-material/Share';
+import { faker } from '@faker-js/faker'
+import AccountCircleIcon from '@mui/icons-material/AccountCircle'
+import DeleteIcon from '@mui/icons-material/Delete'
+import ShareIcon from '@mui/icons-material/Share'
+import { Button, MenuItem as MuiMenuItem, styled } from '@mui/material'
+import { Meta, Story } from '@storybook/react'
+import React from 'react'
+import TableComponent, { Table_ColumnDef, TableComponentProps } from '../../'
 import { getSeparatedTeamMembers } from '../utils/getTeamMembers'
 import { getTeamMembersColumns } from '../utils/getTeamMembersColumns'
 
 const MenuItem = styled(MuiMenuItem)({
-  display: 'flex',
-  gap: '0.75rem',
-});
+	display: 'flex',
+	gap: '0.75rem',
+})
 
 const meta: Meta = {
   title: 'Features/Row Actions Examples',

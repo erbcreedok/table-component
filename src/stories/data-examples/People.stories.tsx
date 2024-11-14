@@ -1,20 +1,20 @@
-import React, { useState } from 'react'
+import { Typography } from '@mui/material'
+import LinearProgress from '@mui/material/LinearProgress'
+import MuiTableCell from '@mui/material/TableCell'
 import { Meta, Story } from '@storybook/react'
+import React, { useState } from 'react'
 import TableComponent, {
-	TableComponentProps,
-	Sidebar,
 	ExpandByClick,
+	Sidebar,
+	TableComponentProps,
 	utilColumns,
 } from '../../'
-import { Typography } from '@mui/material'
+import { Table_DisplayColumnIdsArray } from '../../column.utils'
 import { OpenIcon } from '../../icons/OpenIcon'
 import {
 	getPeopleColumns,
 	getSeparatedPeopleMembers,
 } from '../utils/getPeopleColumns'
-import { Table_DisplayColumnIdsArray } from '../../column.utils'
-import MuiTableCell from '@mui/material/TableCell'
-import LinearProgress from '@mui/material/LinearProgress'
 import { getTablePresetProps } from '../utils/getTablePresetProps'
 import { ColumnActionsFiltersMenu } from './components/ColumnActionsFiltersMenu'
 

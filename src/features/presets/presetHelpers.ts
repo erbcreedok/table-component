@@ -1,4 +1,4 @@
-import { EMPTY_STATE, TableData, TableInstance } from '../../'
+import { EMPTY_STATE, TableInstance } from '../../'
 import { getValidColumnOrder } from '../../utils/getValidColumnOrder'
 
 import { PresetState } from './presetTypes'
@@ -60,8 +60,8 @@ const getIsVisibilitySame = (presetVisibility, tableVisibility) => {
 	return getIsArraySame(hiddenPresetColumns, hiddenTableColumns)
 }
 
-export const getIsPresetStateSame = <TData extends TableData = TableData>(
-	table: TableInstance<TData>,
+export const getIsPresetStateSame = (
+	table: TableInstance,
 	tableState: PresetState,
 	presetState: PresetState = EMPTY_STATE
 ) => {

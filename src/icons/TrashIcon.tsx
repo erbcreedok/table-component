@@ -1,5 +1,5 @@
-import React from 'react'
 import { SvgIconProps } from '@mui/material'
+import React from 'react'
 
 import { IconGeneral } from './IconGeneral'
 

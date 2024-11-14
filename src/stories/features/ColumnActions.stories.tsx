@@ -1,15 +1,12 @@
-import React from 'react';
-import { Meta, Story } from '@storybook/react';
-import TableComponent, {
-  TableComponentProps,
-  Table_ColumnDef,
-} from '../../';
-import { faker } from '@faker-js/faker';
-import { getDefaultRowActionMenuItems } from "../utils/rowActionMenuItems";
+import { faker } from '@faker-js/faker'
+import { Meta, Story } from '@storybook/react'
+import React from 'react'
+import TableComponent, { Table_ColumnDef, TableComponentProps } from '../../'
+import { getDefaultRowActionMenuItems } from '../utils/rowActionMenuItems'
 
 const meta: Meta = {
-  title: 'Features/Column Action Examples',
-};
+	title: 'Features/Column Action Examples',
+}
 
 export default meta;
 

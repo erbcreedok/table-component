@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from 'react'
-import { Meta, Story } from '@storybook/react'
-import TableComponent, { TableComponentProps, Table_ColumnDef } from '../../'
 import { faker } from '@faker-js/faker'
 import { Box, Button, MenuItem, TextField } from '@mui/material'
+import { Meta, Story } from '@storybook/react'
 import { ColumnFiltersState } from '@tanstack/react-table'
+import React, { useEffect, useState } from 'react'
+import TableComponent, { Table_ColumnDef, TableComponentProps } from '../../'
 
 const meta: Meta = {
 	title: 'Features/Filtering Examples',
@@ -506,7 +506,7 @@ export const CustomChipFilterText: Story<TableComponentProps> = () => (
 			{
 				header: 'Address',
 				accessorKey: 'address',
-				enableColumnFilter: true, 
+				enableColumnFilter: true,
 				filterChipText: () => 'Custom chip text',
 			},
 			{

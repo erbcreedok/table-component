@@ -1,6 +1,10 @@
 import React, { useCallback, useMemo, useState } from 'react'
 
-import { ListFilterLoadingItem } from '../../components/ListFilterItem'
+import {
+	DropdownContentHeader,
+	DropdownContentSearch,
+	ListFilterLoadingItem,
+} from '../../components'
 import {
 	SelectOption,
 	Table_Column,
@@ -8,27 +12,25 @@ import {
 	TableInstance,
 } from '../../TableComponent'
 import { getColumnFilterOptions } from '../../utils/getColumnFilterOptions'
-import { splitFilterOptions } from '../../utils/splitFilterOptions'
 import { getPascalCase } from '../../utils/getPascalCase'
-import { DropdownContentHeader } from '../../components/DropdownContent/DropdownContentHeader'
-import { DropdownContentSearch } from '../../components/DropdownContent/DropdownContentSearch'
+import { splitFilterOptions } from '../../utils/splitFilterOptions'
 
 import { FilterChipList } from './FilterChipList'
 
-export type FilterChipSelectFieldProps<TData extends TableData = TableData> = {
+export type FilterChipSelectFieldProps<TData = TableData> = {
 	column: Table_Column<TData>
 	table: TableInstance<TData>
 	options?: SelectOption[]
 	loading?: boolean
 	loadingText?: string
 }
-export const FilterChipSelectField = <TData extends TableData = TableData>({
+export const FilterChipSelectField = ({
 	column,
 	table,
 	options: _options,
 	loading,
 	loadingText,
-}: FilterChipSelectFieldProps<TData>) => {
+}: FilterChipSelectFieldProps) => {
 	const {
 		options: { localization },
 	} = table

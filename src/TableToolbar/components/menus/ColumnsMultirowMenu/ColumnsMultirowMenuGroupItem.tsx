@@ -1,25 +1,23 @@
-import React, { Dispatch, DragEvent, SetStateAction, useRef } from 'react'
 import Box from '@mui/material/Box'
 import FormControlLabel from '@mui/material/FormControlLabel'
 import MenuItem from '@mui/material/MenuItem'
 import Typography from '@mui/material/Typography'
+import React, { Dispatch, DragEvent, SetStateAction, useRef } from 'react'
 
-import type { Table_Column, TableData, TableInstance } from '../../../../index'
-import { GrabHandleButton } from '../../buttons/GrabHandleButton'
-import { TableSwitch } from '../../../../components/TableSwitch'
-import { Tooltip } from '../../../../components/Tooltip'
 import {
+	Colors,
 	DEFAULT_FONT_FAMILY,
 	TextColor,
-	Colors,
 } from '../../../../components/styles'
+import { TableSwitch } from '../../../../components/TableSwitch'
+import { Tooltip } from '../../../../components/Tooltip'
+import type { Table_Column, TableData, TableInstance } from '../../../../index'
+import { GrabHandleButton } from '../../buttons/GrabHandleButton'
 import { IconTooltip } from '../ColumnsMenu/ColumnsMenuItem'
 
 import { MultirowColumnParent } from './multirowMenu.types'
 
-export interface ColumnsMultirowMenuGroupItemProps<
-	TData extends TableData = TableData
-> {
+export interface ColumnsMultirowMenuGroupItemProps<TData = TableData> {
 	group: MultirowColumnParent<TData>
 	table: TableInstance<TData>
 	parent?: any
@@ -40,9 +38,7 @@ export interface ColumnsMultirowMenuGroupItemProps<
 	itemIndex?: number
 }
 
-export const ColumnsMultirowMenuGroupItem = <
-	TData extends TableData = TableData
->({
+export const ColumnsMultirowMenuGroupItem = <TData,>({
 	group,
 	table,
 	drawAngle,

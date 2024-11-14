@@ -1,38 +1,36 @@
 import { useMemo } from 'react'
 
 import {
-	ColumnsMenuItem,
-	ColumnsMenuItemProps,
-} from '../ColumnsMenu/ColumnsMenuItem'
-import {
 	MultirowColumn,
 	Table_Column,
 	TableData,
 } from '../../../../TableComponent'
+import {
+	ColumnsMenuItem,
+	ColumnsMenuItemProps,
+} from '../ColumnsMenu/ColumnsMenuItem'
 
 import { MultirowColumnParent } from './multirowMenu.types'
 import { MultiRowTreeItem, MultiRowTreeItemProps } from './MultiRowTreeItem'
 
-export type MultiRowTreeProps<TData extends TableData = TableData> = {
+export type MultiRowTreeProps<TData = TableData> = {
 	multirowGroups: (MultirowColumnParent<TData> | MultirowColumn)[]
 	multirowColumnsDisplayDepth: number
 } & Omit<ColumnsMenuItemProps<TData>, 'column'> &
 	Omit<MultiRowTreeItemProps<TData>, 'depth' | 'groups'>
 
-const pullOutParents = <TData extends TableData = TableData>(
-	group: MultirowColumnParent<TData>
-) => {
+const pullOutParents = (group: MultirowColumnParent) => {
 	if (!group.parent) {
 		return group
 	}
 
 	return [{ ...group, parent: group.parent.id }, pullOutParents(group.parent)]
 }
-const buildParentsTree = <TData extends TableData = TableData>(
-	items: MultirowColumnParent<TData>[],
+const buildParentsTree = (
+	items: MultirowColumnParent[],
 	parent: string | null = null
 ) => {
-	const result: MultirowColumnParent<TData>[] = []
+	const result: MultirowColumnParent[] = []
 
 	items.forEach((item) => {
 		if (!item.text) {
@@ -56,15 +54,13 @@ const buildParentsTree = <TData extends TableData = TableData>(
 
 	return result
 }
-const makeParentsTree = <TData extends TableData = TableData>(
-	groups: MultirowColumnParent<TData>[]
-) => {
+const makeParentsTree = (groups: MultirowColumnParent[]) => {
 	const flattenGroups = groups
 		.reduce((acc, curr) => {
 			acc.push(pullOutParents(curr))
 
 			return acc
-		}, [] as MultirowColumnParent<TData>[])
+		}, [] as MultirowColumnParent[])
 		.flat(Infinity)
 		.reduce((arr, el) => {
 			if (!arr.find(({ id }) => el.id === id)) {
@@ -72,24 +68,22 @@ const makeParentsTree = <TData extends TableData = TableData>(
 			}
 
 			return arr
-		}, [] as MultirowColumnParent<TData>[])
+		}, [] as MultirowColumnParent[])
 
 	return buildParentsTree(flattenGroups)
 }
-export const MultiRowTree = <TData extends TableData = TableData>(
-	props: MultiRowTreeProps<TData>
-) => {
+export const MultiRowTree = (props: MultiRowTreeProps) => {
 	const { multirowGroups, multirowColumnsDisplayDepth, ...rest } = props
 	const parentsTree = useMemo(
-		() => makeParentsTree<TData>(multirowGroups),
+		() => makeParentsTree(multirowGroups),
 		[multirowGroups]
 	)
 
 	return (
 		<>
-			{parentsTree.map((group: MultirowColumnParent<TData>) => {
+			{parentsTree.map((group: MultirowColumnParent) => {
 				if (!group.text && group.columns) {
-					return group.columns.map((column: Table_Column<TData>) => (
+					return group.columns.map((column: Table_Column) => (
 						<ColumnsMenuItem key={column.id} column={column} {...rest} />
 					))
 				}

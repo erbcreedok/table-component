@@ -1,22 +1,21 @@
 import React, { useMemo } from 'react'
 
-import { TableData } from '../TableComponent'
 import { getCellFieldId } from '../utils'
 import { getValueOrFunctionHandler } from '../utils/getValueOrFunctionHandler'
-import { normalizeSelectOptions } from '../utils/normalizeSelectOptions'
 import { isEditInputDisabled } from '../utils/isEditingEnabled'
+import { normalizeSelectOptions } from '../utils/normalizeSelectOptions'
 
 import { EditCellControllerProps, EditCellFieldProps } from './EditCellField'
 import { Select, SelectProps } from './Select'
 
-export const EditSelectField = <TData extends TableData>({
+export const EditSelectField = ({
 	table,
 	cell,
 	showLabel,
 	field,
 	fieldState,
 	onCellSave,
-}: EditCellFieldProps<TData> & EditCellControllerProps) => {
+}: EditCellFieldProps & EditCellControllerProps) => {
 	const { row, column } = cell
 	const cellDataProps = {
 		cell,

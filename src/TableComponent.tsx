@@ -55,13 +55,14 @@ import { Table_Localization_EN } from './_locales/en'
 import { Table_AggregationFns } from './aggregationFns'
 import { TableBodyRowProps } from './body/TableBodyRow'
 import {
+	BulkActionButtonProps,
 	NotificationBoxProps,
 	type RowTooltipProps,
 	type SidebarProps,
-	BulkActionButtonProps,
 	TableBulkActionsProps,
 } from './components'
 import { TableProvider } from './context/TableProvider'
+import { TableInstanceWithPresets, TablePropsWithPresets } from './features'
 import { Table_FilterFns } from './filterFns'
 import { multirowActions } from './head/constants'
 import { TableHeadCellFilterLabelProps } from './head/TableHeadCellFilterLabel'
@@ -85,7 +86,6 @@ import {
 	TableStatusBarAdornment,
 	TableStatusBarWrapperProps,
 } from './TableStatusBar'
-import { TableInstanceWithPresets, TablePropsWithPresets } from './features'
 import { ColumnsMenuProps } from './TableToolbar/components/menus/ColumnsMenu/ColumnsMenu'
 import { FiltersMenuProps } from './TableToolbar/components/menus/FiltersMenu/FiltersMenu'
 import { GroupingMenuProps } from './TableToolbar/components/menus/GroupingMenu/GroupingMenu'
@@ -122,18 +122,18 @@ export type DraggingMessage = {
 	type?: string | 'danger' | 'warning'
 }
 
-export type Table_RowModel<TData extends TableData = {}> = {
+export type Table_RowModel<TData = TableData> = {
 	flatRows: Table_Row<TData>[]
 	rows: Table_Row<TData>[]
 	rowsById: { [key: string]: Table_Row<TData> }
 }
 
-export type OpenedDetailPanel<TData extends TableData = {}> = {
+export type OpenedDetailPanel<TData = TableData> = {
 	cell: Table_Cell<TData>
 	row: Table_Row<TData>
 }
 
-export type TableInstance<TData extends TableData = TableData> = Omit<
+export type TableInstance<TData = TableData> = Omit<
 	Table<TData>,
 	| '_getOrderColumnsFn'
 	| 'getAllColumns'
@@ -255,9 +255,9 @@ export type TableInstance<TData extends TableData = TableData> = Omit<
 		setStickyHeadersHeight: Dispatch<SetStateAction<number>>
 	}
 
-export type SearchData<TData extends TableData = {}> = Table_Row<TData>[] | null
+export type SearchData<TData = TableData> = Table_Row<TData>[] | null
 
-export type Table_TableState<TData extends TableData = {}> = TableState & {
+export type Table_TableState<TData = TableData> = TableState & {
 	columnFilterFns: Record<string, Table_FilterOption>
 	draggingColumn: Table_Column<TData> | null
 	draggingRows: Table_Row<TData>[]
@@ -296,16 +296,14 @@ export type SelectOption = {
 	value: any
 }
 
-export type MultirowColumnActionClickHandler<
-	TData extends TableData = TableData
-> = (props: {
+export type MultirowColumnActionClickHandler<TData = TableData> = (props: {
 	multirowColumn: MultirowColumn
 	table: TableInstance<TData>
 	columns: Table_Column<TData>[]
 	event: React.MouseEvent
 }) => void
 
-export type MultirowColumnActionClickFns<TData extends TableData = TableData> =
+export type MultirowColumnActionClickFns<TData = TableData> =
 	| MultirowColumnActionClickHandler<TData>
 	| keyof typeof multirowActions
 
@@ -342,7 +340,7 @@ export type MultirowHeaderColumn = {
 
 export type MultirowHeaderRow = {
 	additionalRowContent?: (
-		table: TableInstance<{}>,
+		table: TableInstance,
 		cellsPropsArray: MultirowColumn[]
 	) => React.ReactNode
 	pin?: boolean
@@ -352,7 +350,7 @@ export type MultirowHeaderRow = {
 
 export type MultirowHeader = MultirowHeaderRow[]
 
-export type MultirowColumnsGroup<TData extends TableData = TableData> = {
+export type MultirowColumnsGroup<TData = TableData> = {
 	columns: Table_Column<TData>[]
 	text: string
 	depth?: number
@@ -376,36 +374,30 @@ export class SimpleEvent<T = string> {
 	}
 }
 
-export type TableCellDataProps<TData extends TableData> = {
+export type TableCellDataProps<TData = TableData> = {
 	cell: Table_Cell<TData>
 	column: Table_Column<TData>
 	row: Table_Row<TData>
 	table: TableInstance<TData>
 }
-export type TableFunctionalProp<Prop, TData extends TableData> = FunctionProps<
+export type TableFunctionalProp<Prop, TData = {}> = FunctionProps<
 	Partial<Prop>,
 	{ table: TableInstance<TData> }
 >
-export type TableRowFunctionalProp<
-	Prop,
-	TData extends TableData
-> = FunctionProps<
+export type TableRowFunctionalProp<Prop, TData = {}> = FunctionProps<
 	Partial<Prop>,
 	{ table: TableInstance<TData>; row: Table_Row<TData> }
 >
-export type TableColumnFunctionalProp<
-	Prop,
-	TData extends TableData
-> = FunctionProps<
+export type TableColumnFunctionalProp<Prop, TData = {}> = FunctionProps<
 	Partial<Prop>,
 	{ table: TableInstance<TData>; column: Table_Column<TData> }
 >
-export type TableCellFunctionalProp<
-	Prop,
-	TData extends TableData
-> = FunctionProps<Partial<Prop>, TableCellDataProps<TData>>
+export type TableCellFunctionalProp<Prop, TData = {}> = FunctionProps<
+	Partial<Prop>,
+	TableCellDataProps<TData>
+>
 
-export type TableColumnEditProps<TData extends TableData> = {
+export type TableColumnEditProps<TData = TableData> = {
 	editVariant?:
 		| 'text'
 		| 'number'
@@ -427,20 +419,17 @@ export type TableColumnEditProps<TData extends TableData> = {
 	getEditValue?: (rowOriginal: TData) => any
 }
 
-export type EnableEditingArgs<TData extends TableData = TableData> = {
+export type EnableEditingArgs<TData = TableData> = {
 	table: TableInstance<TData>
 	row: Table_Row<TData>
 }
 
-export type EnableEditingOption<TData extends TableData = TableData> =
+export type EnableEditingOption<TData = TableData> =
 	| boolean
 	| ((args: EnableEditingArgs<TData>) => boolean)
 
 export type SortingType = 'textual' | 'numeric' | 'custom'
-export type GetSortingNode<
-	TData extends TableData = TableData,
-	Args = unknown
-> = (
+export type GetSortingNode<TData = {}, Args = unknown> = (
 	args: {
 		table: TableInstance<TData>
 		column: Table_Column<TData>
@@ -448,13 +437,13 @@ export type GetSortingNode<
 	} & Args
 ) => ReactNode | string | null
 
-export type TableSortingConfigs<TData extends TableData = TableData> = {
+export type TableSortingConfigs<TData = TableData> = {
 	getSortingIcon?: GetSortingNode<TData, { sortingIconProps?: any }>
 	getSortingIconConstructor?: GetSortingNode<TData>
 	getSortingText?: GetSortingNode<TData, { withSortWord?: boolean }>
 }
 
-export type ColumnSortingConfigs<TData extends TableData = TableData> =
+export type ColumnSortingConfigs<TData = TableData> =
 	TableSortingConfigs<TData> & {
 		sortingType?: SortingType
 		sortingFn?: Table_SortingFn<TData>
@@ -463,7 +452,7 @@ export type ColumnSortingConfigs<TData extends TableData = TableData> =
 		sortingKey?: string
 	}
 
-export type GroupingKey<TData extends TableData = {}> =
+export type GroupingKey<TData = TableData> =
 	| string
 	| (<T = any>(args: {
 			row: Table_Row<TData>
@@ -471,7 +460,7 @@ export type GroupingKey<TData extends TableData = {}> =
 			columnId: string
 	  }) => T)
 
-export type Table_ColumnDef<TData extends TableData = {}> = Omit<
+export type Table_ColumnDef<TData = TableData> = Omit<
 	ColumnDef<TData, unknown>,
 	| 'accessorKey'
 	| 'aggregatedCell'
@@ -897,7 +886,7 @@ export interface PercentColumn
 	displayFormat?: 'PROGRESS_BAR'
 }
 
-export type Table_DefinedColumnDef<TData extends TableData = TableData> = Omit<
+export type Table_DefinedColumnDef<TData = TableData> = Omit<
 	Table_ColumnDef<TData>,
 	'id' | 'defaultDisplayColumn'
 > & {
@@ -910,7 +899,7 @@ export type Table_DefinedColumnDef<TData extends TableData = TableData> = Omit<
 	filterTypeLabel?: string
 }
 
-export type Table_Column<TData extends TableData = TableData> = Omit<
+export type Table_Column<TData = TableData> = Omit<
 	Column<TData, unknown>,
 	'header' | 'footer' | 'columns' | 'columnDef' | 'filterFn' | 'getLeafColumns'
 > & {
@@ -922,22 +911,22 @@ export type Table_Column<TData extends TableData = TableData> = Omit<
 	header: string
 }
 
-export type Table_ColumnOrEmpty<TData extends TableData = TableData> =
+export type Table_ColumnOrEmpty<TData = TableData> =
 	| (Table_Column<TData> & { empty?: false })
 	| EmptyColumn
 
-export type Table_Header<TData extends TableData = TableData> = Omit<
+export type Table_Header<TData = TableData> = Omit<
 	Header<TData, unknown>,
 	'column'
 > & {
 	column: Table_Column<TData>
 }
 
-export type Table_HeaderOrEmpty<TData extends TableData = {}> =
+export type Table_HeaderOrEmpty<TData = TableData> =
 	| (Table_Header<TData> & { empty?: false })
 	| EmptyColumn
 
-export type Table_HeaderGroup<TData extends TableData = {}> = Omit<
+export type Table_HeaderGroup<TData = TableData> = Omit<
 	HeaderGroup<TData>,
 	'headers'
 > & {
@@ -945,12 +934,14 @@ export type Table_HeaderGroup<TData extends TableData = {}> = Omit<
 	getNonCollapsedHeaders: () => NonCollapsedItem<Table_Header<TData>>[]
 }
 
-export type Table_HeaderGroupOrEmpty<TData extends TableData = TableData> =
-	Omit<Table_HeaderGroup<TData>, 'headers'> & {
-		headers: Table_HeaderOrEmpty<TData>[]
-	}
+export type Table_HeaderGroupOrEmpty<TData = TableData> = Omit<
+	Table_HeaderGroup<TData>,
+	'headers'
+> & {
+	headers: Table_HeaderOrEmpty<TData>[]
+}
 
-export type Table_Row<TData extends TableData = TableData> = Omit<
+export type Table_Row<TData = TableData> = Omit<
 	Row<TData>,
 	| '_getAllVisibleCells'
 	| 'getVisibleCells'
@@ -972,7 +963,7 @@ export type Table_Row<TData extends TableData = TableData> = Omit<
 	isMock?: boolean
 }
 
-export type Table_Cell<TData extends TableData = TableData> = Omit<
+export type Table_Cell<TData = TableData> = Omit<
 	Cell<TData, unknown>,
 	'column' | 'row'
 > & {
@@ -980,13 +971,13 @@ export type Table_Cell<TData extends TableData = TableData> = Omit<
 	row: Table_Row<TData>
 }
 
-export type Table_CellOrEmpty<TData extends TableData = TableData> =
+export type Table_CellOrEmpty<TData = TableData> =
 	| (Table_Cell<TData> & { empty?: false })
 	| EmptyColumn
 
 export type Table_AggregationOption = string & keyof typeof Table_AggregationFns
 
-export type Table_AggregationFn<TData extends TableData = TableData> =
+export type Table_AggregationFn<TData = TableData> =
 	| AggregationFn<TData>
 	| Table_AggregationOption
 
@@ -994,7 +985,7 @@ export type Table_SortingOption = LiteralUnion<
 	string & keyof typeof Table_SortingFns
 >
 
-export type Table_SortingFn<TData extends TableData = TableData> =
+export type Table_SortingFn<TData = TableData> =
 	| SortingFn<TData>
 	| Table_SortingOption
 
@@ -1002,18 +993,17 @@ export type Table_FilterOption = LiteralUnion<
 	string & keyof typeof Table_FilterFns
 >
 
-export type Table_FilterFn<TData extends TableData = TableData> =
+export type Table_FilterFn<TData = TableData> =
 	| FilterFn<TData>
 	| Table_FilterOption
 
-export type Table_ColumnActionsFiltersMenuProps<TData extends TableData = {}> =
-	{
-		table: TableInstance<TData>
-		column: Table_Column<TData>
-		selectedFilters: string[]
-		filterOptions: SelectOption[]
-		onCheckFilter: (value: string) => void
-	}
+export type Table_ColumnActionsFiltersMenuProps<TData = TableData> = {
+	table: TableInstance<TData>
+	column: Table_Column<TData>
+	selectedFilters: string[]
+	filterOptions: SelectOption[]
+	onCheckFilter: (value: string) => void
+}
 
 export type Table_InternalFilterOption = {
 	option: string
@@ -1027,15 +1017,14 @@ export type Table_DisplayColumnIds =
 	| 'table-row-expand'
 	| 'table-util-column'
 
-export type Table_Actions<TData extends TableData = TableData> =
-	BulkActionButtonProps<TData>
+export type Table_Actions<TData = TableData> = BulkActionButtonProps<TData>
 
 export enum ExpandByClick {
 	Cell = 'Cell',
 	CellAction = 'CellAction',
 }
 
-export type HoveredRowState<TData extends TableData> = {
+export type HoveredRowState<TData = TableData> = {
 	row: Table_Row<TData>
 	asChild?: boolean
 	position: 'bottom' | 'top'
@@ -1049,18 +1038,17 @@ export type NativeEventArgs = {
 	value?: any
 }
 
-export type ValidateHoveredRowProp<TData extends TableData = {}> = (
+export type ValidateHoveredRowProp<TData = TableData> = (
 	row: NonNullable<HoveredRowState<TData>>,
 	table: TableInstance<TData>
 ) => boolean | NotificationBoxProps
-export type GetRowDragValuesChangeMessageProp<TData extends TableData = {}> =
-	(args: {
-		table: TableInstance<TData>
-		hoveredRow: HoveredRowState<TData>
-		draggingRows: Table_Row<TData>[]
-		current: { label: string; value: string }[]
-	}) => { label: string; value: string }[]
-export type MuiTableBodyRowDragHandleFnProps<TData extends TableData = {}> = ({
+export type GetRowDragValuesChangeMessageProp<TData = TableData> = (args: {
+	table: TableInstance<TData>
+	hoveredRow: HoveredRowState<TData>
+	draggingRows: Table_Row<TData>[]
+	current: { label: string; value: string }[]
+}) => { label: string; value: string }[]
+export type MuiTableBodyRowDragHandleFnProps<TData = TableData> = ({
 	table,
 	row,
 }: {
@@ -1068,7 +1056,7 @@ export type MuiTableBodyRowDragHandleFnProps<TData extends TableData = {}> = ({
 	row: Table_Row<TData>
 }) => IconButtonProps
 
-type RenderEditMenuItem<TData extends TableData = TableData> = (args: {
+type RenderEditMenuItem<TData = TableData> = (args: {
 	table: TableInstance<TData>
 	row: Table_Row<TData>
 	handleEdit: MouseEventHandler
@@ -1125,7 +1113,7 @@ export interface E2ELabelsOption {
 	idPrefix?: string
 }
 
-export type SetColumns<TData extends TableData> = (
+export type SetColumns<TData = TableData> = (
 	columns: Table_ColumnDef<TData>[],
 	current: Table_ColumnDef<TData>,
 	action: 'INSERT' | 'UPDATE' | 'DELETE'
@@ -1140,7 +1128,7 @@ export type SetColumns<TData extends TableData> = (
  * See the full props list on the official docs site:
  * @link https://www.material-react-table.com/docs/api/props
  */
-export type TableComponentProps<TData extends TableData = TableData> = Omit<
+export type TableComponentProps<TData = TableData> = Omit<
 	Partial<TableOptions<TData>>,
 	| 'columns'
 	| 'data'
@@ -1652,16 +1640,14 @@ export type TableComponentProps<TData extends TableData = TableData> = Omit<
 		defaultCollapsedMultiRow?: { id: string; colIds: string[] }[]
 	}
 
-export type TableComponentPropsDefined<TData extends TableData = TableData> =
+export type TableComponentPropsDefined<TData = TableData> =
 	TableComponentProps<TData> & {
 		originalColumns: Table_ColumnDef<TData>[]
 		icons: Table_Icons
 		localization: Table_Localization
 		theme: Theme
 	}
-const TableComponent = <TData extends TableData = TableData>(
-	props: TableComponentProps<TData>
-) => {
+const TableComponent = (props: TableComponentProps) => {
 	return (
 		<TableProvider {...props}>
 			<TableMain />

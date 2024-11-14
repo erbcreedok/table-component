@@ -1,13 +1,13 @@
-import { FC } from 'react'
 import { Typography } from '@mui/material'
+import { FC } from 'react'
 
-import { ItemBoxSearchedSortingStyled } from '../SortingChip.styled'
-import { useSortingControls } from '../../filter-bar-hooks/useSortingControls'
 import { ButtonLink } from '../../../components/ButtonLink'
 import { IconsColor } from '../../../components/styles'
 import { PlusIcon } from '../../../icons/PlusIcon'
-import { withNativeEvent } from '../../../utils/withNativeEvent'
 import { getPascalCase } from '../../../utils/getPascalCase'
+import { withNativeEvent } from '../../../utils/withNativeEvent'
+import { useSortingControls } from '../../filter-bar-hooks/useSortingControls'
+import { ItemBoxSearchedSortingStyled } from '../SortingChip.styled'
 
 // TODO:
 //  1. define props properly

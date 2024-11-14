@@ -35,6 +35,9 @@ import {
 	type FilterChipSelectFieldProps,
 } from './TableStatusBar/FilterChip/FilterChipSelectField'
 import { TableToolbar, ToolbarDivider } from './TableToolbar'
+import { ColumnsMenuProps } from './TableToolbar/components/menus/ColumnsMenu/ColumnsMenu'
+import { FiltersMenuProps } from './TableToolbar/components/menus/FiltersMenu/FiltersMenu'
+import { GroupingMenuProps } from './TableToolbar/components/menus/GroupingMenu/GroupingMenu'
 import { createTheme } from './theme/createTheme'
 import { BottomToolbar } from './toolbar/BottomToolbar'
 import { TablePagination } from './toolbar/TablePagination'
@@ -48,9 +51,6 @@ import {
 	isNumericSorting,
 	isTextSorting,
 } from './utils/getSortingInfo'
-import { ColumnsMenuProps } from './TableToolbar/components/menus/ColumnsMenu/ColumnsMenu'
-import { FiltersMenuProps } from './TableToolbar/components/menus/FiltersMenu/FiltersMenu'
-import { GroupingMenuProps } from './TableToolbar/components/menus/GroupingMenu/GroupingMenu'
 
 export default TableComponent
 export * from '@tanstack/react-table'

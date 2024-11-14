@@ -1,13 +1,16 @@
 import { DEFAULT_PRESETS, Preset, PresetState } from '../../'
 
-const getDefaultPreset = (state: Partial<PresetState>, defaultPreset?: Preset[]) => {
+const getDefaultPreset = (
+	state: Partial<PresetState>,
+	defaultPreset?: Preset[]
+) => {
 	if (defaultPreset) {
 		return defaultPreset
 	}
 
 	return DEFAULT_PRESETS.map((preset) => ({
 		...preset,
-		state: { ...preset.state, ...state }
+		state: { ...preset.state, ...state },
 	}))
 }
 

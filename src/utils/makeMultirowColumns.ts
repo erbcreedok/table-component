@@ -1,18 +1,17 @@
 import {
-	MultirowHeaderRow,
 	MultirowColumn,
 	MultirowColumnAction,
-	TableInstance,
-	Table_Column,
-	TableData,
 	MultirowHeaderColumn,
+	MultirowHeaderRow,
+	Table_Column,
+	TableInstance,
 } from '..'
 import { getColumnId, getTotalRight } from '../column.utils'
 
 import type { EmptyColumn } from './getNonCollapsedColumnItems'
 
-export const makeMultirowColumns = <TData extends TableData = {}>(
-	columns: ((Table_Column<TData> & { empty?: false }) | EmptyColumn)[],
+export const makeMultirowColumns = (
+	columns: ((Table_Column & { empty?: false }) | EmptyColumn)[],
 	multiHeaderRow: MultirowHeaderRow,
 	table: TableInstance
 ) => {
@@ -37,12 +36,9 @@ export const makeMultirowColumns = <TData extends TableData = {}>(
 	const multirowColumns = columns
 		.reduce((result, column) => {
 			if (column.empty) {
-				const columns = column.collapsedColumns.map(
-					(id) =>
-						table
-							.getAllColumns()
-							.find((el) => el.id === id) as Table_Column<TData>
-				)
+				const columns = column.collapsedColumns.map((id) =>
+					table.getAllColumns().find((el) => el.id === id)
+				) as Table_Column[]
 
 				result.push(...columns)
 			} else {
@@ -50,7 +46,7 @@ export const makeMultirowColumns = <TData extends TableData = {}>(
 			}
 
 			return result
-		}, [] as Table_Column<TData>[])
+		}, [] as Table_Column[])
 		.reduce((result, column) => {
 			const isGrouped = column.getIsGrouped()
 			const isPinned = column.getIsPinned()

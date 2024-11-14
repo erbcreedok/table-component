@@ -4,9 +4,9 @@ import React, { ComponentProps } from 'react'
 
 import { TextColor } from '../components/styles'
 import { TooltipOverflow } from '../components/TooltipOverflow'
-import { Table_Column } from '../TableComponent'
+import { Table_Column, TableData } from '../TableComponent'
 
-type Props<TData extends Record<string, any>> = {
+type Props<TData = TableData> = {
 	column: Table_Column<TData>
 	tooltipDisabled?: boolean
 	boxProps?: ComponentProps<typeof TooltipOverflow>['boxProps']
@@ -22,7 +22,7 @@ const Subtitle = styled(Box)`
 	overflow: hidden;
 	text-overflow: ellipsis;
 `
-export const HeaderBase = <TData extends Record<string, any>>({
+export const HeaderBase = <TData,>({
 	column,
 	tooltipDisabled,
 	boxProps,

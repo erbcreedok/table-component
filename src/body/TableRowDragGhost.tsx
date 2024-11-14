@@ -139,12 +139,12 @@ const ValuesChangeMessages = ({
 	)
 }
 
-type TableRowDragGhostProps<TData extends TableData> = {
+type TableRowDragGhostProps<TData = TableData> = {
 	table: TableInstance<TData>
 	rowRef: RefObject<HTMLTableRowElement>
 }
-const TableRowDragGhostRoot = <TData extends TableData>(
-	{ table, rowRef }: TableRowDragGhostProps<TData>,
+const TableRowDragGhostRoot = (
+	{ table, rowRef }: TableRowDragGhostProps,
 	ref
 ) => {
 	const {

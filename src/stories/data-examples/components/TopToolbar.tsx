@@ -1,40 +1,37 @@
-import React, { Fragment } from 'react';
-import Box from '@mui/material/Box';
-import Stack from '@mui/material/Stack';
-import Toolbar from '@mui/material/Toolbar';
-import { lighten } from '@mui/material/styles';
-import type { Theme } from '@mui/material/styles';
-import type { TableInstance } from '../../..';
-import Chip from '@mui/material/Chip';
-import { IconsColor } from '../../../components/styles';
-import { SortedDescIcon } from './SortedDescIcon';
-import { SortedAscIcon } from './SortedAscIcon';
-import { TableToolbar } from '../../../TableToolbar';
+import Box from '@mui/material/Box'
+import Chip from '@mui/material/Chip'
+import Stack from '@mui/material/Stack'
+import type { Theme } from '@mui/material/styles'
+import { lighten } from '@mui/material/styles'
+import Toolbar from '@mui/material/Toolbar'
+import React, { Fragment } from 'react'
+import type { TableData, TableInstance } from '../../..'
+import { IconsColor } from '../../../components/styles'
 import { GroupIcon } from '../../../icons/GroupIcon'
-
+import { TableToolbar } from '../../../TableToolbar'
+import { SortedAscIcon } from './SortedAscIcon'
+import { SortedDescIcon } from './SortedDescIcon'
 
 export const commonToolbarStyles = ({ theme }: { theme: Theme }) => ({
-  alignItems: 'flex-start',
-  backgroundColor: lighten(theme.palette.background.default, 0.04),
-  backgroundImage: 'none',
-  display: 'grid',
-  flexWrap: 'wrap-reverse',
-  minHeight: '3.5rem',
-  overflow: 'hidden',
-  p: '0 !important',
-  transition: 'all 150ms ease-in-out',
-  zIndex: 1,
-});
+	alignItems: 'flex-start',
+	backgroundColor: lighten(theme.palette.background.default, 0.04),
+	backgroundImage: 'none',
+	display: 'grid',
+	flexWrap: 'wrap-reverse',
+	minHeight: '3.5rem',
+	overflow: 'hidden',
+	p: '0 !important',
+	transition: 'all 150ms ease-in-out',
+	zIndex: 1,
+})
 
-interface Props<TData extends Record<string, any> = {}> {
+interface Props<TData = TableData> {
   table: TableInstance<TData>;
 }
 
-export const TopToolbar = <
-  TData extends Record<string, any> = {},
->({
+export const TopToolbar = ({
   table,
-}: Props<TData>) => {
+}: Props) => {
   const {
     getState,
     options: {

@@ -26,6 +26,13 @@ import {
 	showExpandColumn,
 } from '../column.utils'
 import {
+	columnFreezingFeature,
+	multirowFeature,
+	notDisplayedColumnFeature,
+	usePresets,
+} from '../features'
+import { columnOrderingFeature } from '../features/column-ordering-feature'
+import {
 	GroupCollapsed,
 	HoveredRowState,
 	Table_Cell,
@@ -35,10 +42,8 @@ import {
 	Table_Row,
 	Table_TableState,
 	TableComponentPropsDefined,
-	TableData,
 	TableInstance,
 } from '../TableComponent'
-import { usePresets } from '../features'
 import { getUtilColumn, utilColumns } from '../utilColumns'
 import { defaultGetSubRows } from '../utils/defaultGetSubRows'
 import { flatHierarchyTree } from '../utils/flatHierarchyTree'
@@ -52,12 +57,9 @@ import { showRowActionsColumn } from '../utils/showRowActionsColumn'
 import { showUtilityColumn } from '../utils/showUtilityColumn'
 
 import { NewRowState, useCreateNewRow } from './useCreateNewRow'
-import { useTableColumns } from './useTableColumns'
 import { useTableHierarchy } from './useTableHierarchy'
 
-export const useTable = <TData extends TableData = TableData>(
-	config: TableComponentPropsDefined<TData>
-) => {
+export const useTable = (config: TableComponentPropsDefined) => {
 	const bottomToolbarRef = useRef<HTMLDivElement>(null)
 	const editInputRefs = useRef<Record<string, HTMLInputElement>>({})
 	const filterInputRefs = useRef<Record<string, HTMLInputElement>>({})
@@ -74,7 +76,7 @@ export const useTable = <TData extends TableData = TableData>(
 	// hopefully, we need to redo current HeaderSearch behavior, and pass filtering logic into getFilteredRowModel
 	const headerSearchValueRef = useRef('')
 
-	const initialState: Partial<Table_TableState<TData>> = useMemo(() => {
+	const initialState: Partial<Table_TableState> = useMemo(() => {
 		const initState = config.initialState ?? {}
 		initState.columnOrder =
 			initState.columnOrder ?? getDefaultColumnOrderIds(config)
@@ -114,15 +116,16 @@ export const useTable = <TData extends TableData = TableData>(
 		initialState.columnFilters ?? []
 	)
 	const [rowSelection, setRowSelection] = React.useState({})
-	const [draggingColumn, setDraggingColumn] =
-		useState<Table_Column<TData> | null>(initialState.draggingColumn ?? null)
-	const [draggingRows, setDraggingRows] = useState<Table_Row<TData>[]>(
+	const [draggingColumn, setDraggingColumn] = useState<Table_Column | null>(
+		initialState.draggingColumn ?? null
+	)
+	const [draggingRows, setDraggingRows] = useState<Table_Row[]>(
 		initialState.draggingRows ?? []
 	)
-	const [editingCell, setEditingCell] = useState<Table_Cell<TData> | null>(
+	const [editingCell, setEditingCell] = useState<Table_Cell | null>(
 		initialState.editingCell ?? null
 	)
-	const [editingRow, setEditingRow] = useState<Table_Row<TData> | null>(
+	const [editingRow, setEditingRow] = useState<Table_Row | null>(
 		initialState.editingRow ?? null
 	)
 	const [isEditingTable, setIsEditingTable] = useState<boolean>(false)
@@ -136,16 +139,16 @@ export const useTable = <TData extends TableData = TableData>(
 		initialState.grouping ?? []
 	)
 	const [hoveredColumn, setHoveredColumn] = useState<
-		Table_Column<TData> | { id: string } | null
+		Table_Column | { id: string } | null
 	>(initialState.hoveredColumn ?? null)
-	const [hoveredRow, setHoveredRow] = useState<HoveredRowState<TData>>(
+	const [hoveredRow, setHoveredRow] = useState<HoveredRowState>(
 		initialState.hoveredRow ?? null
 	)
 	const [openedDetailedPanels, setOpenedDetailedPanels] = useState<Record<
 		string,
 		{
-			cell: Table_Cell<TData>
-			row: Table_Row<TData>
+			cell: Table_Cell
+			row: Table_Row
 		}
 	> | null>(null)
 	const [isFullScreen, setIsFullScreen] = useState(
@@ -168,7 +171,7 @@ export const useTable = <TData extends TableData = TableData>(
 	const [sorting, setSorting] = useState<SortingState>(
 		initialState.sorting ?? []
 	)
-	const [searchData, setSearchData] = useState<Table_Row<TData>[] | null>(null)
+	const [searchData, setSearchData] = useState<Table_Row[] | null>(null)
 	const [highlightHeadCellId, setHighlightHeadCellId] = useState<string | null>(
 		null
 	)
@@ -221,7 +224,7 @@ export const useTable = <TData extends TableData = TableData>(
 						...config.displayColumnDefOptions?.[utilColumns.expand],
 						id: utilColumns.expand,
 					},
-				] as Array<Table_ColumnDef<TData>>
+				] as Array<Table_ColumnDef>
 			).filter(Boolean),
 		[
 			config.displayColumnDefOptions,
@@ -263,7 +266,7 @@ export const useTable = <TData extends TableData = TableData>(
 		]
 	)
 
-	const data: TData[] = useMemo(() => {
+	const data: {}[] = useMemo(() => {
 		const tableData = config.data
 
 		if (
@@ -342,10 +345,10 @@ export const useTable = <TData extends TableData = TableData>(
 		collapsedMultirow,
 		stickyHeadersHeight,
 		...config.state,
-	} as Table_TableState<TData>
+	} as Table_TableState
 
 	const isGroupableRow = useCallback(
-		(row: Table_Row<TData>) => {
+		(row: Table_Row) => {
 			return isHierarchyItem ? !isHierarchyItem(row.original) : true
 		},
 		[isHierarchyItem]
@@ -406,6 +409,12 @@ export const useTable = <TData extends TableData = TableData>(
 	// @ts-ignore
 	const table = Object.assign(
 		useReactTable({
+			_features: [
+				notDisplayedColumnFeature,
+				columnFreezingFeature,
+				columnOrderingFeature,
+				multirowFeature,
+			],
 			getCoreRowModel: getCoreRowModel(),
 			getExpandedRowModel: getExpandedRowModel(),
 			getFacetedRowModel: getFacetedRowModel(),
@@ -487,7 +496,7 @@ export const useTable = <TData extends TableData = TableData>(
 			setCollapsedMultirow,
 			setStickyHeadersHeight,
 		}
-	) as TableInstance<TData>
+	) as TableInstance
 
 	if (config.tableInstanceRef) {
 		config.tableInstanceRef.current = table
@@ -507,7 +516,6 @@ export const useTable = <TData extends TableData = TableData>(
 
 	table.constants.totalRowCount = table.getFilteredRowModel().flatRows.length
 
-	useTableColumns(table)
 	useCreateNewRow(table)
 	useTableHierarchy(table)
 	usePresets(table, initialState)

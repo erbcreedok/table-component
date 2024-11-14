@@ -1,15 +1,14 @@
 import { PropsWithChildren, ReactElement, useMemo } from 'react'
 
-import type { Table_Row, TableInstance, TableData } from '..'
+import type { Table_Row, TableData, TableInstance } from '..'
 import { getValueOrFunctionHandler } from '../utils/getValueOrFunctionHandler'
 
 import { Tooltip } from './Tooltip'
 
-export type RowTooltipProps<TData extends TableData = TableData> =
-	PropsWithChildren<{
-		row: Table_Row<TData>
-		table: TableInstance<TData>
-	}>
+export type RowTooltipProps<TData = TableData> = PropsWithChildren<{
+	row: Table_Row<TData>
+	table: TableInstance<TData>
+}>
 
 export const RowTooltip = ({ row, table, children }: RowTooltipProps) => {
 	const {

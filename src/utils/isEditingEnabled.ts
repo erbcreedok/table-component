@@ -1,10 +1,6 @@
-import {
-	EnableEditingArgs,
-	EnableEditingOption,
-	type TableData,
-} from '../TableComponent'
+import { EnableEditingArgs, EnableEditingOption } from '../TableComponent'
 
-export const isEditingEnabled = <TData extends TableData = TableData>(
+export const isEditingEnabled = <TData>(
 	enableEditing: EnableEditingOption<TData> | undefined,
 	args: EnableEditingArgs<TData>
 ): boolean => {
@@ -13,7 +9,7 @@ export const isEditingEnabled = <TData extends TableData = TableData>(
 		: enableEditing === true
 }
 
-export const isEditInputDisabled = <TData extends TableData = TableData>(
+export const isEditInputDisabled = <TData>(
 	enableEditing: EnableEditingOption<TData> | undefined,
 	args: EnableEditingArgs<TData>
 ): boolean => {

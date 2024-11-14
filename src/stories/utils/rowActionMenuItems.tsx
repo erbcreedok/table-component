@@ -1,16 +1,16 @@
 import AccountCircleIcon from '@mui/icons-material/AccountCircle'
 import DeleteIcon from '@mui/icons-material/Delete'
-import ShareIcon from '@mui/icons-material/Share'
 import GroupIcon from '@mui/icons-material/Group'
+import ShareIcon from '@mui/icons-material/Share'
 import ViewSidebar from '@mui/icons-material/ViewSidebar'
 import React, { ReactNode } from 'react'
 import { MenuItemBase } from '../../components/Menu'
-import { Table_Row, TableInstance } from '../../TableComponent'
+import { Table_Row, TableData, TableInstance } from '../../TableComponent'
 
 type ActionMenuItemProps = {
 	onClick?: (action: string) => void
 }
-type GetDefaultRowActionMenuItemsProps<TData extends Record<string, any> = {}> =
+type GetDefaultRowActionMenuItemsProps<TData = TableData> =
 	{
 		closeMenu?: () => void
 		row: Table_Row<TData>
@@ -57,7 +57,7 @@ export const OpenSidebarMenuItem = ({ onClick }: ActionMenuItemProps) => (
 	</MenuItemBase>
 )
 export const ShowGroupedColumnValuesMenuItem = <
-	TData extends Record<string, any> = {}
+	TData = {}
 >({
 	table,
 	row,
@@ -84,7 +84,7 @@ export const ShowGroupedColumnValuesMenuItem = <
 )
 
 export const getDefaultRowActionMenuItems = (customActions?: ((closeMenu?: () => void) => ReactNode[])) => <
-	TData extends Record<string, any> = {}
+	TData = {}
 >({
 	closeMenu,
 	row,

@@ -1,6 +1,6 @@
-import { styled, Chip } from '@mui/material'
+import { Chip, styled } from '@mui/material'
 
-import { DEFAULT_FONT_FAMILY, Colors } from './styles'
+import { Colors, DEFAULT_FONT_FAMILY } from './styles'
 
 export const ToolbarChip = styled(Chip)`
 	font-family: ${DEFAULT_FONT_FAMILY};

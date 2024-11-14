@@ -1,14 +1,11 @@
-import React from 'react';
-import { Meta, Story } from '@storybook/react';
-import TableComponent, {
-  TableComponentProps,
-  Table_ColumnDef,
-} from '../../';
-import { faker } from '@faker-js/faker';
+import { faker } from '@faker-js/faker'
+import { Meta, Story } from '@storybook/react'
+import React from 'react'
+import TableComponent, { Table_ColumnDef, TableComponentProps } from '../../'
 
 const meta: Meta = {
-  title: 'Styling/Style Table Body Rows',
-};
+	title: 'Styling/Style Table Body Rows',
+}
 
 export default meta;
 

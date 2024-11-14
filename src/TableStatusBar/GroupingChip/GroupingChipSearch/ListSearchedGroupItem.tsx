@@ -1,11 +1,11 @@
-import { FC } from 'react'
 import { Typography } from '@mui/material'
+import { FC } from 'react'
 
-import { useGroupingControls } from '../../filter-bar-hooks/useGroupingControls'
-import { ItemBoxSearchedGroupingStyled } from '../GroupingChip.styled'
 import { ButtonLink } from '../../../components/ButtonLink'
 import { IconsColor } from '../../../components/styles'
 import { PlusIcon } from '../../../icons/PlusIcon'
+import { useGroupingControls } from '../../filter-bar-hooks/useGroupingControls'
+import { ItemBoxSearchedGroupingStyled } from '../GroupingChip.styled'
 
 // TODO:
 //  1. define props properly

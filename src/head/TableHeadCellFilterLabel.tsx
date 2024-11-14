@@ -6,11 +6,11 @@ import React from 'react'
 
 import { Table_Header, TableData, TableInstance } from '..'
 import { Tooltip } from '../components'
+import { getFilterValueText } from '../utils/getFilterValueText'
 import { getValueOrFunctionHandler } from '../utils/getValueOrFunctionHandler'
 import { mergeSx } from '../utils/mergeSx'
-import { getFilterValueText } from '../utils/getFilterValueText'
 
-export type TableHeadCellFilterLabelProps<TData extends TableData = {}> = {
+export type TableHeadCellFilterLabelProps<TData = TableData> = {
 	header: Table_Header<TData>
 	table: TableInstance<TData>
 	buttonProps?: IconButtonProps

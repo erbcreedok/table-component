@@ -1,6 +1,7 @@
 import {
 	ControllerFieldState,
 	ControllerRenderProps,
+	FieldValues,
 	useFormContext,
 	UseFormStateReturn,
 } from 'react-hook-form'
@@ -17,12 +18,12 @@ import { EditDateField } from './EditDateField'
 import { EditSelectField } from './EditSelectField'
 import { EditTextField } from './EditTextField'
 
-export type EditCellFieldProps<TData extends TableData = TableData> = {
+export type EditCellFieldProps<TData = TableData> = {
 	cell: Table_Cell<TData>
 	table: TableInstance<TData>
 	showLabel?: boolean
 }
-export type EditCellControllerProps<TData extends TableData = TableData> = {
+export type EditCellControllerProps<TData extends FieldValues = any> = {
 	field: ControllerRenderProps<TData>
 	fieldState: ControllerFieldState
 	formState: UseFormStateReturn<TData>
@@ -30,9 +31,7 @@ export type EditCellControllerProps<TData extends TableData = TableData> = {
 	onCellCancel(): void
 }
 
-export const EditCellField = <TData extends TableData = TableData>(
-	props: EditCellFieldProps<TData>
-) => {
+export const EditCellField = (props: EditCellFieldProps) => {
 	const { cell, table } = props
 	const { column, row } = cell
 	const { columnDef } = column
@@ -73,9 +72,9 @@ export const EditCellField = <TData extends TableData = TableData>(
 	}
 
 	const getRenderValue = (args: {
-		field: ControllerRenderProps<TableData>
+		field: ControllerRenderProps
 		fieldState: ControllerFieldState
-		formState: UseFormStateReturn<TableData>
+		formState: UseFormStateReturn<any>
 	}) => {
 		const editProps = { ...props, ...args, onCellSave, onCellCancel }
 		if (editVariant === 'select' || editVariant === 'multi-select') {

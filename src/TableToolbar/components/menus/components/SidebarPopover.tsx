@@ -1,19 +1,19 @@
 import { Popover } from '@mui/material'
 import Box from '@mui/material/Box'
-import React, { useEffect, useState } from 'react'
 import MenuItem from '@mui/material/MenuItem'
+import React, { useEffect, useState } from 'react'
 
+import { Table_Column, TableData } from '../../../../'
 import { ButtonBordered } from '../../../../components/ButtonBordered'
-import { Table_Column } from '../../../../'
 import { SidebarSearchComponent } from '../../../../components/SidebarSearch'
 
-interface Props<TData extends Record<string, any> = {}> {
+interface Props<TData = TableData> {
 	buttonText: string
 	columns: Array<Table_Column<TData>>
 	onGroupingByColumn(column: Table_Column<TData>): void
 }
 
-export const SidebarPopover = <TData extends Record<string, any> = {}>({
+export const SidebarPopover = <TData,>({
 	buttonText,
 	columns,
 	onGroupingByColumn,

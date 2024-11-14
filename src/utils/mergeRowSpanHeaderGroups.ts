@@ -1,6 +1,6 @@
 import { Header } from '@tanstack/table-core'
 
-import { Table_HeaderGroup, TableData } from '../TableComponent'
+import { Table_HeaderGroup } from '../TableComponent'
 
 import { remove2d, transpose2d } from './array2d'
 
@@ -42,7 +42,7 @@ export const mergeRowSpan = <T extends MRSHeader>(
  * Merge row span headers removing placeholders
  * This function does not make sense if there are less than 2 groups
  */
-export const mergeRowSpanHeaderGroups = <TData extends TableData = TableData>(
+export const mergeRowSpanHeaderGroups = <TData>(
 	groups: readonly Table_HeaderGroup<TData>[]
 ): Table_HeaderGroup<TData>[] => {
 	const result = [/* immutable */ ...groups]

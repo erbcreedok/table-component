@@ -1,18 +1,18 @@
-import React, { Fragment } from 'react'
 import Alert from '@mui/material/Alert'
 import AlertTitle from '@mui/material/AlertTitle'
 import Box from '@mui/material/Box'
 import Chip from '@mui/material/Chip'
 import Collapse from '@mui/material/Collapse'
+import React, { Fragment } from 'react'
 
-import type { TableInstance } from '..'
+import type { TableData, TableInstance } from '..'
 
-interface Props<TData extends Record<string, any> = object> {
+interface Props<TData = TableData> {
 	stackAlertBanner: boolean
 	table: TableInstance<TData>
 }
 
-export const ToolbarAlertBanner = <TData extends Record<string, any> = object>({
+export const ToolbarAlertBanner = <TData,>({
 	stackAlertBanner,
 	table,
 }: Props<TData>) => {

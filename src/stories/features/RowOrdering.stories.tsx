@@ -1,15 +1,16 @@
-import React, { useState } from 'react';
-import { Meta, Story } from '@storybook/react';
+import { faker } from '@faker-js/faker'
+import { Meta, Story } from '@storybook/react'
+import React, { useState } from 'react'
 import TableComponent, {
-  TableComponentProps,
-  Table_ColumnDef,
-  Table_Row, HoveredRowState,
+	HoveredRowState,
+	Table_ColumnDef,
+	Table_Row,
+	TableComponentProps,
 } from '../../'
-import { faker } from '@faker-js/faker';
 
 const meta: Meta = {
-  title: 'Features/Row Ordering Examples',
-};
+	title: 'Features/Row Ordering Examples',
+}
 
 export default meta;
 

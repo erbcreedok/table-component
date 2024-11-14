@@ -1,13 +1,13 @@
+import { Box, BoxProps, styled } from '@mui/material'
 import React, {
 	forwardRef,
+	PropsWithChildren,
 	useCallback,
+	useEffect,
 	useImperativeHandle,
 	useRef,
 	useState,
-	PropsWithChildren,
-	useEffect,
 } from 'react'
-import { Box, BoxProps, styled } from '@mui/material'
 
 import { useTableContext } from '../context/useTableContext'
 import { useDebouncedScrollTo } from '../hooks/useDebouncedScrollTo'

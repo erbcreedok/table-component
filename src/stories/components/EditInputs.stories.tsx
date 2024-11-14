@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
-import { Meta } from '@storybook/react';
-import { convertDate } from '../utils/convertDate'
+import { Meta } from '@storybook/react'
+import React, { useState } from 'react'
 
 import TableComponent, { Table_ColumnDef } from '../../index'
+import { convertDate } from '../utils/convertDate'
 
 type EditInputsExampleData = {
 	text: string

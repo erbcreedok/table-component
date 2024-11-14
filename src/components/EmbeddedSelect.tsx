@@ -1,5 +1,5 @@
-import React, { useCallback, useState, ReactNode } from 'react'
 import { Box } from '@mui/material'
+import React, { ReactNode, useCallback, useState } from 'react'
 
 import { DropdownContentHeader } from './DropdownContent/DropdownContentHeader'
 import { DropdownContentSearch } from './DropdownContent/DropdownContentSearch'

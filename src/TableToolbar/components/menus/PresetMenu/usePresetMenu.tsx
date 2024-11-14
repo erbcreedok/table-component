@@ -2,14 +2,11 @@ import { useState } from 'react'
 
 import { TableData, TableInstance } from '../../../../'
 
-type Props<TData extends TableData = {}> = {
+type Props<TData = TableData> = {
 	table: TableInstance<TData>
 	onClose(): void
 }
-export const usePresetMenu = <TData extends TableData = {}>({
-	table,
-	onClose,
-}: Props<TData>) => {
+export const usePresetMenu = <TData,>({ table, onClose }: Props<TData>) => {
 	const [editingPresetId, setEditingPresetId] = useState<
 		number | null | string
 	>(null)

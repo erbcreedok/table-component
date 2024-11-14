@@ -1,20 +1,16 @@
 import { memo } from '@tanstack/table-core'
 import { useCallback, useEffect, useMemo } from 'react'
 
-import {
-	Table_TableState,
-	TableData,
-	TableInstance,
-} from '../../TableComponent'
+import { Table_TableState, TableInstance } from '../../TableComponent'
 import { getValidColumnOrder } from '../../utils/getValidColumnOrder'
 
 import { getDefaultPreset } from './presetConstants'
 import { getIsPresetStateSame, isPresetStateEmpty } from './presetHelpers'
 import { Preset, PresetState } from './presetTypes'
 
-export const usePresets = <TData extends TableData = {}>(
-	table: TableInstance<TData>,
-	initialState: Partial<Table_TableState<TData>>
+export const usePresets = (
+	table: TableInstance,
+	initialState: Partial<Table_TableState>
 ) => {
 	const {
 		options: {

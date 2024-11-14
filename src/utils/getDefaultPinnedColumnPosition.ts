@@ -1,12 +1,10 @@
-import { Table_Column, TableData, TableInstance } from '../TableComponent'
+import { Table_Column, TableInstance } from '../TableComponent'
 
 // this method help to calculate sticky column positions
 // especially helpful for columns that have some borders, which cannot be detected by `column.getStart()` method
 // this method has a lot of magic numbers basing from our default border styles.
 // Clients can override this method by `getPinnedColumnPosition` prop
-export const getDefaultPinnedColumnPosition = <
-	TData extends TableData = TableData
->(
+export const getDefaultPinnedColumnPosition = <TData>(
 	column: Table_Column<TData>,
 	table: TableInstance<TData>
 ) => {

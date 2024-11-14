@@ -1,6 +1,6 @@
-import { Row, RowModel, Table, RowData } from '@tanstack/table-core'
+import { Row, RowData, RowModel, Table } from '@tanstack/table-core'
 
-import { TableData, TableInstance } from '../TableComponent'
+import { TableInstance } from '../TableComponent'
 
 import { createTableRow } from './createTableRow'
 
@@ -33,9 +33,9 @@ export function filterRowModelFromLeafs<TData extends RowData>(
 			let row = rowsToFilter[i]
 
 			const newRow = createTableRow(
-				table as unknown as TableInstance,
+				table as unknown as TableInstance<TData>,
 				row.id,
-				row.original as TableData,
+				row.original,
 				row.index,
 				row.depth
 			) as Row<TData>
@@ -105,9 +105,9 @@ export function filterRowModelFromRoot<TData extends RowData>(
 			if (pass) {
 				if (row.subRows?.length && depth < maxDepth) {
 					const newRow = createTableRow(
-						table as unknown as TableInstance,
+						table as unknown as TableInstance<TData>,
 						row.id,
-						row.original as TableData,
+						row.original,
 						row.index,
 						row.depth
 					) as Row<TData>

@@ -14,45 +14,43 @@ import { validateValue } from '../utils'
 import { NewRow } from './useCreateNewRow'
 import { useValueListener } from './useValueListener'
 
-export type TableFormValues = Record<string, TableData | undefined | null>
-export type TableInstanceWithForm<TData extends TableData = TableData> = {
+export type TableFormValues = Record<string, {} | undefined | null>
+export type TableInstanceWithForm<TData = TableData> = {
 	getEditableTableRowProps: (row: Table_Row<TData>) => {
 		onClick: MouseEventHandler<HTMLTableRowElement>
 	}
 }
-export type OnEditCellSaveProp<TData extends TableData = TableData> = (props: {
+export type OnEditCellSaveProp<TData = TableData> = (props: {
 	exitEditingMode: () => void
 	cell: Table_Cell<TData>
 	table: TableInstance<TData>
 	value: any
 	error: string | null
 }) => Promise<void> | void
-export type OnEditingRowCancelProp<TData extends TableData = TableData> =
-	(props: { row: Table_Row<TData>; table: TableInstance<TData> }) => void
-export type OnEditingRowSaveProp<TData extends TableData = TableData> =
-	(props: {
-		exitEditingMode: () => void
-		row: Table_Row<TData>
-		table: TableInstance<TData>
-		values: Record<LiteralUnion<string & DeepKeys<TData>>, any> | {}
-	}) => Promise<void> | void
-export type OnEditingTableSaveProp<TData extends TableData = TableData> =
-	(props: {
-		exitEditingMode: () => void
-		table: TableInstance<TData>
-		values: Record<LiteralUnion<string & DeepKeys<TData>>, any> | {}
-		methods: UseFormReturn<any>
-	}) => Promise<void> | void
-export type TablePropsWithForm<TData extends TableData = TableData> = {
+export type OnEditingRowCancelProp<TData = TableData> = (props: {
+	row: Table_Row<TData>
+	table: TableInstance<TData>
+}) => void
+export type OnEditingRowSaveProp<TData = TableData> = (props: {
+	exitEditingMode: () => void
+	row: Table_Row<TData>
+	table: TableInstance<TData>
+	values: Record<LiteralUnion<string & DeepKeys<TData>>, any> | {}
+}) => Promise<void> | void
+export type OnEditingTableSaveProp<TData = TableData> = (props: {
+	exitEditingMode: () => void
+	table: TableInstance<TData>
+	values: Record<LiteralUnion<string & DeepKeys<TData>>, any> | {}
+	methods: UseFormReturn<any>
+}) => Promise<void> | void
+export type TablePropsWithForm<TData = TableData> = {
 	onEditingCellSave?: OnEditCellSaveProp<TData>
 	onEditingRowCancel?: OnEditingRowCancelProp<TData>
 	onEditingRowSave?: OnEditingRowSaveProp<TData>
 	onEditingTableSave?: OnEditingTableSaveProp<TData>
 }
 
-export const useTableForm = <TData extends TableData = TableData>(
-	table: TableInstance<TData>
-) => {
+export const useTableForm = (table: TableInstance) => {
 	const {
 		getState,
 		options: { editingMode, formOptions },
@@ -69,7 +67,7 @@ export const useTableForm = <TData extends TableData = TableData>(
 	useFormStateListener({
 		item: editingCell,
 		registerItem: useCallback(
-			(cell: Table_Cell<TData>) => registerCell(cell, table, methods),
+			(cell: Table_Cell) => registerCell(cell, table, methods),
 			[methods, table]
 		),
 		enabled: editingMode === 'cell',
@@ -78,7 +76,7 @@ export const useTableForm = <TData extends TableData = TableData>(
 	useFormStateListener({
 		item: editingRow,
 		registerItem: useCallback(
-			(row: Table_Row<TData>) => registerRow(row, table, methods),
+			(row: Table_Row) => registerRow(row, table, methods),
 			[methods, table]
 		),
 		enabled: editingMode === 'row',
@@ -87,7 +85,7 @@ export const useTableForm = <TData extends TableData = TableData>(
 	useFormStateListener({
 		item: newRow,
 		registerItem: useCallback(
-			(newRow: NewRow<TData>) => registerRow(newRow, table, methods),
+			(newRow: NewRow) => registerRow(newRow, table, methods),
 			[methods, table]
 		),
 		clearOnExit: isEditingTable,
@@ -180,11 +178,9 @@ const useFormStateListener = <T>(args: {
 	useValueListener(item, listener)
 }
 
-export const useTableWithFormMethods = <TData extends TableData = TableData>(
-	table: TableInstance<TData>
-) => {
+export const useTableWithFormMethods = (table: TableInstance) => {
 	const getEditableTableRowProps = useCallback(
-		(row: Table_Row<TData>) => ({
+		(row: Table_Row) => ({
 			onClick: () => {
 				const { isEditingTable } = table.getState()
 				if (isEditingTable) {
@@ -200,20 +196,17 @@ export const useTableWithFormMethods = <TData extends TableData = TableData>(
 	})
 }
 
-export const getCellEditValue = <TData extends TableData = TableData>(
-	cell: Table_Cell<TData>
-) =>
+export const getCellEditValue = (cell: Table_Cell) =>
 	cell.column.columnDef.getEditValue
 		? cell.column.columnDef.getEditValue(cell.row.original)
 		: cell.getValue()
 
-export const getCellId = <TData extends TableData = TableData>(
-	cell: Table_Cell<TData>
-) => `${cell.row.id}.${cell.column.id}`
+export const getCellId = (cell: Table_Cell) =>
+	`${cell.row.id}.${cell.column.id}`
 
-const registerCell = <TData extends TableData = {}>(
-	cell: Table_Cell<TData>,
-	table: TableInstance<TData>,
+const registerCell = (
+	cell: Table_Cell,
+	table: TableInstance,
 	methods: UseFormReturn
 ) => {
 	const { fieldNameIsRequired } = table.options.localization
@@ -250,9 +243,9 @@ const registerCell = <TData extends TableData = {}>(
 	}
 }
 
-const registerRow = <TData extends TableData = {}>(
-	row: Table_Row<TData>,
-	table: TableInstance<TData>,
+const registerRow = (
+	row: Table_Row,
+	table: TableInstance,
 	methods: UseFormReturn
 ) => {
 	const destructors = row
@@ -264,10 +257,7 @@ const registerRow = <TData extends TableData = {}>(
 	}
 }
 
-export const registerTable = <TData extends TableData = {}>(
-	table: TableInstance<TData>,
-	methods: UseFormReturn
-) => {
+export const registerTable = (table: TableInstance, methods: UseFormReturn) => {
 	const defaultValues = {}
 	const destructors = table.getPreExpandedRowModel().flatRows.map((row) => {
 		const rowValues = {}

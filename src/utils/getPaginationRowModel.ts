@@ -1,10 +1,10 @@
 import {
-	Table,
-	RowModel,
+	expandRows,
+	memo,
 	Row,
 	RowData,
-	memo,
-	expandRows,
+	RowModel,
+	Table,
 } from '@tanstack/table-core'
 
 export function getPaginationRowModel<TData extends RowData>(): (

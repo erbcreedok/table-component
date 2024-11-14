@@ -20,14 +20,14 @@ export function getSortedRowModel<TData extends RowData>(): (
 				const sortedFlatRows: Row<TData>[] = []
 
 				// Filter out sortings that correspond to non existing columns
-				const availableSorting = sortingState.filter((sort) =>
-					table.getColumn(sort.id).getCanSort()
+				const availableSorting = sortingState.filter(
+					(sort) => table.getColumn(sort.id)?.getCanSort() ?? false
 				)
 
 				const columnInfoById: Record<
 					string,
 					{
-						sortUndefined?: false | -1 | 1
+						sortUndefined?: false | -1 | 1 | 'first' | 'last'
 						invertSorting?: boolean
 						sortingFn: SortingFn<TData>
 						sortingKey?: string
@@ -36,12 +36,13 @@ export function getSortedRowModel<TData extends RowData>(): (
 
 				availableSorting.forEach((sortEntry) => {
 					const column = table.getColumn(sortEntry.id)
+					if (!column) return
 
 					columnInfoById[sortEntry.id] = {
 						sortUndefined: column.columnDef.sortUndefined,
 						invertSorting: column.columnDef.invertSorting,
-						sortingFn: column.getSortingFn(),
-						sortingKey: (column.columnDef as Table_DefinedColumnDef<any>)
+						sortingFn: column.getSortingFn?.(),
+						sortingKey: (column?.columnDef as Table_DefinedColumnDef<any>)
 							.sortingKey, // todo in EPMDCEMLST-4146
 					}
 				})
@@ -58,7 +59,13 @@ export function getSortedRowModel<TData extends RowData>(): (
 							const { sortingKey } = columnInfo
 							const isDesc = sortEntry?.desc ?? false
 
-							if (columnInfo.sortUndefined) {
+							let sortUndefined = 0
+							if (columnInfo.sortUndefined === 'first') sortUndefined = -1
+							else if (columnInfo.sortUndefined === 'last') sortUndefined = 1
+							else if (columnInfo.sortUndefined)
+								sortUndefined = columnInfo.sortUndefined
+
+							if (sortUndefined) {
 								const aValue = rowA.getValue(sortEntry.id)
 								const bValue = rowB.getValue(sortEntry.id)
 
@@ -71,8 +78,8 @@ export function getSortedRowModel<TData extends RowData>(): (
 									return aUndefined && bUndefined
 										? 0
 										: aUndefined
-										? columnInfo.sortUndefined
-										: -columnInfo.sortUndefined
+										? sortUndefined
+										: -sortUndefined
 								}
 							}
 

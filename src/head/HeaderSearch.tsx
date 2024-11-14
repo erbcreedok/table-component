@@ -1,3 +1,12 @@
+import {
+	IconButton,
+	InputAdornment,
+	outlinedInputClasses,
+	Popper,
+	styled,
+	TextField,
+	Typography,
+} from '@mui/material'
 import Box from '@mui/material/Box'
 import React, {
 	ChangeEvent,
@@ -8,23 +17,7 @@ import React, {
 	useRef,
 	useState,
 } from 'react'
-import {
-	IconButton,
-	InputAdornment,
-	outlinedInputClasses,
-	Popper,
-	styled,
-	TextField,
-	Typography,
-} from '@mui/material'
 
-import {
-	Table_Column,
-	Table_Header,
-	Table_Row,
-	TableData,
-	TableInstance,
-} from '../TableComponent'
 import {
 	Colors,
 	DEFAULT_FONT_FAMILY,
@@ -33,33 +26,37 @@ import {
 	TextColor,
 } from '../components'
 import { useDelay } from '../hooks/useDelay'
-import { getValueFromObj } from '../utils/getValueFromObj'
-import { getPascalCase } from '../utils/getPascalCase'
-import { withNativeEvent } from '../utils/withNativeEvent'
 import { useOnClickOutside } from '../hooks/useOnClickOutside'
+import {
+	Table_Column,
+	Table_Header,
+	Table_Row,
+	TableInstance,
+} from '../TableComponent'
+import { getPascalCase } from '../utils/getPascalCase'
+import { getValueFromObj } from '../utils/getValueFromObj'
+import { withNativeEvent } from '../utils/withNativeEvent'
 
 import { HeaderBase } from './HeaderBase'
 
-type GetFilteredDataArgs<TData extends TableData> = {
-	rows: Table_Row<TData>[]
-	flatRows: Table_Row<TData>[]
+type GetFilteredDataArgs = {
+	rows: Table_Row[]
+	flatRows: Table_Row[]
 	value: string
 	path: string
 }
-type GetFilteredDataFn<TData extends TableData> = (
-	args: GetFilteredDataArgs<TData>
-) => Table_Row<TData>[]
-type Props<TData extends TableData> = {
-	column: Table_Column<TData>
-	header: Table_Header<TData>
-	table: TableInstance<TData>
+type GetFilteredDataFn = (args: GetFilteredDataArgs) => Table_Row[]
+type Props = {
+	column: Table_Column
+	header: Table_Header
+	table: TableInstance
 	searchPath: string
 	placeholder: string
 	minLengthSearch?: number
 	targetUnitId?: string
-	getFilteredData?: GetFilteredDataFn<TData>
+	getFilteredData?: GetFilteredDataFn
 	keepSearchValueOnClickOutside?: boolean
-	renderOption?: FC<HeaderSearchOptionProps<TData>>
+	renderOption?: FC<HeaderSearchOptionProps>
 }
 
 const SearchInput = styled(TextField)`
@@ -94,8 +91,8 @@ const SearchInput = styled(TextField)`
 	}
 `
 
-export type HeaderSearchOptionProps<TData extends TableData> = {
-	item: TData
+export type HeaderSearchOptionProps = {
+	item: any
 	searchPath: string
 	input: string
 	onClick: MouseEventHandler<HTMLElement>
@@ -108,21 +105,21 @@ const typographySx = {
 		backgroundColor: Colors.Gray20,
 	},
 }
-export const HeaderSearchOptionDefault = <TData extends TableData>({
+export const HeaderSearchOptionDefault = ({
 	searchPath,
 	onClick,
 	item,
-}: HeaderSearchOptionProps<TData>) => (
+}: HeaderSearchOptionProps) => (
 	<Typography onClick={onClick} sx={typographySx}>
 		{getValueFromObj(item, searchPath, '')}
 	</Typography>
 )
 
-export const getFlatFilteredData = <T extends TableData>({
+export const getFlatFilteredData = ({
 	flatRows,
 	value,
 	path,
-}: GetFilteredDataArgs<T>) => {
+}: GetFilteredDataArgs) => {
 	return flatRows.filter((item) =>
 		getValueFromObj(item.original, path, '')
 			?.toLowerCase()
@@ -130,7 +127,7 @@ export const getFlatFilteredData = <T extends TableData>({
 	)
 }
 
-export const HeaderSearch = <T extends TableData>({
+export const HeaderSearch = ({
 	column,
 	table,
 	searchPath,
@@ -139,7 +136,7 @@ export const HeaderSearch = <T extends TableData>({
 	getFilteredData = getFlatFilteredData,
 	keepSearchValueOnClickOutside,
 	renderOption: Option = HeaderSearchOptionDefault,
-}: Props<T>) => {
+}: Props) => {
 	const [showPopper, setShowPopper] = useState(false)
 	const anchorElRef = useRef<HTMLDivElement>(null)
 	const popperRef = useRef<HTMLDivElement>(null)
@@ -170,8 +167,8 @@ export const HeaderSearch = <T extends TableData>({
 			const { flatRows, rows } = table.getCoreRowModel()
 
 			return getFilteredData({
-				flatRows: flatRows as Table_Row<T>[],
-				rows: rows as Table_Row<T>[],
+				flatRows: flatRows as Table_Row[],
+				rows: rows as Table_Row[],
 				value: searchValue.toLowerCase(),
 				path: searchPath,
 			})
@@ -281,7 +278,7 @@ export const HeaderSearch = <T extends TableData>({
 							),
 						}}
 						value={input}
-						onChange={withNativeEvent<ChangeEvent<HTMLTextAreaElement>, T>(
+						onChange={withNativeEvent<ChangeEvent<HTMLTextAreaElement>>(
 							{
 								el: `ColumnHeader_${getPascalCase(
 									column.columnDef.header

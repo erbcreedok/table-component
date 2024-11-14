@@ -3,17 +3,17 @@ import Box from '@mui/material/Box'
 import Divider from '@mui/material/Divider'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 
-import { getColumnId } from '../../../../column.utils'
 import {
-	Table_Column,
-	TableInstance,
 	ButtonBordered,
 	ListTitle,
 	SidebarPropsWithOnCloseEnd,
-	SidebarWithMuiProps,
 	SidebarSearchComponent,
+	SidebarWithMuiProps,
+	Table_Column,
 	TableData,
+	TableInstance,
 } from '../../../../'
+import { getColumnId } from '../../../../column.utils'
 import { createComponentWithMuiProps } from '../../../../utils/createComponentWithMuiProps'
 import { getOrderedColumns } from '../../../../utils/getOrderedColumns'
 import { getSuggestedColumns } from '../../../../utils/getSuggestedColumns'
@@ -27,19 +27,19 @@ import { ColumnFilterField } from './ColumnFilterField'
 import { FiltersMenuListItem } from './FiltersMenuListItem'
 import { FilterWrapper } from './FilterWrapper'
 
-export interface FiltersMenuProps<TData extends TableData> {
+export interface FiltersMenuProps<TData = TableData> {
 	open: boolean
 	onClose: () => void
 	table: TableInstance<TData>
 	sidebarProps?: SidebarPropsWithOnCloseEnd
 }
 
-export const FiltersMenu = <TData extends TableData>({
+export const FiltersMenu = ({
 	open,
 	onClose,
 	table,
 	sidebarProps,
-}: FiltersMenuProps<TData>) => {
+}: FiltersMenuProps) => {
 	const {
 		getAllLeafColumns,
 		getState,
@@ -53,8 +53,9 @@ export const FiltersMenu = <TData extends TableData>({
 	} = table
 
 	const [searchValue, setSearchValue] = useState<string>('')
-	const [newColumnFilter, setNewColumnFilter] =
-		useState<Table_Column<TData> | null>(null)
+	const [newColumnFilter, setNewColumnFilter] = useState<Table_Column | null>(
+		null
+	)
 	const { columnFilters } = getState() // this updates memo below
 	const [isSearchActive, setSearchActive] = useState<boolean>(
 		!columnFilters || !columnFilters.length
@@ -82,7 +83,7 @@ export const FiltersMenu = <TData extends TableData>({
 				(col) => myFiltersIds.includes(getColumnId(col))
 			)
 
-			let result: Table_Column<TData>[]
+			let result: Table_Column[]
 			let areSuggestedShown = false
 
 			if (searchValue)
@@ -123,13 +124,13 @@ export const FiltersMenu = <TData extends TableData>({
 		setMyFiltersIds([])
 	}, [resetColumnFilters])
 
-	const handleRemoveFilter = useCallback((column: Table_Column<TData>) => {
+	const handleRemoveFilter = useCallback((column: Table_Column) => {
 		setNewColumnFilter(null)
 		column.setFilterValue(undefined)
 		setMyFiltersIds((ids) => ids.filter((id) => id !== column.id))
 	}, [])
 
-	const handleAddFilter = useCallback((column: Table_Column<TData>) => {
+	const handleAddFilter = useCallback((column: Table_Column) => {
 		setSearchValue('')
 		setSearchActive(false)
 		setNewColumnFilter(column)

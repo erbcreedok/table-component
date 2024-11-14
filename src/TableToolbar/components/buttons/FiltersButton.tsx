@@ -3,25 +3,25 @@ import type { IconButtonProps } from '@mui/material/IconButton'
 import React, { useState } from 'react'
 
 import {
-	TableInstance,
 	IconsColor,
+	TableData,
+	TableInstance,
 	ToolbarIconButton,
 	Tooltip,
 } from '../../../'
 import { FiltersMenuWithMuiProps } from '../menus/FiltersMenu/FiltersMenu'
 
-interface Props<TData extends Record<string, any> = {}>
-	extends IconButtonProps {
+interface Props<TData = TableData> extends IconButtonProps {
 	table: TableInstance<TData>
 	enableCaption: boolean
 }
 
-export const FiltersButton = <TData extends Record<string, any> = {}>({
+export const FiltersButton = ({
 	table,
 	enableCaption,
 	disabled,
 	...rest
-}: Props<TData>) => {
+}: Props) => {
 	const {
 		options: {
 			icons: { FiltersIcon },
@@ -62,7 +62,7 @@ export const FiltersButton = <TData extends Record<string, any> = {}>({
 				<FiltersMenuWithMuiProps
 					open
 					onClose={() => setOpen(false)}
-					table={table as TableInstance}
+					table={table}
 				/>
 			)}
 		</>

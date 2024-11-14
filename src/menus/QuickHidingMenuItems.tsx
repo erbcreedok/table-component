@@ -3,26 +3,26 @@ import ListItemIcon from '@mui/material/ListItemIcon'
 import MenuItem from '@mui/material/MenuItem'
 
 import { Table_Column, TableData, TableInstance } from '../TableComponent'
-import { getPascalCase } from '../utils/getPascalCase'
-import { withNativeEvent } from '../utils/withNativeEvent'
+import { defaultOrganizeColumnsMenu } from '../TableToolbar/components/menus/ColumnsMenu/ColumnsMenu'
 import { getMultirowDepthMatchingColumns } from '../utils/getMultirowDepthMatchingColumns'
+import { getPascalCase } from '../utils/getPascalCase'
+import { getTestAttributes } from '../utils/getTestAttributes'
 import { makeMultiheaderGroups } from '../utils/makeMultiheaderGroups'
 import { makeNonMultiheaderGroups } from '../utils/makeNonMultiheaderGroups'
-import { defaultOrganizeColumnsMenu } from '../TableToolbar/components/menus/ColumnsMenu/ColumnsMenu'
-import { getTestAttributes } from '../utils/getTestAttributes'
+import { withNativeEvent } from '../utils/withNativeEvent'
 
 import { commonListItemStyles, commonMenuItemStyles } from './constants'
 
-type QuickHidingMenuItemsProps<TData extends TableData = TableData> = {
+type QuickHidingMenuItemsProps<TData = TableData> = {
 	column: Table_Column<TData>
 	table: TableInstance<TData>
 	setVisible(open?: boolean): void
 }
-export const QuickHidingMenuItems = <TData extends TableData = TableData>({
+export const QuickHidingMenuItems = ({
 	column,
 	table,
 	setVisible,
-}: QuickHidingMenuItemsProps<TData>) => {
+}: QuickHidingMenuItemsProps) => {
 	const {
 		getAllLeafColumns,
 		options: {

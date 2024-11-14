@@ -1,6 +1,6 @@
-import { Table_Row, TableData } from '../TableComponent'
+import { Table_Row } from '../TableComponent'
 
-export const getTargetGroupingKeysValues = <TData extends TableData = {}>(
+export const getTargetGroupingKeysValues = <TData>(
 	targetRow?: Table_Row<TData>,
 	grouping: string[] = []
 ) => {

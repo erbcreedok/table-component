@@ -1,4 +1,8 @@
+import Box from '@mui/material/Box'
 import IconButton from '@mui/material/IconButton'
+import type { Theme } from '@mui/material/styles'
+import { useTheme } from '@mui/material/styles'
+import TableCell from '@mui/material/TableCell'
 import { noop } from '@tanstack/react-table'
 import React, {
 	FC,
@@ -9,19 +13,15 @@ import React, {
 	useRef,
 	useState,
 } from 'react'
-import Box from '@mui/material/Box'
-import TableCell from '@mui/material/TableCell'
-import { useTheme } from '@mui/material/styles'
-import type { Theme } from '@mui/material/styles'
 import { useResizeDetector } from 'react-resize-detector'
 
+import type { Table_Header, Table_Row, TableInstance } from '..'
 import { HeaderBase, utilColumns, utilColumnsList } from '..'
+import { getCommonCellStyles, Table_DefaultColumn } from '../column.utils'
+import { Colors, groupDividerBorder } from '../components/styles'
 import { Tooltip } from '../components/Tooltip'
 import { useHoverEffects } from '../hooks/useHoverEffects'
 import { GroupBorders } from '../utils/getGroupBorders'
-import { getCommonCellStyles, Table_DefaultColumn } from '../column.utils'
-import type { Table_Header, Table_Row, TableInstance } from '..'
-import { Colors, groupDividerBorder } from '../components/styles'
 import { getValueOrFunctionHandler } from '../utils/getValueOrFunctionHandler'
 import { mergeSx } from '../utils/mergeSx'
 import { withStopPropagation } from '../utils/withStopPropagation'

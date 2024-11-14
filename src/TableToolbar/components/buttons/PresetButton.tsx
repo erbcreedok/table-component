@@ -17,13 +17,13 @@ import { PresetMenu } from '../menus/PresetMenu/PresetMenu'
 
 const theme = createTheme(PRESET_THEME)
 
-interface PresetButtonProps<TData extends TableData = {}> {
+interface PresetButtonProps<TData = TableData> {
 	table: TableInstance<TData>
 	enableCaption?: boolean
 	disabled?: boolean
 }
 
-export const PresetButton = <TData extends TableData = {}>({
+export const PresetButton = <TData,>({
 	table,
 	enableCaption = true,
 	disabled,

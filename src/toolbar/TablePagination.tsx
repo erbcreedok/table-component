@@ -1,12 +1,19 @@
-import { ChangeEvent, useEffect, useRef, useState } from 'react'
-import MuiTablePagination from '@mui/material/TablePagination'
-import { IconButton, InputAdornment, styled, TextField } from '@mui/material'
 import { NavigateBefore, NavigateNext } from '@mui/icons-material'
+import { IconButton, InputAdornment, styled, TextField } from '@mui/material'
+import MuiTablePagination from '@mui/material/TablePagination'
 import { noop } from '@tanstack/react-table'
+import { ChangeEvent, useEffect, useRef, useState } from 'react'
 
-import { Colors, DEFAULT_FONT_FAMILY, Flex, TableInstance, TextColor } from '..'
+import {
+	Colors,
+	DEFAULT_FONT_FAMILY,
+	Flex,
+	TableData,
+	TableInstance,
+	TextColor,
+} from '..'
 
-interface Props<TData extends Record<string, any> = object> {
+interface Props<TData = TableData> {
 	position?: 'top' | 'bottom'
 	table: TableInstance<TData>
 }
@@ -45,7 +52,7 @@ const StyledSpan = styled('span')`
 	width: 95px;
 `
 
-export const TablePagination = <TData extends Record<string, any> = object>({
+export const TablePagination = <TData,>({
 	table,
 	position = 'bottom',
 }: Props<TData>) => {

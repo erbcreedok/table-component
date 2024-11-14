@@ -1,11 +1,18 @@
-import { Meta, Story } from '@storybook/react'
-import ModeIcon from '@mui/icons-material/Mode';
-import Tooltip from '@mui/material/Tooltip';
+import ModeIcon from '@mui/icons-material/Mode'
 import MuiTableCell from '@mui/material/TableCell'
-import { ColumnOrderState, VisibilityState, SortingState } from '@tanstack/react-table'
+import Tooltip from '@mui/material/Tooltip'
+import { Meta, Story } from '@storybook/react'
+import {
+	ColumnOrderState,
+	SortingState,
+	VisibilityState,
+} from '@tanstack/react-table'
 import React from 'react'
 import { getColumnId, Table_DisplayColumnIdsArray } from '../../column.utils'
-import TableComponent, { Table_ColumnDef, TableComponentProps } from '../../index'
+import TableComponent, {
+	Table_ColumnDef,
+	TableComponentProps,
+} from '../../index'
 import { TeamMember } from '../types/TeamMember'
 import { getSeparatedTeamMembers } from '../utils/getTeamMembers'
 import { getTeamMembersColumns } from '../utils/getTeamMembersColumns'

@@ -1,11 +1,11 @@
-import React, { useRef } from 'react'
+import { faker } from '@faker-js/faker'
 import { Meta, Story } from '@storybook/react'
+import React, { useRef } from 'react'
 import TableComponent, {
 	Table_ColumnDef,
 	TableBodyRow,
 	TableComponentProps,
 } from '../../'
-import { faker } from '@faker-js/faker'
 
 const meta: Meta = {
 	title: 'Features/Virtualization',

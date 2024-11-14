@@ -9,9 +9,9 @@ import {
 	useState,
 } from 'react'
 
+import type { Table_Header, TableInstance } from '..'
 import { ColumnActionMenu } from '../menus/ColumnActionMenu'
 import { CustomColumnEditor } from '../menus/CustomColumnEditor'
-import type { Table_Header, TableInstance } from '..'
 
 type Props = {
 	header: Table_Header

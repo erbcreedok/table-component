@@ -1,4 +1,4 @@
-import { useCallback, SyntheticEvent, DependencyList } from 'react'
+import { DependencyList, SyntheticEvent, useCallback } from 'react'
 
 export const withStopPropagation =
 	<E extends SyntheticEvent = SyntheticEvent, R = void>(

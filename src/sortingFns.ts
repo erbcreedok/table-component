@@ -3,11 +3,7 @@ import { Row, sortingFns } from '@tanstack/react-table'
 
 import { Table_Row } from '.'
 
-const fuzzy = <TData extends Record<string, any> = {}>(
-	rowA: Row<TData>,
-	rowB: Row<TData>,
-	columnId: string
-) => {
+const fuzzy = <TData>(rowA: Row<TData>, rowB: Row<TData>, columnId: string) => {
 	let dir = 0
 	if (rowA.columnFiltersMeta[columnId]) {
 		dir = compareItems(
@@ -27,7 +23,7 @@ export const Table_SortingFns = {
 	fuzzy,
 }
 
-export const rankGlobalFuzzy = <TData extends Record<string, any> = {}>(
+export const rankGlobalFuzzy = <TData>(
 	rowA: Table_Row<TData>,
 	rowB: Table_Row<TData>
 ) =>

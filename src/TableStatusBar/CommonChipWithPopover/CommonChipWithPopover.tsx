@@ -1,8 +1,8 @@
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
+import { Box, Chip, Popover, Typography } from '@mui/material'
 import { ChipProps } from '@mui/material/Chip'
 import { noop } from '@tanstack/react-table'
-import React, { cloneElement, useMemo, useState, MouseEvent } from 'react'
-import { Box, Chip, Popover, Typography } from '@mui/material'
+import React, { cloneElement, MouseEvent, useMemo, useState } from 'react'
 
 import { TextColor, Tooltip } from '../../components'
 import { useTableContext } from '../../context/useTableContext'

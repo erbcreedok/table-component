@@ -1,10 +1,10 @@
-import React, { FC } from 'react'
 import { VirtualItem } from '@tanstack/react-virtual'
+import React, { FC } from 'react'
 
 import { ColumnVirtualizerWrapper } from '../'
-import { DEFAULT_EXPAND_PADDING, utilColumns } from '../utilColumns'
 import { getColumnWidth } from '../column.utils'
 import { TableInstance } from '../TableComponent'
+import { DEFAULT_EXPAND_PADDING, utilColumns } from '../utilColumns'
 import { mapVirtualItems } from '../utils/virtual'
 
 type TableHeadInvisibleProps = {

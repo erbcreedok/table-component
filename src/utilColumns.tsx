@@ -20,14 +20,11 @@ export const utilColumnsList: string[] = Object.values(utilColumns)
 
 export const DEFAULT_EXPAND_PADDING = 12
 
-type UtilColumnCellProps<TData extends TableData> = {
+type UtilColumnCellProps<TData = TableData> = {
 	row: Table_Row<TData>
 	table: TableInstance<TData>
 }
-const UtilColumnCell = <TData extends TableData>({
-	table,
-	row,
-}: UtilColumnCellProps<TData>) => {
+const UtilColumnCell = ({ table, row }: UtilColumnCellProps) => {
 	const {
 		options: { hideRowSelectionColumn, enableRowSelection },
 	} = table
@@ -44,14 +41,11 @@ const UtilColumnCell = <TData extends TableData>({
 	)
 }
 
-type UtilColumnHeaderProps<TData extends TableData> = {
+type UtilColumnHeaderProps<TData = TableData> = {
 	parentRow: Table_Row<TData>
 	table: TableInstance<TData>
 }
-const UtilColumnHeader = <TData extends TableData>({
-	table,
-	parentRow,
-}: UtilColumnHeaderProps<TData>) => {
+const UtilColumnHeader = ({ table, parentRow }: UtilColumnHeaderProps) => {
 	const {
 		options: {
 			hideRowSelectionColumn,
@@ -77,9 +71,7 @@ const UtilColumnHeader = <TData extends TableData>({
 	)
 }
 
-export const getUtilColumn = <TData extends TableData>(
-	config: TableComponentProps<TData>
-) => ({
+export const getUtilColumn = (config: TableComponentProps) => ({
 	Cell: UtilColumnCell,
 	Header: UtilColumnHeader,
 	header: 'util-column',

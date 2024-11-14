@@ -5,10 +5,10 @@ import { FC } from 'react'
 
 import { SelectedChevron } from '../components/SelectedChevron'
 import { Table_Column, TableInstance } from '../TableComponent'
-import { getSortingIcon, getSortingText } from '../utils/getSortingInfo'
 import { getPascalCase } from '../utils/getPascalCase'
-import { withNativeEvent } from '../utils/withNativeEvent'
+import { getSortingIcon, getSortingText } from '../utils/getSortingInfo'
 import { getTestAttributes } from '../utils/getTestAttributes'
+import { withNativeEvent } from '../utils/withNativeEvent'
 
 import { commonListItemStyles, commonMenuItemStyles } from './constants'
 

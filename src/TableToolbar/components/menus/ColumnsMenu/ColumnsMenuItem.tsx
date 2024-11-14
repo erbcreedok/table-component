@@ -1,3 +1,7 @@
+import Box from '@mui/material/Box'
+import FormControlLabel from '@mui/material/FormControlLabel'
+import MenuItem from '@mui/material/MenuItem'
+import Typography from '@mui/material/Typography'
 import React, {
 	Dispatch,
 	DragEvent,
@@ -5,31 +9,27 @@ import React, {
 	SetStateAction,
 	useRef,
 } from 'react'
-import Box from '@mui/material/Box'
-import FormControlLabel from '@mui/material/FormControlLabel'
-import MenuItem from '@mui/material/MenuItem'
-import Typography from '@mui/material/Typography'
 
-import { GrabHandleButton } from '../../buttons/GrabHandleButton'
+import {
+	Colors,
+	DEFAULT_FONT_FAMILY,
+	IconsColor,
+	TableSwitch,
+	TextColor,
+	Tooltip,
+	TreeAngle,
+} from '../../../../components'
 import type {
 	Table_Column,
 	TableData,
 	TableInstance,
 	TooltipProps,
 } from '../../../../index'
-import { TableSwitch } from '../../../../components/TableSwitch'
-import { Tooltip } from '../../../../components/Tooltip'
-import { TreeAngle } from '../../../../components/TreeAngle'
-import {
-	Colors,
-	DEFAULT_FONT_FAMILY,
-	TextColor,
-	IconsColor,
-} from '../../../../components/styles'
-import { withNativeEvent } from '../../../../utils/withNativeEvent'
 import { getPascalCase } from '../../../../utils/getPascalCase'
+import { withNativeEvent } from '../../../../utils/withNativeEvent'
+import { GrabHandleButton } from '../../buttons/GrabHandleButton'
 
-export interface ColumnsMenuItemProps<TData extends TableData = TableData> {
+export interface ColumnsMenuItemProps<TData = TableData> {
 	column: Table_Column<TData>
 	hoveredColumn?: Table_Column<TData> | null
 	draggingColumn?: Table_Column<TData> | null
@@ -45,7 +45,7 @@ export interface ColumnsMenuItemProps<TData extends TableData = TableData> {
 	renderTreeAngle?: boolean
 }
 
-export const ColumnsMenuItem = <TData extends TableData = TableData>({
+export const ColumnsMenuItem = ({
 	hoveredColumn,
 	draggingColumn,
 	setHoveredColumn,
@@ -56,7 +56,7 @@ export const ColumnsMenuItem = <TData extends TableData = TableData>({
 	onColumnOrderChange,
 	isLastInList,
 	renderTreeAngle,
-}: ColumnsMenuItemProps<TData>) => {
+}: ColumnsMenuItemProps) => {
 	const {
 		options: {
 			enableColumnOrdering,
@@ -75,9 +75,9 @@ export const ColumnsMenuItem = <TData extends TableData = TableData>({
 		(columnDefType === 'group' &&
 			column.getLeafColumns().some((col) => col.getIsVisible()))
 
-	const handleToggleColumnHidden = (col: Table_Column<TData>) => {
+	const handleToggleColumnHidden = (col: Table_Column) => {
 		if (columnDefType === 'group') {
-			col?.columns?.forEach?.((childColumn: Table_Column<TData>) => {
+			col?.columns?.forEach?.((childColumn: Table_Column) => {
 				childColumn.toggleVisibility(!switchChecked)
 			})
 		} else {

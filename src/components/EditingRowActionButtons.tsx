@@ -11,7 +11,7 @@ import { scrollToElement } from '../utils/scrollToElement'
 import { FloatingActionButtons } from './FloatingActionButtons'
 import { NotificationBox } from './NotificationBox'
 
-type EditingRowActionButtonsProps<TData extends TableData> = {
+type EditingRowActionButtonsProps<TData = TableData> = {
 	open?: boolean
 	children: (args: {
 		ref: (node: HTMLTableRowElement | null) => void
@@ -20,7 +20,7 @@ type EditingRowActionButtonsProps<TData extends TableData> = {
 	row: Table_Row<TData>
 	fieldState?: ControllerFieldState
 }
-export const EditingRowActionButtonsMain = <TData extends TableData>({
+export const EditingRowActionButtonsMain = <TData,>({
 	open,
 	children,
 	table,
@@ -148,7 +148,7 @@ export const EditingRowActionButtonsMain = <TData extends TableData>({
 	)
 }
 
-export const EditingRowActionButtons = <TData extends TableData = {}>({
+export const EditingRowActionButtons = <TData,>({
 	children,
 	...props
 }: EditingRowActionButtonsProps<TData>) => {

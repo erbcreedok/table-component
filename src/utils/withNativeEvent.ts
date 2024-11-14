@@ -1,9 +1,9 @@
 import { MouseEvent } from 'react'
 
-import { NativeEventArgs, TableData, TableInstance } from '../TableComponent'
+import { NativeEventArgs, TableInstance } from '../TableComponent'
 
 export const withNativeEvent =
-	<E = MouseEvent<HTMLElement>, TData extends TableData = TableData>(
+	<E = MouseEvent<HTMLElement>, TData = {}>(
 		args: Omit<NativeEventArgs, 'event'>,
 		table: TableInstance | TableInstance<TData>
 	) =>

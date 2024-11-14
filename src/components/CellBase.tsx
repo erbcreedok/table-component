@@ -1,23 +1,23 @@
 import { BoxProps } from '@mui/material'
 import { PropsWithChildren, useMemo } from 'react'
 
-import { validateValue } from '../utils/validate'
 import {
+	NumericColumn,
+	PercentColumn,
 	Table_Cell,
 	Table_Column,
 	Table_Row,
 	TableData,
 	TableInstance,
-	NumericColumn,
-	PercentColumn,
 } from '../TableComponent'
 import { mergeSx } from '../utils/mergeSx'
+import { validateValue } from '../utils/validate'
 
+import { LinearProgressWithLabel } from './LinearProgressWithLabel'
 import { TooltipProps } from './Tooltip'
 import { TooltipOverflow } from './TooltipOverflow'
-import { LinearProgressWithLabel } from './LinearProgressWithLabel'
 
-export type CellBaseProps<TData extends TableData = {}> = PropsWithChildren<
+export type CellBaseProps<TData = TableData> = PropsWithChildren<
 	{
 		cell: Table_Cell<TData>
 		table: TableInstance<TData>
@@ -28,7 +28,7 @@ export type CellBaseProps<TData extends TableData = {}> = PropsWithChildren<
 		clamp?: boolean | number
 	} & BoxProps
 >
-export const CellBase = <TData extends TableData = {}>({
+export const CellBase = ({
 	cell,
 	column,
 	// spread `row` out of `rest`, because it's not a valid Box prop
@@ -40,7 +40,7 @@ export const CellBase = <TData extends TableData = {}>({
 	tooltipProps,
 	clamp = true,
 	...rest
-}: CellBaseProps<TData>) => {
+}: CellBaseProps) => {
 	const {
 		options: { cellGroupedPlaceholderText = 'N/A', cellPlaceholderText },
 	} = table

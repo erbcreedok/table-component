@@ -1,5 +1,5 @@
-import React, { FC } from 'react'
 import Box from '@mui/material/Box'
+import React, { FC } from 'react'
 
 import { TableInstance } from '..'
 import { TextColor } from '../components/styles'

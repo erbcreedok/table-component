@@ -1,16 +1,17 @@
-import React, { useRef, useState } from 'react';
-import { Meta, Story } from '@storybook/react';
+import { faker } from '@faker-js/faker'
+import { Button } from '@mui/material'
+import { Meta, Story } from '@storybook/react'
+import React, { useRef, useState } from 'react'
 import TableComponent, {
-  TableComponentProps,
-  Table_ColumnDef,
-  TableInstance, utilColumns,
+	Table_ColumnDef,
+	TableComponentProps,
+	TableInstance,
+	utilColumns,
 } from '../../'
-import { faker } from '@faker-js/faker';
-import { Button } from '@mui/material';
 
 const meta: Meta = {
-  title: 'Features/Selection Examples',
-};
+	title: 'Features/Selection Examples',
+}
 
 export default meta;
 

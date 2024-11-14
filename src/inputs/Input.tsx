@@ -15,21 +15,21 @@ import {
 } from 'react'
 
 import {
-	ErrorTooltipIconWithTable,
-	NumberStepButtons,
 	Colors,
+	ErrorTooltipIconWithTable,
 	IconsColor,
+	NumberStepButtons,
 	TextColor,
 } from '../'
 import { useTableContext } from '../context/useTableContext'
 import { useFocusEvents } from '../hooks/useFocusEvents'
-import { isGreaterThan } from '../utils/isGreaterThan'
-import { isLessThan } from '../utils/isLessThan'
-import { sumAnyTwoValues } from '../utils/sumAnyTwoValues'
 import { TableColumnEditProps } from '../TableComponent'
 import { createNativeChangeEvent } from '../utils/createNativeChangeEvent'
+import { isGreaterThan } from '../utils/isGreaterThan'
+import { isLessThan } from '../utils/isLessThan'
 import { mergeSx } from '../utils/mergeSx'
 import { sanitizeNumeric } from '../utils/numeric'
+import { sumAnyTwoValues } from '../utils/sumAnyTwoValues'
 import {
 	handleStopPropagation,
 	useStopPropagation,

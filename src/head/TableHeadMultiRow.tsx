@@ -3,7 +3,7 @@ import type { VirtualItem } from '@tanstack/react-virtual'
 import { Fragment, useEffect, useMemo, useRef } from 'react'
 
 import type { MultirowHeader, Table_Row, TableInstance } from '..'
-import { ColumnVirtualizerWrapper, Colors, TextColor } from '..'
+import { Colors, ColumnVirtualizerWrapper, TextColor } from '..'
 import type { StickyElement } from '../hooks/useMultiSticky'
 import { arrayHasAll } from '../utils/arrayHasAll'
 import { makeMultirowColumns } from '../utils/makeMultirowColumns'

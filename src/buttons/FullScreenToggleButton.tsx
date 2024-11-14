@@ -1,16 +1,15 @@
-import React from 'react'
-import IconButton from '@mui/material/IconButton'
 import type { IconButtonProps } from '@mui/material/IconButton'
+import IconButton from '@mui/material/IconButton'
 import Tooltip from '@mui/material/Tooltip'
+import React from 'react'
 
-import type { TableInstance } from '..'
+import type { TableData, TableInstance } from '..'
 
-interface Props<TData extends Record<string, any> = {}>
-	extends IconButtonProps {
+interface Props<TData = TableData> extends IconButtonProps {
 	table: TableInstance<TData>
 }
 
-export const FullScreenToggleButton = <TData extends Record<string, any> = {}>({
+export const FullScreenToggleButton = <TData,>({
 	table,
 	...rest
 }: Props<TData>) => {

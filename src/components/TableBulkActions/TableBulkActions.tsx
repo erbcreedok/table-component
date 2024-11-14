@@ -7,7 +7,7 @@ import { ComponentProps } from 'react'
 
 import { useComputedEnableCaptions } from '../../hooks/useComputedEnableCaptions'
 import { SelectCheckbox } from '../../inputs/SelectCheckbox'
-import { TableInstance } from '../../TableComponent'
+import { TableData, TableInstance } from '../../TableComponent'
 import { getColorAlpha } from '../../utils/getColorAlpha'
 import { getTestAttributes } from '../../utils/getTestAttributes'
 import { getValueOrFunctionHandler } from '../../utils/getValueOrFunctionHandler'
@@ -24,7 +24,7 @@ const Line = styled(Divider)<{ height?: number }>`
 	background: ${IconsColor.active};
 	height: ${({ height }) => height ?? 1}px;
 `
-export type TableBulkActionsProps<TData extends Record<string, any> = {}> = {
+export type TableBulkActionsProps<TData = TableData> = {
 	table: TableInstance<TData>
 	wrapperProps?: ComponentProps<typeof Box>
 	sx?: (theme: Theme & { visible: boolean }) => CSSObject

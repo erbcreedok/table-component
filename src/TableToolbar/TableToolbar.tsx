@@ -7,7 +7,7 @@ import React, { ComponentProps, ReactNode, useCallback, useMemo } from 'react'
 import { DEFAULT_FONT_FAMILY, TextColor } from '../components'
 import { useComputedEnableCaptions } from '../hooks/useComputedEnableCaptions'
 import { useHoverEffects } from '../hooks/useHoverEffects'
-import type { TableData, TableInstance } from '../index'
+import { TableData, type TableInstance } from '../index'
 
 import { ColumnsButton } from './components/buttons/ColumnsButton'
 import { EditButton } from './components/buttons/EditButton'
@@ -45,7 +45,7 @@ export const ToolbarDivider = styled<typeof Divider>((props) => (
 	width: ${({ orientation }) => orientation === 'horizontal' && '24px'};
 `
 
-type Adornment<TData extends TableData> =
+type Adornment<TData = TableData> =
 	| ReactNode
 	| ((
 			config: {
@@ -57,7 +57,7 @@ type Adornment<TData extends TableData> =
 				disableButtons: boolean
 			} & ReturnType<typeof useHoverEffects>
 	  ) => ReactNode)
-export type TableToolbarProps<TData extends TableData> = {
+export type TableToolbarProps<TData = TableData> = {
 	table: TableInstance<TData>
 	enableGrouping?: boolean
 	disableGroupingButton?: boolean
@@ -78,9 +78,7 @@ export type TableToolbarProps<TData extends TableData> = {
 	dividerProps?: DividerProps
 } & ComponentProps<typeof Box>
 
-export const TableToolbar = <TData extends TableData = {}>(
-	tableToolbarProps: TableToolbarProps<TData>
-) => {
+export const TableToolbar = (tableToolbarProps: TableToolbarProps) => {
 	const {
 		table,
 		enableSettings = true,
@@ -123,7 +121,7 @@ export const TableToolbar = <TData extends TableData = {}>(
 	}, [disableAdornmentDividers, dividerProps])
 
 	const getAdornment = useCallback(
-		(adornment: Adornment<TData>) => {
+		(adornment: Adornment) => {
 			if (adornment instanceof Function) {
 				return adornment({
 					computedEnableCaptions,

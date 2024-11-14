@@ -1,9 +1,9 @@
 import { Box, ButtonBase } from '@mui/material'
 
 import { Colors, TextColor } from '../../../../../components/styles'
-import { TableInstance } from '../../../../../TableComponent'
+import { TableData, TableInstance } from '../../../../../TableComponent'
 
-interface PresetsFooterProps<TData extends Record<string, any>> {
+interface PresetsFooterProps<TData = TableData> {
 	table: TableInstance<TData> | TableInstance
 	isSaveAsNewEnabled?: boolean
 	isUpdateCurrentEnabled?: boolean
@@ -11,7 +11,7 @@ interface PresetsFooterProps<TData extends Record<string, any>> {
 	onUpdateCurrent(): void
 }
 
-export const PresetsFooter = <TData extends Record<string, any>>({
+export const PresetsFooter = <TData,>({
 	isSaveAsNewEnabled,
 	isUpdateCurrentEnabled,
 	onSaveAsNew,

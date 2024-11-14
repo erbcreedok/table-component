@@ -1,6 +1,6 @@
-import React, { FC, RefObject } from 'react'
 import Box from '@mui/material/Box'
 import Tooltip from '@mui/material/Tooltip'
+import React, { FC, RefObject } from 'react'
 
 import { Table_Cell, TableInstance } from '..'
 import { TextColor } from '../components'
