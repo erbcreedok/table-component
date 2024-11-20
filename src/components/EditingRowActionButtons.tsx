@@ -1,4 +1,4 @@
-import { ReactElement, useCallback, useEffect, useState } from 'react'
+import { ReactElement, useCallback, useEffect, useMemo, useState } from 'react'
 import {
 	Controller,
 	ControllerFieldState,
@@ -6,6 +6,7 @@ import {
 } from 'react-hook-form'
 
 import { Table_Row, TableData, TableInstance } from '../TableComponent'
+import { getValueOrFunctionHandler } from '../utils/getValueOrFunctionHandler'
 import { scrollToElement } from '../utils/scrollToElement'
 
 import { FloatingActionButtons } from './FloatingActionButtons'
@@ -20,13 +21,13 @@ type EditingRowActionButtonsProps<TData = TableData> = {
 	row: Table_Row<TData>
 	fieldState?: ControllerFieldState
 }
-export const EditingRowActionButtonsMain = <TData,>({
+export const EditingRowActionButtonsMain = ({
 	open,
 	children,
 	table,
 	row,
 	fieldState,
-}: EditingRowActionButtonsProps<TData>) => {
+}: EditingRowActionButtonsProps) => {
 	const {
 		getState,
 		options: {
@@ -34,6 +35,7 @@ export const EditingRowActionButtonsMain = <TData,>({
 			onEditingRowCancel,
 			onNewRowSave,
 			localization: { requiredFieldIsHidden },
+			floatingActionButtonProps,
 		},
 		refs: { tableContainerRef, tableHeadCellRefs },
 		setEditingRow,
@@ -124,6 +126,11 @@ export const EditingRowActionButtonsMain = <TData,>({
 
 	const anyError = fieldState?.error?.message ?? rowError
 
+	const upperProps = useMemo(
+		() => getValueOrFunctionHandler(floatingActionButtonProps)({ table, row }),
+		[table, row]
+	)
+
 	return (
 		<FloatingActionButtons
 			table={table}
@@ -142,16 +149,17 @@ export const EditingRowActionButtonsMain = <TData,>({
 					/>
 				) : null
 			}
+			{...upperProps}
 		>
 			{children}
 		</FloatingActionButtons>
 	)
 }
 
-export const EditingRowActionButtons = <TData,>({
+export const EditingRowActionButtons = ({
 	children,
 	...props
-}: EditingRowActionButtonsProps<TData>) => {
+}: EditingRowActionButtonsProps) => {
 	const methods = useFormContext()
 	if (!props.table.getState().isEditingTable) {
 		return (

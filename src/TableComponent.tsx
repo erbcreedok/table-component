@@ -56,6 +56,7 @@ import { Table_AggregationFns } from './aggregationFns'
 import { TableBodyRowProps } from './body/TableBodyRow'
 import {
 	BulkActionButtonProps,
+	EditFloatingActionButtonsProps,
 	NotificationBoxProps,
 	type RowTooltipProps,
 	type SidebarProps,
@@ -1272,6 +1273,10 @@ export type TableComponentProps<TData = TableData> = Omit<
 		enableToolbarInternalActions?: boolean
 		enableTopToolbar?: boolean
 		expandRowsFn?: (dataRow: TData) => TData[]
+		floatingActionButtonProps?: TableRowFunctionalProp<
+			Partial<EditFloatingActionButtonsProps<TData>>,
+			TData
+		>
 		formOptions?: Partial<UseFormProps<TableFormValues>>
 		getExpandableColumn?:
 			| string

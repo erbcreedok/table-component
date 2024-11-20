@@ -6,9 +6,11 @@ import {
 	shift,
 	useFloating,
 } from '@floating-ui/react'
+import type { UseFloatingProps } from '@floating-ui/react/src/types'
 import { styled } from '@mui/material'
 import Box from '@mui/material/Box'
 import IconButton from '@mui/material/IconButton'
+import * as React from 'react'
 import { MouseEventHandler, ReactElement, ReactNode, useRef } from 'react'
 
 import { TableData, TableInstance } from '../TableComponent'
@@ -25,7 +27,13 @@ const IconButtonStyled = styled(IconButton)`
 	border-radius: 4px;
 `
 
-type EditFloatingActionButtonsProps<TData = TableData> = {
+export type FloatingPortalProps = {
+	children?: React.ReactNode
+	id?: string | undefined
+	root?: HTMLElement | null | undefined
+	preserveTabOrder?: boolean | undefined
+}
+export type EditFloatingActionButtonsProps<TData = TableData> = {
 	adornment?: ReactNode
 	open?: boolean
 	children: (args: {
@@ -34,15 +42,19 @@ type EditFloatingActionButtonsProps<TData = TableData> = {
 	table: TableInstance<TData>
 	onSubmit?: MouseEventHandler
 	onCancel?: MouseEventHandler
+	floatingPortalProps?: Partial<FloatingPortalProps>
+	floatingOptions?: Partial<UseFloatingProps>
 }
-export const FloatingActionButtons = <TData,>({
+export const FloatingActionButtons = ({
 	adornment,
 	open,
 	children,
 	table,
 	onCancel,
 	onSubmit,
-}: EditFloatingActionButtonsProps<TData>) => {
+	floatingPortalProps,
+	floatingOptions,
+}: EditFloatingActionButtonsProps) => {
 	const {
 		options: {
 			icons: { CloseIcon, CheckIcon },
@@ -56,6 +68,7 @@ export const FloatingActionButtons = <TData,>({
 		whileElementsMounted: autoUpdate,
 		placement: 'bottom-start',
 		middleware: [shift(), flip(), offset({ mainAxis: 2, crossAxis: 10 })],
+		...floatingOptions,
 	})
 
 	return (
@@ -64,6 +77,7 @@ export const FloatingActionButtons = <TData,>({
 			{(open || adornment) && (
 				<FloatingPortal
 					root={tableContainerRef.current ?? defaultContainerRef.current}
+					{...floatingPortalProps}
 				>
 					<Box
 						ref={floating}
