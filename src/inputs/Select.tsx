@@ -9,7 +9,7 @@ import { AutocompleteRenderGetTagProps } from '@mui/material/Autocomplete/Autoco
 import { ChipTypeMap } from '@mui/material/Chip'
 import Typography from '@mui/material/Typography'
 import { PartialKeys } from '@tanstack/table-core'
-import React, { RefObject } from 'react'
+import React, { forwardRef, RefObject } from 'react'
 
 import { Flex } from '../components/Flex'
 import { Tag } from '../components/Tag'
@@ -30,8 +30,9 @@ export type SelectProps<
 		AutocompleteProps<T, Multiple, DisableClearable, FreeSolo, ChipComponent>,
 		'value'
 	>,
-	'renderInput' | 'options'
+	'renderInput' | 'options' | 'ref'
 > & {
+	ref?: RefObject<HTMLInputElement>
 	inputRef?: RefObject<HTMLInputElement>
 	inputProps?: InputProps
 	value?: (T | string | undefined | null) | (T | string | undefined | null)[]
@@ -68,69 +69,70 @@ const renderTags = <T extends Record<string, any> = SelectOption>(
 	</Flex>
 )
 
-export const Select = <
-	T extends Record<string, any> = SelectOption,
-	Multiple extends boolean | undefined = boolean
->({
-	inputProps,
-	options = [],
-	value,
-	...props
-}: SelectProps<T, Multiple>) => {
-	const {
-		table: {
-			options: {
-				icons: { ChevronDownIcon, CloseIcon },
-				localization,
+export const Select = forwardRef<HTMLInputElement, SelectProps>(
+	<
+		T extends Record<string, any> = SelectOption,
+		Multiple extends boolean | undefined = boolean
+	>(
+		{ inputProps, options = [], value, ...props }: SelectProps<T, Multiple>,
+		ref
+	) => {
+		const {
+			table: {
+				options: {
+					icons: { ChevronDownIcon, CloseIcon },
+					localization,
+				},
 			},
-		},
-	} = useTableContext()
+		} = useTableContext()
 
-	const getMultipleOptions = () => {
-		if (Array.isArray(value)) {
-			return options.filter((opt) => !value?.includes(opt.value))
+		const getMultipleOptions = () => {
+			if (Array.isArray(value)) {
+				return options.filter((opt) => !value?.includes(opt.value))
+			}
+
+			return options
 		}
 
-		return options
-	}
-
-	return (
-		<Autocomplete<T, Multiple, boolean, false>
-			fullWidth
-			size="small"
-			popupIcon={<ChevronDownIcon />}
-			clearIcon={<CloseIcon style={{ width: '18px', height: '18px' }} />}
-			getOptionLabel={getOptionLabel}
-			renderInput={(params) => <Input {...inputProps} {...params} />}
-			isOptionEqualToValue={isOptionEqualToValue}
-			renderTags={renderTags}
-			options={props.multiple ? getMultipleOptions() : options}
-			value={value as AutocompleteValue<T, Multiple, boolean, false>}
-			{...props}
-			disableCloseOnSelect={props.multiple}
-			noOptionsText={<Typography>{localization.noOptions}</Typography>}
-			sx={mergeSx(
-				{
-					[`.${autocompleteClasses.endAdornment}`]: {
-						position: 'static',
-						transform: 'translate(0, 0)',
-					},
-					[`&.${autocompleteClasses.hasClearIcon}.${autocompleteClasses.hasPopupIcon} .${outlinedInputClasses.root},
+		return (
+			<Autocomplete<T, Multiple, boolean, false>
+				ref={ref}
+				fullWidth
+				size="small"
+				popupIcon={<ChevronDownIcon />}
+				clearIcon={<CloseIcon style={{ width: '18px', height: '18px' }} />}
+				getOptionLabel={getOptionLabel}
+				renderInput={(params) => <Input {...inputProps} {...params} />}
+				isOptionEqualToValue={isOptionEqualToValue}
+				renderTags={renderTags}
+				options={props.multiple ? getMultipleOptions() : options}
+				value={value as AutocompleteValue<T, Multiple, boolean, false>}
+				{...props}
+				disableCloseOnSelect={props.multiple}
+				noOptionsText={<Typography>{localization.noOptions}</Typography>}
+				sx={mergeSx(
+					{
+						[`.${autocompleteClasses.endAdornment}`]: {
+							position: 'static',
+							transform: 'translate(0, 0)',
+						},
+						[`&.${autocompleteClasses.hasClearIcon}.${autocompleteClasses.hasPopupIcon} .${outlinedInputClasses.root},
 					 &.${autocompleteClasses.hasPopupIcon} .${outlinedInputClasses.root}`]: {
-						pr: 1,
+							pr: 1,
+						},
+						[`.${autocompleteClasses.clearIndicator}`]: {
+							display: 'none',
+							height: 18,
+							p: 0,
+							lineHeight: '18px',
+						},
+						[`&:hover .${autocompleteClasses.clearIndicator}`]: {
+							display: 'inline-block',
+						},
 					},
-					[`.${autocompleteClasses.clearIndicator}`]: {
-						display: 'none',
-						height: 18,
-						p: 0,
-						lineHeight: '18px',
-					},
-					[`&:hover .${autocompleteClasses.clearIndicator}`]: {
-						display: 'inline-block',
-					},
-				},
-				props.sx
-			)}
-		/>
-	)
-}
+					props.sx
+				)}
+			/>
+		)
+	}
+)

@@ -16,7 +16,7 @@ export const TableFormProvider = ({
 	} = table
 	const methods = useTableForm(table)
 
-	if (!disableFormProvider) {
+	if (disableFormProvider) {
 		return <>{children}</>
 	}
 
