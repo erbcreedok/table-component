@@ -1651,6 +1651,7 @@ export type TableComponentProps<TData = TableData> = Omit<
 				headerGroup: Table_HeaderGroup<TData>
 			}
 		>
+		disableFormProvider?: boolean
 	}
 
 export type TableComponentPropsDefined<TData = TableData> =

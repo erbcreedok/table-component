@@ -2,6 +2,7 @@ import { ThemeProvider } from '@mui/material'
 import { PropsWithChildren } from 'react'
 import { FormProvider } from 'react-hook-form'
 
+import { TableFormProvider } from '../components/TableFormProvider'
 import { useTableForm, useTableWithFormMethods } from '../hooks'
 import { useTable } from '../hooks/useTable'
 import { useTableInitialization } from '../hooks/useTableInitialization'
@@ -17,12 +18,13 @@ export const TableProvider = ({
 
 	const tableContext = useTable(props) as unknown as TableContextType
 	useTableWithFormMethods(tableContext.table)
-	const methods = useTableForm(tableContext.table)
 
 	return (
 		<ThemeProvider theme={props.theme}>
 			<TableContext.Provider value={tableContext}>
-				<FormProvider {...methods}>{children}</FormProvider>
+				<TableFormProvider table={tableContext.table}>
+					{children}
+				</TableFormProvider>
 			</TableContext.Provider>
 		</ThemeProvider>
 	)
