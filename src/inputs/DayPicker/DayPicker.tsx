@@ -55,6 +55,7 @@ export type DayPickerProps = {
 	isDateRange?: boolean
 	container?: HTMLElement
 	floatingRef?: MutableRefObject<HTMLElement | null>
+	zIndex?: number | string
 } & Omit<
 	ComponentProps<typeof ReactDayPicker>,
 	'value' | 'onFocus' | 'onBlur' | 'onChange'
@@ -67,6 +68,7 @@ export const DayPicker: FC<DayPickerProps> = ({
 	isDateRange,
 	container,
 	floatingRef: uFloatingRef,
+	zIndex = 100,
 	...props
 }) => {
 	const [mode, setMode] = useState<'month' | 'year'>()
@@ -197,7 +199,7 @@ export const DayPicker: FC<DayPickerProps> = ({
 								position: strategy,
 								left: x ?? '',
 								top: y ?? '',
-								zIndex: 100,
+								zIndex,
 							},
 						})}
 					>
