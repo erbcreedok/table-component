@@ -1,9 +1,4 @@
-import {
-	autocompleteClasses,
-	AutocompleteProps,
-	AutocompleteValue,
-	outlinedInputClasses,
-} from '@mui/material'
+import { AutocompleteProps, AutocompleteValue } from '@mui/material'
 import Autocomplete from '@mui/material/Autocomplete'
 import { AutocompleteRenderGetTagProps } from '@mui/material/Autocomplete/Autocomplete'
 import { ChipTypeMap } from '@mui/material/Chip'
@@ -11,13 +6,13 @@ import Typography from '@mui/material/Typography'
 import { PartialKeys } from '@tanstack/table-core'
 import React, { forwardRef, RefObject } from 'react'
 
-import { Flex } from '../components/Flex'
-import { Tag } from '../components/Tag'
-import { useTableContext } from '../context/useTableContext'
-import { SelectOption } from '../TableComponent'
-import { mergeSx } from '../utils/mergeSx'
+import { Flex, Tag } from '../../components'
+import { useTableContext } from '../../context/useTableContext'
+import { SelectOption } from '../../TableComponent'
+import { mergeSx } from '../../utils/mergeSx'
+import { Input, InputProps } from '../Input'
 
-import { Input, InputProps } from './Input'
+import { selectSx } from './styles'
 
 export type SelectProps<
 	T = SelectOption,
@@ -110,28 +105,7 @@ export const Select = forwardRef<HTMLInputElement, SelectProps>(
 				{...props}
 				disableCloseOnSelect={props.multiple}
 				noOptionsText={<Typography>{localization.noOptions}</Typography>}
-				sx={mergeSx(
-					{
-						[`.${autocompleteClasses.endAdornment}`]: {
-							position: 'static',
-							transform: 'translate(0, 0)',
-						},
-						[`&.${autocompleteClasses.hasClearIcon}.${autocompleteClasses.hasPopupIcon} .${outlinedInputClasses.root},
-					 &.${autocompleteClasses.hasPopupIcon} .${outlinedInputClasses.root}`]: {
-							pr: 1,
-						},
-						[`.${autocompleteClasses.clearIndicator}`]: {
-							display: 'none',
-							height: 18,
-							p: 0,
-							lineHeight: '18px',
-						},
-						[`&:hover .${autocompleteClasses.clearIndicator}`]: {
-							display: 'inline-block',
-						},
-					},
-					props.sx
-				)}
+				sx={mergeSx(selectSx, props.sx)}
 			/>
 		)
 	}

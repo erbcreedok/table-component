@@ -1,9 +1,4 @@
-import {
-	inputBaseClasses,
-	outlinedInputClasses,
-	TextField,
-	Typography,
-} from '@mui/material'
+import { TextField, Typography } from '@mui/material'
 import IconButton from '@mui/material/IconButton'
 import { TextFieldProps } from '@mui/material/TextField'
 import { PartialKeys } from '@tanstack/table-core'
@@ -14,26 +9,22 @@ import {
 	useRef,
 } from 'react'
 
-import {
-	Colors,
-	ErrorTooltipIconWithTable,
-	IconsColor,
-	NumberStepButtons,
-	TextColor,
-} from '../'
-import { useTableContext } from '../context/useTableContext'
-import { useFocusEvents } from '../hooks/useFocusEvents'
-import { TableColumnEditProps } from '../TableComponent'
-import { createNativeChangeEvent } from '../utils/createNativeChangeEvent'
-import { isGreaterThan } from '../utils/isGreaterThan'
-import { isLessThan } from '../utils/isLessThan'
-import { mergeSx } from '../utils/mergeSx'
-import { sanitizeNumeric } from '../utils/numeric'
-import { sumAnyTwoValues } from '../utils/sumAnyTwoValues'
+import { ErrorTooltipIconWithTable, NumberStepButtons } from '../../'
+import { useTableContext } from '../../context/useTableContext'
+import { useFocusEvents } from '../../hooks/useFocusEvents'
+import { TableColumnEditProps } from '../../TableComponent'
+import { createNativeChangeEvent } from '../../utils/createNativeChangeEvent'
+import { isGreaterThan } from '../../utils/isGreaterThan'
+import { isLessThan } from '../../utils/isLessThan'
+import { mergeSx } from '../../utils/mergeSx'
+import { sanitizeNumeric } from '../../utils/numeric'
+import { sumAnyTwoValues } from '../../utils/sumAnyTwoValues'
 import {
 	handleStopPropagation,
 	useStopPropagation,
-} from '../utils/withStopPropagation'
+} from '../../utils/withStopPropagation'
+
+import { iconButtonSx, inputSx } from './styles'
 
 export type InputProps = Omit<
 	PartialKeys<TextFieldProps, 'variant'>,
@@ -153,26 +144,7 @@ export const Input = ({
 					<>
 						{showError && <ErrorTooltipIconWithTable error={error} />}
 						{!!props.value && onClear && (
-							<IconButton
-								onClick={onClearStop}
-								sx={{
-									visibility: 'hidden',
-									right: 0,
-									background: 'white',
-									display: 'none',
-									height: 18,
-									p: 0,
-									mr: 1,
-									[`&:hover`]: {
-										background: Colors.White,
-									},
-									[`.${outlinedInputClasses.root}:hover &`]: {
-										display: 'flex',
-										alignItems: 'center',
-										visibility: 'visible',
-									},
-								}}
-							>
+							<IconButton onClick={onClearStop} sx={iconButtonSx}>
 								<CloseIcon style={{ width: '18px', height: '18px' }} />
 							</IconButton>
 						)}
@@ -209,60 +181,7 @@ export const Input = ({
 				),
 				inputProps: props.inputProps,
 			}}
-			sx={mergeSx(
-				{
-					my: '6px',
-					backgroundColor: '#FFFFFF',
-					borderRadius: '6px',
-					[`& .${outlinedInputClasses.root}`]: {
-						borderRadius: '6px',
-						[`&:not(.${outlinedInputClasses.focused}):not(.${outlinedInputClasses.disabled}):not(.${outlinedInputClasses.error}):hover`]:
-							{
-								[`& .${outlinedInputClasses.notchedOutline}`]: {
-									borderColor: Colors.Gray40,
-									borderWidth: 1,
-								},
-							},
-						[`&.${outlinedInputClasses.disabled}`]: {
-							backgroundColor: Colors.LightestGray,
-							[`.${outlinedInputClasses.notchedOutline}`]: {
-								borderColor: Colors.Gray20,
-							},
-						},
-						[`&.${outlinedInputClasses.error}`]: {
-							[`.${outlinedInputClasses.notchedOutline}`]: {
-								borderColor: Colors.Red,
-							},
-						},
-					},
-					[`& .${outlinedInputClasses.input}`]: {
-						fontSize: '14px',
-						padding: '9px 12px',
-						lineHeight: '18px',
-						height: '18px',
-						color: TextColor.Dark,
-						[`&::placeholder`]: {
-							color: IconsColor.disabled,
-							opacity: 1,
-						},
-						[`&::-webkit-outer-spin-button, &::-webkit-inner-spin-button`]: {
-							WebkitAppearance: 'none',
-							margin: 0,
-						},
-						[`&[type=number]`]: {
-							MozAppearance: 'textfield',
-						},
-					},
-					[`& .${outlinedInputClasses.notchedOutline}`]: {
-						borderColor: Colors.BorderMain,
-						borderWidth: 1,
-					},
-					[`& .${inputBaseClasses.adornedEnd}`]: {
-						pr: 0,
-					},
-				},
-				props.sx
-			)}
+			sx={mergeSx(inputSx, props.sx)}
 		/>
 	)
 }
