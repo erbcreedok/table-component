@@ -95,6 +95,7 @@ import type { TableToolbarProps } from './TableToolbar/TableToolbar'
 import type { FunctionProps, LiteralUnion } from './types'
 import type { GetIsColumnAllGroupsCollapsedProps } from './utils/getIsColumnAllGroupsCollapsed'
 import type { GetIsGroupCollapsedProps } from './utils/getIsGroupCollapsed'
+import { GetNewRowProps } from './utils/getNewRow'
 import {
 	EmptyColumn,
 	NonCollapsedItem,
@@ -1289,6 +1290,7 @@ export type TableComponentProps<TData = TableData> = Omit<
 			groupRow?: Table_Row<TData>
 			table: TableInstance<TData>
 		}) => ReactNode
+		getNewRowOrigin?: (props: GetNewRowProps<TData>) => TData
 		getRowId?: (
 			originalRow: TData,
 			index: number,

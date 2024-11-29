@@ -53,19 +53,25 @@ const getInitialValues = <TData>(
 	)
 }
 
-export const getNewRow = <TData>(props: {
+export type GetNewRowProps<TData> = {
 	row: Table_Row<TData>
 	table: TableInstance<TData>
 	depth: number
 	initialValues?: TableData
-}) => {
+}
+
+export const getNewRow = <TData>(props: GetNewRowProps<TData>) => {
 	const { row, table, depth, initialValues } = props
+	const {
+		options: { getNewRowOrigin },
+	} = table
 	const previousRow = findPreviousRow(row, depth) ?? row
 	const newRow: NewRowState<TData> = {
 		...(createTableRow(
 			table,
 			NewRowPlaceholderId,
-			getInitialValues(row, initialValues) as TData,
+			(getNewRowOrigin?.(props) ??
+				getInitialValues(row, initialValues)) as TData,
 			row.index,
 			depth,
 			[]
