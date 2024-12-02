@@ -36,7 +36,7 @@ export const TableBodyRows: FC<Props> = ({
 		CustomRow,
 	} = table
 
-	const { groupCollapsed } = getState()
+	const { groupCollapsed, newRow } = getState()
 
 	if (rowVirtualizerInstanceRef && virtualizer) {
 		rowVirtualizerInstanceRef.current = virtualizer
@@ -157,33 +157,51 @@ export const TableBodyRows: FC<Props> = ({
 	}, [CustomRow])
 
 	return (
-		<RowVirtualizerWrapper rowVirtualizer={virtualizer} colSpan={columnsCount}>
-			{rowProps.map((props) => {
-				const computedProps = {
-					...props,
-					groupingProps: rowsGroupingProps[props.row.id],
-				}
+		<>
+			{rowProps.length > 0 && newRow && !newRow.previousRow && (
+				<TableBodyRow
+					{...rowProps[0]}
+					row={newRow}
+					measureElement={undefined}
+				/>
+			)}
+			<RowVirtualizerWrapper
+				rowVirtualizer={virtualizer}
+				colSpan={columnsCount}
+			>
+				{rowProps.map((props) => {
+					const computedProps = {
+						...props,
+						groupingProps: rowsGroupingProps[props.row.id],
+					}
 
-				if (CustomRow)
-					return memoMode === 'rows' && MemoizedCustomRow ? (
-						<MemoizedCustomRow key={computedProps.row.id} {...computedProps} />
-					) : (
-						<CustomRow key={computedProps.row.id} {...computedProps} />
-					)
-				if (hierarchyTreeConfig) {
+					if (CustomRow)
+						return memoMode === 'rows' && MemoizedCustomRow ? (
+							<MemoizedCustomRow
+								key={computedProps.row.id}
+								{...computedProps}
+							/>
+						) : (
+							<CustomRow key={computedProps.row.id} {...computedProps} />
+						)
+					if (hierarchyTreeConfig) {
+						return memoMode === 'rows' ? (
+							<Memo_HierarchyRow
+								key={computedProps.row.id}
+								{...computedProps}
+							/>
+						) : (
+							<HierarchyRow key={computedProps.row.id} {...computedProps} />
+						)
+					}
+
 					return memoMode === 'rows' ? (
-						<Memo_HierarchyRow key={computedProps.row.id} {...computedProps} />
+						<Memo_TableBodyRow key={computedProps.row.id} {...computedProps} />
 					) : (
-						<HierarchyRow key={computedProps.row.id} {...computedProps} />
+						<TableBodyRow key={computedProps.row.id} {...computedProps} />
 					)
-				}
-
-				return memoMode === 'rows' ? (
-					<Memo_TableBodyRow key={computedProps.row.id} {...computedProps} />
-				) : (
-					<TableBodyRow key={computedProps.row.id} {...computedProps} />
-				)
-			})}
-		</RowVirtualizerWrapper>
+				})}
+			</RowVirtualizerWrapper>
+		</>
 	)
 }

@@ -354,8 +354,25 @@ export const TableBodyRow: FC<TableBodyRowProps> = (props) => {
 										)
 									}
 
-									if (table.getIsNewRow(row) && cell.column.getIsGrouped())
+									if (table.getIsNewRow(row) && cell.column.getIsGrouped()) {
+										if (!row.previousRow) {
+											const props = {
+												cell,
+												enableHover: tableRowProps?.hover !== false,
+												numRows,
+												row,
+												rowIndex,
+												rowNumber,
+												rowRef,
+												table,
+												virtualCell,
+											}
+
+											return <TableBodyCell key={cell.id} {...props} />
+										}
+
 										return null
+									}
 
 									if (cell.getIsPlaceholder() && !isSummaryRow)
 										return getGroupedCell(cell, virtualCell)

@@ -10,7 +10,7 @@ export const useCreateNewRow = (table: TableInstance) => {
 	const { newRow } = table.getState()
 
 	const createNewRow = useCallback(
-		(row: Table_Row, depth: number, initialValues?: any) => {
+		(row?: Table_Row, depth = 0, initialValues: any = {}) => {
 			const newRow = getNewRow({ row, depth, table, initialValues })
 			setNewRow(newRow)
 		},
@@ -89,13 +89,13 @@ export type TablePropsWithCreateNewRow<TData = TableData> = {
 	organizeCreateNewRowButtons?: OrganizeCreateNewRowButtonsProp<TData>
 }
 export type CreateNewRowMethod<TData = TableData> = (
-	row: Table_Row<TData>,
-	depth: number,
+	row?: Table_Row<TData>,
+	depth?: number,
 	initialValues?: TData
 ) => void
 export type TableInstanceWithCreateNewRow<TData = TableData> = {
 	createNewRow: CreateNewRowMethod<TData>
-	getIsNewRow: (row: Table_Row<TData>) => boolean
+	getIsNewRow: (row: Table_Row<TData>) => row is NewRow<TData>
 	getIsNewRowHolder: (row: Table_Row<TData>) => boolean
 	setNewRow: OnChangeFn<NewRowState<TData>>
 }

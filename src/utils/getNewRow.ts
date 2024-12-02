@@ -38,23 +38,25 @@ const findPreviousRow = <TData>(row: Table_Row<TData>, depth: number) => {
 }
 
 const getInitialValues = <TData>(
-	row: Table_Row<TData>,
+	row?: Table_Row<TData>,
 	initialValues: TableData = {}
 ): TableData => {
-	return row.getVisibleCells().reduce(
-		(acc, { column, getValue }) =>
-			column.getIsGrouped()
-				? {
-						...acc,
-						[column.id]: getValue(),
-				  }
-				: acc,
-		initialValues ?? {}
+	return (
+		row?.getVisibleCells()?.reduce(
+			(acc, { column, getValue }) =>
+				column.getIsGrouped()
+					? {
+							...acc,
+							[column.id]: getValue(),
+					  }
+					: acc,
+			initialValues
+		) ?? initialValues
 	)
 }
 
 export type GetNewRowProps<TData> = {
-	row: Table_Row<TData>
+	row?: Table_Row<TData>
 	table: TableInstance<TData>
 	depth: number
 	initialValues?: TableData
@@ -65,19 +67,20 @@ export const getNewRow = <TData>(props: GetNewRowProps<TData>) => {
 	const {
 		options: { getNewRowOrigin },
 	} = table
-	const previousRow = findPreviousRow(row, depth) ?? row
+	const previousRow = row ? findPreviousRow(row, depth) : undefined
 	const newRow: NewRowState<TData> = {
 		...(createTableRow(
 			table,
 			NewRowPlaceholderId,
 			(getNewRowOrigin?.(props) ??
 				getInitialValues(row, initialValues)) as TData,
-			row.index,
+			row?.index ?? 0,
 			depth,
 			[]
 		) as Table_Row<TData>),
 		previousRow,
-		getParent: () => (depth > 0 ? findParent(row, depth - 1) : undefined),
+		getParent: () =>
+			depth > 0 && row ? findParent(row, depth - 1) : undefined,
 	}
 
 	return newRow

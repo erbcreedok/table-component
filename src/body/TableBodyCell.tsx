@@ -510,7 +510,7 @@ const TableBodyCellMain = ({
 				)}
 				{isGroupedCell ? (
 					<TableBodyCellValue cell={cell} row={row} table={table} />
-				) : cell.getIsPlaceholder() ? null : isLoading || showSkeletons ? (
+				) : isLoading || showSkeletons ? (
 					<Skeleton
 						animation="wave"
 						height={20}
