@@ -2,7 +2,7 @@ import Box from '@mui/material/Box'
 import ListItemIcon from '@mui/material/ListItemIcon'
 import MenuItem, { MenuItemProps } from '@mui/material/MenuItem'
 
-import { Table_Column, TableData, TableInstance, utilColumns } from '../'
+import { Table_Column, TableData, TableInstance } from '../'
 import { getTestAttributes } from '../utils/getTestAttributes'
 
 import { commonListItemStyles, commonMenuItemStyles } from './constants'
@@ -19,7 +19,6 @@ export const QuickGroupingMenuItems = <TData,>({
 	...rest
 }: QuickGroupingMenuItemsProps<TData>) => {
 	const {
-		setColumnOrder,
 		options: {
 			enableGrouping,
 			icons: { GroupingIcon },
@@ -30,7 +29,6 @@ export const QuickGroupingMenuItems = <TData,>({
 
 	const handleGroupByColumn = () => {
 		column.toggleGrouping()
-		setColumnOrder((old: any) => [utilColumns.expand, ...old])
 		setVisible(false)
 	}
 
