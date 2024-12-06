@@ -1,4 +1,3 @@
-export * from './buildTableHeaderGroups'
 export * from './createTableRow'
 export * from './findRelativeParent'
 export * from './focusOnErrorFields'

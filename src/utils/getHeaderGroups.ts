@@ -1,16 +1,20 @@
+import { Table } from '@tanstack/react-table'
 import { memo } from '@tanstack/table-core'
 
-import { TableInstance } from '../TableComponent'
+import { buildHeaderGroups } from './buildHeaderGroups'
+import { getMemoOptions } from './getMemoOptions'
 
-import { buildTableHeaderGroups } from './buildTableHeaderGroups'
-
-export const getHeaderGroups = <TData>(table: TableInstance<TData>) =>
+export const getHeaderGroups = <TData>(table: Table<TData>) =>
 	memo(
-		() => [table.getAllColumns(), table.getVisibleLeafColumns()],
-		(allColumns, visibleLeafColumns) =>
-			buildTableHeaderGroups(allColumns, visibleLeafColumns, table),
-		{
-			key: 'getHeaderGroups',
-			debug: () => table.options.debugAll ?? table.options.debugTable,
-		}
+		() => [
+			table.getAllColumns(),
+			table.getVisibleLeafColumns(),
+			table._getOrderColumnsFn(),
+		],
+		(allColumns, leafColumns, orderColumnsFn) => {
+			const sortedColumns = orderColumnsFn(leafColumns)
+
+			return buildHeaderGroups(allColumns, sortedColumns, table)
+		},
+		getMemoOptions(table.options, 'debugHeaders', 'getHeaderGroups')
 	)

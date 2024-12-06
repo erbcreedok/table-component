@@ -1,5 +1,7 @@
 import { memo, Table } from '@tanstack/table-core'
 
+import { getMemoOptions } from './getMemoOptions'
+
 export const getLeftLeafColumns = <TData>(table: Table<TData>) =>
 	memo(
 		() => [
@@ -22,8 +24,5 @@ export const getLeftLeafColumns = <TData>(table: Table<TData>) =>
 				})
 				.filter(Boolean)
 		},
-		{
-			key: process.env.NODE_ENV === 'development' && 'getLeftLeafColumns',
-			debug: () => table.options.debugAll ?? table.options.debugColumns,
-		}
+		getMemoOptions(table.options, 'debugColumns', 'getLeftLeafColumns')
 	)

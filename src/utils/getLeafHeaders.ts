@@ -2,6 +2,8 @@ import { memo, Table } from '@tanstack/table-core'
 
 import { Table_Header } from '../TableComponent'
 
+import { getMemoOptions } from './getMemoOptions'
+
 export const getLeafHeaders = <TData>(table: Table<TData>) =>
 	memo(
 		() => [table.getHeaderGroups()],
@@ -12,8 +14,5 @@ export const getLeafHeaders = <TData>(table: Table<TData>) =>
 				.map((h) => h.getLeafHeaders() as Table_Header<TData>[])
 				.flat()
 		},
-		{
-			key: 'getLeafHeaders',
-			debug: () => table.options.debugAll ?? table.options.debugTable,
-		}
+		getMemoOptions(table.options, 'debugHeaders', 'getLeafHeaders')
 	)

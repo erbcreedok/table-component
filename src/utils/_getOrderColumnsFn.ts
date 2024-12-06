@@ -3,6 +3,7 @@ import { memo } from '@tanstack/table-core'
 
 import { Table_Column } from '../TableComponent'
 
+import { getMemoOptions } from './getMemoOptions'
 import { sortColumns } from './sortColumns'
 
 export const _getOrderColumnsFn = <TData>(table: Table<TData>) =>
@@ -11,6 +12,8 @@ export const _getOrderColumnsFn = <TData>(table: Table<TData>) =>
 			table.getState().columnOrder,
 			table.getState().columnPinning,
 			table.getState().grouping,
+			table.getState().columnPinning.left,
+			table.getState().columnPinning.right,
 		],
 		(columnOrder, columnPinning, grouping) => (columns) => {
 			// Sort grouped columns to the start of the column list
@@ -45,8 +48,5 @@ export const _getOrderColumnsFn = <TData>(table: Table<TData>) =>
 
 			return sortColumns(orderedColumns, columnPinning, grouping)
 		},
-		{
-			key: process.env.NODE_ENV === 'development' && 'getOrderColumnsFn',
-			// debug: () => table.options.debugAll ?? table.options.debugTable,
-		}
+		getMemoOptions(table.options, 'debugColumns', 'getOrderColumnsFn')
 	)
