@@ -409,12 +409,6 @@ export const useTable = (config: TableComponentPropsDefined) => {
 	// @ts-ignore
 	const table = Object.assign(
 		useReactTable({
-			_features: [
-				notDisplayedColumnFeature,
-				columnFreezingFeature,
-				columnOrderingFeature,
-				multirowFeature,
-			],
 			getCoreRowModel: getCoreRowModel(),
 			getExpandedRowModel: getExpandedRowModel(),
 			getFacetedRowModel: getFacetedRowModel(),
@@ -435,6 +429,13 @@ export const useTable = (config: TableComponentPropsDefined) => {
 			onSortingChange: setSorting,
 			onStateChange: config.onStateChange,
 			...config,
+			_features: [
+				notDisplayedColumnFeature,
+				columnFreezingFeature,
+				columnOrderingFeature,
+				multirowFeature,
+				...(config._features ?? []),
+			],
 			onGroupingChange,
 			detailPanelBorderColor:
 				config.detailPanelBorderColor ?? config.theme?.palette.primary.main,
