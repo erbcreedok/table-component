@@ -54,6 +54,8 @@ export const DateInput: FC<DateInputProps> = forwardRef(
 				}
 				if (!isValid(parsedDate)) {
 					setIsError(true)
+				} else {
+					setIsError(false)
 				}
 				setInternalValue(value)
 			},

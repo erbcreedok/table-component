@@ -20,10 +20,7 @@ import { isLessThan } from '../../utils/isLessThan'
 import { mergeSx } from '../../utils/mergeSx'
 import { sanitizeNumeric } from '../../utils/numeric'
 import { sumAnyTwoValues } from '../../utils/sumAnyTwoValues'
-import {
-	handleStopPropagation,
-	useStopPropagation,
-} from '../../utils/withStopPropagation'
+import { useStopPropagation } from '../../utils/withStopPropagation'
 
 import { iconButtonSx, inputSx } from './styles'
 
@@ -147,7 +144,6 @@ export const Input = forwardRef<HTMLDivElement, InputProps>(
 				onFocus={handleFocus}
 				onBlur={onBlur}
 				error={showError}
-				onMouseDown={handleStopPropagation} // for DragScrollingContainer to not mess things up
 				InputProps={{
 					inputRef: compoundInputRef,
 					...props.InputProps,

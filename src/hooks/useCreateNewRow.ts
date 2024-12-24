@@ -1,5 +1,5 @@
 import { OnChangeFn } from '@tanstack/react-table'
-import { ReactNode, useCallback } from 'react'
+import { MouseEventHandler, ReactNode, useCallback } from 'react'
 
 import { Table_Row, TableData, TableInstance } from '../TableComponent'
 import { FunctionProps } from '../types'
@@ -53,6 +53,7 @@ export type CreateNewRowButtonsConfig<TData = TableData> = {
 	hint?: string
 	disabled?: boolean
 	renderMenu?: CreateNewRowRenderMenuConfig<TData>
+	onClick?: MouseEventHandler<HTMLButtonElement>
 }
 export type CreateNewRowButtonsConfigProps<TData = TableData> = (
 	| number

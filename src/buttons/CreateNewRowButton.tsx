@@ -1,8 +1,7 @@
 import { IconButton, iconButtonClasses, styled } from '@mui/material'
 import { useCallback, useRef } from 'react'
 
-import { Colors, IconsColor } from '../components/styles'
-import { Tooltip } from '../components/Tooltip'
+import { Colors, IconsColor, Tooltip } from '../components'
 import { CreateNewRowButtonsConfig } from '../hooks'
 import { Table_Row, TableInstance } from '../TableComponent'
 
@@ -25,6 +24,7 @@ export const CreateNewRowButton = (
 		setMenuOpen,
 		table,
 		renderMenu,
+		onClick,
 	} = props
 	const {
 		options: {
@@ -47,7 +47,11 @@ export const CreateNewRowButton = (
 	return (
 		<>
 			<Tooltip title={hint} key={depth} placement="top">
-				<CreateButton ref={anchorRef} disabled={disabled} onClick={handleClick}>
+				<CreateButton
+					ref={anchorRef}
+					disabled={disabled}
+					onClick={onClick ?? handleClick}
+				>
 					<ExpandFilledIcon />
 				</CreateButton>
 			</Tooltip>
