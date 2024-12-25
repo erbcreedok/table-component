@@ -14,6 +14,8 @@ import * as React from 'react'
 import { MouseEventHandler, ReactElement, ReactNode, useRef } from 'react'
 
 import { TableData, TableInstance } from '../TableComponent'
+import { getValueOrFunctionHandler } from '../utils/getValueOrFunctionHandler'
+import { mergeSx } from '../utils/mergeSx'
 
 import { Colors } from './styles'
 
@@ -58,6 +60,9 @@ export const FloatingActionButtons = ({
 	const {
 		options: {
 			icons: { CloseIcon, CheckIcon },
+			floatingActionButtonCancelProps,
+			floatingActionButtonSubmitProps,
+			floatingActionButtonWrapperProps,
 		},
 		refs: { tableContainerRef },
 	} = table
@@ -71,6 +76,16 @@ export const FloatingActionButtons = ({
 		...floatingOptions,
 	})
 
+	const cancelProps = getValueOrFunctionHandler(
+		floatingActionButtonCancelProps
+	)({ table })
+	const submitProps = getValueOrFunctionHandler(
+		floatingActionButtonSubmitProps
+	)({ table })
+	const wrapperProps = getValueOrFunctionHandler(
+		floatingActionButtonWrapperProps
+	)({ table })
+
 	return (
 		<>
 			{children({ ref: reference })}
@@ -81,30 +96,40 @@ export const FloatingActionButtons = ({
 				>
 					<Box
 						ref={floating}
+						{...wrapperProps}
 						style={{
 							position: strategy,
 							right: x ?? '',
 							top: y ?? '',
 							zIndex: 2,
+							...wrapperProps?.style,
 						}}
-						sx={{
-							display: 'flex',
-							gap: '6px',
-							p: '6px',
-						}}
+						sx={mergeSx(
+							{
+								display: 'flex',
+								gap: '6px',
+								p: '6px',
+							},
+							wrapperProps?.sx
+						)}
 					>
 						{adornment}
 						{open && (
 							<>
 								<IconButtonStyled
-									style={{ background: Colors.Red }}
 									onClick={onCancel}
+									{...cancelProps}
+									style={{ background: Colors.Red, ...cancelProps?.style }}
 								>
 									<CloseIcon style={{ width: '21px', height: '21px' }} />
 								</IconButtonStyled>
 								<IconButtonStyled
-									style={{ background: Colors.LightBlue }}
 									onClick={onSubmit}
+									{...submitProps}
+									style={{
+										background: Colors.LightBlue,
+										...submitProps?.style,
+									}}
 								>
 									<CheckIcon style={{ width: '21px', height: '21px' }} />
 								</IconButtonStyled>

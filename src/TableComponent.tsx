@@ -1278,6 +1278,18 @@ export type TableComponentProps<TData = TableData> = Omit<
 			Partial<EditFloatingActionButtonsProps<TData>>,
 			TData
 		>
+		floatingActionButtonCancelProps?: TableFunctionalProp<
+			Partial<ButtonProps>,
+			TData
+		>
+		floatingActionButtonSubmitProps?: TableFunctionalProp<
+			Partial<ButtonProps>,
+			TData
+		>
+		floatingActionButtonWrapperProps?: TableFunctionalProp<
+			Partial<BoxProps>,
+			TData
+		>
 		formOptions?: Partial<UseFormProps<TableFormValues>>
 		getExpandableColumn?:
 			| string
