@@ -1,6 +1,6 @@
 {
 	"name": "@core/table-component",
-	"version": "1.8.11-table-clean.4",
+	"version": "1.8.11-table-clean.14",
 	"description": "React table written with tanstack table v8",
 	"scripts": {
 		"dev": "start-storybook -p 6006",
